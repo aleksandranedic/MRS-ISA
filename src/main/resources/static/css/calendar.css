@@ -1,0 +1,17 @@
+.date {
+    position: relative;
+    top: 0;
+    z-index: 1;
+    background-color: white;
+    cursor:pointer;
+}
+.event {
+    position: relative;
+    top: -40px;
+    background-color: #01504D;
+    z-index: -1;
+    -webkit-transition: top 1s;
+    -moz-transition: top 1s;
+    -o-transition: top 1s;
+    transition: top 1s;
+}
