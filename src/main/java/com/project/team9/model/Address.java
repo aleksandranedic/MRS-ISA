@@ -5,6 +5,14 @@ import javax.persistence.*;
 @Entity
 public class Address {
     @Id
+    @SequenceGenerator(
+            name = "address_sequence",
+            sequenceName = "address_sequence",
+            allocationSize = 1)
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "address_sequence"
+    )
     private Long id;
 
     private String place;

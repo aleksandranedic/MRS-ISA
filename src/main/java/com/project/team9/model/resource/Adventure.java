@@ -1,9 +1,12 @@
 package com.project.team9.model.resource;
 
+import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.Address;
 import com.project.team9.model.user.vendor.FishingInstructor;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -15,18 +18,28 @@ import java.util.List;
 @Entity
 public class Adventure extends Resource{
     @ManyToOne
-    @JoinColumn(name = "owner_id")
+    @Cascade(CascadeType.SAVE_UPDATE)
+
     private FishingInstructor owner;
     private int numberOfClients;
-    private String fishingEquipment;
     @OneToMany
+    private List<Tag> fishingEquipment;
+    @OneToMany(cascade= javax.persistence.CascadeType.ALL, orphanRemoval = true)
     private List<AdventureReservation> quickReservations;
 
 
     public Adventure() {
     }
 
-    public Adventure(String title, Address address, String description,  String rulesAndRegulations, Pricelist pricelist, int cancellationFee, FishingInstructor owner, int numberOfClients, String fishingEquipment) {
+    public Adventure(String title,
+                     Address address,
+                     String description,
+                     String rulesAndRegulations,
+                     Pricelist pricelist,
+                     int cancellationFee,
+                     FishingInstructor owner,
+                     int numberOfClients,
+                     List<Tag> fishingEquipment) {
         super(title, address, description, rulesAndRegulations, pricelist, cancellationFee);
         this.owner = owner;
         this.numberOfClients = numberOfClients;
@@ -51,11 +64,15 @@ public class Adventure extends Resource{
         this.numberOfClients = numberOfClients;
     }
 
-    public String getFishingEquipment() {
+    public List<Tag> getFishingEquipment() {
         return fishingEquipment;
     }
 
-    public void setFishingEquipment(String fishingEquipment) {
+    public void setFishingEquipment(List<Tag> fishingEquipment) {
         this.fishingEquipment = fishingEquipment;
+    }
+
+    public void addQuickReservation(AdventureReservation adventureReservation) {
+        quickReservations.add(adventureReservation);
     }
 }
