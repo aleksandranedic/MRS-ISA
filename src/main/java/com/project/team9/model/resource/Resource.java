@@ -121,4 +121,8 @@ public abstract class Resource {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    public void addImage(Image image) {
+        this.images.add(image);
+    }
 }

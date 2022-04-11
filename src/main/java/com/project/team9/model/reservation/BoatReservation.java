@@ -11,21 +11,21 @@ import java.util.List;
 @Entity
 public class BoatReservation extends Reservation{
     @ManyToOne
-    private Boat boat;
+    private Boat resource;
 
     public BoatReservation() {
     }
 
     public BoatReservation(List<Appointment> appointments, int numberOfClients, List<Tag> additionalServices, int price, Client client, Boat boat) {
         super(appointments, numberOfClients, additionalServices, price, client);
-        this.boat = boat;
+        this.resource = boat;
     }
 
-    public Boat getBoat() {
-        return boat;
+    public Boat getResource() {
+        return resource;
     }
 
-    public void setBoat(Boat boat) {
-        this.boat = boat;
+    public void setResource(Boat boat) {
+        this.resource = boat;
     }
 }

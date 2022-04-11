@@ -12,21 +12,21 @@ import java.util.List;
 public class VacationHouseReservation extends Reservation{
 
     @ManyToOne
-    private VacationHouse vacationHouse;
+    private VacationHouse resource;
 
     public VacationHouseReservation() {
     }
 
     public VacationHouseReservation(List<Appointment> appointments, int numberOfClients, List<Tag> additionalServices, int price, Client client, VacationHouse vacationHouse) {
         super(appointments, numberOfClients, additionalServices, price, client);
-        this.vacationHouse = vacationHouse;
+        this.resource = vacationHouse;
     }
 
-    public VacationHouse getVacationHouse() {
-        return vacationHouse;
+    public VacationHouse getResource() {
+        return resource;
     }
 
-    public void setVacationHouse(VacationHouse vacationHouse) {
-        this.vacationHouse = vacationHouse;
+    public void setResource(VacationHouse vacationHouse) {
+        this.resource = vacationHouse;
     }
 }
