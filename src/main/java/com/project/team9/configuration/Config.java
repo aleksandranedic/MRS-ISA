@@ -1,6 +1,7 @@
 package com.project.team9.configuration;
 
 import com.project.team9.model.Address;
+import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.AdventureReservation;
@@ -28,7 +29,8 @@ public class Config {
             AddressRepository addressRepository,
             TagRepository tagRepository,
             AdventureReservationRepository adventureReservationRepository,
-            AppointmentRepository appointmentRepository
+            AppointmentRepository appointmentRepository,
+            ImageRepository imageRepository
     ) {
         return args -> {
             Address fishingInstructorAddress = new Address("Novi Sad", "23", "Bulevar Cara Lazara", "Srbija");
@@ -59,6 +61,16 @@ public class Config {
 
             tagRepository.saveAll(fishingEquipment);
 
+
+
+            Image image1 = new Image("./images/fishing1.jpg");
+            Image image2 = new Image("./images/fishing2.jpg");
+            Image image3 = new Image("./images/fishing3.jpg");
+
+            imageRepository.save(image1);
+            imageRepository.save(image2);
+            imageRepository.save(image3);
+
             Adventure bigAdventure = new Adventure(
                     "Velika ribarska avantura",
                     adventureAddress,
@@ -71,6 +83,9 @@ public class Config {
                     fishingEquipment
             );
 
+            bigAdventure.addImage(image1);
+            bigAdventure.addImage(image2);
+            bigAdventure.addImage(image3);
 
             fishingInstructor.addAdventure(bigAdventure);
             fishingInstructorRepository.save(fishingInstructor);

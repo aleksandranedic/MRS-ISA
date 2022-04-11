@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping(path="fishinginstructor")
+@CrossOrigin(origins="http://localhost:3000")
 public class FishingInstructorController {
 
     private final FishingInstructorService service;

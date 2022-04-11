@@ -14,7 +14,7 @@ import java.util.List;
 public class AdventureReservation extends Reservation{
     @ManyToOne
     @Cascade(CascadeType.SAVE_UPDATE)
-    private Adventure adventure;
+    private Adventure resource;
 
     public AdventureReservation() {
     }
@@ -24,16 +24,16 @@ public class AdventureReservation extends Reservation{
                                 List<Tag> additionalServices,
                                 int price,
                                 Client client,
-                                Adventure adventure) {
+                                Adventure resource) {
         super(appointments, numberOfClients, additionalServices, price, client);
-        this.adventure = adventure;
+        this.resource = resource;
     }
 
-    public Adventure getAdventure() {
-        return adventure;
+    public Adventure getResource() {
+        return resource;
     }
 
-    public void setAdventure(Adventure adventure) {
-        this.adventure = adventure;
+    public void setResource(Adventure adventure) {
+        this.resource = adventure;
     }
 }
