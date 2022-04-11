@@ -3,10 +3,11 @@ import React, {useEffect, useState} from "react";
 
 import axios from "axios";
 import ImageGallery from "./ImageGallery";
-import QuickReservations from "./QuickReservations";
+
 import Banner from "./Banner";
 import Navigation from "./Navigation";
 import AdventureInfo from "./AdventureInfo";
+import QuickReservations from "./QuickReservations";
 
 const Adventures = () => {
 
@@ -34,6 +35,9 @@ const Adventures = () => {
                            numberOfClients={adventure.numberOfClients}
                            fishingEquipment={adventure.fishingEquipment}
                            biography={adventure.owner.biography}/>
+            <ImageGallery images={adventure.images}/>
+            <QuickReservations/>
+
         </div>
     })
 };
@@ -43,8 +47,8 @@ export function AdventurePage() {
     return (
         <>
             <Adventures/>
-            <ImageGallery/>
-            <QuickReservations/>
+
+
         </>
 
 

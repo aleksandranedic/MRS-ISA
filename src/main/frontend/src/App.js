@@ -1,11 +1,12 @@
 import React from 'react';
-import {AdventurePage} from "./AdventurePage";
+
+import {FishingInstructorPage} from "./FishingInstructorPage";
 
 
 function App() {
     return (
         <>
-            <AdventurePage/>
+            <FishingInstructorPage/>
 
         </>
     );
