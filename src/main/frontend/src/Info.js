@@ -1,6 +1,5 @@
 import React from "react";
 import 'bootstrap/dist/css/bootstrap.css'
-import * as PropTypes from "prop-types";
 import Tag from "./Tag";
 
 export function Info({title, text}) {
@@ -34,7 +33,7 @@ export function TagInfo({title, tags}) {
 
 export function TagList({tags}) {
     return (
-        tags.map(tag => {
+        tags.map((tag, key) => {
             return <Tag tag={tag.text}/>}
         )
     )
