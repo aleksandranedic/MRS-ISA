@@ -20,8 +20,8 @@ public class Tag {
 
     }
 
-    public Tag(String path) {
-        this.text = path;
+    public Tag(String text) {
+        this.text = text;
     }
 
     public Long getId() {

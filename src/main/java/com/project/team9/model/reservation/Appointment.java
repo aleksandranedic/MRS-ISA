@@ -1,6 +1,9 @@
 package com.project.team9.model.reservation;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.Date;
 
 @Entity
@@ -15,15 +18,23 @@ public class Appointment {
             generator = "appointment_sequence"
     )
     private Long id;
-    private Date startTime;
-    private Date endTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 
     public Appointment() {
     }
 
-    public Appointment(Date startTime, Date endTime) {
+    public Appointment(LocalDateTime startTime, LocalDateTime endTime) {
         this.startTime = startTime;
         this.endTime = endTime;
+    }
+
+    public static Appointment getVacationHouseAppointment(int year, int month, int day) {
+        return new Appointment(LocalDateTime.of(year, month, day, 10, 0, 0), LocalDateTime.of(year, month, day, 10, 0, 0).plusDays(1));
+    }
+
+    public static Appointment getAdventureAppointment(int year, int month, int day, int hour, int minute) {
+        return new Appointment(LocalDateTime.of(year, month, day, hour, minute,0), LocalDateTime.of(year, month, day, hour+1, minute,0));
     }
 
     public Long getId() {
@@ -34,19 +45,19 @@ public class Appointment {
         this.id = id;
     }
 
-    public Date getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
+    public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
 
-    public Date getEndTime() {
+    public LocalDateTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Date endTime) {
+    public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
 }
