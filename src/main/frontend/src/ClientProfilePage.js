@@ -25,18 +25,27 @@ const Client = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    function handleDeleteAccount(clientId){
+        return null
+        //znaci ovde treba axios zahtev da obrisem korisnika
+    }
+    function handleUpdateAccount(userDTO){
+        return null
+        //ovde mi treba azuriranje
+    }
+
     return clients.map((client, index) => {
         return <div key={index}>
-            <Banner caption={"Petar  Milosevic"}/>
-            <UpdateClientInfo handleClose={handleClose} showPopUp={show} />
+            <Banner caption={client.firstName + " " +client.lastName}/>
+            <UpdateClientInfo client={client} handleDeleteAccount={handleDeleteAccount} handleClose={handleClose} showPopUp={show} />
             <Navigation handleEvent={handleShow}/>
             <ClientInfo
-                firstName={"Petar"}
-                lastName={"Milosevic"}
-                address={"Jovana Cvijica 25"}
-                email={"petar.milosevic@eamil.com"}
-                phoneNumber={"0656452628"}
-                city={"Novi Sad"}
+                firstName={client.firstName}
+                lastName={client.lastName}
+                address={"moras pogledati to"}
+                email={client.email}
+                phoneNumber={client.phoneNumber}
+                city={"Novi sad"}
                 country={"Srbija"}
             />
             <ClientLoyalty/>
