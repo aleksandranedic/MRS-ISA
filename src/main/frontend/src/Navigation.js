@@ -13,7 +13,7 @@ export default function Navigation() {
                     <NavigationButton text="Akcije" path="#sales"/>
                     <NavigationButton text="Kalendar zauzetosti" path="#calendar"/>
                     <Button variant="outline-light" className="border-0 m-0 p-0 d-flex justify-content-right align-items-center" width="0.8rem" height="1rem" >
-                        <BsPencilSquare style={{width: '0.8rem', height: '1rem', color:"rgb(106,106,106)"}}/>
+                        <BsPencilSquare style={{width: '2rem', height: '1rem', color:"rgb(106,106,106)"}}/>
                     </Button>
                 </Nav>
             </Container>

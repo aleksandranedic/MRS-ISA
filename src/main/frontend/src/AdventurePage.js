@@ -8,6 +8,20 @@ import Banner from "./Banner";
 import Navigation from "./Navigation";
 import AdventureInfo from "./AdventureInfo";
 
+
+export function AdventurePage() {
+    return (
+        <>
+            <Adventures/>
+            <ImageGallery/>
+            <QuickReservations/>
+        </>
+
+
+    )
+}
+
+
 const Adventures = () => {
 
     const [adventures, setAdventures] = useState([]);
@@ -39,14 +53,4 @@ const Adventures = () => {
 };
 
 
-export function AdventurePage() {
-    return (
-        <>
-            <Adventures/>
-            <ImageGallery/>
-            <QuickReservations/>
-        </>
-
-
-    )
 export default AdventurePage;
