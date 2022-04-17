@@ -24,8 +24,6 @@ const Houses = () => {
 
     // return houses.map((house, index) => {
         return <div>
-
-            <Banner caption={"Naziv vikendice"}/>
             <Navigation/>
             <HouseInfo 
                     description = {"Opis"}
@@ -42,12 +40,16 @@ const Houses = () => {
 
 export function VacationHousePage() {
     return (
-        <>
-            <Houses/>
+    <>
+        <Banner caption={"Naziv vikendice"}/>
+        <Houses/>
+        <div className='p-5 pt-0'>
+            <hr/>
             <ImageGallery/>
+            <hr/>
             <QuickReservations/>
-        </>
-
+        </div>
+    </>
 
     )
 }
