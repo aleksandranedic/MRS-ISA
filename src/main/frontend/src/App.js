@@ -1,14 +1,18 @@
 import React from 'react';
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 
-import {FishingInstructorPage} from "./FishingInstructorPage";
+import AdventurePage from "./AdventurePage";
+import VacationHousePage from "./VacationHousePage"
 
 
 function App() {
     return (
-        <>
-            <FishingInstructorPage/>
-
-        </>
+        <Router>
+            <Routes>
+                <Route path="/adventure" element={<AdventurePage />}></Route>
+                <Route path="/house" element={<VacationHousePage />}></Route>
+            </Routes>
+        </Router>
     );
 }
 

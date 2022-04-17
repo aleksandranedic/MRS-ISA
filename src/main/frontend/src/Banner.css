@@ -1,3 +1,11 @@
 img {
     object-fit: cover;
 }
+
+.carousel-indicators {
+    display: none;
+}
+
+.carousel a {
+    display: none;
+}
