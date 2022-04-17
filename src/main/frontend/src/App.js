@@ -1,13 +1,11 @@
 import React from 'react';
-
-import {FishingInstructorPage} from "./FishingInstructorPage";
-
+import LogIn from './LogIn';
+import ClientProfilePage from "./ClientProfilePage";
 
 function App() {
     return (
         <>
-            <FishingInstructorPage/>
-
+            <ClientProfilePage />
         </>
     );
 }
