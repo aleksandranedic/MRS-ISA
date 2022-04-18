@@ -37,7 +37,7 @@ const Client = () => {
     }
 
     function handleUpdateAccount(userDTO) {
-        setClient(userDTO)
+        userDTO.email=client.email
         axios.put("http://localhost:4444/client/"+localStorage.getItem('user'),userDTO).then(res => {
             console.log(res);
             setClient(res.data);
@@ -48,11 +48,11 @@ const Client = () => {
             <Banner caption={client.firstName + " " + client.lastName}/>
             <UpdateClientInfo client={client} handleDeleteAccount={handleDeleteAccount} handleClose={handleClose}
                               showPopUp={show} updateClient={handleUpdateAccount}/>
-            <Navigation handleEvent={handleShow}/>
+            <Navigation showUpdateModal={handleShow}/>
             <ClientInfo
                 firstName={client.firstName}
                 lastName={client.lastName}
-                address={"moras pogledati to"}
+                address={"Dragise Brasovana 10"}
                 email={client.email}
                 phoneNumber={client.phoneNumber}
                 city={"Novi sad"}
