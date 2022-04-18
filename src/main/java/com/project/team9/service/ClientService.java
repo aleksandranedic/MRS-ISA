@@ -19,4 +19,16 @@ public class ClientService {
     public List<Client> getClients() {
         return repository.findAll();
     }
+
+    public Client getById(String id) {
+        return repository.getById(Long.parseLong(id));
+    }
+
+    public void deleteById(Long id) {
+        repository.deleteById(id);
+    }
+
+    public Client save(Client client) {
+        return repository.save(client);
+    }
 }

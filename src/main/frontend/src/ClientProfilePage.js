@@ -6,18 +6,20 @@ import ClientInfo from "./ClientInfo";
 import ClientLoyalty from "./ClientLoyalty";
 import UpdateClientInfo from "./UpdateClientInfo"
 
+localStorage.setItem('user', '2');
 const Client = () => {
-    const [clients, setClient] = useState([]);
+    const [client, setClient] = useState([]);
 
-    const fetchClients = () => {
-        axios.get("http://localhost:4444/client").then(res => {
+    let html;
+    const fetchClient = () => {
+        axios.get("http://localhost:4444/client/"+localStorage.getItem('user')).then(res => {
             console.log(res);
             setClient(res.data);
         });
     };
 
     useEffect(() => {
-        fetchClients();
+        fetchClient();
     }, []);
 
     const [show, setShow] = useState(false);
@@ -25,19 +27,27 @@ const Client = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    function handleDeleteAccount(clientId){
-        return null
-        //znaci ovde treba axios zahtev da obrisem korisnika
-    }
-    function handleUpdateAccount(userDTO){
-        return null
-        //ovde mi treba azuriranje
+    function handleDeleteAccount() {
+        axios.delete("http://localhost:4444/client/"+localStorage.getItem('user')).then(
+            res=>{
+                console.log(res)
+                window.location.reload(false);
+            }
+        )
     }
 
-    return clients.map((client, index) => {
-        return <div key={index}>
-            <Banner caption={client.firstName + " " +client.lastName}/>
-            <UpdateClientInfo client={client} handleDeleteAccount={handleDeleteAccount} handleClose={handleClose} showPopUp={show} />
+    function handleUpdateAccount(userDTO) {
+        setClient(userDTO)
+        axios.put("http://localhost:4444/client/"+localStorage.getItem('user'),userDTO).then(res => {
+            console.log(res);
+            setClient(res.data);
+        });
+    }
+    if (client.length !== 0) {
+        html = (<div>
+            <Banner caption={client.firstName + " " + client.lastName}/>
+            <UpdateClientInfo client={client} handleDeleteAccount={handleDeleteAccount} handleClose={handleClose}
+                              showPopUp={show} updateClient={handleUpdateAccount}/>
             <Navigation handleEvent={handleShow}/>
             <ClientInfo
                 firstName={client.firstName}
@@ -49,8 +59,9 @@ const Client = () => {
                 country={"Srbija"}
             />
             <ClientLoyalty/>
-        </div>
-    })
+        </div>)
+    }
+    return (html)
 };
 
 export function ClientProfilePage() {
