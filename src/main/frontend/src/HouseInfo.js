@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 
 export default function HouseInfo({description, rooms, capacity, rulesAndRegulations, additionalServices, address}) {
     return (
-        <div className="p-5 pt-3 mt-4">
+        <div className="p-5 pt-3 mt-4" id="info">
             <h4 className="fw-light">
                 {description}
             </h4>

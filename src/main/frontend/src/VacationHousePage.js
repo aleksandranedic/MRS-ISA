@@ -6,7 +6,7 @@ import QuickReservations from "./QuickReservations";
 import Banner from "./Banner";
 import Navigation from "./Navigation";
 import HouseInfo from "./HouseInfo";
-
+import BeginButton from "./BeginButton";
 const Houses = () => {
 
     // const [houses, setHouses] = useState([]);
@@ -24,7 +24,6 @@ const Houses = () => {
 
     // return houses.map((house, index) => {
         return <div>
-            <Navigation/>
             <HouseInfo 
                     description = {"Opis"}
                     rooms={"5 spavace i 1 dnevna"}
@@ -42,6 +41,7 @@ export function VacationHousePage() {
     return (
     <>
         <Banner caption={"Naziv vikendice"}/>
+        <Navigation/>
         <Houses/>
         <div className='p-5 pt-0'>
             <hr/>
@@ -49,6 +49,7 @@ export function VacationHousePage() {
             <hr/>
             <QuickReservations/>
         </div>
+        <BeginButton/>
     </>
 
     )

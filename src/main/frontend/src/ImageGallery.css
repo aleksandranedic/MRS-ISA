@@ -1,11 +1,11 @@
 .gallery-carousel .owl-stage {
   padding: 100px 0;
 }
-.container {
+.gallery-carousel .container {
   max-width: 100% !important;
 }
 
-.card {
+.gallery-carousel .card {
   position: relative;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -29,7 +29,7 @@
     min-width: 60vh;
     max-width: 60vh;
 }
-.item {
+.gallery-carousel .item {
     padding: 0px;
     min-height: 60vh;
     max-height: 60vh;
@@ -37,15 +37,15 @@
     max-width: 60vh;
 }
 
-.card-container {
+.gallery-carousel .card-container {
   padding: 0px 20px;
 }
 
-.card.show {
+.gallery-carousel .card.show {
   color: #fff;
 }
 
-.center .card {
+.gallery-carousel .center .card {
   color: #fff;
   transform: scale(1.40);
 }
@@ -81,25 +81,25 @@
   display: none;
 }
 
-.owl-item > div {
+.gallery-carousel .owl-item > div {
   cursor: pointer;
   transform: scale(0.70);
   margin: 0;
 }
-.owl-item.center > div {
+.gallery-carousel .owl-item.center > div {
   cursor: auto;
   transform: scale(1);
   transition: scale 0.4s ease-in-out;
 }
-.owl-item:not(.center) > div {
+.gallery-carousel .owl-item:not(.center) > div {
   opacity: 0.5;
 }
-.owl-item:not(.center) > div:hover {
+.gallery-carousel .owl-item:not(.center) > div:hover {
   opacity: 0.85;
 }
 
-.owl-nav .owl-next,
-.owl-nav .owl-prev {
+.gallery-carousel .owl-nav .owl-next,
+.gallery-carousel .owl-nav .owl-prev {
   background: 0 0;
   color: #6b6b6b !important;
   border: none;
@@ -110,16 +110,16 @@
   top: 50%;
 }
 
-.owl-nav .owl-next {
+.gallery-carousel .owl-nav .owl-next {
   right: -10px;
 }
 
-.owl-nav .owl-prev {
+.gallery-carousel .owl-nav .owl-prev {
   left: -10px;
 }
 
-.owl-nav .owl-next:hover,
-.owl-nav .owl-prev:hover {
+.gallery-carousel .owl-nav .owl-next:hover,
+.gallery-carousel .owl-nav .owl-prev:hover {
   opacity: 0.8;
   background-color: transparent !important;
 }

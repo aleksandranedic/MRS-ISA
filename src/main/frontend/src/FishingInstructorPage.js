@@ -49,3 +49,4 @@ export function FishingInstructorPage() {
 
     )
 }
+export default FishingInstructorPage;

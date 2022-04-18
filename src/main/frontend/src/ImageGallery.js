@@ -5,8 +5,8 @@ import v1 from "./images/vikendica1.jpeg"
 import v2 from "./images/vikendica2.jpeg"
 import v3 from "./images/vikendica3.jpeg"
 import v4 from "./images/vikendica4.jpeg"
-import {Container,Row, Card, Image} from "react-bootstrap";
 import boatnotext from "./images/boatsnotext.png";
+import {Container, Card, Image} from "react-bootstrap";
 import OwlCarousel from 'react-owl-carousel';
 import 'owl.carousel/dist/assets/owl.carousel.css';
 import 'owl.carousel/dist/assets/owl.theme.default.css';
@@ -36,7 +36,7 @@ const options = {
 };
 
   return (
-    <Container className= "p-0 m-0 w-100">
+    <Container className= "p-0 m-0 w-100" id="photos">
       <OwlCarousel className="owl-theme owl-theme gallery-carousel" loop {...options} navElement>
         <div className="card-container">
           <Card className="item card">
