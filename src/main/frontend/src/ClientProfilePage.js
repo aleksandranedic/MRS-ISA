@@ -12,7 +12,7 @@ const Client = () => {
 
     let html;
     const fetchClient = () => {
-        axios.get("http://localhost:4444/client/"+localStorage.getItem('user')).then(res => {
+        axios.get("http://localhost:4444/client/" + localStorage.getItem('user')).then(res => {
             console.log(res);
             setClient(res.data);
         });
@@ -28,8 +28,8 @@ const Client = () => {
     const handleShow = () => setShow(true);
 
     function handleDeleteAccount() {
-        axios.delete("http://localhost:4444/client/"+localStorage.getItem('user')).then(
-            res=>{
+        axios.delete("http://localhost:4444/client/" + localStorage.getItem('user')).then(
+            res => {
                 console.log(res)
                 window.location.reload(false);
             }
@@ -37,12 +37,14 @@ const Client = () => {
     }
 
     function handleUpdateAccount(userDTO) {
-        userDTO.email=client.email
-        axios.put("http://localhost:4444/client/"+localStorage.getItem('user'),userDTO).then(res => {
+        userDTO.email = client.email
+        console.log(userDTO)
+        axios.put("http://localhost:4444/client/" + localStorage.getItem('user'), userDTO).then(res => {
             console.log(res);
             setClient(res.data);
         });
     }
+
     if (client.length !== 0) {
         html = (<div>
             <Banner caption={client.firstName + " " + client.lastName}/>
@@ -52,11 +54,11 @@ const Client = () => {
             <ClientInfo
                 firstName={client.firstName}
                 lastName={client.lastName}
-                address={"Dragise Brasovana 10"}
+                address={client.address.street + " " + client.address.number}
                 email={client.email}
                 phoneNumber={client.phoneNumber}
-                city={"Novi sad"}
-                country={"Srbija"}
+                city={client.address.place}
+                country={client.address.country}
             />
             <ClientLoyalty/>
         </div>)

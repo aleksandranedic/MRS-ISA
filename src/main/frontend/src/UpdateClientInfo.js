@@ -11,14 +11,14 @@ function UpdateClientInfo({handleDeleteAccount, handleClose, showPopUp, updateCl
     const [form, setForm] = useState({})
     const [errors, setErrors] = useState({})
 
-    const stringRegExp=new RegExp("[A-Z][A-Za-z]+")
-    const addressRegExp=new RegExp("[A-Z][A-Za-z]+.?[A-Za-z]*")
-    const passwordExp=new RegExp(".[^ ]+")
-    const numExp=new RegExp("[1-9][0-9]*[a-z]?")
-    const phoneNumRegExp=new RegExp("[0-9]{7,10}")
+    const stringRegExp = new RegExp("[A-Z][A-Za-z]+")
+    const streetRegExp = new RegExp("[A-Z][A-Za-z]+.?[A-Za-z]*")
+    const passwordExp = new RegExp(".[^ ]+")
+    const numExp = new RegExp("[1-9][0-9]*[a-z]?")
+    const phoneNumRegExp = new RegExp("[0-9]{7,10}")
 
     const findFormErrors = () => {
-        const {firstName, lastName, password, confPass, streetNum, address, city, country,phoneNumber} = form
+        const {firstName, lastName, password, confPass, number, street, place, country, phoneNumber} = form
         const newErrors = {}
         if (!stringRegExp.test(firstName)) newErrors.firstName = 'cannot be blank!'
 
@@ -29,13 +29,13 @@ function UpdateClientInfo({handleDeleteAccount, handleClose, showPopUp, updateCl
         if (!confPass || !passwordExp.test(confPass)) newErrors.confPass = 'cannot be blank!'
         else if (confPass !== password) newErrors.confPass = 'passwords are not matching'
 
-        if (!numExp.test(streetNum)) newErrors.streetNum = 'cannot be blank!'
+        if (!numExp.test(number)) newErrors.number = 'cannot be blank!'
 
-        if (!address || !addressRegExp.test(address)) newErrors.address = 'cannot be blank!'
+        if (!street || !streetRegExp.test(street)) newErrors.address = 'cannot be blank!'
 
-        if (!city || !addressRegExp.test(city)) newErrors.city = 'cannot be blank!'
+        if (!place || !streetRegExp.test(place)) newErrors.place = 'cannot be blank!'
 
-        if (!country || !addressRegExp.test(country)) newErrors.country = 'cannot be blank!'
+        if (!country || !streetRegExp.test(country)) newErrors.country = 'cannot be blank!'
 
         if (!phoneNumber || !phoneNumRegExp.test(phoneNumber)) newErrors.phoneNumber = 'cannot be blank!'
 
@@ -51,9 +51,19 @@ function UpdateClientInfo({handleDeleteAccount, handleClose, showPopUp, updateCl
             // We got errors!
             setErrors(newErrors)
         } else {
-            console.log('Thank you for your feedback!')
-            console.log(form)
-            updateClient(form) //ovo nam azurira korisnika
+            const userDTO = {
+                firstName: form.firstName,
+                lastName: form.lastName,
+                password: form.password,
+                phoneNumber: form.phoneNumber,
+                address: {
+                    number: form.number,
+                    street: form.street,
+                    place: form.place,
+                    country: form.country
+                }
+            }
+            updateClient(userDTO)
             handleClose()
         }
     }
@@ -131,29 +141,29 @@ function UpdateClientInfo({handleDeleteAccount, handleClose, showPopUp, updateCl
                         <Form.Group className="mb-3 m-2" controlId="formNumOfAddress">
                             <Form.Label>Broj</Form.Label>
                             <Form.Control type="text"
-                                          onChange={e => setField('streetNum', e.target.value)}
-                                          isInvalid={!!errors.streetNum}/>
+                                          onChange={e => setField('number', e.target.value)}
+                                          isInvalid={!!errors.number}/>
                             <Form.Control.Feedback type='invalid'>
-                                {errors.streetNum}
+                                {errors.number}
                             </Form.Control.Feedback>
                         </Form.Group>
-                        <Form.Group className="mb-3 m-2" controlId="formAddress">
+                        <Form.Group className="mb-3 m-2" controlId="formStreet">
                             <Form.Label>Adresa</Form.Label>
                             <Form.Control type="text"
-                                          onChange={e => setField('address', e.target.value)}
-                                          isInvalid={!!errors.address}/>
+                                          onChange={e => setField('street', e.target.value)}
+                                          isInvalid={!!errors.street}/>
                             <Form.Control.Feedback type='invalid'>
-                                {errors.address}
+                                {errors.street}
                             </Form.Control.Feedback>
                         </Form.Group>
 
                         <Form.Group className="mb-3 m-2 " controlId="formCity">
                             <Form.Label>Grad</Form.Label>
                             <Form.Control type="text"
-                                          onChange={e => setField('city', e.target.value)}
-                                          isInvalid={!!errors.city}/>
+                                          onChange={e => setField('place', e.target.value)}
+                                          isInvalid={!!errors.place}/>
                             <Form.Control.Feedback type='invalid'>
-                                {errors.city}
+                                {errors.place}
                             </Form.Control.Feedback>
                         </Form.Group>
 
