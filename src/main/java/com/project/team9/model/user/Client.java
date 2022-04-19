@@ -1,11 +1,13 @@
 package com.project.team9.model.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.project.team9.model.Address;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
 
 @Entity
-public class Client extends User{
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+public class Client extends User {
 
     public Client() {
     }

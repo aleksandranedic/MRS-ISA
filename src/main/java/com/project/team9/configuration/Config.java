@@ -7,6 +7,7 @@ import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.resource.Adventure;
+import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.model.user.vendor.RegistrationType;
 import com.project.team9.repo.*;
@@ -30,7 +31,8 @@ public class Config {
             TagRepository tagRepository,
             AdventureReservationRepository adventureReservationRepository,
             AppointmentRepository appointmentRepository,
-            ImageRepository imageRepository
+            ImageRepository imageRepository,
+            ClientRepository clientRepository
     ) {
         return args -> {
             Address fishingInstructorAddress = new Address("Novi Sad", "23", "Bulevar Cara Lazara", "Srbija");
@@ -47,7 +49,6 @@ public class Config {
                     "Jos sam bio savim mlad, neke barske ptice sam lovio tad, kad je dosla da se kupa lepa protina kci."
             );
 
-
             Address adventureAddress = new Address("Novi Sad", "52a", "Dunav", "Srbija");
             addressRepository.save(adventureAddress);
 
@@ -60,8 +61,6 @@ public class Config {
             fishingEquipment.add(new Tag("3 udice"));
 
             tagRepository.saveAll(fishingEquipment);
-
-
 
             Image image1 = new Image("./images/fishing1.jpg");
             Image image2 = new Image("./images/fishing2.jpg");
@@ -91,6 +90,17 @@ public class Config {
             fishingInstructorRepository.save(fishingInstructor);
             adventureRepository.save(bigAdventure);
 
+            Address clientAddress=new Address("Novi Sad", "16", "Puskinova", "Srbija");
+            addressRepository.save(clientAddress);
+            Client client = new Client(
+                    "petar123",
+                    "Petar",
+                    "Peric",
+                    "perap@gmail.com",
+                    "0601233215",
+                    clientAddress
+            );
+            clientRepository.save(client);
         };
     }
 }
