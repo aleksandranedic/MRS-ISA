@@ -53,4 +53,12 @@ public class VacationHouse extends Resource{
     public void setNumberOfBedsPerRoom(int numberOfBedsPerRoom) {
         this.numberOfBedsPerRoom = numberOfBedsPerRoom;
     }
+
+    public List<VacationHouseReservation> getQuickReservations() {
+        return quickReservations;
+    }
+
+    public void setQuickReservations(List<VacationHouseReservation> quickReservations) {
+        this.quickReservations = quickReservations;
+    }
 }
