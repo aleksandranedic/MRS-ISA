@@ -24,14 +24,7 @@ const Houses = () => {
 
     // return houses.map((house, index) => {
         return <div>
-            <Navigation buttons={
-                [
-                    {text: "Osnovne informacije", path: "#"},
-                    {text: "Fotografije", path: "#"},
-                    {text: "Akcije", path: "#"},
-                    {text: "Kalendar zauzetosti", path: "#"}
-                ]}
-                        editable={true} editFunction={""}/>
+            <Navigation/>
             <HouseInfo 
                     description = {"Opis"}
                     rooms={"5 spavace i 1 dnevna"}
@@ -54,7 +47,7 @@ export function VacationHousePage() {
             <hr/>
             <ImageGallery/>
             <hr/>
-            {/*<QuickReservations/>*/}
+            <QuickReservations/>
         </div>
     </>
 

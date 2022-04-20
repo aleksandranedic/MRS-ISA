@@ -1,6 +1,5 @@
 package com.project.team9.model.user.vendor;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.Address;
 
@@ -9,10 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+
 @Entity
 public class FishingInstructor extends Vendor {
-    @OneToMany(cascade= CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(cascade= CascadeType.ALL, orphanRemoval = true)
     List<Adventure> adventures;
     String biography;
 

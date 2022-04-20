@@ -3,6 +3,7 @@ import {} from 'bootstrap'
 import {Button, Card} from 'react-bootstrap'
 import {TagList} from "./Info";
 
+//BsPencilSquare
 import {BsPencilSquare} from "react-icons/bs";
 
 
@@ -26,7 +27,7 @@ export default function QuickReservation({startDate, endDate, price, numberOfPeo
                                 Broj mesta: {numberOfPeople}
                             </li>
                         </ul>
-
+                        <TagList tags={tags}/>
                     </Card.Text>
                     <div className="d-flex justify-content-center">
                         <Button variant="primary">Rezervisi</Button>
