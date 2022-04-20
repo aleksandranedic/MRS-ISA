@@ -1,20 +1,20 @@
 import React from "react";
-import {Info, AddressInfo} from "./Info";
+import {Info, AddressInfo, TagInfo} from "./Info";
 import 'bootstrap/dist/css/bootstrap.css'
 
-export default function HouseInfo({description, rooms, capacity, rulesAndRegulations, additionalServices, address}) {
+export default function AdventureInfo({address, description, rulesAndRegulations, numberOfClients, fishingEquipment, biography}) {
     return (
         <div className="p-5 pt-3 mt-4">
             <h4 className="fw-light">
                 {description}
             </h4>
-            <hr/>
+
             <div className="d-flex">
                 <div id="left-column" className="w-50 pe-2">
-                    <Info title="Broj soba" text={rooms}/>
-                    <Info title="Kapacitet" text={capacity}/>
+                    <Info title="Broj klijenata" text={numberOfClients}/>
+                    <TagInfo title="Oprema za pecanje" tags={fishingEquipment}/>
+                    <Info title="Biografija instruktora" text={biography}/>
                     <Info title="Pravila ponasanja" text={rulesAndRegulations}/>
-                    <Info title="Dodatne usluge" text={additionalServices}/>
                 </div>
 
                 <div id="right-column" className="w-50">
