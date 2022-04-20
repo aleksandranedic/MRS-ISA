@@ -8,6 +8,7 @@ import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.user.Client;
+import com.project.team9.model.user.Client;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.model.user.vendor.RegistrationType;
@@ -34,6 +35,7 @@ public class Config {
             AdventureReservationRepository adventureReservationRepository,
             AppointmentRepository appointmentRepository,
             ImageRepository imageRepository,
+            ClientRepository clientRepository,
             VacationHouseOwnerRepository vacationHouseOwnerRepository,
             VacationHouseRepository vacationHouseRepository
     ) {
@@ -41,10 +43,10 @@ public class Config {
             Address fishingInstructorAddress = new Address("Novi Sad", "23", "Bulevar Cara Lazara", "Srbija");
             addressRepository.save(fishingInstructorAddress);
             FishingInstructor fishingInstructor = new FishingInstructor(
-                    "petar.jovanovic@email.com",
                     "peraribar",
                     "Petar",
                     "Jovanovic",
+                    "petar.jovanovic@email.com",
                     "0601233215",
                     fishingInstructorAddress,
                     RegistrationType.FishingInstructor,
@@ -115,6 +117,7 @@ public class Config {
                     "0601233215",
                     clientAddress
             );
+            clientRepository.save(client);
         };
     }
 }

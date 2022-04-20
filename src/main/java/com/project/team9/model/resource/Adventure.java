@@ -1,25 +1,25 @@
 package com.project.team9.model.resource;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.project.team9.model.Address;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.AdventureReservation;
-import com.project.team9.model.Address;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 public class Adventure extends Resource{
     @ManyToOne
     @Cascade(CascadeType.SAVE_UPDATE)
-
     private FishingInstructor owner;
     private int numberOfClients;
     @OneToMany

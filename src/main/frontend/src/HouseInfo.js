@@ -18,7 +18,7 @@ export default function HouseInfo({description, rooms, capacity, rulesAndRegulat
                 </div>
 
                 <div id="right-column" className="w-50">
-                    <AddressInfo title="Adresa" text={address}/>
+                    {/*<AddressInfo title="Adresa" text={address}/>*/}
                 </div>
             </div>
         </div>

@@ -1,10 +1,13 @@
 import React from 'react';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 
-import {AdventurePage} from "./AdventurePage";
 import VacationHousePage from "./VacationHousePage"
-import FishingInstructorPage from "./FishingInstructorPage"
+import {ClientProfilePage} from "./ClientProfilePage";
+import AdventurePage from "./AdventurePage/AdventurePage";
+
+
 import HouseOwnerPage from "./HouseOwnerPage"
+import {FishingInstructorPage} from "./FishingInstructorPage/FishingInstructorPage";
 
 function App() {
     return (
@@ -12,8 +15,9 @@ function App() {
             <Routes>
                 <Route path="/adventure" element={<AdventurePage/>}/>
                 <Route path="/house" element={<VacationHousePage/>}/>
-                <Route path="houseOwner" element={<HouseOwnerPage/>}/>
-                <Route path="instructor" element={<FishingInstructorPage/>}/>
+                <Route path="/client" element={<ClientProfilePage/>}/>
+                <Route path="/houseOwner" element={<HouseOwnerPage/>}/>
+                <Route path="/fishingInstructor" element={<FishingInstructorPage/>}/>
             </Routes>
         </Router>
     );
