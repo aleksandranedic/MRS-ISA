@@ -1,7 +1,7 @@
 import React from 'react'
 import {AddressInfo, Info} from "./Info";
 
-export default function ClientInfo({firstName, lastName, email, phoneNumber, address, biography, city, country}) {
+export default function ClientInfo({firstName, lastName, email, phoneNumber, address, biography}) {
   return (
     <div className="p-5 pt-3 mt-4">
     <h4 className="fw-light text-center">
@@ -15,9 +15,7 @@ export default function ClientInfo({firstName, lastName, email, phoneNumber, add
         </div>
 
         <div id="right-column" className="w-50">
-            <AddressInfo title="Adresa" text={address}/>
-            <Info title="Grad" text={city}/>
-            <Info title="Drzava" text={country}/>
+            <AddressInfo title="Adresa" address={address}/>
         </div>
     </div>
 </div>

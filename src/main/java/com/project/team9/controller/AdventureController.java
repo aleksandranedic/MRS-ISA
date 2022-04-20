@@ -33,7 +33,6 @@ public class AdventureController {
     @PostMapping("/add")
     public void postBody(Adventure adventure) {
         service.addAdventure(adventure);
-
     }
 
     @PutMapping("/{id}/edit")

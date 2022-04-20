@@ -12,7 +12,7 @@ function OwnerInfo({name, rate, bio, email, phoneNum, address}) {
                 <p className="fw-bold m-0 mt-1 me-2 p-0"> {rate} </p>
                 <StarRatings rating={rate} starDimension="17px" starSpacing="1px" starRatedColor="#f4b136"/>
                 </div>
-                <p className="mt-4 pe-5" textJustify="inter-word" style={{ 'text-align': 'justify'}}>
+                <p className="mt-4 pe-5"  style={{ textAlign: 'justify', textJustify: 'inter-word'}}>
                     {bio}
                 </p>
             </div>

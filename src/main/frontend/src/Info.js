@@ -14,7 +14,6 @@ export function Info({title, text}) {
 }
 
 export function AddressInfo({title, address}) {
-    console.log(address)
     return (
         <div className="m-3">
             <p className="lead fw-normal m-0 p-0">{title}</p>

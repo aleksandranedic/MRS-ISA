@@ -5,8 +5,9 @@ import VacationHousePage from "./VacationHousePage"
 import {ClientProfilePage} from "./ClientProfilePage";
 import AdventurePage from "./AdventurePage/AdventurePage";
 
-import FishingInstructorPage from "./FishingInstructorPage"
+
 import HouseOwnerPage from "./HouseOwnerPage"
+import {FishingInstructorPage} from "./FishingInstructorPage/FishingInstructorPage";
 
 function App() {
     return (
@@ -15,7 +16,7 @@ function App() {
                 <Route path="/adventure" element={<AdventurePage/>}/>
                 <Route path="/house" element={<VacationHousePage/>}/>
                 <Route path="/client" element={<ClientProfilePage/>}/>
-                <Route path="houseOwner" element={<HouseOwnerPage/>}/>
+                <Route path="/houseOwner" element={<HouseOwnerPage/>}/>
                 <Route path="/fishingInstructor" element={<FishingInstructorPage/>}/>
             </Routes>
         </Router>

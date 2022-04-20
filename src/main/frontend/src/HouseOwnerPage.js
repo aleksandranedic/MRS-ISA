@@ -10,7 +10,14 @@ function HouseOwnerPage(props) {
     return (
         <>
             <Banner caption={"Lepa Sojic"}/>
-            <Navigation/>
+            <Navigation buttons={
+                [
+                    {text: "Osnovne informacije", path: "#"},
+                    {text: "Fotografije", path: "#"},
+                    {text: "Akcije", path: "#"},
+                    {text: "Kalendar zauzetosti", path: "#"}
+                ]}
+                        editable={false}/>
             <AddVacationHouse/>
             <div className='p-5 pt-0'>
                 <OwnerInfo bio = {"Lorem ipsum dolor, sit amet consectetur adipisicing elit. Accusamus repellendus dicta excepturi sed aliquam consequatur magnam nihil. Delectus eos velit amet deserunt natus soluta cum, illo necessitatibus dolorum vel unde repellendus molestias aspernatur. Ipsum cupiditate perspiciatis ullam provident delectus quam, accusamus ad exercitationem aspernatur repellat accusantium. Sit aperiam velit minima itaque neque omnis veritatis harum error minus? Unde, exercitationem saepe?"}

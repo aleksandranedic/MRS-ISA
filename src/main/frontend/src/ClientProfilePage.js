@@ -50,15 +50,18 @@ const Client = () => {
             <Banner caption={client.firstName + " " + client.lastName}/>
             <UpdateClientInfo client={client} handleDeleteAccount={handleDeleteAccount} handleClose={handleClose}
                               showPopUp={show} updateClient={handleUpdateAccount}/>
-            <Navigation showUpdateModal={handleShow}/>
+            <Navigation buttons={
+                [
+                    {text: "Osnovne informacije", path: "#"}
+                ]}
+                        editable={true} editFunction={handleShow}
+            />
             <ClientInfo
                 firstName={client.firstName}
                 lastName={client.lastName}
-                address={client.address.street + " " + client.address.number}
+                address={client.address}
                 email={client.email}
                 phoneNumber={client.phoneNumber}
-                city={client.address.place}
-                country={client.address.country}
             />
             <ClientLoyalty/>
         </div>)
