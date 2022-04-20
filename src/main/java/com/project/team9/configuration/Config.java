@@ -38,10 +38,10 @@ public class Config {
             Address fishingInstructorAddress = new Address("Novi Sad", "23", "Bulevar Cara Lazara", "Srbija");
             addressRepository.save(fishingInstructorAddress);
             FishingInstructor fishingInstructor = new FishingInstructor(
-                    "petar.jovanovic@email.com",
                     "peraribar",
                     "Petar",
                     "Jovanovic",
+                    "petar.jovanovic@email.com",
                     "0601233215",
                     fishingInstructorAddress,
                     RegistrationType.FishingInstructor,
