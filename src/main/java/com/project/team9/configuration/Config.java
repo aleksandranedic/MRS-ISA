@@ -108,12 +108,19 @@ public class Config {
             Image vhImg1 = new Image("./images/vikendica1.jpeg");
             Image vhImg2 = new Image("./images/vikendica2.jpeg");
             Image vhImg3 = new Image("./images/vikendica3.jpeg");
+            ArrayList<Tag> additionalServices =new ArrayList<Tag>();
+            additionalServices.add(new Tag("Bazen"));
+            additionalServices.add(new Tag("Pet-friendly"));
+            additionalServices.add(new Tag("WiFi"));
+            additionalServices.add(new Tag("Parking"));
+            tagRepository.saveAll(additionalServices);
             imageRepository.save(vhImg1);
             imageRepository.save(vhImg2);
             imageRepository.save(vhImg3);
             vacationHouse.addImage(vhImg1);
             vacationHouse.addImage(vhImg2);
             vacationHouse.addImage(vhImg3);
+            vacationHouse.setAdditionalServices(additionalServices);
             vacationHouseRepository.save(vacationHouse);
 
             Address clientAddress=new Address("Novi Sad", "16", "Puskinova", "Srbija");

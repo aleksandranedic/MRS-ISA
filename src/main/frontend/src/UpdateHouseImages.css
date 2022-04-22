@@ -18,7 +18,7 @@
   }
   
   .houses-images-carousel .owl-stage {
-      padding: 20px 0;
+      padding: 0px 0px 20px 0px;
     }
 .container {
     max-width: 100% !important;
@@ -114,10 +114,13 @@
     .houses-images-carousel .center > div img:hover {
         opacity: 0.3;
     }
+   .delete-photo:hover + img {
+      opacity: 0.3;
+    }
     .delete-photo {
       z-index: 5;
-      position:relative;
-      top:-170px; 
+      position: relative;
+      top:30px; 
       left:210px;
     }
     .houses-images-carousel   .owl-nav .owl-next,

@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-
 import axios from "axios";
 import ImageGallery from "./ImageGallery";
 import QuickReservations from "./QuickReservations";
@@ -7,70 +6,58 @@ import Banner from "./Banner";
 import Navigation from "./Navigation";
 import HouseInfo from "./HouseInfo";
 import UpdateHouse from "./UpdateHouse"
-
 import BeginButton from "./BeginButton";
-const Houses = () => {
-    // const [houses, setHouses] = useState([]);
+import { useParams } from "react-router-dom";
 
-    // const fetchHouses = () => {
-    //     axios.get("http://localhost:4444/house").then(res => {
-    //         console.log(res);
-    //         setHouses(res.data);
-    //     });
-    // };
-
-    // useEffect(() => {
-    //     fetchHouses();
-    // }, []);
-
-    // return houses.map((house, index) => {
+const Houses = ({house}) => {
         return <div>
-
-            <HouseInfo 
-                    description = {"Opis"}
-                    rooms={"5 spavace i 1 dnevna"}
-                    capacity={"30 osoba"}
-                    rulesAndRegulations={"Dozvoljeno: zezanje i puštanje Zdravka Čolića Zabranjeno: smaranje i pričanje o obavezama"}
-                    additionalServices={"Pet friendly, poseduje WiFi, poseduje bazen"}
-                    address={"Karađorđa Petrovića 238/19"}
-                           />
+            <HouseInfo house={house} />
         </div>
-    // })
 };
 
-
+const Gallery = ({house}) => {
+    if (typeof house.imagePaths !== "undefined"){
+        return <ImageGallery images={house.imagePaths}/>
+    }
+    else {
+        return <></>
+    }
+}
 export function VacationHousePage() {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-    const house = {
-        title: 'Lepa Brena',
-        price: '100e',
-        description: 'Ovo je opis vikendice ona je jako lepa!!! :))',
-        rules_and_regulations: 'Dozvoljen Cola nije dozvoljeno smaranje.',
-        number_of_rooms: '5 soba',
-        number_of_beds_per_room: '15',
-        address: 'Brace Krkljus 7/59',
-        city: 'Novi Sad',
-        country: 'Srbija',
-        services: 'Pet-friendy, bazen'
-    }
+    
+    const {id} = useParams();
+    const [house, setHouse] = useState({});
+
+    const fetchHouse = () => {
+        axios
+        .get("http://localhost:4444/house/houseprof/" + id)
+        .then(res => {
+            setHouse(res.data);
+        });
+    };
+    useEffect(() => {
+        fetchHouse();
+    }, []);
+  
     return (
     <>
-        <Banner caption={"Naziv vikendice"}/>
+        <Banner caption={house.title}/>
         <Navigation buttons={
             [
-                {text: "Osnovne informacije", path: "#"},
-                {text: "Fotografije", path: "#"},
+                {text: "Osnovne informacije", path: "#info"},
+                {text: "Fotografije", path: "#gallery"},
                 {text: "Akcije", path: "#"},
                 {text: "Kalendar zauzetosti", path: "#"}
             ]}
                     editable={true} editFunction={handleShow}/>
-        <Houses/>
+        <Houses house={house}/>
         <UpdateHouse closeModal={handleClose} showModal={show} vacationHouse = {house}/>
         <div className='p-5 pt-0'>
             <hr/>
-            <ImageGallery/>
+            <Gallery house={house}/>
             <hr/>
             <QuickReservations/>
         </div>
