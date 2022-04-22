@@ -1,16 +1,18 @@
 package com.project.team9.controller;
 
-        import com.project.team9.model.user.vendor.VacationHouseOwner;
-        import com.project.team9.service.VacationHouseOwnerService;
-        import org.springframework.beans.factory.annotation.Autowired;
-        import org.springframework.http.MediaType;
-        import org.springframework.http.ResponseEntity;
-        import org.springframework.web.bind.annotation.*;
+import com.project.team9.model.resource.VacationHouse;
+import com.project.team9.model.user.vendor.VacationHouseOwner;
+import com.project.team9.service.VacationHouseOwnerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
-@RequestMapping(path="house")
-@CrossOrigin("*")
+@RequestMapping(path = "houseowner")
 public class VacationHouseOwnerController {
 
     private final VacationHouseOwnerService service;
@@ -20,30 +22,19 @@ public class VacationHouseOwnerController {
         this.service = vacationHouseOwnerService;
     }
 
-    @GetMapping("get/howner/{id}")
-    public VacationHouseOwner getOwner(@PathVariable("id") String idStr) {
-        Long id = Long.parseLong(idStr);
-        return service.getOwner(id);
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public VacationHouseOwner getOwner(@PathVariable String id) {
+        Long ownerId = Long.parseLong(id);
+        return service.getOwner(ownerId);
     }
 
-    @PostMapping("/add/howner")
+    @PostMapping("/add")
     public void addOwner(@RequestBody VacationHouseOwner owner) {
         service.addOwner(owner);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity deleteOwner(@PathVariable Long id) {
-        service.deleteById(id);
-        return ResponseEntity.ok().build();
-    }
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public VacationHouseOwner getById(@PathVariable String idStr) {
-        Long id = Long.parseLong(idStr);
-        return service.getOwner(id);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteVacationHouseOwner(@PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.ok().build();
     }

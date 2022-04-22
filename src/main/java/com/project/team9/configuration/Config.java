@@ -54,18 +54,6 @@ public class Config {
                     "Jos sam bio savim mlad, neke barske ptice sam lovio tad, kad je dosla da se kupa lepa protina kci."
             );
 
-            Address ownerAddress =  new Address("Novi Sad","21","Kralja Petra I","Srbija");
-            addressRepository.save(ownerAddress);
-            VacationHouseOwner owner = new VacationHouseOwner("1", "Pera", "Peric", "pericpera@gmail.com", "0600651", ownerAddress, RegistrationType.VacationHouseOwner ,"registrationRationale");
-            vacationHouseOwnerRepository.save(owner);
-            Address houseAddress = new Address("Novi Sad","7","Braće Krkljuš","Srbija");
-            addressRepository.save(houseAddress);
-            Pricelist housePriceList = new Pricelist(100, new Date());
-            pricelistRepository.save(housePriceList);
-            VacationHouse vacationHouse = new VacationHouse("Lepa Brena", houseAddress, "lepa, velika, zuta zgrada blizu centra", "Dozvoljeno slušanje Čole, zyabranjeno smaranje",housePriceList,10,owner,5,3);
-            vacationHouseRepository.save(vacationHouse);
-            owner.addVacationHouse(vacationHouse);
-
             Address adventureAddress = new Address("Novi Sad", "52a", "Dunav", "Srbija");
             addressRepository.save(adventureAddress);
 
@@ -106,6 +94,27 @@ public class Config {
             fishingInstructor.addAdventure(bigAdventure);
             fishingInstructorRepository.save(fishingInstructor);
             adventureRepository.save(bigAdventure);
+
+            Address ownerAddress =  new Address("Novi Sad","21","Kralja Petra I","Srbija");
+            addressRepository.save(ownerAddress);
+            VacationHouseOwner owner = new VacationHouseOwner("1", "Pera", "Peric", "pericpera@gmail.com", "0600651", ownerAddress, RegistrationType.VacationHouseOwner ,"registrationRationale");
+            vacationHouseOwnerRepository.save(owner);
+            Address houseAddress = new Address("Novi Sad","7","Braće Krkljuš","Srbija");
+            addressRepository.save(houseAddress);
+            Pricelist housePriceList = new Pricelist(100, new Date());
+            pricelistRepository.save(housePriceList);
+            VacationHouse vacationHouse = new VacationHouse("Lepa Brena", houseAddress, "lepa, velika, zuta zgrada blizu centra", "Dozvoljeno slušanje Čole, zyabranjeno smaranje",housePriceList,10,owner,5,3);
+            owner.addVacationHouse(vacationHouse);
+            Image vhImg1 = new Image("./images/vikendica1.jpeg");
+            Image vhImg2 = new Image("./images/vikendica2.jpeg");
+            Image vhImg3 = new Image("./images/vikendica3.jpeg");
+            imageRepository.save(vhImg1);
+            imageRepository.save(vhImg2);
+            imageRepository.save(vhImg3);
+            vacationHouse.addImage(vhImg1);
+            vacationHouse.addImage(vhImg2);
+            vacationHouse.addImage(vhImg3);
+            vacationHouseRepository.save(vacationHouse);
 
             Address clientAddress=new Address("Novi Sad", "16", "Puskinova", "Srbija");
             addressRepository.save(clientAddress);

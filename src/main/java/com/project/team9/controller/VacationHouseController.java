@@ -1,5 +1,6 @@
 package com.project.team9.controller;
 
+import com.project.team9.dto.HouseCardDTO;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.service.VacationHouseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,26 +27,32 @@ public class VacationHouseController {
         return service.getVacationHouses();
     }
 
-    @GetMapping("get/house/{id}")
-    public VacationHouse getVacationHouse(@PathVariable("id") String idStr) {
-        Long id = Long.parseLong(idStr);
-        return service.getVacationHouse(id);
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public VacationHouse getVacationHouse(@PathVariable String id) {
+        Long houseId = Long.parseLong(id);
+        return service.getVacationHouse(houseId);
     }
 
-    @PostMapping("/update/house")
+    @PostMapping("/update")
     public void updateHouse(@RequestBody VacationHouse house) {
         service.updateVacationHouses(house);
     }
 
-    @PostMapping("/add/house")
+    @PostMapping("/add")
     public void addHouse(@RequestBody VacationHouse house) {
         service.addVacationHouses(house);
     }
 
+    @GetMapping(value = "getownerhouses/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<HouseCardDTO> getOwnerHouses(@PathVariable String id) {
+        Long owner_id = Long.parseLong(id);
+        return service.getOwnerHouses(owner_id);
+    }
+
     @PutMapping("/{id}")
-    public VacationHouse updateVacationHouse(@PathVariable String idStr, @RequestBody VacationHouse house) {
-        Long id = Long.parseLong(idStr);
-        VacationHouse vacationHouse = service.getVacationHouse(id);
+    public VacationHouse updateVacationHouse(@PathVariable String id, @RequestBody VacationHouse house) {
+        Long houseId = Long.parseLong(id);
+        VacationHouse vacationHouse = service.getVacationHouse(houseId);
         vacationHouse.setTitle(house.getTitle());
         vacationHouse.setPricelist(house.getPricelist());
         vacationHouse.setDescription(house.getDescription());
@@ -59,11 +66,6 @@ public class VacationHouseController {
         return vacationHouse;
     }
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public VacationHouse getById(@PathVariable String idStr) {
-        Long id = Long.parseLong(idStr);
-        return service.getVacationHouse(id);
-    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity deleteVacationHouse(@PathVariable Long id) {

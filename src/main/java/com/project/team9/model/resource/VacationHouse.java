@@ -1,5 +1,6 @@
 package com.project.team9.model.resource;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.Address;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class VacationHouse extends Resource{
     @ManyToOne
     private VacationHouseOwner owner;
