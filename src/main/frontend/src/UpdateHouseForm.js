@@ -1,6 +1,7 @@
 import React from 'react';
-import { Form, Row, Col } from 'react-bootstrap';
+import { Form, Row, Col, InputGroup, Button } from 'react-bootstrap';
 import UpdateHouseImages from './UpdateHouseImages';
+import { TagInfo } from './Info';
 
 function UpdateHouseForm({house}) {
     return (
@@ -12,8 +13,11 @@ function UpdateHouseForm({house}) {
                 </Form.Group>
 
                 <Form.Group as={Col} controlId="formGridPrice">
-                    <Form.Label>Cena</Form.Label>
-                    <Form.Control type="price" defaultValue={house.price} />
+                    <Form.Label>Cena po noćenju</Form.Label>
+                    <InputGroup>
+                    <Form.Control type="price" defaultValue={house.priceList} />
+                    <InputGroup.Text>€</InputGroup.Text>
+                    </InputGroup>
                 </Form.Group>
             </Row>
 
@@ -25,24 +29,27 @@ function UpdateHouseForm({house}) {
             <Row className="mb-3">
                 <Form.Group as={Col} controlId="formGridRooms">
                     <Form.Label>Broj soba</Form.Label>
-                    <Form.Control type="name" defaultValue={house.number_of_rooms}/>
+                    <Form.Control type="name" defaultValue={house.numberOfRooms}/>
                 </Form.Group>
 
                 <Form.Group as={Col} controlId="formGridCapacity">
                     <Form.Label>Kapacitet</Form.Label>
-                    <Form.Control type="price" defaultValue={house.number_of_beds_per_room} />
+                    <Form.Control type="price" defaultValue={house.capacity} />
                 </Form.Group>
             </Row>
 
             <Form.Group className="mb-3" controlId="formGridRules">
                 <Form.Label>Pravila ponašanja</Form.Label>
-                <Form.Control defaultValue={house.rules_and_regulations} />
+                <Form.Control defaultValue={house.rulesAndRegulations} />
             </Form.Group>
 
             <Row className="mb-3">
                 <Form.Group as={Col} controlId="formGridAddress">
-                    <Form.Label>Adresa</Form.Label>
-                    <Form.Control defaultValue={house.address}/>
+                    <Form.Label>Ulica i broj</Form.Label>
+                    <InputGroup>
+                    <Form.Control className="w-50" defaultValue={house.street}/>
+                    <Form.Control className="w-50" defaultValue={house.number}/>
+                    </InputGroup>
                 </Form.Group>
 
                 <Form.Group as={Col} controlId="formGridCity">
@@ -56,14 +63,27 @@ function UpdateHouseForm({house}) {
                 </Form.Group>
             </Row>
 
-            <Form.Group className="mb-3" controlId="formGridServices">
-                <Form.Label>Dodatne usluge</Form.Label>
-                <Form.Control defaultValue={house.services} />
-            </Form.Group>
+            <Row className="mb-3">
+                <Form.Group as={Col} controlId="formGridServices">
+                    <Form.Label>Dodatne usluge</Form.Label>
+                    <div className='d-flex justify-content-start'>
+                        <TagInfo tagList={house.additionalServices} edit={true}/>
+                        <Button className='align-self-center ms-3 rounded-circle' style={{padding: "0.1rem 0.4rem", fontSize: "0.85rem"}}>+</Button>
+                    </div>
+                </Form.Group>
+
+                <Form.Group as={Col} controlId="formGridFee">
+                    <Form.Label>Naknada za otkazivanje</Form.Label>
+                    <InputGroup>
+                    <Form.Control defaultValue={house.cancellationFee} />
+                    <InputGroup.Text>%</InputGroup.Text>
+                    </InputGroup>
+                </Form.Group>
+            </Row>
 
             <Form.Group controlId="formFileMultiple" className="mb-3">
                 <Form.Label>Fotografije vikendice</Form.Label>
-                <UpdateHouseImages/>
+                <UpdateHouseImages images={house.imagePaths}/>
                 <Form.Label>Dodaj</Form.Label>
                 <Form.Control type="file" multiple/>
             </Form.Group>

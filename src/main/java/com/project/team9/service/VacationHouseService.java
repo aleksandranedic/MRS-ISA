@@ -1,6 +1,10 @@
 package com.project.team9.service;
 
 import com.project.team9.dto.HouseCardDTO;
+import com.project.team9.dto.VacationHouseDTO;
+import com.project.team9.model.Image;
+import com.project.team9.model.Tag;
+import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.VacationHouseRepository;
@@ -9,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class VacationHouseService {
@@ -41,6 +44,16 @@ public class VacationHouseService {
 
     public VacationHouse getVacationHouse(Long id) {
         return repository.getById(id);
+    }
+    public VacationHouseDTO getVacationHouseDTO(Long id) {
+        VacationHouse vh = repository.getById(id);
+        String address = vh.getAddress().getStreet() + " " + vh.getAddress().getNumber() + ", " + vh.getAddress().getPlace()  + ", " + vh.getAddress().getCountry();
+        List<String> images = new ArrayList<String>();
+        for (Image img : vh.getImages()) {
+            images.add(img.getPath());
+        }
+        int capacity = vh.getNumberOfBedsPerRoom() * vh.getNumberOfRooms();
+        return new VacationHouseDTO(vh.getId(), vh.getTitle(), address, vh.getAddress().getNumber(), vh.getAddress().getStreet(), vh.getAddress().getPlace(), vh.getAddress().getCountry(), vh.getDescription(), images, vh.getRulesAndRegulations(), vh.getAdditionalServices(), vh.getPricelist().getPrice(), vh.getCancellationFee(), vh.getNumberOfRooms(), capacity, vh.getQuickReservations());
     }
 
     public void updateVacationHouses(VacationHouse house) {

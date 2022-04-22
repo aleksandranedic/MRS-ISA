@@ -13,7 +13,9 @@ export default function AdventureInfo({adventure}) {
             <div className="d-flex">
                 <div id="left-column" className="w-50 pe-2">
                     <Info title="Broj klijenata" text={adventure?.numberOfClients}/>
-                    <TagInfo title="Oprema za pecanje" tagList={adventure?.fishingEquipment}/>
+                    <div className="m-3">
+                        <TagInfo title="Oprema za pecanje" tagList={adventure?.fishingEquipment}/>
+                    </div>
 
                     <Info title="Pravila ponasanja" text={adventure?.rulesAndRegulations}/>
                 </div>

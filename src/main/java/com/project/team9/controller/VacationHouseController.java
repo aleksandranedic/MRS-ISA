@@ -1,6 +1,7 @@
 package com.project.team9.controller;
 
 import com.project.team9.dto.HouseCardDTO;
+import com.project.team9.dto.VacationHouseDTO;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.service.VacationHouseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,12 @@ public class VacationHouseController {
     public VacationHouse getVacationHouse(@PathVariable String id) {
         Long houseId = Long.parseLong(id);
         return service.getVacationHouse(houseId);
+    }
+
+    @GetMapping(value = "houseprof/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public VacationHouseDTO getVacationHouseDTO(@PathVariable String id) {
+        Long houseId = Long.parseLong(id);
+        return service.getVacationHouseDTO(houseId);
     }
 
     @PostMapping("/update")

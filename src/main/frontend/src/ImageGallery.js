@@ -12,7 +12,7 @@ import 'owl.carousel/dist/assets/owl.carousel.css';
 import 'owl.carousel/dist/assets/owl.theme.default.css';
 import './ImageGallery.css';
 
-export default function ImageGallery() {
+export default function ImageGallery({images}) {
 const options = {
   center: true,
   responsiveClass: true,
@@ -36,33 +36,15 @@ const options = {
 };
 
   return (
-    <Container className= "p-0 m-0 w-100" id="photos">
+    <Container className= "p-0 m-0 w-100" id="gallery">
       <OwlCarousel className="owl-theme owl-theme gallery-carousel" loop {...options} navElement>
-        <div className="card-container">
+      {images.map( (image) => (
+          <div className="card-container" key={image}>
           <Card className="item card">
-            <Image src={boatnotext} className="img-fluid" alt=""/>
+            <Image src={v2} className="img-fluid" alt=""/>
           </Card>
         </div>
-        <div className="card-container">
-          <Card className="item card">
-            <Image src={v1} className="img-fluid" alt="" />
-          </Card>
-        </div>
-        <div className="card-container">
-          <Card className="item card">
-            <Image src={v2} className="img-fluid" alt="" />
-          </Card>
-        </div>
-        <div className="card-container">
-          <Card className="item card">
-            <Image src={v3} className="img-fluid" alt="" />
-          </Card>
-        </div>
-        <div className="card-container">
-          <Card className="item card">
-            <Image src={v4} className="img-fluid" alt="" />
-          </Card>
-        </div>
+      ))}
       </OwlCarousel>
     </Container>
   );

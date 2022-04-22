@@ -13,7 +13,7 @@ function HouseOwnerPage() {
     const [houseOwner, setHouseOwner] = useState({address:''});
     let [ownerHouses, setOwnerHouses] = useState([]);
   
-    const fetchData = () => {
+    const fetchOwnerHouses = () => {
       axios
       .get("http://localhost:4444/house/getownerhouses/" + id)
       .then(res => {
@@ -29,7 +29,7 @@ function HouseOwnerPage() {
     };
     useEffect(() => {
         fetchHouseOwner();
-        fetchData();
+        fetchOwnerHouses();
     }, []);
     return (
         <>
