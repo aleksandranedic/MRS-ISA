@@ -16,10 +16,10 @@ function OwnerInfo({name, rate, bio, email, phoneNum, address}) {
                     {bio}
                 </p>
             </div>
-            <div className='w-50 pt-5 ps-3'>
+            <div className='w-50 pt-5 ps-0'>
                 <ProfileInfo icon={BsEnvelope} label={"Email"} text={email}/>
                 <ProfileInfo icon={BsTelephone} label={"Broj telefona"} text={phoneNum}/>
-                <ProfileInfo icon={BsGeoAlt} label={"Adresa"} text={address}/>
+                <ProfileInfo icon={BsGeoAlt} label={"Adresa"} text={address.street + " " + address.number + ", " + address.place +", " + address.country}/>
             </div>
         </div>
     );

@@ -26,7 +26,7 @@ const FishingInstructors = () => {
     const handleShow = () => setShow(true);
 
     let html;
-
+  
     if (fishingInstructor.length !== 0) {
         html = (<div key={fishingInstructor.id}>
 

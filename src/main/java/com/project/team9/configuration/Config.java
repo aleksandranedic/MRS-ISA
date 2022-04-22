@@ -8,8 +8,11 @@ import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.user.Client;
+import com.project.team9.model.user.Client;
+import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.model.user.vendor.RegistrationType;
+import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -32,7 +35,9 @@ public class Config {
             AdventureReservationRepository adventureReservationRepository,
             AppointmentRepository appointmentRepository,
             ImageRepository imageRepository,
-            ClientRepository clientRepository
+            ClientRepository clientRepository,
+            VacationHouseOwnerRepository vacationHouseOwnerRepository,
+            VacationHouseRepository vacationHouseRepository
     ) {
         return args -> {
             Address fishingInstructorAddress = new Address("Novi Sad", "23", "Bulevar Cara Lazara", "Srbija");
@@ -89,6 +94,27 @@ public class Config {
             fishingInstructor.addAdventure(bigAdventure);
             fishingInstructorRepository.save(fishingInstructor);
             adventureRepository.save(bigAdventure);
+
+            Address ownerAddress =  new Address("Novi Sad","21","Kralja Petra I","Srbija");
+            addressRepository.save(ownerAddress);
+            VacationHouseOwner owner = new VacationHouseOwner("1", "Pera", "Peric", "pericpera@gmail.com", "0600651", ownerAddress, RegistrationType.VacationHouseOwner ,"registrationRationale");
+            vacationHouseOwnerRepository.save(owner);
+            Address houseAddress = new Address("Novi Sad","7","Braće Krkljuš","Srbija");
+            addressRepository.save(houseAddress);
+            Pricelist housePriceList = new Pricelist(100, new Date());
+            pricelistRepository.save(housePriceList);
+            VacationHouse vacationHouse = new VacationHouse("Lepa Brena", houseAddress, "lepa, velika, zuta zgrada blizu centra", "Dozvoljeno slušanje Čole, zyabranjeno smaranje",housePriceList,10,owner,5,3);
+            owner.addVacationHouse(vacationHouse);
+            Image vhImg1 = new Image("./images/vikendica1.jpeg");
+            Image vhImg2 = new Image("./images/vikendica2.jpeg");
+            Image vhImg3 = new Image("./images/vikendica3.jpeg");
+            imageRepository.save(vhImg1);
+            imageRepository.save(vhImg2);
+            imageRepository.save(vhImg3);
+            vacationHouse.addImage(vhImg1);
+            vacationHouse.addImage(vhImg2);
+            vacationHouse.addImage(vhImg3);
+            vacationHouseRepository.save(vacationHouse);
 
             Address clientAddress=new Address("Novi Sad", "16", "Puskinova", "Srbija");
             addressRepository.save(clientAddress);

@@ -114,17 +114,8 @@
     .houses-images-carousel .center > div img:hover {
         opacity: 0.3;
     }
-    .houses-images-carousel .center > div:hover .delete-photo {
-      opacity: 0.99;
-      display: block;
-    }
-    .houses-images-carousel:not(.center) > div:hover .delete-photo {
-      opacity: 0.99;
-      display: block;
-  }
     .delete-photo {
       z-index: 5;
-      display: none;
       position:relative;
       top:-170px; 
       left:210px;

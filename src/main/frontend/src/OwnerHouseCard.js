@@ -1,10 +1,11 @@
 import React from 'react';
 import {Card} from "react-bootstrap";
 import {BsGeoAltFill, BsPencilSquare} from 'react-icons/bs'
-function OwnerHouseCard({pic, title, text, address}) {
+function OwnerHouseCard({id, pic, title, text, address}) {
+    const url = "http://localhost:3000/house/" + id;
     return (
-        <Card>
-            <a href="house" className="text-decoration-none h-100">
+        <Card className="m-3">
+            <a href={url} className="text-decoration-none h-100">
             <Card.Img variant="top" src={pic} />
             </a>
             <Card.Body className="w-100">

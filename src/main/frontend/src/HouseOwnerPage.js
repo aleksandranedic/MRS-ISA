@@ -1,34 +1,58 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from "axios";    
 import Banner from './Banner';
 import BeginButton from './BeginButton';
 import Navigation from './Navigation';
 import OwnerInfo from './OwnerInfo';
 import OwnerHouses from './OwnerHouses';
 import AddVacationHouse from './AddVacationHouse';
+import { useParams } from "react-router-dom";
 
-function HouseOwnerPage(props) {
+function HouseOwnerPage() {
+    const {id} = useParams();
+    const [houseOwner, setHouseOwner] = useState({address:''});
+    let [ownerHouses, setOwnerHouses] = useState([]);
+  
+    const fetchData = () => {
+      axios
+      .get("http://localhost:4444/house/getownerhouses/" + id)
+      .then(res => {
+          setOwnerHouses(res.data);
+        });
+    };
+    const fetchHouseOwner = () => {
+        axios
+        .get("http://localhost:4444/houseowner/" + id)
+        .then(res => {
+            setHouseOwner(res.data);
+        });
+    };
+    useEffect(() => {
+        fetchHouseOwner();
+        fetchData();
+    }, []);
     return (
         <>
-            <Banner caption={"Lepa Sojic"}/>
+            <Banner caption={houseOwner.firstName + " " + houseOwner.lastName}/>
             <Navigation buttons={
                 [
-                    {text: "Osnovne informacije", path: "#"},
-                    {text: "Fotografije", path: "#"},
-                    {text: "Akcije", path: "#"},
-                    {text: "Kalendar zauzetosti", path: "#"}
+                    {text: "Osnovne informacije", path: "#info"},
+                    {text: "Vikendice", path: "#houses"},
+                    {text: "Rezervacije", path: "#sales"},
+                    {text: "Izveštaji", path: "#reports"}
                 ]}
                         editable={false}/>
             <AddVacationHouse/>
             <div className='p-5 pt-0'>
-                <OwnerInfo bio = {"Lorem ipsum dolor, sit amet consectetur adipisicing elit. Accusamus repellendus dicta excepturi sed aliquam consequatur magnam nihil. Delectus eos velit amet deserunt natus soluta cum, illo necessitatibus dolorum vel unde repellendus molestias aspernatur. Ipsum cupiditate perspiciatis ullam provident delectus quam, accusamus ad exercitationem aspernatur repellat accusantium. Sit aperiam velit minima itaque neque omnis veritatis harum error minus? Unde, exercitationem saepe?"}
-                    name={"Lepa Sojic"}
+                <OwnerInfo bio = {houseOwner.registrationRationale}
+                    name={houseOwner.firstName + " " + houseOwner.lastName}
                     rate = {4.5}
-                    email={"pepaprase@gmail.com"}
-                    phoneNum={"555-333"}
-                    address={"Karađorđa Petrovića 238/19"}
+                    email={houseOwner.email}
+                    phoneNum={houseOwner.phoneNumber}
+                    address={houseOwner.address}
                     />
                 <hr/>
-                <OwnerHouses/>
+                <OwnerHouses houses={ownerHouses}/>
                 <hr/>
                
             </div>

@@ -5,7 +5,7 @@
   box-shadow: none !important;
   display: flex;
   justify-content: center;
-  position:relative;
+ 
   top: 51vh;
   left: -1%;
   height: 3%;
@@ -15,7 +15,9 @@
   background: transparent;
   padding: 0px;
 }
-
+.card-img-top {
+  min-height: 50vh;
+}
 .add svg:hover {
   fill: #6b6b6b;
 }

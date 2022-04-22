@@ -1,5 +1,6 @@
 package com.project.team9.model.user.vendor;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.Address;
 
@@ -8,6 +9,7 @@ import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class VacationHouseOwner extends Vendor {
     @OneToMany
     List<VacationHouse> vacationHouses;
