@@ -24,7 +24,6 @@ public abstract class User {
     @OneToOne
     private Address address;
 
-
     public User() {
 
     }

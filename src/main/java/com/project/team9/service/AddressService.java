@@ -28,7 +28,7 @@ public class AddressService {
         addressRepository.deleteById(id);
     }
 
-    public Address save(Address address) {
+    public Address addAddress(Address address) {
         return addressRepository.save(address);
     }
 

@@ -3,7 +3,7 @@ import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 
 import VacationHousePage from "./VacationHousePage"
 import {ClientProfilePage} from "./ClientProfilePage";
-import AdventurePage from "./AdventurePage/AdventurePage";
+import Login from "./LogIn";
 
 
 import HouseOwnerPage from "./HouseOwnerPage"
@@ -18,6 +18,7 @@ function App() {
                 <Route path="/client" element={<ClientProfilePage/>}/>
                 <Route path="/houseOwner/:id" element={<HouseOwnerPage/>}/>
                 <Route path="/fishingInstructor" element={<FishingInstructorPage/>}/>
+                <Route path="/login" element={<Login/>}/>
             </Routes>
         </Router>
     );

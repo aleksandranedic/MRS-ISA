@@ -28,10 +28,9 @@ const Client = () => {
     const handleShow = () => setShow(true);
 
     function handleDeleteAccount() {
-        axios.delete("http://localhost:4444/client/" + localStorage.getItem('user')).then(
+        axios.delete("http://localhost:4444/client/delete/" + localStorage.getItem('user')).then(
             res => {
                 console.log(res)
-                window.location.reload(false);
             }
         )
     }
@@ -39,7 +38,7 @@ const Client = () => {
     function handleUpdateAccount(userDTO) {
         userDTO.email = client.email
         console.log(userDTO)
-        axios.put("http://localhost:4444/client/" + localStorage.getItem('user'), userDTO).then(res => {
+        axios.put("http://localhost:4444/client/update/" + localStorage.getItem('user'), userDTO).then(res => {
             console.log(res);
             setClient(res.data);
         });
