@@ -1,5 +1,6 @@
 package com.project.team9.service;
 
+import com.project.team9.dto.LoginDTO;
 import com.project.team9.model.user.Client;
 import com.project.team9.repo.AddressRepository;
 import com.project.team9.repo.ClientRepository;
@@ -29,7 +30,17 @@ public class ClientService {
         clientRepository.deleteById(id);
     }
 
-    public Client save(Client client) {
+    public Client addClient(Client client) {
         return clientRepository.save(client);
+    }
+
+    public Client getClientByEmailAndPassword(LoginDTO loginDTO){
+        for (Client client :
+                clientRepository.findAll()) {
+            if(client.getPassword().equals(loginDTO.getPassword()) && client.getEmail().equals(loginDTO.getEmail())){
+                return client;
+            }
+        }
+        return null;
     }
 }
