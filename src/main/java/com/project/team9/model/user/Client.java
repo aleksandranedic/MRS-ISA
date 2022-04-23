@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Client extends User {
+public class Client extends User  {
 
     public Client() {
     }
