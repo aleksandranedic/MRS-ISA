@@ -1,17 +1,11 @@
 package com.project.team9.model.user;
 
 import com.project.team9.model.Address;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.Collections;
 
 @MappedSuperclass
-public class User implements UserDetails {
+public abstract class User {
     @Id
     @SequenceGenerator(
             name="user_sequence",
@@ -29,12 +23,6 @@ public class User implements UserDetails {
     private String phoneNumber;
     @OneToOne
     private Address address;
-    @Enumerated(EnumType.STRING)
-    private UserRole userRole;
-    private Boolean locked;
-    private Boolean enabled;
-    private Boolean deleted;
-
     public User() {
 
     }
@@ -46,9 +34,6 @@ public class User implements UserDetails {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.address = address;
-        this.locked = false;
-        this.enabled = false;
-        this.deleted = false;
     }
     public User(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country) {
         this.password = password;
@@ -57,9 +42,6 @@ public class User implements UserDetails {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.address = new Address(place, number, street, country);
-        this.locked = false;
-        this.enabled = false;
-        this.deleted = false;
     }
 
     public void setPassword(String password) {
@@ -78,40 +60,8 @@ public class User implements UserDetails {
         this.phoneNumber = phoneNumber;
     }
 
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority=new SimpleGrantedAuthority(userRole.name());
-        return Collections.singletonList(authority);
-    }
-
     public String getPassword() {
         return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return !locked;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
     }
 
     public String getFirstName() {

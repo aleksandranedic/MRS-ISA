@@ -37,7 +37,8 @@ public class Config {
             ImageRepository imageRepository,
             ClientRepository clientRepository,
             VacationHouseOwnerRepository vacationHouseOwnerRepository,
-            VacationHouseRepository vacationHouseRepository
+            VacationHouseRepository vacationHouseRepository,
+            UserAccountRepository userAccountRepository
     ) {
         return args -> {
             Address fishingInstructorAddress = new Address("Novi Sad", "23", "Bulevar Cara Lazara", "Srbija");
