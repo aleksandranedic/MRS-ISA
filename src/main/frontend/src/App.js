@@ -2,12 +2,14 @@ import React from 'react';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 
 import VacationHousePage from "./VacationHousePage"
-import {ClientProfilePage} from "./ClientProfilePage";
+import {ClientProfilePage} from "./ClientPage/ClientProfilePage";
 import Login from "./LogIn";
 
 
 import HouseOwnerPage from "./HouseOwnerPage"
 import {FishingInstructorPage} from "./FishingInstructorPage/FishingInstructorPage";
+import Registration from './Registration';
+import AdventurePage from "./AdventurePage/AdventurePage";
 
 function App() {
     return (
@@ -19,6 +21,7 @@ function App() {
                 <Route path="/houseOwner/:id" element={<HouseOwnerPage/>}/>
                 <Route path="/fishingInstructor" element={<FishingInstructorPage/>}/>
                 <Route path="/login" element={<Login/>}/>
+                <Route path='/registration' element={<Registration/>}/>
             </Routes>
         </Router>
     );

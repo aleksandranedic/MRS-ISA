@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, {useEffect, useState} from "react";
-import Banner from "./Banner";
-import Navigation from "./Navigation";
+import Banner from "../Banner";
+import Navigation from "../Navigation";
 import ClientInfo from "./ClientInfo";
 import ClientLoyalty from "./ClientLoyalty";
 import UpdateClientInfo from "./UpdateClientInfo"
