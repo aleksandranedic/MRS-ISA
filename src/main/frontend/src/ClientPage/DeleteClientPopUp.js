@@ -1,6 +1,6 @@
 import React from 'react'
 import {Button, Modal} from "react-bootstrap";
-import {Info} from "./Info";
+import {Info} from "../Info";
 
 export default function DeleteClientPopUp({showDeleteClient,handleCloseDeleteClient,handleDeleteAccount,handleClose}) {
   return (
