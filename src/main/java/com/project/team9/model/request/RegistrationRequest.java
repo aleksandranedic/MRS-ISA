@@ -15,8 +15,6 @@ public class RegistrationRequest extends Request{
     private String number;
     private String street;
     private String country;
-    String registrationType;
-    String registrationRationale;
 
     public RegistrationRequest() {
     }
@@ -32,7 +30,5 @@ public class RegistrationRequest extends Request{
         this.number = number;
         this.street = street;
         this.country = country;
-        this.registrationType = registrationType;
-        this.registrationRationale = registrationRationale;
     }
 }
