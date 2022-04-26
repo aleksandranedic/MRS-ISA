@@ -45,32 +45,8 @@ public class UserAccount implements UserDetails {
         this.userId = userId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserAccount that = (UserAccount) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(email, that.email) &&
-                Objects.equals(password, that.password) &&
-                userRole == that.userRole &&
-                Objects.equals(locked, that.locked) &&
-                Objects.equals(enabled, that.enabled) &&
-                Objects.equals(deleted, that.deleted) &&
-                Objects.equals(userId, that.userId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, email, password, userRole, locked, enabled, deleted, userId);
-    }
-
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getEmail() {

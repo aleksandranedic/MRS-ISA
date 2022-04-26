@@ -10,6 +10,7 @@ import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.resource.VacationHouse;
+import com.project.team9.model.user.UserRole;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.model.user.vendor.RegistrationType;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
@@ -50,7 +51,8 @@ public class Config {
                     "petar.jovanovic@email.com",
                     "0601233215",
                     fishingInstructorAddress,
-                    RegistrationType.FishingInstructor,
+                    UserRole.FISHING_INSTRUCTOR,
+                    false,
                     "Imam zavrseni pecaroski fakultet.",
                     "Jos sam bio savim mlad, neke barske ptice sam lovio tad, kad je dosla da se kupa lepa protina kci."
             );
@@ -98,7 +100,16 @@ public class Config {
 
             Address ownerAddress =  new Address("Novi Sad","21","Kralja Petra I","Srbija");
             addressRepository.save(ownerAddress);
-            VacationHouseOwner owner = new VacationHouseOwner("1", "Pera", "Peric", "pericpera@gmail.com", "0600651", ownerAddress, RegistrationType.VacationHouseOwner ,"registrationRationale");
+            VacationHouseOwner owner = new VacationHouseOwner(
+                    "1",
+                    "Pera",
+                    "Peric",
+                    "pericpera@gmail.com",
+                    "0600651",
+                    ownerAddress,
+                    UserRole.VACATION_HOUSE_OWNER,
+                    false,
+                    "registrationRationale");
             vacationHouseOwnerRepository.save(owner);
             Address houseAddress = new Address("Novi Sad","7","Braće Krkljuš","Srbija");
             addressRepository.save(houseAddress);
@@ -132,7 +143,9 @@ public class Config {
                     "Peric",
                     "perap@gmail.com",
                     "0601233215",
-                    clientAddress
+                    clientAddress,
+                    UserRole.CLIENT,
+                    false
             );
             clientRepository.save(client);
         };
