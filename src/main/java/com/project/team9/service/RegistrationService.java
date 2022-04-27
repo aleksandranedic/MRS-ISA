@@ -11,20 +11,19 @@ import org.springframework.stereotype.Service;
 public class RegistrationService {
 
     private final UserServiceSecurity userServiceSecurity;
-
-    private  final RegistrationRequestRepository registrationRequestRepository;
+    private final RegistrationRequestRepository registrationRequestRepository;
 
 
     public RegistrationService(UserServiceSecurity userServiceSecurity, RegistrationRequestRepository registrationRequestRepository) {
         this.userServiceSecurity = userServiceSecurity;
         this.registrationRequestRepository = registrationRequestRepository;
     }
+
     public String register(RegistrationRequest registrationRequest) {
-//        return registrationRequestRepository.save(registrationRequest).toString();
-        User user=null;
-        switch (registrationRequest.getUserRole().name()){
+        Client user = null;
+        switch (registrationRequest.getUserRole()) {
             case "CLIENT":
-                user=new Client(
+                user = new Client(
                         registrationRequest.getPassword(),
                         registrationRequest.getFirstName(),
                         registrationRequest.getLastName(),
@@ -38,35 +37,17 @@ public class RegistrationService {
                         Boolean.FALSE);
                 break;
             case "FISHING_INSTRUCTOR":
-                user=new FishingInstructor();
-                break;
             case "VACATION_HOUSE_OWNER":
-                break;
             case "BOAT_OWNER":
+                addRegistrationRequest(registrationRequest);
+                break;
+            default:
                 break;
         }
-//        return userServiceSecurity.signUpUser(
-//                new User(
-//                        String password, UserRole userRole, Boolean locked, Boolean enabled, Boolean deleted, Long userId
-//                        registrationRequest.getEmail(),
-//                        registrationRequest.getUserRole(),
-//                        registrationRequest.getLocked(),
-//                        registrationRequest.getUserRole(),
-//                        registrationRequest.getUserRole(),
-//                        registrationRequest.getUserRole(),
-//                        registrationRequest.getUserRole(),
+        return userServiceSecurity.signUpUser(user,registrationRequest.getEmail());
+    }
 
-//                        registrationRequest.get
-//                )
-//        );
-        return userServiceSecurity.signUpUser(user);
+    public RegistrationRequest addRegistrationRequest(RegistrationRequest registrationRequest) {
+        return registrationRequestRepository.save(registrationRequest);
     }
 }
-//    private String email;
-//    private String password;
-//    @Enumerated(EnumType.STRING)
-//    private UserRole userRole;
-//    private Boolean locked;
-//    private Boolean enabled;
-//    private Boolean deleted;
-//    private Long userId;

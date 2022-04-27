@@ -1,10 +1,6 @@
 package com.project.team9.model.request;
 
-import com.project.team9.model.user.UserRole;
-
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 
 
 @Entity
@@ -19,14 +15,14 @@ public class RegistrationRequest extends Request{
     private String number;
     private String street;
     private String country;
-    @Enumerated(EnumType.STRING)
-    private UserRole userRole;
+    private String userRole;
+    private String biography;
 
 
     public RegistrationRequest() {
     }
 
-    public RegistrationRequest(String text, String response, String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, String registrationType, String registrationRationale, UserRole userRole) {
+    public RegistrationRequest(String text, String response, String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, String userRole, String biography) {
         super(text, response);
         this.password = password;
         this.firstName = firstName;
@@ -38,6 +34,15 @@ public class RegistrationRequest extends Request{
         this.street = street;
         this.country = country;
         this.userRole = userRole;
+        this.biography = biography;
+    }
+
+    public String getBiography() {
+        return biography;
+    }
+
+    public void setBiography(String biography) {
+        this.biography = biography;
     }
 
     public String getPassword() {
@@ -112,11 +117,11 @@ public class RegistrationRequest extends Request{
         this.country = country;
     }
 
-    public UserRole getUserRole() {
+    public String getUserRole() {
         return userRole;
     }
 
-    public void setUserRole(UserRole userRole) {
+    public void setUserRole(String userRole) {
         this.userRole = userRole;
     }
 }
