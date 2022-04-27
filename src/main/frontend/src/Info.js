@@ -23,12 +23,22 @@ export function AddressInfo({title, address}) {
     )
 }
 
-export function TagInfo({title, tagList, edit}) {
+export function TagInfo({title, tagList, edit, setState}) {
+    function removeTag(id){
+        var object = tagList.find((element) => {return element.id === id;})
+        var newTagList = tagList.filter(function(tag) { return tag !== object })
+        if (newTagList.length === 0){
+            newTagList = [{id:0, text:''}]
+        }
+        setState( prevState => {
+            return {...prevState, additionalServices:newTagList}
+        })
+    }
     return (
         <div className="m-0">
             <p className="lead fw-normal m-0 p-0">{title}</p>
             {tagList.map((tagData)=> {
-                return <Tag key={tagData.id} tag={tagData.text} edit={edit}/>
+                return <Tag key={tagData.id} tag={tagData.text} edit={edit} id={tagData.id} remove={removeTag}/>
             })}
         </div>
     )

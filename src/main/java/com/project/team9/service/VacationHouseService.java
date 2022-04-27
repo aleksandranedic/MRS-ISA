@@ -28,6 +28,11 @@ public class VacationHouseService {
         return repository.findAll();
     }
 
+    public HouseCardDTO getVacationHouseCard(Long id){
+        VacationHouse vh = getVacationHouse(id);
+        String address = vh.getAddress().getStreet() + " " + vh.getAddress().getNumber() + ", " + vh.getAddress().getPlace() + ", " + vh.getAddress().getCountry();
+        return new HouseCardDTO(vh.getId(), vh.getImages().get(0).getPath(), vh.getTitle(), vh.getDescription(), address);
+    }
     public List<HouseCardDTO> getOwnerHouses(Long owner_id) {
         List<VacationHouse> houses = repository.findByOwnerId(owner_id);
         List<HouseCardDTO> houseCards = new ArrayList<HouseCardDTO>();

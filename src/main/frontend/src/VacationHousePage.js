@@ -9,27 +9,37 @@ import UpdateHouse from "./UpdateHouse"
 import BeginButton from "./BeginButton";
 import { useParams } from "react-router-dom";
 
-const Houses = ({house}) => {
-        return <div>
-            <HouseInfo house={house} />
-        </div>
-};
 
+const HOST = "http://localhost:4444";
 const Gallery = ({house}) => {
     if (typeof house.imagePaths !== "undefined"){
+        for (let i=0; i<house.imagePaths.length;i++){
+            if (!house.imagePaths[i].includes(HOST)){
+                house.imagePaths[i] = HOST + house.imagePaths[i];
+            }
+        }
         return <ImageGallery images={house.imagePaths}/>
     }
     else {
         return <></>
     }
 }
+const Update = ({vacationHouse, showModal, closeModal, fetchHouse}) => {
+    if (typeof vacationHouse.name !== "undefined" && typeof fetchHouse !== "undefined"){
+        return <UpdateHouse closeModal={closeModal} showModal={showModal} vacationHouse = {vacationHouse} fetchHouse={fetchHouse}/>
+    }
+    else {
+        return <></>
+    }
+}
+
 export function VacationHousePage() {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-    
     const {id} = useParams();
     const [house, setHouse] = useState({});
+
 
     const fetchHouse = () => {
         axios
@@ -41,10 +51,9 @@ export function VacationHousePage() {
     useEffect(() => {
         fetchHouse();
     }, []);
-  
     return (
     <>
-        <Banner caption={house.title}/>
+        <Banner caption={house.name}/>
         <Navigation buttons={
             [
                 {text: "Osnovne informacije", path: "#info"},
@@ -53,8 +62,8 @@ export function VacationHousePage() {
                 {text: "Kalendar zauzetosti", path: "#"}
             ]}
                     editable={true} editFunction={handleShow}/>
-        <Houses house={house}/>
-        <UpdateHouse closeModal={handleClose} showModal={show} vacationHouse = {house}/>
+        <HouseInfo house={house} />
+        <Update closeModal={handleClose} showModal={show} vacationHouse = {house} fetchHouse={fetchHouse}/>
         <div className='p-5 pt-0'>
             <hr/>
             <Gallery house={house}/>

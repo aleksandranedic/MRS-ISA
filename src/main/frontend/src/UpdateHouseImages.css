@@ -22,8 +22,15 @@
     }
 .container {
     max-width: 100% !important;
-}
     
+}
+.house-images-main-container {
+  min-height: 25vh;
+} 
+.react-multi-carousel-list {
+  min-height: 25vh;
+  align-items: start !important;
+}
 .houses-images-carousel .card {
       position: relative;
       display: -webkit-box;
@@ -108,10 +115,8 @@
     .houses-images-carousel .owl-item:not(.center) > div {
       opacity: 1;
     }
-    .houses-images-carousel .owl-item:not(.center) > div img:hover {
-      opacity: 0.3;
-    }
-    .houses-images-carousel .center > div img:hover {
+    
+    .houses-images-carousel img:hover {
         opacity: 0.3;
     }
    .delete-photo:hover + img {
@@ -120,8 +125,8 @@
     .delete-photo {
       z-index: 5;
       position: relative;
-      top:30px; 
-      left:210px;
+      top:10px; 
+      left:220px;
     }
     .houses-images-carousel   .owl-nav .owl-next,
     .houses-images-carousel    .owl-nav .owl-prev {

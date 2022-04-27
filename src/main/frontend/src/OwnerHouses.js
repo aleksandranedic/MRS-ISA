@@ -5,7 +5,7 @@ import Carousel from 'react-multi-carousel';
 import {Container, Button} from "react-bootstrap";
 import {BsFillPlusCircleFill} from 'react-icons/bs'
 
-import OwnerHouseCards from './OwnerHouseCards';
+import OwnerHouseCard from "./OwnerHouseCard";
 import AddVacationHouse from './AddVacationHouse';
 
 function OwnerHouses({houses}) {
@@ -35,10 +35,22 @@ function OwnerHouses({houses}) {
         items: 1
     }
 };
+
     return (
        <Container className='d-flex p-0' id="houses">            
             <Carousel responsive={responsive} interval="250000" className='w-100 h-100  .houses-carousel' autoPlay={false} autoPlaySpeed={9000000}>    
-                <OwnerHouseCards houses = {houses}/>
+            {houses.map( (house) => (
+            <div className='house-container' key={house.id}>
+                    <OwnerHouseCard
+                        id={house.id}
+                        pic={house.thumbnailPath}
+                        title={house.title}
+                        text={house.description}
+                        address={house.address}
+                        />
+            </div>               
+            )   
+        )}
             </Carousel> 
             <Button className="btn btn-light add border-radius-lg align-self-center" onClick={handleShow}>
                 <BsFillPlusCircleFill viewBox='0 0 16 16' size={25} fill="#7d7d7d"/>          

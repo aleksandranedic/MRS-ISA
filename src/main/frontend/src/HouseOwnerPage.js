@@ -12,11 +12,17 @@ function HouseOwnerPage() {
     const {id} = useParams();
     const [houseOwner, setHouseOwner] = useState({address:''});
     let [ownerHouses, setOwnerHouses] = useState([]);
-  
+    const HOST = "http://localhost:4444";  
     const fetchOwnerHouses = () => {
       axios
       .get("http://localhost:4444/house/getownerhouses/" + id)
       .then(res => {
+          var houses = res.data;
+          for (let house of houses){
+              if (!house.thumbnailPath.includes(HOST)){
+                  house.thumbnailPath = HOST + house.thumbnailPath;
+              }
+          }
           setOwnerHouses(res.data);
         });
     };
@@ -30,7 +36,7 @@ function HouseOwnerPage() {
     useEffect(() => {
         fetchHouseOwner();
         fetchOwnerHouses();
-    }, []);
+    }, [ownerHouses]);
     return (
         <>
             <Banner caption={houseOwner.firstName + " " + houseOwner.lastName}/>
@@ -41,7 +47,7 @@ function HouseOwnerPage() {
                     {text: "Rezervacije", path: "#sales"},
                     {text: "Izveštaji", path: "#reports"}
                 ]}
-                        editable={false}/>
+                        editable={true}/>
             <AddVacationHouse/>
             <div className='p-5 pt-0'>
                 <OwnerInfo bio = {houseOwner.registrationRationale}

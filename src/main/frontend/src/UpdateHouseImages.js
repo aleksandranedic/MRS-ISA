@@ -1,50 +1,51 @@
 import React from 'react';
-import {Container, Button, Image} from'react-bootstrap'
+import {Container, Image} from'react-bootstrap'
 import OwlCarousel from 'react-owl-carousel';  
-
+import Carousel from 'react-multi-carousel'
 import {BsTrashFill} from 'react-icons/bs'
 
-import v1 from "./images/vikendica1.jpeg"
-import v2 from "./images/vikendica2.jpeg"
-import v3 from "./images/vikendica3.jpeg"
-import v4 from "./images/vikendica4.jpeg"
-import boatnotext from "./images/boatsnotext.png";
 
 import "./UpdateHouseImages.css"
 
-function UpdateHouseImages({images}) {
+function UpdateHouseImages({images, setImages}) {
 
-    const options = {
-        center: true,
-        responsiveClass: true,
-        responsive: {
-          0: {
-            items: 1
-          },
-          600: {
-            items: 3
-          },
-          1000: {
-            items: 3
-          },
-          1400: {
-            items: 3
-          }
-        },
-        autoplay: false,
-        dots: false,
-        nav: true
-      };
+  const responsive = {
+    superLargeDesktop: {
+        breakpoint: {max: 4000, min: 3000},
+        items: 3
+    },
+    desktop: {
+        breakpoint: {max: 3000, min: 1400},
+        items: 3
+    },
+    desktop2: {
+        breakpoint: {max: 1400, min: 1024},
+        items: 3
+    },
+    tablet: {
+        breakpoint: {max: 1024, min: 700},
+        items: 2
+    },
+    mobile: {
+        breakpoint: {max: 700, min: 0},
+        items: 1
+    }
+};
+    function removePhoto(event, image){
+        const imageList = images.filter((img) => img !== image);
+        setImages(imageList);
+    }
+
     return (
-        <Container className='d-flex p-0'>            
-            <OwlCarousel className="owl-theme owl-theme houses-images-carousel d-flex" loop {...options} navElement>    
+        <Container className='d-flex p-0 house-images-main-container'>               
+            <Carousel responsive={responsive} interval="250000" className='w-100 h-100 houses-images-carousel d-flex' autoPlay={false} autoPlaySpeed={9000000}>    
                 {images.map( (image) => (
                     <div className='house-images-container' key={image}>
-                    <BsTrashFill  size={18} className="delete-photo"/>
-                    <Image src={v1}/>
+                    <BsTrashFill  size={18} className="delete-photo" style={{cursor: "pointer"}} onClick={event => removePhoto(event, image)}/>
+                    <Image src={image} style={{position:"absolute"}}/>
                   </div> 
                 ))}     
-            </OwlCarousel> 
+            </Carousel> 
         </Container>
     );
 }
