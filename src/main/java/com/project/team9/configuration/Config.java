@@ -105,9 +105,9 @@ public class Config {
             pricelistRepository.save(housePriceList);
             VacationHouse vacationHouse = new VacationHouse("Lepa Brena", houseAddress, "lepa, velika, zuta zgrada blizu centra", "Dozvoljeno slušanje Čole, zyabranjeno smaranje",housePriceList,10,owner,5,3);
             owner.addVacationHouse(vacationHouse);
-            Image vhImg1 = new Image("./images/vikendica1.jpeg");
-            Image vhImg2 = new Image("./images/vikendica2.jpeg");
-            Image vhImg3 = new Image("./images/vikendica3.jpeg");
+            Image vhImg1 = new Image("/images/2/vikendica1.jpeg");
+            Image vhImg2 = new Image("/images/2/vikendica2.jpeg");
+            Image vhImg3 = new Image("/images/2/vikendica3.jpeg");
             ArrayList<Tag> additionalServices =new ArrayList<Tag>();
             additionalServices.add(new Tag("Bazen"));
             additionalServices.add(new Tag("Pet-friendly"));

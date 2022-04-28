@@ -2,14 +2,26 @@ package com.project.team9.controller;
 
 import com.project.team9.dto.HouseCardDTO;
 import com.project.team9.dto.VacationHouseDTO;
+import com.project.team9.model.Address;
+import com.project.team9.model.Image;
+import com.project.team9.model.Tag;
+import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.resource.VacationHouse;
-import com.project.team9.service.VacationHouseService;
+import com.project.team9.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.*;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path="house")
@@ -17,6 +29,7 @@ import java.util.List;
 public class VacationHouseController {
 
     private final VacationHouseService service;
+
 
     @Autowired
     public VacationHouseController(VacationHouseService vacationHouseService) {
@@ -33,21 +46,20 @@ public class VacationHouseController {
         Long houseId = Long.parseLong(id);
         return service.getVacationHouse(houseId);
     }
+    @PostMapping(value = "createHouse")
+    public Long addVacationHouseForOwner(VacationHouseDTO house, @RequestParam("fileImage") MultipartFile[] multipartFiles) throws IOException {
+        return service.createHouse(house, multipartFiles);
+    }
+
+    @PostMapping(value = "updateHouse/{id}")
+    public VacationHouseDTO updateVacationHouse(@PathVariable String id, VacationHouseDTO house, @RequestParam("fileImage") MultipartFile[] multipartFiles) throws IOException {
+        return service.updateHouse(id, house, multipartFiles);
+    }
 
     @GetMapping(value = "houseprof/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public VacationHouseDTO getVacationHouseDTO(@PathVariable String id) {
         Long houseId = Long.parseLong(id);
         return service.getVacationHouseDTO(houseId);
-    }
-
-    @PostMapping("/update")
-    public void updateHouse(@RequestBody VacationHouse house) {
-        service.updateVacationHouses(house);
-    }
-
-    @PostMapping("/add")
-    public void addHouse(@RequestBody VacationHouse house) {
-        service.addVacationHouses(house);
     }
 
     @GetMapping(value = "getownerhouses/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -56,23 +68,10 @@ public class VacationHouseController {
         return service.getOwnerHouses(owner_id);
     }
 
-    @PutMapping("/{id}")
-    public VacationHouse updateVacationHouse(@PathVariable String id, @RequestBody VacationHouse house) {
-        Long houseId = Long.parseLong(id);
-        VacationHouse vacationHouse = service.getVacationHouse(houseId);
-        vacationHouse.setTitle(house.getTitle());
-        vacationHouse.setPricelist(house.getPricelist());
-        vacationHouse.setDescription(house.getDescription());
-        vacationHouse.setNumberOfRooms(house.getNumberOfRooms());
-        vacationHouse.setNumberOfBedsPerRoom(house.getNumberOfBedsPerRoom());
-        vacationHouse.setRulesAndRegulations(house.getRulesAndRegulations());
-        vacationHouse.setAddress(house.getAddress());
-        vacationHouse.setAdditionalServices(house.getAdditionalServices());
-        vacationHouse.setImages(house.getImages());
-        vacationHouse = service.save(house);
-        return vacationHouse;
+    @GetMapping(value = "getownerhouse/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public HouseCardDTO getOwnerHouse(@PathVariable String id) {
+        return service.getVacationHouseCard(Long.parseLong(id));
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity deleteVacationHouse(@PathVariable Long id) {

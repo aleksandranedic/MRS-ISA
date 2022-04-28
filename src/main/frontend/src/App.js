@@ -1,12 +1,12 @@
 import React from 'react';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 
-import VacationHousePage from "./VacationHousePage"
+import VacationHousePage from "./VacationHousePage/VacationHousePage"
 import {ClientProfilePage} from "./ClientProfilePage";
 import Login from "./LogIn";
 
 
-import HouseOwnerPage from "./HouseOwnerPage"
+import HouseOwnerPage from "./VacationHouseOwnerPage/HouseOwnerPage"
 import {FishingInstructorPage} from "./FishingInstructorPage/FishingInstructorPage";
 
 function App() {

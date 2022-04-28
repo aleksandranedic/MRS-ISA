@@ -7,7 +7,7 @@ import java.util.List;
 
 public class VacationHouseDTO {
     private Long id;
-    private String title;
+    private String name;
     private String address;
     private String number;
     private String street;
@@ -17,7 +17,8 @@ public class VacationHouseDTO {
     private List<String> imagePaths;
     private String rulesAndRegulations;
     private List<Tag> additionalServices;
-    private int priceList;
+    private List<String> tagsText;
+    private int price;
     private int cancellationFee;
     private int numberOfRooms;
     private int capacity;
@@ -25,9 +26,9 @@ public class VacationHouseDTO {
 
     public VacationHouseDTO() {}
 
-    public VacationHouseDTO(Long id, String title,String address, String number, String street, String city, String country, String description, List<String> imagePaths, String rulesAndRegulations, List<Tag> additionalServices, int priceList, int cancellationFee, int numberOfRooms, int capacity, List<VacationHouseReservation> quickReservations) {
+    public VacationHouseDTO(Long id, String name,String address, String number, String street, String city, String country, String description, List<String> imagePaths, String rulesAndRegulations, List<Tag> additionalServices, int price, int cancellationFee, int numberOfRooms, int capacity, List<VacationHouseReservation> quickReservations) {
         this.id = id;
-        this.title = title;
+        this.name = name;
         this.number = number;
         this.address = address;
         this.street = street;
@@ -37,11 +38,39 @@ public class VacationHouseDTO {
         this.imagePaths = imagePaths;
         this.rulesAndRegulations = rulesAndRegulations;
         this.additionalServices = additionalServices;
-        this.priceList = priceList;
+        this.price = price;
         this.cancellationFee = cancellationFee;
         this.numberOfRooms = numberOfRooms;
         this.capacity = capacity;
         this.quickReservations = quickReservations;
+    }
+
+    public VacationHouseDTO(Long id, String name,String address, String number, String street, String city, String country, String description, List<String> imagePaths, String rulesAndRegulations, List<Tag> additionalServices, List<String> tagsText, int price, int cancellationFee, int numberOfRooms, int capacity, List<VacationHouseReservation> quickReservations) {
+        this.id = id;
+        this.name = name;
+        this.number = number;
+        this.address = address;
+        this.street = street;
+        this.city = city;
+        this.country = country;
+        this.description = description;
+        this.imagePaths = imagePaths;
+        this.rulesAndRegulations = rulesAndRegulations;
+        this.additionalServices = additionalServices;
+        this.tagsText = tagsText;
+        this.price = price;
+        this.cancellationFee = cancellationFee;
+        this.numberOfRooms = numberOfRooms;
+        this.capacity = capacity;
+        this.quickReservations = quickReservations;
+    }
+
+    public List<String> getTagsText() {
+        return tagsText;
+    }
+
+    public void setTagsText(List<String> tagsText) {
+        this.tagsText = tagsText;
     }
 
     public String getAddress() {
@@ -84,12 +113,12 @@ public class VacationHouseDTO {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getNumber() {
@@ -132,12 +161,12 @@ public class VacationHouseDTO {
         this.additionalServices = additionalServices;
     }
 
-    public int getPriceList() {
-        return priceList;
+    public int getPrice() {
+        return price;
     }
 
-    public void setPriceList(int priceList) {
-        this.priceList = priceList;
+    public void setPrice(int price) {
+        this.price = price;
     }
 
     public int getCancellationFee() {
@@ -170,5 +199,28 @@ public class VacationHouseDTO {
 
     public void setQuickReservations(List<VacationHouseReservation> quickReservations) {
         this.quickReservations = quickReservations;
+    }
+
+    @Override
+    public String toString() {
+        return "VacationHouseDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", number='" + number + '\'' +
+                ", street='" + street + '\'' +
+                ", city='" + city + '\'' +
+                ", country='" + country + '\'' +
+                ", description='" + description + '\'' +
+                ", imagePaths=" + imagePaths +
+                ", rulesAndRegulations='" + rulesAndRegulations + '\'' +
+                ", additionalServices=" + additionalServices +
+                ", tagsText=" + tagsText +
+                ", price=" + price +
+                ", cancellationFee=" + cancellationFee +
+                ", numberOfRooms=" + numberOfRooms +
+                ", capacity=" + capacity +
+                ", quickReservations=" + quickReservations +
+                '}';
     }
 }
