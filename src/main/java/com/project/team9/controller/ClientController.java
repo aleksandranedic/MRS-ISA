@@ -15,7 +15,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "client")
-@CrossOrigin("*")
 public class ClientController {
 
     private final ClientService clientService;
@@ -35,8 +34,8 @@ public class ClientController {
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Client> getById(@PathVariable String id) {
-        return ResponseEntity.ok().body(clientService.getById(id));
+    public String getById(@PathVariable String id) {
+        return "ResponseEntity.ok().body(clientService.getById(id))";
     }
 
     @PutMapping("/update/{id}")

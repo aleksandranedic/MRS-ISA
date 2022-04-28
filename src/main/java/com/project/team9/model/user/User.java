@@ -26,9 +26,9 @@ public abstract class User implements UserDetails{
     private Address address;
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
-    private Boolean locked;
-    private Boolean enabled;
-    private Boolean deleted;
+    private Boolean locked=false;
+    private Boolean enabled=false;
+    private Boolean deleted=false;
     public User() {
 
     }

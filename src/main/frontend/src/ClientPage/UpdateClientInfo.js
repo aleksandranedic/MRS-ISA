@@ -15,15 +15,15 @@ function UpdateClientInfo({handleDeleteAccount, handleClose, showPopUp, updateCl
     const streetRegExp = new RegExp("[A-Z][A-Za-z]+.?[A-Za-z]*")
     const passwordExp = new RegExp(".[^ ]+")
     const numExp = new RegExp("[1-9][0-9]*[a-z]?")
-    const phoneNumRegExp = new RegExp("[0-9]{7,10}")
+    const phoneNumRegExp = new RegExp("^[0-9]{7,10}$")
 
     const findFormErrors = () => {
         const {firstName, lastName, password, confPass, number, street, place, country, phoneNumber} = form
         const newErrors = {}
-        if(!firstName) newErrors.firstName = 'Polje ne sme da bude prazno!'
+        if (!firstName) newErrors.firstName = 'Polje ne sme da bude prazno!'
         else if (!stringRegExp.test(firstName)) newErrors.firstName = 'Mora da pocne sa velikim slovom!'
 
-        if(!lastName) newErrors.lastName = 'Polje ne sme da bude prazno!'
+        if (!lastName) newErrors.lastName = 'Polje ne sme da bude prazno!'
         else if (!stringRegExp.test(lastName)) newErrors.lastName = 'Mora da pocne sa velikim slovom!'
 
         if (!password || !passwordExp.test(password)) newErrors.password = 'Polje ne sme da bude prazno!'
@@ -31,17 +31,20 @@ function UpdateClientInfo({handleDeleteAccount, handleClose, showPopUp, updateCl
         if (!confPass || !passwordExp.test(confPass)) newErrors.confPass = 'Polje ne sme da bude prazno!'
         else if (confPass !== password) newErrors.confPass = 'Sifre se ne poklapaju!'
 
-        if(!number) newErrors.number = 'Polje ne sme da bude prazno!'
+        if (!number) newErrors.number = 'Polje ne sme da bude prazno!'
         else if (!numExp.test(number)) newErrors.number = 'Mora da sadrzi brojeve!'
 
         if (!street || !streetRegExp.test(street)) newErrors.street = 'Polje ne sme da bude prazno!'
 
-        if (!streetRegExp.test(place)) newErrors.place = 'Polje ne sme da bude prazno!'
+        if (!place) newErrors.place = 'Polje ne sme da bude prazno!'
+        else if (!streetRegExp.test(place)) newErrors.place = 'Mora da pocne sa velikim slovom!'
 
-        if (!streetRegExp.test(country)) newErrors.country = 'Polje ne sme da bude prazno!'
+        if (!country) newErrors.country = 'Polje ne sme da bude prazno!'
+        else if (!streetRegExp.test(country)) newErrors.country = 'Mora da pocne sa velikim slovom!'
 
-        if(!phoneNumber)newErrors.phoneNumber = 'Polje ne sme da bude prazno!'
+        if (!phoneNumber) newErrors.phoneNumber = 'Polje ne sme da bude prazno!'
         if (!phoneNumRegExp.test(phoneNumber)) newErrors.phoneNumber = 'Mora da sadrzi od 7 do 10 cifara!'
+
 
         return newErrors
     }

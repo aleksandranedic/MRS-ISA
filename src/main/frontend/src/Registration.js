@@ -4,23 +4,28 @@ import background from "./images/registration.jpg"
 
 export default function Registration() {
 
+    const getInitialState = () => {
+        return "USER";
+    };
     const [form, setForm] = useState({})
     const [errors, setErrors] = useState({})
+    const [isFishingInstructor, setBool] = useState({})
 
     const stringRegExp = new RegExp("[A-Z][A-Za-z]+")
     const streetRegExp = new RegExp("[A-Z][A-Za-z]+.?[A-Za-z]*")
     const passwordExp = new RegExp(".[^\\n\\t\\s]+")
     const numExp = new RegExp("[1-9][0-9]*[a-z]?")
-    const phoneNumRegExp = new RegExp("[0-9]{7,10}")
-    const emailRegExp =new RegExp(".+@gmail\\.com")
+    const phoneNumRegExp = new RegExp("^[0-9]{7,10}$")
+    const emailRegExp = new RegExp(".+@gmail\\.com")
 
     const findFormErrors = () => {
-        const {firstName, lastName, password, confPass, number, street, place, country, phoneNumber,email} = form
+        const {firstName, lastName, password, confPass, number, street, place, country, phoneNumber, email, role} = form
         const newErrors = {}
-        if(!firstName) newErrors.firstName = 'Polje ne sme da bude prazno!'
+
+        if (!firstName) newErrors.firstName = 'Polje ne sme da bude prazno!'
         else if (!stringRegExp.test(firstName)) newErrors.firstName = 'Mora da pocne sa velikim slovom!'
 
-        if(!lastName) newErrors.lastName = 'Polje ne sme da bude prazno!'
+        if (!lastName) newErrors.lastName = 'Polje ne sme da bude prazno!'
         else if (!stringRegExp.test(lastName)) newErrors.lastName = 'Mora da pocne sa velikim slovom!'
 
         if (!password || !passwordExp.test(password)) newErrors.password = 'Polje ne sme da bude prazno!'
@@ -28,22 +33,24 @@ export default function Registration() {
         if (!confPass || !passwordExp.test(confPass)) newErrors.confPass = 'Polje ne sme da bude prazno!'
         else if (confPass !== password) newErrors.confPass = 'Sifre se ne poklapaju!'
 
-        if(!number) newErrors.number = 'Polje ne sme da bude prazno!'
+        if (!number) newErrors.number = 'Polje ne sme da bude prazno!'
         else if (!numExp.test(number)) newErrors.number = 'Mora da sadrzi brojeve!'
 
-        console.log(street)
         if (!street || !streetRegExp.test(street)) newErrors.street = 'Polje ne sme da bude prazno!'
 
-        if (!streetRegExp.test(place)) newErrors.place = 'Polje ne sme da bude prazno!'
+        if (!place) newErrors.place = 'Polje ne sme da bude prazno!'
+        else if (!streetRegExp.test(place)) newErrors.place = 'Mora da pocne sa velikim slovom!'
 
-        if (!streetRegExp.test(country)) newErrors.country = 'Polje ne sme da bude prazno!'
+        if (!country) newErrors.country = 'Polje ne sme da bude prazno!'
+        else if (!streetRegExp.test(country)) newErrors.country = 'Mora da pocne sa velikim slovom!'
 
-        if(!phoneNumber)newErrors.phoneNumber = 'Polje ne sme da bude prazno!'
+        if (!phoneNumber) newErrors.phoneNumber = 'Polje ne sme da bude prazno!'
         if (!phoneNumRegExp.test(phoneNumber)) newErrors.phoneNumber = 'Mora da sadrzi od 7 do 10 cifara!'
 
         if (!email) newErrors.email = 'Polje ne sme da bude prazno!'
-        else if(!emailRegExp.test(email)) newErrors.email = 'Mora da sadrzi @gmail.com!'
+        else if (!emailRegExp.test(email)) newErrors.email = 'Mora da sadrzi @gmail.com!'
 
+        if (role === undefined || !role) newErrors.role = 'Mora te izabrati vrstu korisnika'
         return newErrors
     }
 
@@ -62,6 +69,7 @@ export default function Registration() {
                 password: form.password,
                 phoneNumber: form.phoneNumber,
                 email: form.email,
+                role: form.role,
                 address: {
                     number: form.number,
                     street: form.street,
@@ -76,27 +84,32 @@ export default function Registration() {
     }
 
     const setField = (field, value) => {
+        console.log(value)
         setForm({
             ...form,
             [field]: value
         })
+        if(field==='role' && value==="FISHING_INSTRUCTOR"){
+            setBool(true)
+        }else if(field==='role' && value!=="FISHING_INSTRUCTOR"){
+            setBool(false)
+        }
         if (!!errors[field]) setErrors({
             ...errors,
             [field]: null
         })
     }
-
     return (
-        <div className="m-0 p-0 min-vw-100 min-vh-100" style={{
-            backgroundImage: `url(${background})`,  backgroundSize: "cover",
-        }} >
-            <div className="d-flex justify-content-center h-100 w-100">
-                <Modal.Dialog size="lg">
-                    <Modal.Header closeButton>
+        <div className="m-0 p-0 min-vw-90 min-vh-100" style={{
+            backgroundImage: `url(${background})`, backgroundSize: "cover",
+        }}>
+            <div className="d-flex justify-content-center h-50 w-100" >
+                <Modal.Dialog size="lg" >
+                    <Modal.Header>
                         <Modal.Title>Registracija</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Form className="d-flex">
+                        <Form className="d-flex scrollbar scrollbar-primary">
                             <div className="m-2 w-50">
                                 <Form.Group className="mb-3" controlId="formName">
                                     <Form.Label>Ime</Form.Label>
@@ -128,7 +141,7 @@ export default function Registration() {
                             </div>
                             <div className="m-2 w-50">
                                 <Form.Group className="mb-3 m" controlId="formBasicEmail">
-                                    <Form.Label>Majl</Form.Label>
+                                    <Form.Label>Email</Form.Label>
                                     <Form.Control type="email"
                                                   onChange={e => setField('email', e.target.value)}
                                                   isInvalid={!!errors.email}/>
@@ -137,7 +150,7 @@ export default function Registration() {
                                     </Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group className="mb-3 m" controlId="formBasicPassword">
-                                    <Form.Label>Sifra</Form.Label>
+                                    <Form.Label>Lozinka</Form.Label>
                                     <Form.Control type="password"
                                                   onChange={e => setField('password', e.target.value)}
                                                   isInvalid={!!errors.password}/>
@@ -147,7 +160,7 @@ export default function Registration() {
                                 </Form.Group>
 
                                 <Form.Group className="mb-3" controlId="formConfirmPassword">
-                                    <Form.Label>Ponovi sifru</Form.Label>
+                                    <Form.Label>Ponovi lozinku</Form.Label>
                                     <Form.Control type="password"
                                                   onChange={e => setField('confPass', e.target.value)}
                                                   isInvalid={!!errors.confPass}/>
@@ -156,6 +169,28 @@ export default function Registration() {
                                     </Form.Control.Feedback>
                                 </Form.Group>
                             </div>
+                        </Form>
+                        <Form>
+                            <div className="m-2 ">
+                                <Form.Group className="mb-3" controlId="formBasicUserRole">
+                                    <Form.Label>Vrsta korisnika</Form.Label>
+                                    <Form.Select onChange={e => setField('role', e.target.value)}
+                                                 isInvalid={!!errors.role}>
+                                        <option></option>
+                                        <option value="CLIENT">Obican korisnik</option>
+                                        <option value="FISHING_INSTRUCTOR">Instruktor pecanja</option>
+                                        <option value="VACATION_HOUSE_OWNER">Vlasnik vikendice</option>
+                                        <option value="BOAT_OWNER">Vlasnik čamca</option>
+                                    </Form.Select>
+                                    <Form.Control.Feedback type='invalid'>
+                                        {errors.role}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                            </div>
+                            <Form.Group className="mb-3 m-2 hidden"  controlId="formBasicBiography"  >
+                                <Form.Label  >Biografija</Form.Label>
+                                <Form.Control disabled={!isFishingInstructor} as="textarea" rows={2} onChange={e => setField('biography', e.target.value)}/>
+                            </Form.Group>
                         </Form>
                         <Form className="d-flex gap-4">
                             <Form.Group className="mb-3 m-2" controlId="formNumOfAddress">
