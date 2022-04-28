@@ -95,14 +95,14 @@ function HouseForm({state, setState, imagesRef, reference, validated}) {
             <Row className="mb-3">
                 <Form.Group as={Col} controlId="formGridRooms">
                     <Form.Label>Broj soba</Form.Label>
-                    <Form.Control required type="number" name="numberOfRooms" placeholder="Broj soba" value={state.numberOfRooms} onChange={e => setRooms(e.target.value)}/>
-                    <Form.Control.Feedback type="invalid">Molimo Vas unesite broj soba.</Form.Control.Feedback>
+                    <Form.Control required type="number" min={1} name="numberOfRooms" placeholder="Broj soba" value={state.numberOfRooms} onChange={e => setRooms(e.target.value)}/>
+                    <Form.Control.Feedback type="invalid">Molimo Vas unesite broj soba koji je veći od nule.</Form.Control.Feedback>
                 </Form.Group>
 
                 <Form.Group as={Col} controlId="formGridCapacity">
                     <Form.Label>Kapacitet</Form.Label>
-                    <Form.Control required type="number" name='capacity' placeholder="Kapacitet vikendice" value={state.capacity} onChange={e => setCapacity(e.target.value)}/>
-                    <Form.Control.Feedback type="invalid">Molimo Vas unesite kapacitet.</Form.Control.Feedback>
+                    <Form.Control required type="number" min={1} name='capacity' placeholder="Kapacitet vikendice" value={state.capacity} onChange={e => setCapacity(e.target.value)}/>
+                    <Form.Control.Feedback type="invalid">Molimo Vas unesite kapacitet koji je veći od nule.</Form.Control.Feedback>
                 </Form.Group>
             </Row>
 
