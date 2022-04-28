@@ -4,7 +4,7 @@ import {Modal, Button} from 'react-bootstrap'
 import UpdateHouseForm from './UpdateHouseForm';
 import { useParams } from "react-router-dom";
 
-function UpdateHouse({showModal, closeModal, vacationHouse, fetchHouse}) {
+function UpdateHouse({showModal, closeModal, vacationHouse}) {
   const form = useRef();
   const imagesRef = useRef();
   const {id} = useParams();
@@ -16,7 +16,7 @@ function UpdateHouse({showModal, closeModal, vacationHouse, fetchHouse}) {
     }, []);
   const submit = e => {
     e.preventDefault()
-    if (form.current.checkValidity() === false || state.imagePaths.length < 3) {
+    if (form.current.checkValidity() === false || state.imagePaths.length === 0) {
       document.getElementById("noImages").style.display = "block"
       e.stopPropagation();
       setValidated(true);
@@ -57,7 +57,7 @@ function UpdateHouse({showModal, closeModal, vacationHouse, fetchHouse}) {
       axios
       .post("http://localhost:4444/house/updateHouse/" + id, data)
       .then(res => {
-        fetchHouse();
+        window.location.reload();
       });
       closeModal();
     }

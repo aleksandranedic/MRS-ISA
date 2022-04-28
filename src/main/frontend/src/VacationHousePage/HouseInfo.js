@@ -1,5 +1,5 @@
 import React from "react";
-import {Info, TagInfo} from "./Info";
+import {Info, TagInfo} from "../Info";
 import 'bootstrap/dist/css/bootstrap.css'
 
 export default function HouseInfo({house}) {

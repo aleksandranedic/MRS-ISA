@@ -35,7 +35,6 @@ function UpdateHouseImages({images, setImages}) {
         const imageList = images.filter((img) => img !== image);
         setImages(imageList);
     }
-
     return (
         <Container className='d-flex p-0 house-images-main-container'>               
             <Carousel responsive={responsive} interval="250000" className='w-100 h-100 houses-images-carousel d-flex' autoPlay={false} autoPlaySpeed={9000000}>    

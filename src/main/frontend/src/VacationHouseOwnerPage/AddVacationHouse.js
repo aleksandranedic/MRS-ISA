@@ -15,13 +15,11 @@ function AddVacationHouse({showModal, closeModal}) {
   const submit = e => {
     e.preventDefault()
 
-    if (form.current.checkValidity() === false || imagesRef.current.files.length < 3) {
-      document.getElementById("noImages").style.display = "block"
+    if (form.current.checkValidity() === false) {
       e.stopPropagation();
       setValidated(true);
     }
     else {
-      document.getElementById("noImages").style.display = "none"
       var files = imagesRef.current.files;
       var data = new FormData(form.current);
       var images = []

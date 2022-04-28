@@ -1,6 +1,6 @@
 import React from 'react';
 import StarRatings from 'react-star-ratings';
-import ProfileInfo from './ProfileInfo'
+import ProfileInfo from '../ProfileInfo'
 import {BsEnvelope, BsTelephone, BsGeoAlt} from 'react-icons/bs'
 
 function OwnerInfo({name, rate, bio, email, phoneNum, address}) {

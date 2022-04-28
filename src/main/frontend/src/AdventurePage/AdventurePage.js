@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import ImageGallery from "../ImageGallery";
+import ImagesGallery from "../ImageGallery";
 import Banner from "../Banner";
 import Navigation from "../Navigation";
 import AdventureInfo from "./AdventureInfo";
@@ -46,8 +46,8 @@ const Adventures = ()  =>{
             <EditAdventure show={show} setShow={setShow} adventure={adventure}/>
             <AdventureInfo adventure={adventure}/>
 
-            <ImageGallery/>
-            }
+            <ImagesGallery/>
+            )
         </div>)
     }
 
