@@ -108,14 +108,14 @@ function UpdateHouseForm({state, setState, validated, imagesRef, reference}) {
             <Row className="mb-3">
                 <Form.Group as={Col} controlId="formGridRooms">
                     <Form.Label>Broj soba</Form.Label>
-                    <Form.Control required type="number" defaultValue={state.numberOfRooms} onChange={e => setRooms(e.target.value)}/>
-                    <Form.Control.Feedback type="invalid">Molimo Vas unesite broj soba.</Form.Control.Feedback>
+                    <Form.Control required type="number" min={1} defaultValue={state.numberOfRooms} onChange={e => setRooms(e.target.value)}/>
+                    <Form.Control.Feedback type="invalid">Molimo Vas unesite broj soba koji je veći od nule.</Form.Control.Feedback>
                 </Form.Group>
 
                 <Form.Group as={Col} controlId="formGridCapacity">
                     <Form.Label>Kapacitet</Form.Label>
-                    <Form.Control required type="number" defaultValue={state.capacity} onChange={e => setCapacity(e.target.value)}/>
-                    <Form.Control.Feedback type="invalid">Molimo Vas unesite kapacitet.</Form.Control.Feedback>
+                    <Form.Control required type="number" min={1} defaultValue={state.capacity} onChange={e => setCapacity(e.target.value)}/>
+                    <Form.Control.Feedback type="invalid">Molimo Vas unesite kapacitet koji je veći od nule.</Form.Control.Feedback>
                 </Form.Group>
             </Row>
 
