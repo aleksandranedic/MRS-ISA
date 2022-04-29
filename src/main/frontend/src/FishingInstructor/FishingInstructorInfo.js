@@ -1,6 +1,8 @@
 import React from "react";
 import {AddressInfo, Info} from "../Info";
 
+
+
 export function FishingInstructorInfo({fishingInstructor}) {
     console.log(fishingInstructor)
     return (
@@ -17,7 +19,7 @@ export function FishingInstructorInfo({fishingInstructor}) {
                 </div>
 
                 <div id="right-column" className="w-50">
-                    {/*<AddressInfo title="Adresa" address={fishingInstructor.address}/>*/}
+                    <AddressInfo title="Adresa" address={fishingInstructor.address}/>
                 </div>
             </div>
         </div>

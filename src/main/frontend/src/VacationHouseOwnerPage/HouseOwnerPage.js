@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from "axios";    
 import Banner from '../Banner';
 import BeginButton from '../BeginButton';
-import Navigation from '../Navigation';
+
 import OwnerInfo from './OwnerInfo';
 import OwnerHouses from './OwnerHouses';
 import AddVacationHouse from './AddVacationHouse';
 import { useParams } from "react-router-dom";
+import Navigation from "../Navigation/Navigation";
 
 function HouseOwnerPage() {
     const {id} = useParams();

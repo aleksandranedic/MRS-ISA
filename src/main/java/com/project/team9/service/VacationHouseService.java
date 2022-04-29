@@ -180,15 +180,15 @@ public class VacationHouseService {
 
     private VacationHouse getHouseFromDTO(VacationHouseDTO house) {
         Pricelist pl = new Pricelist(house.getPrice(), new Date());
-        pricelistService.save(pl);
+        pricelistService.addPriceList(pl);
         int numberOfBedsPerRoom = house.getCapacity() / house.getNumberOfRooms();
         Address adr = new Address(house.getCity(), house.getNumber(), house.getStreet(), house.getCountry());
-        addressService.save(adr);
+        addressService.addAddress(adr);
         VacationHouse vh = new VacationHouse(house.getName(), adr, house.getDescription(), house.getRulesAndRegulations(), pl, house.getCancellationFee(), null, house.getNumberOfRooms(), numberOfBedsPerRoom);
         List<Tag> tags = new ArrayList<Tag>();
         for (String tagText : house.getTagsText()){
             Tag tag = new Tag(tagText);
-            tagService.save(tag);
+            tagService.addTag(tag);
             tags.add(tag);
         }
         vh.setAdditionalServices(tags);

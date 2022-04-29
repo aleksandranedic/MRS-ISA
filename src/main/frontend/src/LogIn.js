@@ -70,7 +70,7 @@ export default function Login() {
     }
     return (
         <div className="mt-4 d-flex justify-content-center ">
-            <img className="border rounded-start border-end-0 border-2 border-dark" src={require("./images/login.jpg")}
+            <img className="border rounded-start border-end-0 border-2 border-dark" src={require("./images/cover.png")}
                  alt="login"/>
             <div className="py-5 px-4 border rounded-end border-2 border-start-0 border-dark d-flex flex-column"
                  style={{width: "335px"}}>

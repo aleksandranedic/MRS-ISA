@@ -1,5 +1,6 @@
 package com.project.team9.controller;
 
+import com.project.team9.dto.AdventureDTO;
 import com.project.team9.exceptions.AdventureNotFoundException;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.service.AdventureService;
@@ -30,19 +31,25 @@ public class AdventureController {
         return service.getById(id);
     }
 
-    @PostMapping("/add")
-    public void postBody(Adventure adventure) {
-        service.addAdventure(adventure);
-    }
-
-    @PutMapping("/{id}/edit")
-    Adventure editAdventure(@RequestBody Adventure newAdventure, @PathVariable String id) {
+    @PostMapping("/{id}/edit")
+    public Adventure edit(@RequestBody AdventureDTO adventure, @PathVariable String id) {
         try {
-            return service.editAdventure(newAdventure, id);
+            return service.editAdventure(adventure, id);
         } catch (AdventureNotFoundException e) {
             e.printStackTrace();
+            return null;
         }
-        return newAdventure;
+
+    }
+
+    @PostMapping("/add")
+    public Long add(@RequestBody AdventureDTO adventure){
+        return service.createAdventure(adventure);
+    }
+
+    @GetMapping("/owner/{ownerId}")
+    List<Adventure> findAdventuresWithOwner(@PathVariable String ownerId) {
+        return service.findAdventuresWithOwner(ownerId);
     }
 
 

@@ -13,6 +13,17 @@ export function Info({title, text}) {
     )
 }
 
+export function LinkInfo({title, text, link}) {
+    return (
+        <div className="m-3">
+            <p className="lead fw-normal m-0 p-0">{title}</p>
+            <a href={link} style={{textDecoration: "None", color: "#212529", cursor: "pointer"}}><p className="fw-light">{text}</p></a>
+        </div>
+
+
+    )
+}
+
 export function AddressInfo({title, address}) {
     return (
         <div className="m-3">
@@ -35,7 +46,7 @@ export function TagInfo({title, tagList, edit, setState}) {
         })
     }
     return (
-        <div className="m-0">
+        <div className="m-3">
             <p className="lead fw-normal m-0 p-0">{title}</p>
             {tagList.map((tagData)=> {
                 return <Tag key={tagData.id} tag={tagData.text} edit={edit} id={tagData.id} remove={removeTag}/>
