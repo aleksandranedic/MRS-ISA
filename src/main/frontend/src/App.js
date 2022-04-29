@@ -4,10 +4,12 @@ import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import VacationHousePage from "./VacationHousePage/VacationHousePage"
 import {ClientProfilePage} from "./ClientProfilePage";
 import Login from "./LogIn";
+import AdventurePage from "./Adventure/AdventurePage";
 
+import {SearchResultsPage} from "./Search/SearchResultsPage";
+import HouseOwnerPage from "./VacationHouseOwnerPage/HouseOwnerPage";
+import {FishingInstructorPage} from "./FishingInstructor/FishingInstructorPage";
 
-import HouseOwnerPage from "./VacationHouseOwnerPage/HouseOwnerPage"
-import {FishingInstructorPage} from "./FishingInstructorPage/FishingInstructorPage";
 
 function App() {
     return (
@@ -19,6 +21,7 @@ function App() {
                 <Route path="/houseOwner/:id" element={<HouseOwnerPage/>}/>
                 <Route path="/fishingInstructor" element={<FishingInstructorPage/>}/>
                 <Route path="/login" element={<Login/>}/>
+                <Route path="/search" element={<SearchResultsPage/>}/>
             </Routes>
         </Router>
     );

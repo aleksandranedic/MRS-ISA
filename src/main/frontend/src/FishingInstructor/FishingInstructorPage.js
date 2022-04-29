@@ -2,15 +2,18 @@ import axios from "axios";
 import React, {useEffect, useState} from "react";
 import Banner from "../Banner";
 import {FishingInstructorInfo} from "./FishingInstructorInfo";
-import Adventures from "./Adventures/Adventures";
-import Navigation from "../Navigation";
+
 import ImageGallery from "../ImageGallery";
-import {EditFishingInstructor} from "./EditFishingInstructor";
+import {FishingInstructorForm} from "./FishingInstructorForm";
+import AdventureCarousel from "../Adventure/AdventureCarousel";
+import Navigation from "../Navigation/Navigation";
 
 
 const FishingInstructors = () => {
 
     const [fishingInstructor, setFishingInstructor] = useState([]);
+    const [adventures, setAdventures] = useState([]);
+
 
     const fetchFishingInstructors = () => {
         axios.get("http://localhost:4444/fishinginstructor/1").then(res => {
@@ -18,8 +21,19 @@ const FishingInstructors = () => {
         });
     };
 
+    const fetchAdventures = () => {
+        axios.get("http://localhost:4444/adventure/owner/1", ).then(res => {
+            console.log(res.data);
+            setAdventures(res.data);
+        });
+    };
+
     useEffect(() => {
         fetchFishingInstructors();
+    }, []);
+
+    useEffect(() => {
+        fetchAdventures();
     }, []);
 
     const [show, setShow] = useState(false);
@@ -38,17 +52,16 @@ const FishingInstructors = () => {
                     {text: "Avanture", path: "#"},
                     {text: "Kalendar zauzetosti", path: "#"}
                 ]}
-                        editable={true} editFunction={handleShow}
+                        editable={true} editFunction={handleShow} searchable={true} showProfile={true}
             />
 
             <FishingInstructorInfo fishingInstructor={fishingInstructor}/>
             <hr className="me-5 ms-5"/>
-            <ImageGallery/>
+            {/*<ImageGallery/>*/}
             <hr className="me-5 ms-5"/>
-            <Adventures adventures={[]}/>
+            <AdventureCarousel adventures={adventures}/>
             <hr className="me-5 ms-5"/>
-
-            <EditFishingInstructor show={show} setShow={setShow} fishingInstructor={fishingInstructor}/>
+            <FishingInstructorForm show={show} setShow={setShow} fishingInstructor={fishingInstructor}/>
 
         </div>)
     }

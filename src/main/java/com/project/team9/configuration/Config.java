@@ -83,9 +83,10 @@ public class Config {
                     adventurePricelist,
                     10,
                     fishingInstructor,
-                    2,
-                    fishingEquipment
+                    2
+
             );
+            bigAdventure.setFishingEquipment(fishingEquipment);
 
             bigAdventure.addImage(image1);
             bigAdventure.addImage(image2);

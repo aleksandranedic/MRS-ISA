@@ -3,12 +3,12 @@ import axios from "axios";
 import ImagesGallery from "../ImageGallery";
 import QuickReservations from "../QuickReservations";
 import Banner from "../Banner";
-import Navigation from "../Navigation";
 import HouseInfo from "./HouseInfo";
 import UpdateHouse from "./UpdateHouse"
 import BeginButton from "../BeginButton";
 import { useParams } from "react-router-dom";
 import "react-image-gallery/styles/css/image-gallery.css";
+import Navigation from "../Navigation/Navigation";
 
 const HOST = "http://localhost:4444";
 const Gallery = ({house, images}) => {

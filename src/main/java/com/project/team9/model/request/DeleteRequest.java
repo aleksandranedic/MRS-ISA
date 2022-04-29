@@ -7,7 +7,6 @@ import javax.persistence.Id;
 
 @Entity
 public class DeleteRequest extends Request{
-    @Id
     private Long user_id;
 
     public DeleteRequest() {

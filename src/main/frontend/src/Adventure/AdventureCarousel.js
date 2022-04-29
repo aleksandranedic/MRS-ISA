@@ -1,8 +1,9 @@
-import React from 'react'
+import React, {useState} from 'react'
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import AdventureCard from "./AdventureCard";
-import {AddAdventure} from "./AddAdventure";
+import {AdventureForm} from "./AdventureForm";
+import PlusCard from "../PlusCard";
 
 
 const responsive = {
@@ -29,18 +30,16 @@ const responsive = {
     }
 };
 
-export default function Adventures({adventures}) {
+export default function AdventureCarousel({adventures}) {
+    const [show, setShow] = useState(false);
     return (<div className="m-5">
             <Carousel responsive={responsive} interval="25000">
-                {adventures.map((adventure, key) => {
-                        return <AdventureCard adventure={adventure}/>
+                {adventures.map((adventure) => {
+                        return <AdventureCard key={adventure.id} adventure={adventure}/>
                     }
                 )}
-                <AdventureCard adventure={{
-                    title: "Naslov avanture",
-                    description: "Opis avanture"
-                }}/>
-                <AddAdventure/>
+                <PlusCard onClick={() => setShow(true)}/>
+                <AdventureForm show={show} setShow={setShow}/>
 
             </Carousel>
         </div>

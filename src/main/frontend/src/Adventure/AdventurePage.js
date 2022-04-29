@@ -2,14 +2,17 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import ImagesGallery from "../ImageGallery";
 import Banner from "../Banner";
-import Navigation from "../Navigation";
+import Navigation from "../Navigation/Navigation";
 import AdventureInfo from "./AdventureInfo";
-import {EditAdventure} from "./EditAdventure";
+import {Calendar} from "../Calendar/Calendar";
+import {AdventureForm} from "./AdventureForm";
 
 export function AdventurePage() {
     return (
         <>
             <Adventures/>
+
+
         </>
     )
 }
@@ -41,12 +44,15 @@ const Adventures = ()  =>{
                     {text: "Akcije", path: "#"},
                     {text: "Kalendar zauzetosti", path: "#"}
                 ]}
-                        editable={true} editFunction={handleShow}
+                        editable={true} editFunction={handleShow} searchable={true}
             />
-            <EditAdventure show={show} setShow={setShow} adventure={adventure}/>
+            <AdventureForm show={show} setShow={setShow} adventure={adventure}/>
             <AdventureInfo adventure={adventure}/>
+            {/*<ImagesGallery images={[
+            {original:
+            thumbnail:
 
-            <ImagesGallery/>
+            }]} />*/}
             )
         </div>)
     }

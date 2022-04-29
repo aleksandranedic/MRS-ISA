@@ -17,14 +17,14 @@ import java.util.List;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
-public class Adventure extends Resource{
+public class Adventure extends Resource {
     @ManyToOne
     @Cascade(CascadeType.SAVE_UPDATE)
     private FishingInstructor owner;
     private int numberOfClients;
     @OneToMany
     private List<Tag> fishingEquipment;
-    @OneToMany(cascade= javax.persistence.CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = javax.persistence.CascadeType.ALL, orphanRemoval = true)
     private List<AdventureReservation> quickReservations;
 
 
@@ -38,15 +38,17 @@ public class Adventure extends Resource{
                      Pricelist pricelist,
                      int cancellationFee,
                      FishingInstructor owner,
-                     int numberOfClients,
-                     List<Tag> fishingEquipment) {
+                     int numberOfClients
+                     ) {
         super(title, address, description, rulesAndRegulations, pricelist, cancellationFee);
         this.owner = owner;
         this.numberOfClients = numberOfClients;
-        this.fishingEquipment = fishingEquipment;
+        this.fishingEquipment = new ArrayList<Tag>();
         this.quickReservations = new ArrayList<AdventureReservation>();
 
     }
+
+
 
     public FishingInstructor getOwner() {
         return owner;
@@ -70,6 +72,10 @@ public class Adventure extends Resource{
 
     public void setFishingEquipment(List<Tag> fishingEquipment) {
         this.fishingEquipment = fishingEquipment;
+    }
+
+    public void addFishingEquipment(Tag pieceOfFishingEquipment) {
+        this.fishingEquipment.add(pieceOfFishingEquipment);
     }
 
     public void addQuickReservation(AdventureReservation adventureReservation) {
