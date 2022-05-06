@@ -1,18 +1,14 @@
 package com.project.team9.model.user.vendor;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.Address;
-import com.project.team9.model.user.UserRole;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import com.project.team9.model.resource.Adventure;
+import com.project.team9.model.user.Role;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -26,53 +22,18 @@ public class FishingInstructor extends Vendor {
         this.adventures = new ArrayList<>();
     }
 
-    public FishingInstructor(String password, String firstName, String lastName, String email, String phoneNumber, Address address, UserRole userRole, Boolean deleted, String registrationRationale,  String biography) {
-        super(password, firstName, lastName, email, phoneNumber, address, userRole, deleted, registrationRationale);
+    public FishingInstructor(String password, String firstName, String lastName, String email, String phoneNumber, Address address, Boolean deleted, String registrationRationale, String biography, List<Role> roles) {
+        super(password, firstName, lastName, email, phoneNumber, address, deleted, registrationRationale, roles);
         this.adventures = new ArrayList<>();
         this.biography = biography;
     }
 
-    public FishingInstructor(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, UserRole userRole,  Boolean deleted, String registrationRationale,  String biography) {
-        super(password, firstName, lastName, email, phoneNumber, place, number, street, country, userRole, deleted, registrationRationale);
+    public FishingInstructor(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, String registrationRationale, String biography, List<Role> roles) {
+        super(password, firstName, lastName, email, phoneNumber, place, number, street, country, deleted, registrationRationale, roles);
         this.adventures = new ArrayList<>();
         this.biography = biography;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(getUserRole().name());
-        return Collections.singletonList(authority);
-    }
-
-    @Override
-    public String getPassword() {
-        return super.getPassword();
-    }
-
-    @Override
-    public String getUsername() {
-        return getEmail();
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return !getLocked();
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return getEnabled();
-    }
 
     public void addAdventure(Adventure adventure) {
         this.adventures.add(adventure);
