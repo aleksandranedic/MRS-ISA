@@ -1,12 +1,12 @@
 import React, {useState, useRef} from 'react';
 import {Modal, Button} from 'react-bootstrap'
-import HouseForm from './HouseForm';
+import AddBoatForm from './AddBoatForm';
 import axios from "axios";  
 import { useParams } from "react-router-dom";
 
-function AddVacationHouse({showModal, closeModal}) {
+function AddBoat({showModal, closeModal}) {
   const {id} = useParams();
-  const statePlaceHolder = {name:'', price:'', description:'', numberOfRooms:'', capacity:'', rulesAndRegulations:'', street:'', number:'', city:'', country:'', additionalServices:[{id:0, text:''}], cancellationFee:'', imagePaths:[]};
+  const statePlaceHolder = {name:'', price:'', description:'', type:'', engineStrength:'', topSpeed:'', length:'', engineNumber:'', capacity:'', rulesAndRegulations:'', street:'', number:'', city:'', country:'', navigationEquipment:[{id:0, text:''}], cancellationFee:'', imagePaths:[]};
   let [state, setState] = useState(statePlaceHolder)
   const form = useRef();
   const imagesRef = useRef();
@@ -30,18 +30,18 @@ function AddVacationHouse({showModal, closeModal}) {
       state.address = state.street + " " + state.number + ", " + state.city + ", " + state.country;
       state.quickReservations = [];
       state.tagsText = []
-      for (let i=0; i < state.additionalServices.length; i++){
-        if (state.additionalServices[i].text !== ''){
-          state.tagsText.push(state.additionalServices[i].text)
+      for (let i=0; i < state.navigationEquipment.length; i++){
+        if (state.navigationEquipment[i].text !== ''){
+          state.tagsText.push(state.navigationEquipment[i].text)
         }
       }
       data.append("tagsText", state.tagsText)
       data.append("address", state.address)
       axios
-      .post("http://localhost:4444/house/createHouse", data)
+      .post("http://localhost:4444/boat/createBoat", data)
       .then(res => {
-            var houseID = res.data
-            axios.post("http://localhost:4444/houseowner/addHouse/" + id, houseID);
+            var boatID = res.data
+            axios.post("http://localhost:4444/boatowner/addBoat/" + id, boatID);
       });
       close();
     }
@@ -59,11 +59,11 @@ function AddVacationHouse({showModal, closeModal}) {
     return (
         <Modal show={showModal} onHide={close} size="lg">
         <Modal.Header>
-          <Modal.Title>Dodavanje vikendica</Modal.Title>
+          <Modal.Title>Dodavanje broda</Modal.Title>
         </Modal.Header>
       
         <Modal.Body>
-          <HouseForm state={state} setState={setState} reference={form} imagesRef = {imagesRef} validated={validated}/>
+          <AddBoatForm state={state} setState={setState} reference={form} imagesRef = {imagesRef} validated={validated}/>
         </Modal.Body>
       
         <Modal.Footer>
@@ -74,4 +74,4 @@ function AddVacationHouse({showModal, closeModal}) {
     );
 }
 
-export default AddVacationHouse;
+export default AddBoat;

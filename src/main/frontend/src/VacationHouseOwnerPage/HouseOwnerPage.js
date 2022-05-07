@@ -3,7 +3,7 @@ import axios from "axios";
 import Banner from '../Banner';
 import BeginButton from '../BeginButton';
 
-import OwnerInfo from './OwnerInfo';
+import OwnerInfo from '../OwnerInfo';
 import OwnerHouses from './OwnerHouses';
 import AddVacationHouse from './AddVacationHouse';
 import { useParams } from "react-router-dom";

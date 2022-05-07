@@ -1,8 +1,8 @@
 import React from 'react';
 import {Card} from "react-bootstrap";
 import {BsGeoAltFill} from 'react-icons/bs'
-function OwnerHouseCard({id, pic, title, text, address}) {
-    const url = "http://localhost:3000/house/" + id;
+function BoatOwnerCard({id, pic, title, text, address}) {
+    const url = "http://localhost:3000/boat/" + id;
     return (
         <Card className="m-3">
             <a href={url} className="text-decoration-none h-100">
@@ -28,4 +28,4 @@ function OwnerHouseCard({id, pic, title, text, address}) {
     );
 }
 
-export default OwnerHouseCard;
+export default BoatOwnerCard;

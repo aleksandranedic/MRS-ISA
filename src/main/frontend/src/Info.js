@@ -42,7 +42,10 @@ export function TagInfo({title, tagList, edit, setState}) {
             newTagList = [{id:0, text:''}]
         }
         setState( prevState => {
-            return {...prevState, additionalServices:newTagList}
+            if (typeof prevState.additionalServices != "undefined")
+                return {...prevState, additionalServices:newTagList}
+            else    
+            return {...prevState, navigationEquipment:newTagList}
         })
     }
     return (
