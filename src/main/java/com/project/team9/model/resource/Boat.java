@@ -1,5 +1,6 @@
 package com.project.team9.model.resource;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.Tag;
 import com.project.team9.model.reservation.BoatReservation;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Boat extends Resource{
 
     @ManyToOne
@@ -42,6 +44,19 @@ public class Boat extends Resource{
         this.engineStrength = engineStrength;
         this.topSpeed = topSpeed;
         this.navigationEquipment = navigationEquipment;
+        this.capacity = capacity;
+        this.quickReservations = new ArrayList<BoatReservation>();
+    }
+
+    public Boat(String title, Address address, String description, String rulesAndRegulations, Pricelist pricelist, int cancellationFee, BoatOwner owner, String type, double length, String engineNumber, double engineStrength, double topSpeed, int capacity) {
+        super(title, address, description, rulesAndRegulations, pricelist, cancellationFee);
+        this.owner = owner;
+        this.type = type;
+        this.length = length;
+        this.engineNumber = engineNumber;
+        this.engineStrength = engineStrength;
+        this.topSpeed = topSpeed;
+        this.navigationEquipment = new ArrayList<Tag>();
         this.capacity = capacity;
         this.quickReservations = new ArrayList<BoatReservation>();
     }
