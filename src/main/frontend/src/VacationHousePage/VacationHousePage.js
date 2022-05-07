@@ -69,7 +69,7 @@ export function VacationHousePage() {
                 {text: "Akcije", path: "#"},
                 {text: "Kalendar zauzetosti", path: "#"}
             ]}
-                    editable={true} editFunction={handleShow}/>
+                    editable={true} editFunction={handleShow} searchable={true} showProfile={true}/>
         <HouseInfo house={house}/>
         <Update closeModal={handleClose} showModal={show} vacationHouse = {house}/>
         <div className='p-5 pt-0'>

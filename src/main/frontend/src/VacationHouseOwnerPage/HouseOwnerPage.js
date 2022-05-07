@@ -48,7 +48,7 @@ function HouseOwnerPage() {
                     {text: "Rezervacije", path: "#sales"},
                     {text: "Izveštaji", path: "#reports"}
                 ]}
-                        editable={true}/>
+                        editable={true} searchable={true} showProfile={true}/>
             <AddVacationHouse/>
             <div className='p-5 pt-0'>
                 <OwnerInfo bio = {houseOwner.registrationRationale}

@@ -12,7 +12,6 @@ function OwnerHouseCard({id, pic, title, text, address}) {
                 <Card.Title className="text-dark">
                     <div className="d-flex justify-content-between">
                         {title}
-                        <BsPencilSquare/>
                     </div>
                     </Card.Title>
                 <Card.Text className="text-dark">

@@ -46,7 +46,7 @@ export function TagInfo({title, tagList, edit, setState}) {
         })
     }
     return (
-        <div className="m-3">
+        <div className="m-0">
             <p className="lead fw-normal m-0 p-0">{title}</p>
             {tagList.map((tagData)=> {
                 return <Tag key={tagData.id} tag={tagData.text} edit={edit} id={tagData.id} remove={removeTag}/>

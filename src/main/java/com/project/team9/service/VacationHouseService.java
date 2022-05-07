@@ -32,7 +32,7 @@ public class VacationHouseService {
 
     final String STATIC_PATH = "src/main/resources/static/";
     final String STATIC_PATH_TARGET = "target/classes/static/";
-    final String IMAGES_PATH = "/images/";
+    final String IMAGES_PATH = "/images/houses/";
 
     @Autowired
     public VacationHouseService(VacationHouseRepository vacationHouseRepository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService) {
