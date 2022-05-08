@@ -1,19 +1,21 @@
 import React, {useState} from "react";
 import {Button, Card} from "react-bootstrap";
-import {BsLink45Deg, BsPencilSquare} from "react-icons/bs";
+import {BsGeoAltFill, BsLink45Deg, BsPencilSquare} from "react-icons/bs";
 import {AdventureForm} from "./Adventure/AdventureForm";
 import {FishingInstructorForm} from "./FishingInstructor/FishingInstructorForm";
 
 
-export default function CustomCard({imagePath, editable, itemToEdit, title, subtitle, link, type}) {
+export default function CustomCard({imagePath, editable, itemToEdit, title, subtitle, link, type, address}) {
     const [show, setShow] = useState(false);
     const handleShow = () => setShow(true);
 
 
     return (
         <Card className="bg-light text-black" style={{width: '18vw', padding: 0}}>
+            <a href={link} className="text-decoration-none">
+                <img style={{height: '30vh', width: "100%"}}  src={imagePath} alt="Card image"/>
+            </a>
 
-            <img style={{height: '30vh'}}  src={imagePath} alt="Card image"/>
 
             <div className="d-flex">
                 <Card.Title className="text-dark h-25 w-75 p-3" id="title">
@@ -33,10 +35,13 @@ export default function CustomCard({imagePath, editable, itemToEdit, title, subt
 
             {type === "adventure" && <AdventureForm show={show} setShow={setShow} adventure={itemToEdit}/>}
             {type === "fishingInstructor" && <FishingInstructorForm show={show} setShow={setShow} fishingInstructor={itemToEdit}/>}
+            <Card.Footer className="w-100">
+                <small className="text-muted">
+                    <BsGeoAltFill/>
+                    <span className="ms-2">{address}</span>
+                </small>
+            </Card.Footer>
 
-            <Button variant="dark" href={link} className="d-flex justify-content-center"  style={{ height: '2rem'}}>
-                <BsLink45Deg style={{width: '1rem', height: '1rem', color: "white", cursor: "pointer"}}/>
-            </Button>
         </Card>
     )
 }

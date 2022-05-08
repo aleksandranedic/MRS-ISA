@@ -15,6 +15,7 @@ export default function FishingInstructorCard({fishingInstructor, editable}) {
         subtitle={fishingInstructor.biography}
         link={frontLink + "fishinginstructor/" + fishingInstructor.id}
         type={"fishingInstructor"}
+        address={fishingInstructor.address.street + " " + fishingInstructor.address.number +", " + fishingInstructor.address.place}
 
     />)
 

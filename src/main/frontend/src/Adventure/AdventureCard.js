@@ -15,6 +15,8 @@ export default function AdventureCard({adventure, editable}) {
         subtitle={adventure.description}
         link={frontLink + "adventure/" + adventure.id}
         type={"adventure"}
+        address={adventure.address.street + " " + adventure.address.number +", " + adventure.address.place}
+
 
     />)
 
