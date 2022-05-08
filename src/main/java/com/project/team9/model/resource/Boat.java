@@ -25,6 +25,8 @@ public class Boat extends Resource{
     private double engineStrength;
     private double topSpeed;
     @OneToMany
+    private List<Tag> fishingEquipment;
+    @OneToMany
     private List<Tag> navigationEquipment;
     private int capacity;
     @OneToMany
@@ -35,7 +37,7 @@ public class Boat extends Resource{
     }
 
 
-    public Boat(String title, Address address, String description, String rulesAndRegulations, Pricelist pricelist, int cancellationFee, BoatOwner owner, String type, double length, String engineNumber, double engineStrength, double topSpeed, List<Tag> navigationEquipment, int capacity) {
+    public Boat(String title, Address address, String description, String rulesAndRegulations, Pricelist pricelist, int cancellationFee, BoatOwner owner, String type, double length, String engineNumber, double engineStrength, double topSpeed, List<Tag> navigationEquipment, List<Tag> fishingEquipment, List<Tag> additionalServices, int capacity) {
         super(title, address, description, rulesAndRegulations, pricelist, cancellationFee);
         this.owner = owner;
         this.type = type;
@@ -44,6 +46,8 @@ public class Boat extends Resource{
         this.engineStrength = engineStrength;
         this.topSpeed = topSpeed;
         this.navigationEquipment = navigationEquipment;
+        this.fishingEquipment = fishingEquipment;
+        this.setAdditionalServices(additionalServices);
         this.capacity = capacity;
         this.quickReservations = new ArrayList<BoatReservation>();
     }
@@ -57,6 +61,7 @@ public class Boat extends Resource{
         this.engineStrength = engineStrength;
         this.topSpeed = topSpeed;
         this.navigationEquipment = new ArrayList<Tag>();
+        this.fishingEquipment = new ArrayList<Tag>();
         this.capacity = capacity;
         this.quickReservations = new ArrayList<BoatReservation>();
     }
@@ -123,6 +128,14 @@ public class Boat extends Resource{
 
     public void setNavigationEquipment(List<Tag> navigationEquipment) {
         this.navigationEquipment = navigationEquipment;
+    }
+
+    public List<Tag> getFishingEquipment() {
+        return fishingEquipment;
+    }
+
+    public void setFishingEquipment(List<Tag> fishingEquipment) {
+        this.fishingEquipment = fishingEquipment;
     }
 
     public int getCapacity() {

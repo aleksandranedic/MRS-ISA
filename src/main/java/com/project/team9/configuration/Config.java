@@ -141,7 +141,15 @@ public class Config {
             navigationEquipment.add(new Tag("GPS"));
             navigationEquipment.add(new Tag("Radar"));
             tagRepository.saveAll(navigationEquipment);
-            Boat boat = new Boat("Bela ladja", boatAddress, "Veliki, beli, lepi brod kao na filmu", "Dozvoljeno unosene hrane, zabranjeno skakanje sa broda", boatPriceList, 12, boatOwner, "Jahta", 50.5, "tri motora", 23 ,115.5, navigationEquipment,72);
+            List<Tag> fishingEquipmentBoat = new ArrayList<Tag>();
+            fishingEquipmentBoat.add(new Tag("Štap za pecanje"));
+            fishingEquipmentBoat.add(new Tag("2 udice"));
+            tagRepository.saveAll(fishingEquipmentBoat);
+            List<Tag> additionalServicesBoat = new ArrayList<Tag>();
+            additionalServicesBoat.add(new Tag("Bazen"));
+            additionalServicesBoat.add(new Tag("Ručak"));
+            tagRepository.saveAll(additionalServicesBoat);
+            Boat boat = new Boat("Bela ladja", boatAddress, "Veliki, beli, lepi brod kao na filmu", "Dozvoljeno unosene hrane, zabranjeno skakanje sa broda", boatPriceList, 12, boatOwner, "Jahta", 50.5, "tri motora", 23 ,115.5, navigationEquipment, fishingEquipmentBoat, additionalServicesBoat,72);
             boatOwner.addBoat(boat);
             Image boatImg1 = new Image("/images/boats/3/boat1.jpg");
             Image boatImg2 = new Image("/images/boats/3/boat2.jpg");

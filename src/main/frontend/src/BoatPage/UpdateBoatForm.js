@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import { Form, Row, Col, InputGroup, Button } from 'react-bootstrap';
+import UpdateBoatImages from './UpdateBoatImages';
 import { TagInfo } from '../Info';
 
-function AddBoatForm({state, setState, imagesRef, reference, validated}) {
+function UpdateBoatForm({state, setState, validated, imagesRef, reference}) {
     const [tagText, setTagText] = useState('');
     const [tagAdditionalServicesText, setTagAdditionalServicesText] = useState('');
     const [tagFishingEquipText, setTagFishingEquipText] = useState('');
@@ -101,34 +102,48 @@ function AddBoatForm({state, setState, imagesRef, reference, validated}) {
            return {...prevState, engineNumber:value}
         })
     }
+    const setImages = (value) => {
+        setState( prevState => {
+            return {...prevState, imagePaths:value}
+        })
+    }
+    function addImages() {
+        var files = imagesRef.current.files
+        const imageList = state.imagePaths;
+        for (var file of files) {
+            imageList.push(URL.createObjectURL(file))
+        }
+        document.getElementById("noImages").style.display = "none"
+        setImages(imageList)
+    }
     return (
         <Form noValidate validated={validated} ref={reference} encType="multipart/form-data">
             <Row className="mb-3">
-                <Form.Group as={Col} controlId="validationCustom01">
+                <Form.Group as={Col} controlId="formGridTitle">
                     <Form.Label>Naziv</Form.Label>
-                    <Form.Control required name="name" placeholder="Naziv broda" value={state.name} onChange={e => setName(e.target.value)} />
+                    <Form.Control required type="title" defaultValue={state.name} onChange={e => setName(e.target.value)} />
                     <Form.Control.Feedback type="invalid">Molimo Vas unesite naziv.</Form.Control.Feedback>
                 </Form.Group>
 
-                <Form.Group as={Col} controlId="formGridRooms">
+                <Form.Group as={Col} controlId="formGridTitle">
                     <Form.Label>Tip broda</Form.Label>
-                    <Form.Control required name="type" placeholder="Tip broda" value={state.type} onChange={e => setType(e.target.value)}/>
-                    <Form.Control.Feedback type="invalid">Molimo Vas unesite tip broda.</Form.Control.Feedback>
+                    <Form.Control required type="type" defaultValue={state.type} onChange={e => setType(e.target.value)} />
+                    <Form.Control.Feedback type="invalid">Molimo Vas unesite tip.</Form.Control.Feedback>
                 </Form.Group>
-   
-                <Form.Group as={Col} controlId="formGridLength">
+
+                <Form.Group as={Col} controlId="formGridTitle">
                     <Form.Label>Dužina broda</Form.Label>
                     <InputGroup>
-                    <Form.Control required type="number" min={1} name='length' placeholder="Dužina broda" value={state.length} onChange={e => setLength(e.target.value)}/>
+                    <Form.Control required type="title" defaultValue={state.length} onChange={e => setLength(e.target.value)} />
                     <InputGroup.Text>m</InputGroup.Text>
-                    <Form.Control.Feedback type="invalid">Molimo Vas unesite dužinu broda koja je veći od nule.</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">Molimo Vas unesite dužinu broda.</Form.Control.Feedback>
                     </InputGroup>
-                </Form.Group>   
+                </Form.Group>
             </Row>
 
             <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                 <Form.Label>Opis</Form.Label>
-                <Form.Control required as="textarea" name="description" rows={3} value={state.description} onChange={e => setDescription(e.target.value)}/>
+                <Form.Control required as="textarea" rows={3} defaultValue={state.description} onChange={e => setDescription(e.target.value)}/>
                 <Form.Control.Feedback type="invalid">Molimo Vas unesite opis.</Form.Control.Feedback>
             </Form.Group>
 
@@ -154,7 +169,7 @@ function AddBoatForm({state, setState, imagesRef, reference, validated}) {
 
             <Form.Group className="mb-3" controlId="formGridRules">
                 <Form.Label>Pravila ponašanja</Form.Label>
-                <Form.Control required placeholder="Dozvoljeno i zabranjeno" name="rulesAndRegulations" value={state.rulesAndRegulations} onChange={e => setRulesAndRegulations(e.target.value)}/>
+                <Form.Control required defaultValue={state.rulesAndRegulations} onChange={e => setRulesAndRegulations(e.target.value)}/>
                 <Form.Control.Feedback type="invalid">Molimo Vas unesite pravila ponašanja.</Form.Control.Feedback>
             </Form.Group>
 
@@ -194,69 +209,73 @@ function AddBoatForm({state, setState, imagesRef, reference, validated}) {
 
             <Row className="mb-3">
                 <Form.Group as={Col} controlId="formGridAddress">
-                <Form.Label>Ulica i broj</Form.Label>
+                    <Form.Label>Ulica i broj</Form.Label>
                     <InputGroup>
-                    <Form.Control required placeholder="Ulica" name="street" className="w-50" value={state.street} onChange={e => setStreet(e.target.value)}/>
-                    <Form.Control required placeholder="Broj" name="number" className="w-50" value={state.number} onChange={e => setNumber(e.target.value)}/>
+                    <Form.Control required className="w-50" defaultValue={state.street} onChange={e => setStreet(e.target.value)}/>
+                    <Form.Control required className="w-50" defaultValue={state.number} onChange={e => setNumber(e.target.value)}/>
                     <Form.Control.Feedback type="invalid">Molimo Vas unesite ulicu i broj.</Form.Control.Feedback>
                     </InputGroup>
                 </Form.Group>
 
                 <Form.Group as={Col} controlId="formGridCity">
                     <Form.Label>Grad</Form.Label>
-                    <Form.Control required placeholder="Grad" name="city" value={state.city} onChange={e => setCity(e.target.value)}/>
+                    <Form.Control required defaultValue={state.city} onChange={e => setCity(e.target.value)}/>
                     <Form.Control.Feedback type="invalid">Molimo Vas unesite grad.</Form.Control.Feedback>
                 </Form.Group>
 
                 <Form.Group as={Col} controlId="formGridCountry">
                     <Form.Label>Država</Form.Label>
-                    <Form.Control required placeholder="Država" name="country" value={state.country} onChange={e => setCountry(e.target.value)}/>
+                    <Form.Control required defaultValue={state.country} onChange={e => setCountry(e.target.value)}/>
                     <Form.Control.Feedback type="invalid">Molimo Vas unesite državu.</Form.Control.Feedback>
                 </Form.Group>
             </Row>
 
             <Row className="mb-3">
-            <Form.Group as={Col} controlId="formGridServices">
-            <Form.Label>Navigaciona oprema</Form.Label>
-                    <div className='d-flex justify-content-start'>
-                        <TagInfo tagList={state.navigationEquipment} edit={true} setState={setState} entity="navigationEquipment"/>
-                        <InputGroup className="p-0 mt-2" style={{maxWidth:"17vh", minWidth:"17vh"}}>
-                            <Form.Control style={{height:"4vh"}} aria-describedby="basic-addon2" placeholder='Dodaj tag' value={tagText} onChange={e => setTagText(e.target.value)}/>        
-                            <Button className="p-0 pe-2 ps-2" style={{height:"4vh"}} variant="primary" id="button-addon2" onClick={e => addButton("navigationEquipment")}> + </Button>
-                        </InputGroup>
-                    </div>
-            </Form.Group>
+                <Form.Group as={Col} controlId="formGridServices">
+                <Form.Label>Navigaciona oprema</Form.Label>
+                        <div className='d-flex justify-content-start'>
+                            <TagInfo tagList={state.navigationEquipment} edit={true} setState={setState} entity="navigationEquipment"/>
+                            <InputGroup className="p-0 mt-2" style={{maxWidth:"17vh", minWidth:"17vh"}}>
+                                <Form.Control style={{height:"4vh"}} aria-describedby="basic-addon2" placeholder='Dodaj tag' value={tagText} onChange={e => setTagText(e.target.value)}/>        
+                                <Button className="p-0 pe-2 ps-2" style={{height:"4vh"}} variant="primary" id="button-addon2" onClick={e => addButton("navigationEquipment")}> + </Button>
+                            </InputGroup>
+                        </div>
+                </Form.Group>
 
-            <Form.Group as={Col} controlId="formGridServices">
-            <Form.Label>Oprema za pecanje</Form.Label>
-                    <div className='d-flex justify-content-start'>
-                        <TagInfo tagList={state.fishingEquipment} edit={true} setState={setState} entity="fishingEquipment"/>
-                        <InputGroup className="p-0 mt-2" style={{maxWidth:"17vh", minWidth:"17vh"}}>
-                            <Form.Control style={{height:"4vh"}} aria-describedby="basic-addon2" placeholder='Dodaj tag' value={tagFishingEquipText} onChange={e => setTagFishingEquipText(e.target.value)}/>        
-                            <Button className="p-0 pe-2 ps-2" style={{height:"4vh"}} variant="primary" id="button-addon2" onClick={e => addButton("fishingEquipment")}> + </Button>
-                        </InputGroup>
-                    </div>
-            </Form.Group>
+                <Form.Group as={Col} controlId="formGridServices">
+                <Form.Label>Oprema za pecanje</Form.Label>
+                        <div className='d-flex justify-content-start'>
+                            <TagInfo tagList={state.fishingEquipment} edit={true} setState={setState} entity="fishingEquipment"/>
+                            <InputGroup className="p-0 mt-2" style={{maxWidth:"17vh", minWidth:"17vh"}}>
+                                <Form.Control style={{height:"4vh"}} aria-describedby="basic-addon2" placeholder='Dodaj tag' value={tagFishingEquipText} onChange={e => setTagFishingEquipText(e.target.value)}/>        
+                                <Button className="p-0 pe-2 ps-2" style={{height:"4vh"}} variant="primary" id="button-addon2" onClick={e => addButton("fishingEquipment")}> + </Button>
+                            </InputGroup>
+                        </div>
+                </Form.Group>
 
-            <Form.Group as={Col} controlId="formGridServices">
-            <Form.Label>Dodatne usluge</Form.Label>
-                    <div className='d-flex justify-content-start'>
-                        <TagInfo tagList={state.additionalServices} edit={true} setState={setState} entity="additionalServices"/>
-                        <InputGroup className="p-0 mt-2" style={{maxWidth:"17vh", minWidth:"17vh"}}>
-                            <Form.Control style={{height:"4vh"}} aria-describedby="basic-addon2" placeholder='Dodaj tag' value={tagAdditionalServicesText} onChange={e => setTagAdditionalServicesText(e.target.value)}/>        
-                            <Button className="p-0 pe-2 ps-2" style={{height:"4vh"}} variant="primary" id="button-addon2" onClick={e => addButton("additionalServices")}> + </Button>
-                        </InputGroup>
-                    </div>
-            </Form.Group>
+                <Form.Group as={Col} controlId="formGridServices">
+                <Form.Label>Dodatne usluge</Form.Label>
+                        <div className='d-flex justify-content-start'>
+                            <TagInfo tagList={state.additionalServices} edit={true} setState={setState} entity="additionalServices"/>
+                            <InputGroup className="p-0 mt-2" style={{maxWidth:"17vh", minWidth:"17vh"}}>
+                                <Form.Control style={{height:"4vh"}} aria-describedby="basic-addon2" placeholder='Dodaj tag' value={tagAdditionalServicesText} onChange={e => setTagAdditionalServicesText(e.target.value)}/>        
+                                <Button className="p-0 pe-2 ps-2" style={{height:"4vh"}} variant="primary" id="button-addon2" onClick={e => addButton("additionalServices")}> + </Button>
+                            </InputGroup>
+                        </div>
+                </Form.Group>      
             </Row>
 
             <Form.Group controlId="formFileMultiple" className="mb-3">
                 <Form.Label>Fotografije broda</Form.Label>
-                <Form.Control required type="file" multiple name="fileImage" ref={imagesRef} accept="image/png, image/jpeg"/>
-                <Form.Control.Feedback type="invalid">Molimo Vas unesite bar jednu fotografiju.</Form.Control.Feedback>
+                <UpdateBoatImages images={state.imagePaths} setImages={setImages}/>
+                <p id="noImages" style={{color:"#dc3545", fontSize: "0.875em", marginLeft:"34%", display:"none"}}>Molimo Vas postavite bar jednu fotografiju.</p>
+                <InputGroup className="mb-3">
+                    <Form.Control ref={imagesRef} type="file" multiple className='w-75' name="fileImage" />
+                    <Button variant="primary" id="button-addon2" onClick = {e => addImages()}> Dodaj </Button>
+                </InputGroup>
             </Form.Group>
             </Form>
     );
 }
 
-export default AddBoatForm;
+export default UpdateBoatForm;

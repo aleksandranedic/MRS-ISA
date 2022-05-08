@@ -8,6 +8,7 @@ import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
+import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.repo.BoatRepository;
@@ -75,16 +76,15 @@ public class BoatService {
         return repository.getById(id);
     }
 
-//    public BoatDTO getBoatDTO(Long id) {
-//        Boat bt = repository.getById(id);
-//        String address = vh.getAddress().getStreet() + " " + vh.getAddress().getNumber() + ", " + vh.getAddress().getPlace()  + ", " + vh.getAddress().getCountry();
-//        List<String> images = new ArrayList<String>();
-//        for (Image img : vh.getImages()) {
-//            images.add(img.getPath());
-//        }
-//        int capacity = vh.getNumberOfBedsPerRoom() * vh.getNumberOfRooms();
-//        return new VacationHouseDTO(vh.getId(), vh.getTitle(), address, vh.getAddress().getNumber(), vh.getAddress().getStreet(), vh.getAddress().getPlace(), vh.getAddress().getCountry(), vh.getDescription(), images, vh.getRulesAndRegulations(), vh.getAdditionalServices(), vh.getPricelist().getPrice(), vh.getCancellationFee(), vh.getNumberOfRooms(), capacity, vh.getQuickReservations());
-//    }
+    public BoatDTO getBoatDTO(Long id) {
+        Boat bt = repository.getById(id);
+        String address = bt.getAddress().getStreet() + " " + bt.getAddress().getNumber() + ", " + bt.getAddress().getPlace()  + ", " + bt.getAddress().getCountry();
+        List<String> images = new ArrayList<String>();
+        for (Image img : bt.getImages()) {
+            images.add(img.getPath());
+        }
+        return new BoatDTO(bt.getId(), bt.getTitle(), address, bt.getAddress().getNumber(), bt.getAddress().getStreet(), bt.getAddress().getPlace(), bt.getAddress().getCountry(), bt.getDescription(), bt.getType(), images, bt.getRulesAndRegulations(), bt.getEngineNumber(), bt.getEngineStrength(), bt.getTopSpeed(), bt.getLength(), bt.getNavigationEquipment(), bt.getFishingEquipment(), bt.getAdditionalServices(), bt.getPricelist().getPrice(), bt.getCancellationFee(), bt.getCapacity(), bt.getQuickReservations());
+    }
 
     public void addBoat(Boat boat) {
         repository.save(boat);
@@ -105,19 +105,17 @@ public class BoatService {
     }
 
 
-//    public BoatDTO updateBoat(String id, VacationHouseDTO house, MultipartFile[] multipartFiles) throws IOException {
-//        VacationHouse originalHouse = this.getVacationHouse(Long.parseLong(id));
-//        System.out.println(house);
-//        VacationHouse newVacationHouse = getHouseFromDTO(house);
-//        updateVacationHouse(originalHouse, newVacationHouse);
-//        this.save(originalHouse);
-//        List<String> paths = saveImages(originalHouse, multipartFiles);
-//        List<Image> images = getImages(paths);
-//        images.forEach(System.out::println);
-//        originalHouse.setImages(images);
-//        this.save(originalHouse);
-//        return this.getVacationHouseDTO(originalHouse.getId());
-//    }
+    public BoatDTO updateBoat(String id, BoatDTO boatDTO, MultipartFile[] multipartFiles) throws IOException {
+        Boat originalBoat = this.getBoat(Long.parseLong(id));
+        Boat newBoat = getBoatFromDTO(boatDTO);
+        updateBoatFromNew(originalBoat, newBoat);
+        this.addBoat(originalBoat);
+        List<String> paths = saveImages(originalBoat, multipartFiles);
+        List<Image> images = getImages(paths);
+        originalBoat.setImages(images);
+        this.addBoat(originalBoat);
+        return this.getBoatDTO(originalBoat.getId());
+    }
 
     private List<Image> getImages(List<String> paths) {
         List<Image> images = new ArrayList<Image>();
@@ -131,18 +129,24 @@ public class BoatService {
         return images;
     }
 
-//    private void updateBoat(Boat originalBoat, Boat newBoat) {
-//        originalHouse.setTitle(newVacationHouse.getTitle());
-//        originalHouse.setPricelist(newVacationHouse.getPricelist());
-//        originalHouse.setDescription(newVacationHouse.getDescription());
-//        originalHouse.setNumberOfRooms(newVacationHouse.getNumberOfRooms());
-//        originalHouse.setNumberOfBedsPerRoom(newVacationHouse.getNumberOfBedsPerRoom());
-//        originalHouse.setRulesAndRegulations(newVacationHouse.getRulesAndRegulations());
-//        originalHouse.setAddress(newVacationHouse.getAddress());
-//        originalHouse.setAdditionalServices(newVacationHouse.getAdditionalServices());
-//        originalHouse.setCancellationFee(newVacationHouse.getCancellationFee());
-//        originalHouse.setImages(newVacationHouse.getImages());
-//    }
+    private void updateBoatFromNew(Boat originalBoat, Boat newBoat) {
+        originalBoat.setTitle(newBoat.getTitle());
+        originalBoat.setPricelist(newBoat.getPricelist());
+        originalBoat.setDescription(newBoat.getDescription());
+        originalBoat.setType(newBoat.getType());
+        originalBoat.setLength(newBoat.getLength());
+        originalBoat.setTopSpeed(newBoat.getTopSpeed());
+        originalBoat.setEngineNumber(newBoat.getEngineNumber());
+        originalBoat.setEngineStrength(newBoat.getEngineStrength());
+        originalBoat.setRulesAndRegulations(newBoat.getRulesAndRegulations());
+        originalBoat.setAddress(newBoat.getAddress());
+        originalBoat.setNavigationEquipment(newBoat.getNavigationEquipment());
+        originalBoat.setFishingEquipment(newBoat.getFishingEquipment());
+        originalBoat.setAdditionalServices(newBoat.getAdditionalServices());
+        originalBoat.setCancellationFee(newBoat.getCancellationFee());
+        originalBoat.setCapacity(newBoat.getCapacity());
+        originalBoat.setImages(newBoat.getImages());
+    }
 
     private List<String> saveImages(Boat boat, MultipartFile[] multipartFiles) throws IOException {
         List<String> paths = new ArrayList<>();
@@ -186,6 +190,7 @@ public class BoatService {
         Address adr = new Address(boatDTO.getCity(), boatDTO.getNumber(), boatDTO.getStreet(), boatDTO.getCountry());
         addressService.addAddress(adr);
         Boat boat = new Boat(boatDTO.getName(), adr, boatDTO.getDescription(),  boatDTO.getRulesAndRegulations(), pl, boatDTO.getCancellationFee(), null, boatDTO.getType(), boatDTO.getLength(), boatDTO.getEngineNumber(), boatDTO.getEngineStrength() ,boatDTO.getTopSpeed(),boatDTO.getCapacity());
+
         List<Tag> tags = new ArrayList<Tag>();
         for (String tagText : boatDTO.getTagsText()){
             Tag tag = new Tag(tagText);
@@ -193,6 +198,23 @@ public class BoatService {
             tags.add(tag);
         }
         boat.setNavigationEquipment(tags);
+
+        List<Tag> tagsFishingEquip = new ArrayList<Tag>();
+        for (String tagText : boatDTO.getTagsFishingEquipText()){
+            Tag tag = new Tag(tagText);
+            tagService.addTag(tag);
+            tagsFishingEquip.add(tag);
+        }
+        boat.setFishingEquipment(tagsFishingEquip);
+
+        List<Tag> tagsAdditionalServices = new ArrayList<Tag>();
+        for (String tagText : boatDTO.getTagsAdditionalServicesText()){
+            Tag tag = new Tag(tagText);
+            tagService.addTag(tag);
+            tagsAdditionalServices.add(tag);
+        }
+        boat.setAdditionalServices(tagsAdditionalServices);
+
         List<Image> images = new ArrayList<Image>();
         if (boatDTO.getImagePaths() != null){
             for (String path : boatDTO.getImagePaths()) {

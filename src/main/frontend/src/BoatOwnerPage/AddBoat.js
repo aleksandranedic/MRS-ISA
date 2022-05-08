@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 
 function AddBoat({showModal, closeModal}) {
   const {id} = useParams();
-  const statePlaceHolder = {name:'', price:'', description:'', type:'', engineStrength:'', topSpeed:'', length:'', engineNumber:'', capacity:'', rulesAndRegulations:'', street:'', number:'', city:'', country:'', navigationEquipment:[{id:0, text:''}], cancellationFee:'', imagePaths:[]};
+  const statePlaceHolder = {name:'', price:'', description:'', type:'', engineStrength:'', topSpeed:'', length:'', engineNumber:'', capacity:'', rulesAndRegulations:'', street:'', number:'', city:'', country:'', navigationEquipment:[{id:0, text:''}], fishingEquipment:[{id:0, text:''}], additionalServices:[{id:0, text:''}], cancellationFee:'', imagePaths:[]};
   let [state, setState] = useState(statePlaceHolder)
   const form = useRef();
   const imagesRef = useRef();
@@ -29,6 +29,7 @@ function AddBoat({showModal, closeModal}) {
       data.append("fileImage",images);
       state.address = state.street + " " + state.number + ", " + state.city + ", " + state.country;
       state.quickReservations = [];
+      
       state.tagsText = []
       for (let i=0; i < state.navigationEquipment.length; i++){
         if (state.navigationEquipment[i].text !== ''){
@@ -36,6 +37,23 @@ function AddBoat({showModal, closeModal}) {
         }
       }
       data.append("tagsText", state.tagsText)
+
+      state.tagsFishingEquipText = []
+      for (let i=0; i < state.fishingEquipment.length; i++){
+        if (state.fishingEquipment[i].text !== ''){
+          state.tagsFishingEquipText.push(state.fishingEquipment[i].text)
+        }
+      }
+      data.append("tagsFishingEquipText", state.tagsFishingEquipText)
+
+      state.tagsAdditionalServicesText = []
+      for (let i=0; i < state.additionalServices.length; i++){
+        if (state.additionalServices[i].text !== ''){
+          state.tagsAdditionalServicesText.push(state.additionalServices[i].text)
+        }
+      }
+      data.append("tagsAdditionalServicesText", state.tagsAdditionalServicesText)
+
       data.append("address", state.address)
       axios
       .post("http://localhost:4444/boat/createBoat", data)

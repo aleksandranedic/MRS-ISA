@@ -41,16 +41,16 @@ public class BoatController {
         return service.createBoat(boat, multipartFiles);
     }
 
-//    @PostMapping(value = "updateBoat/{id}")
-//    public VacationHouseDTO updateVacationHouse(@PathVariable String id, VacationHouseDTO house, @RequestParam("fileImage") MultipartFile[] multipartFiles) throws IOException {
-//        return service.updateHouse(id, house, multipartFiles);
-//    }
+    @PostMapping(value = "updateBoat/{id}")
+    public BoatDTO updateVacationHouse(@PathVariable String id, BoatDTO boatDTO, @RequestParam("fileImage") MultipartFile[] multipartFiles) throws IOException {
+        return service.updateBoat(id, boatDTO, multipartFiles);
+    }
 
-//    @GetMapping(value = "boatprof/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public VacationHouseDTO getBoatDTO(@PathVariable String id) {
-//        Long boatId = Long.parseLong(id);
-//        return service.getBoatDTO(boatId);
-//    }
+    @GetMapping(value = "boatprof/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public BoatDTO getBoatDTO(@PathVariable String id) {
+        Long boatId = Long.parseLong(id);
+        return service.getBoatDTO(boatId);
+    }
 
     @GetMapping(value = "getownerboats/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<BoatCardDTO> getOwnerHouses(@PathVariable String id) {
