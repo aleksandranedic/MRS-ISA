@@ -152,7 +152,7 @@ function UpdateHouseForm({state, setState, validated, imagesRef, reference}) {
                 <Form.Group as={Col} controlId="formGridServices">
                     <Form.Label>Dodatne usluge</Form.Label>
                     <div className='d-flex justify-content-start'>
-                        <TagInfo tagList={state.additionalServices} edit={true} setState={setState}/>
+                        <TagInfo tagList={state.additionalServices} edit={true} setState={setState} entity="additionalServices"/>
                         <InputGroup className="p-0 mt-2" style={{maxWidth:"17vh", minWidth:"17vh"}}>
                             <Form.Control style={{height:"4vh"}} aria-describedby="basic-addon2" placeholder='Dodaj tag' value={tagText} onChange={e => setTagText(e.target.value)}/>
                             <Button className="p-0 pe-2 ps-2" style={{height:"4vh"}} variant="primary" id="button-addon2" onClick={addButton}> + </Button>
