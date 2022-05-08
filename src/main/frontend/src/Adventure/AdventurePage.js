@@ -6,23 +6,24 @@ import Navigation from "../Navigation/Navigation";
 import AdventureInfo from "./AdventureInfo";
 import {Calendar} from "../Calendar/Calendar";
 import {AdventureForm} from "./AdventureForm";
+import {useParams} from "react-router-dom";
 
 export function AdventurePage() {
+    const {id} = useParams();
     return (
         <>
-            <Adventures/>
-
-
+            <Adventures id={id}/>
         </>
     )
 }
 
-const Adventures = ()  =>{
+const Adventures = ({id})  =>{
 
+    console.log(id);
     const [adventure, setAdventure] = useState([]);
     let html;
     const fetchAdventures = () => {
-        axios.get("http://localhost:4444/adventure/1").then(res => {
+        axios.get("http://localhost:4444/adventure/"+ id).then(res => {
             setAdventure(res.data);
         });
     };

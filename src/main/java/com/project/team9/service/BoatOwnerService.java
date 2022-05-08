@@ -5,6 +5,8 @@ import com.project.team9.repo.BoatOwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BoatOwnerService {
 
@@ -32,4 +34,7 @@ public class BoatOwnerService {
         return repository.save(owner);
     }
 
+    public List<BoatOwner> getAll() {
+        return repository.findAll();
+    }
 }

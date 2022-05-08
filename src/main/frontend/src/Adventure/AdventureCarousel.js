@@ -6,7 +6,7 @@ import {AdventureForm} from "./AdventureForm";
 import PlusCard from "../PlusCard";
 
 
-const responsive = {
+export const responsive = {
     superLargeDesktop: {
         // the naming can be any, depends on you.
         breakpoint: {max: 4000, min: 3000},
@@ -30,16 +30,25 @@ const responsive = {
     }
 };
 
-export default function AdventureCarousel({adventures}) {
+export default function AdventureCarousel({adventures, add}) {
     const [show, setShow] = useState(false);
+    let editable;
+    editable = add === true;
+
     return (<div className="m-5">
             <Carousel responsive={responsive} interval="25000">
                 {adventures.map((adventure) => {
-                        return <AdventureCard key={adventure.id} adventure={adventure}/>
+                        return <AdventureCard key={adventure.id} adventure={adventure} editable={editable}/>
                     }
                 )}
-                <PlusCard onClick={() => setShow(true)}/>
-                <AdventureForm show={show} setShow={setShow}/>
+                {
+                    add &&
+                    <>
+                        <PlusCard onClick={() => setShow(true)}/>
+                        <AdventureForm show={show} setShow={setShow}/>
+                    </>
+                }
+
 
             </Carousel>
         </div>

@@ -4,13 +4,14 @@ import Navigation from "../Navigation/Navigation";
 import {SearchResultCard} from "./SearchResultCard";
 import axios from "axios";
 import {useLocation} from "react-router-dom";
+import {backLink, frontLink} from "../Consts";
 
 
 const Adventures = () => {
     const [adventures, setAdventures] = useState([]);
 
     const fetchAdventures = () => {
-        axios.get("http://localhost:4444/adventure",).then(res => {
+        axios.get(backLink + "adventure",).then(res => {
             console.log(res.data);
             setAdventures(res.data);
         });
@@ -25,7 +26,7 @@ const Adventures = () => {
 
         html = (adventures.map((adventure) => {
                 return <SearchResultCard key={adventure.id} title={adventure.title} description={adventure.description}
-                                         link={"http://localhost:3000/adventure"}/>
+                                         link={frontLink + "adventure/" + adventure.id}/>
             }
         ))
     }
@@ -36,7 +37,7 @@ const FishingInstructors = () => {
     const [fishingInstructors, setFishingInstructors] = useState([]);
 
     const fetchFishingInstructors = () => {
-        axios.get("http://localhost:4444/fishinginstructor",).then(res => {
+        axios.get(backLink + "fishinginstructor").then(res => {
             console.log(res.data);
             setFishingInstructors(res.data);
         });
@@ -52,7 +53,7 @@ const FishingInstructors = () => {
         html = (fishingInstructors.map((fishingInstructor) => {
                 return <SearchResultCard key={fishingInstructor.id} title={fishingInstructor.firstName + " " + fishingInstructor.lastName}
                                          description={fishingInstructor.biography}
-                                         link={"http://localhost:3000/fishingInstructor"}/>
+                                         link={frontLink + "fishingInstructor/" + fishingInstructor.id}/>
             }
         ))
     }
@@ -63,7 +64,7 @@ const VacationHouses = () => {
     const [vacationHouses, setVacationHouses] = useState([]);
 
     const fetchVacationHouses = () => {
-        axios.get("http://localhost:4444/house",).then(res => {
+        axios.get(backLink + "house",).then(res => {
             console.log(res.data);
             setVacationHouses(res.data);
         });
@@ -78,7 +79,7 @@ const VacationHouses = () => {
 
         html = (vacationHouses.map((vacationHouse) => {
                 return <SearchResultCard title={vacationHouse.title} description={vacationHouse.description}
-                                                link={"http://localhost:3000/house"}/>
+                                                link={frontLink + "house/" + vacationHouse.id}/>
             }
         ))
     }

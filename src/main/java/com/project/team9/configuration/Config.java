@@ -4,11 +4,8 @@ import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
-import com.project.team9.model.reservation.AdventureReservation;
-import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.resource.Boat;
-import com.project.team9.model.user.Client;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.vendor.BoatOwner;
@@ -21,7 +18,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 

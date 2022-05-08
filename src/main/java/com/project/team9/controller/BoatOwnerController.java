@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping(path = "boatowner")
@@ -21,6 +23,11 @@ public class BoatOwnerController {
     public BoatOwnerController(BoatOwnerService service, BoatService vacationHouseService) {
         this.service = service;
         this.boatService = vacationHouseService;
+    }
+
+    @GetMapping
+    public List<BoatOwner> getAll() {
+        return service.getAll();
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

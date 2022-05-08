@@ -7,22 +7,23 @@ import ImageGallery from "../ImageGallery";
 import {FishingInstructorForm} from "./FishingInstructorForm";
 import AdventureCarousel from "../Adventure/AdventureCarousel";
 import Navigation from "../Navigation/Navigation";
+import {useParams} from "react-router-dom";
 
 
-const FishingInstructors = () => {
+const FishingInstructors = ({id}) => {
 
     const [fishingInstructor, setFishingInstructor] = useState([]);
     const [adventures, setAdventures] = useState([]);
 
 
     const fetchFishingInstructors = () => {
-        axios.get("http://localhost:4444/fishinginstructor/1").then(res => {
+        axios.get("http://localhost:4444/fishinginstructor/"+ id).then(res => {
             setFishingInstructor(res.data);
         });
     };
 
     const fetchAdventures = () => {
-        axios.get("http://localhost:4444/adventure/owner/1", ).then(res => {
+        axios.get("http://localhost:4444/adventure/owner/" + id).then(res => {
             console.log(res.data);
             setAdventures(res.data);
         });
@@ -59,24 +60,23 @@ const FishingInstructors = () => {
             <hr className="me-5 ms-5"/>
             {/*<ImageGallery/>*/}
             <hr className="me-5 ms-5"/>
-            <AdventureCarousel adventures={adventures}/>
+            <AdventureCarousel adventures={adventures} add={true}/>
             <hr className="me-5 ms-5"/>
             <FishingInstructorForm show={show} setShow={setShow} fishingInstructor={fishingInstructor}/>
 
         </div>)
     }
 
-
-
     return html;
 
 };
 
 export function FishingInstructorPage() {
+    const {id} = useParams();
     return (
         <>
 
-            <FishingInstructors/>
+            <FishingInstructors id={id}/>
 
         </>
 

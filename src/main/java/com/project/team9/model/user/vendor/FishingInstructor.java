@@ -52,6 +52,14 @@ public class FishingInstructor extends Vendor {
         this.adventures = new ArrayList<>();
     }
 
+    public String getBiography() {
+        return biography;
+    }
+
+    public void setBiography(String biography) {
+        this.biography = biography;
+    }
+
     public void addAdventure(Adventure adventure) {
         this.adventures.add(adventure);
     }

@@ -17,15 +17,17 @@ function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/adventure" element={<AdventurePage/>}/>
+                <Route path="/adventure/:id" element={<AdventurePage/>}/>
                 <Route path="/house/:id" element={<VacationHousePage/>}/>
                 <Route path="/client" element={<ClientProfilePage/>}/>
                 <Route path="/houseOwner/:id" element={<HouseOwnerPage/>}/>
                 <Route path="/boatOwner/:id" element={<BoatOwnerPage/>}/>
+                <Route path="/fishingInstructor/:id" element={<FishingInstructorPage/>}/>
                 <Route path="/boat/:id" element={<BoatProfilePage/>}/>
                 <Route path="/fishingInstructor" element={<FishingInstructorPage/>}/>
                 <Route path="/login" element={<Login/>}/>
-                <Route path="/search" element={<SearchResultsPage/>}/>
+                <Route path="/search/:searchTerm" element={<SearchResultsPage/>}/>
+
             </Routes>
         </Router>
     );
