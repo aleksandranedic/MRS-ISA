@@ -8,8 +8,6 @@ import {FilterModal} from "../Filter/FilterModal";
 
 import {frontLink} from "../Consts";
 
-
-
 export default function Navigation(props) {
 
     const [searchTerm, setSearchTerm] = useState("");
@@ -19,7 +17,7 @@ export default function Navigation(props) {
     const [showFilters, setShowFilters] = useState(false);
     const handleShow = () => setShowFilters(true);
 
-    return (<Navbar className="d-flex" style={{background: "rgba(204, 204, 204, 0.4)"}}>
+    return (<Navbar className="d-flex" style={{background: "rgba(204, 204, 204, 0.75)", zIndex: 3}}>
             <Container style={{minHeight: "2.4rem"}}>
                 <Nav className="d-flex justify-content-evenly w-100">
 
@@ -58,6 +56,7 @@ export default function Navigation(props) {
 
                                             <Button variant="outline-secondary" value="Pretraga"
                                                     style={{marginLeft: '0.3rem'}}
+                                                    href={frontLink + "search/" + searchTerm}
                                                     >Pretraga</Button>
                                         </div>
                                     </Form>
@@ -88,9 +87,24 @@ export default function Navigation(props) {
                             <BsPencilSquare style={{width: '0.8rem', height: '1rem', color: "rgb(106,106,106)"}}/>
                         </Button>}
                     </div>
-                    <Button className="ms-2 font-monospace"
-                            style={{background: "#eaeaea", borderColor: "#eaeaea", color: "#6a6a6a", minWidth: "7rem"}}>Odjavi
-                        se</Button>
+
+
+                    {props.loggedIn ?
+
+                        <Button className="ms-3 font-monospace"
+                        style={{background: "#eaeaea", borderColor: "#eaeaea", color: "#6a6a6a", minWidth: "8rem"}}>
+                        Odjavi se
+                        </Button>
+
+                        :
+
+                        <Button className="ms-3 font-monospace text-center"
+                                style={{background: "#eaeaea", borderColor: "#eaeaea", color: "#6a6a6a", minWidth: "8rem"}}
+                                href={frontLink + "login"}>
+                            Prijavi se
+                        </Button>
+                    }
+
                     <FilterModal setShowFilters={setShowFilters}
                                  showFilters={showFilters}
 

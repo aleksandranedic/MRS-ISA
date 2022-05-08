@@ -2,7 +2,6 @@ package com.project.team9.service;
 
 import com.project.team9.dto.LoginDTO;
 import com.project.team9.model.user.Client;
-import com.project.team9.repo.AddressRepository;
 import com.project.team9.repo.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
