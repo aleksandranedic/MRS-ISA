@@ -1,6 +1,7 @@
 package com.project.team9.controller;
 
 import com.project.team9.model.resource.VacationHouse;
+import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.service.VacationHouseOwnerService;
 import com.project.team9.service.VacationHouseService;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -21,6 +24,11 @@ public class VacationHouseOwnerController {
     public VacationHouseOwnerController(VacationHouseOwnerService vacationHouseOwnerService, VacationHouseService vacationHouseService) {
         this.service = vacationHouseOwnerService;
         this.vacationHouseService = vacationHouseService;
+    }
+
+    @GetMapping
+    public List<VacationHouseOwner> getAll() {
+        return service.getAll();
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
