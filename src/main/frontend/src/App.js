@@ -9,6 +9,7 @@ import AdventurePage from "./Adventure/AdventurePage";
 import {SearchResultsPage} from "./Search/SearchResultsPage";
 import HouseOwnerPage from "./VacationHouseOwnerPage/HouseOwnerPage";
 import BoatOwnerPage from './BoatOwnerPage/BoatOwnerPage';
+import BoatProfilePage from './BoatPage/BoatProfilePage'
 import {FishingInstructorPage} from "./FishingInstructor/FishingInstructorPage";
 
 
@@ -21,6 +22,7 @@ function App() {
                 <Route path="/client" element={<ClientProfilePage/>}/>
                 <Route path="/houseOwner/:id" element={<HouseOwnerPage/>}/>
                 <Route path="/boatOwner/:id" element={<BoatOwnerPage/>}/>
+                <Route path="/boat/:id" element={<BoatProfilePage/>}/>
                 <Route path="/fishingInstructor" element={<FishingInstructorPage/>}/>
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/search" element={<SearchResultsPage/>}/>

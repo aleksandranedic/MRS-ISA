@@ -34,19 +34,38 @@ export function AddressInfo({title, address}) {
     )
 }
 
-export function TagInfo({title, tagList, edit, setState}) {
+export function TagInfo({title, tagList, edit, setState, entity}) {
     function removeTag(id){
         var object = tagList.find((element) => {return element.id === id;})
         var newTagList = tagList.filter(function(tag) { return tag !== object })
         if (newTagList.length === 0){
             newTagList = [{id:0, text:''}]
         }
+        if (entity === "additionalServices") {
+            setAdditionalServices(newTagList);
+        }
+        if (entity === "navigationEquipment") {
+            setNavigationEquipment(newTagList);
+        }
+        if (entity === "fishingEquipment") {
+            setFishingEquipment(newTagList);
+        }
+    
+    }
+    function setAdditionalServices(newTagList) {
         setState( prevState => {
-            if (typeof prevState.additionalServices != "undefined")
-                return {...prevState, additionalServices:newTagList}
-            else    
+            return {...prevState, additionalServices:newTagList}
+        });
+    }
+    function setNavigationEquipment(newTagList) {
+        setState( prevState => {
             return {...prevState, navigationEquipment:newTagList}
-        })
+        });
+    }
+    function setFishingEquipment(newTagList) {
+        setState( prevState => {
+            return {...prevState, fishingEquipment:newTagList}
+        });
     }
     return (
         <div className="m-0">
