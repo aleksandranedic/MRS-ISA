@@ -4,22 +4,19 @@ import {Form} from "react-bootstrap";
 import axios from "axios";
 import LoginPopUp from "./LoginPopUp";
 
+
+
 export default function Login() {
     function handleValidateLogIn({email, password}) {
         let loginDto={
-            email:email,
+            username:email,
             password:password
         }
-        axios.post("http://localhost:4444/login/validate",loginDto).then(res => {
+        axios.post("http://localhost:4444/login",loginDto).then(res => {
             console.log(res.data)
-            if (res.data!==null && res.data > 0) {
-                localStorage.setItem('user', res.data)
-                setText("Uspesno ste se ulogovali")
-                handleShow()
-            } else {
-                setText("Ne postoji ovaj klijent u bazi")
-                handleShow()
-            }
+            localStorage.setItem("token",res.data)
+            //jwt token treba da prosledjujes u samom zahtev znaci nesto sa axios i tako dalje
+            window.location.href="http://localhost:3000/registration" //ovde treba sad preusmeriti na client profil
         })
     }
 

@@ -1,36 +1,57 @@
 package com.project.team9.service;
 
-import com.project.team9.email.EmailSender;
 import com.project.team9.model.request.RegistrationRequest;
-import com.project.team9.model.user.*;
+import com.project.team9.model.resource.Adventure;
+import com.project.team9.model.resource.Boat;
+import com.project.team9.model.user.Client;
+import com.project.team9.model.user.Role;
+import com.project.team9.model.user.User;
+import com.project.team9.model.user.vendor.BoatOwner;
+import com.project.team9.model.user.vendor.FishingInstructor;
+import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.RegistrationRequestRepository;
+import com.project.team9.security.email.EmailSender;
 import com.project.team9.security.token.ConfirmationToken;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 @Service
-
 public class RegistrationService {
 
     private final UserServiceSecurity userServiceSecurity;
     private final RegistrationRequestRepository registrationRequestRepository;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
+    private final RoleService roleService;
+    private final FishingInstructorService fishingInstructorService;
+    private final BoatOwnerService boatOwnerService;
+    private final VacationHouseOwnerService vacationHouseOwnerService;
 
-    public RegistrationService(UserServiceSecurity userServiceSecurity, RegistrationRequestRepository registrationRequestRepository, ConfirmationTokenService confirmationTokenService, EmailSender emailSender) {
+    @Autowired
+    public RegistrationService(UserServiceSecurity userServiceSecurity, RegistrationRequestRepository registrationRequestRepository, ConfirmationTokenService confirmationTokenService, EmailSender emailSender, RoleService roleService, FishingInstructorService fishingInstructorService, BoatOwnerService boatOwnerService, VacationHouseOwnerService vacationHouseOwnerService) {
         this.userServiceSecurity = userServiceSecurity;
         this.registrationRequestRepository = registrationRequestRepository;
         this.confirmationTokenService = confirmationTokenService;
         this.emailSender = emailSender;
+        this.roleService = roleService;
+        this.fishingInstructorService = fishingInstructorService;
+        this.boatOwnerService = boatOwnerService;
+        this.vacationHouseOwnerService = vacationHouseOwnerService;
     }
 
     public String register(RegistrationRequest registrationRequest) {
-        //TODO ispravi ovo da pita da li si Client ako jesi vrati token i sve ako nisi onda samo storuje request
-        Client user = null;
+        Role role = roleService.findRoleByName(registrationRequest.getUserRole());
+        String response = "";
+        if (role == null) {
+            role = new Role(registrationRequest.getUserRole());
+            roleService.save(role);
+        }
         switch (registrationRequest.getUserRole()) {
             case "CLIENT":
-                user = new Client(
+                Client user = new Client(
                         registrationRequest.getPassword(),
                         registrationRequest.getFirstName(),
                         registrationRequest.getLastName(),
@@ -40,23 +61,83 @@ public class RegistrationService {
                         registrationRequest.getNumber(),
                         registrationRequest.getStreet(),
                         registrationRequest.getCountry(),
-                        UserRole.CLIENT,
-                        Boolean.FALSE);
+                        Boolean.FALSE, role);
+                String token = userServiceSecurity.signUpUser(user);
+                String link = "http://localhost:3000/confirmedEmail/" + token;
+                emailSender.send(
+                        registrationRequest.getEmail(),
+                        buildEmail(registrationRequest.getFirstName() + " " + registrationRequest.getLastName(), link));
+                //moras da napravis token bre
+                ConfirmationToken confirmationToken = new ConfirmationToken(
+                        token,
+                        LocalDateTime.now(),
+                        LocalDateTime.now().plusMinutes(15),
+                        user
+                );
+                response = "Uspesno ste izvrsili registraciju.\nProverite email kako biste verifikovali svoj nalog";
                 break;
             case "FISHING_INSTRUCTOR":
-            case "VACATION_HOUSE_OWNER":
-            case "BOAT_OWNER":
-                addRegistrationRequest(registrationRequest);
+                FishingInstructor fishingInstructor = new FishingInstructor(
+                        registrationRequest.getPassword(),
+                        registrationRequest.getFirstName(),
+                        registrationRequest.getLastName(),
+                        registrationRequest.getEmail(),
+                        registrationRequest.getPhoneNumber(),
+                        registrationRequest.getPlace(),
+                        registrationRequest.getNumber(),
+                        registrationRequest.getStreet(),
+                        registrationRequest.getCountry(),
+                        false,
+                        registrationRequest.getRegistrationRationale(),
+                        registrationRequest.getBiography(),
+                        role,
+                        new ArrayList<Adventure>()
+                );
+                fishingInstructorService.addFishingInstructor(fishingInstructor);
+                response = "Uspesno ste poslali zahtev o registraciji";
+
                 break;
-            default:
+            case "VACATION_HOUSE_OWNER":
+                VacationHouseOwner vacationHouseOwner = new VacationHouseOwner(
+                        registrationRequest.getPassword(),
+                        registrationRequest.getFirstName(),
+                        registrationRequest.getLastName(),
+                        registrationRequest.getEmail(),
+                        registrationRequest.getPhoneNumber(),
+                        registrationRequest.getPlace(),
+                        registrationRequest.getNumber(),
+                        registrationRequest.getStreet(),
+                        registrationRequest.getCountry(),
+                        false,
+                        registrationRequest.getRegistrationRationale(),
+                        role
+                );
+                vacationHouseOwnerService.addOwner(vacationHouseOwner);
+                response = "Uspesno ste poslali zahtev o registraciji";
+
+                break;
+            case "BOAT_OWNER":
+                BoatOwner boatOwner = new BoatOwner(
+                        registrationRequest.getPassword(),
+                        registrationRequest.getFirstName(),
+                        registrationRequest.getLastName(),
+                        registrationRequest.getEmail(),
+                        registrationRequest.getPhoneNumber(),
+                        registrationRequest.getPlace(),
+                        registrationRequest.getNumber(),
+                        registrationRequest.getStreet(),
+                        registrationRequest.getCountry(),
+                        false,
+                        registrationRequest.getRegistrationRationale(),
+                        new ArrayList<Boat>(),
+                        role
+                );
+                boatOwnerService.addClient(boatOwner);
+                response = "Uspesno ste poslali zahtev o registraciji";
+
                 break;
         }
-        String token = userServiceSecurity.signUpUser(user, registrationRequest.getEmail());
-        String link = "http://localhost:4444/registration/confirm?token=" + token;
-        emailSender.send(
-                registrationRequest.getEmail(),
-                buildEmail(registrationRequest.getFirstName()+registrationRequest.getLastName(), link));
-        return token;
+        return response;
     }
 
     public RegistrationRequest addRegistrationRequest(RegistrationRequest registrationRequest) {
@@ -66,15 +147,19 @@ public class RegistrationService {
     public String confirmToken(String token) {
         ConfirmationToken confirmationToken = confirmationTokenService.getToken(token).orElseThrow(() -> new IllegalStateException("token not found"));
         if (confirmationToken.getConfirmedAt() != null) {
-            throw new IllegalStateException("email already confirmed");
+            return "Vas email je vec verifikovan"; //da se ne baca exception nego nesto drguo da se javi
         }
         LocalDateTime expiredAt = confirmationToken.getExpiresAt();
         if (expiredAt.isBefore(LocalDateTime.now())) {
-            throw new IllegalStateException("token expired");
+            return "Vas verifikacioni token je istekao";
+//            throw new IllegalStateException("token expired");   //da se ne baca exception nego nesto drguo da se javi
         }
         confirmationTokenService.setConfirmedAt(token);
-        userServiceSecurity.enableUser(confirmationToken.getUser().getEmail());
-        return "confirmed";
+        User user = (User) userServiceSecurity.loadUserByUsername(confirmationToken.getUser().getEmail());
+        user.setEnabled(true);
+        userServiceSecurity.addClient((Client) user);
+
+        return "Vasa verifikacija je uspesna";
     }
 
     private String buildEmail(String name, String link) {

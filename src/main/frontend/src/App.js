@@ -10,6 +10,7 @@ import HouseOwnerPage from "./HouseOwnerPage"
 import {FishingInstructorPage} from "./FishingInstructorPage/FishingInstructorPage";
 import Registration from './Registration';
 import AdventurePage from "./AdventurePage/AdventurePage";
+import EmailConfirmed from "./EmailConfirmed";
 
 function App() {
     return (
@@ -22,6 +23,7 @@ function App() {
                 <Route path="/fishingInstructor" element={<FishingInstructorPage/>}/>
                 <Route path="/login" element={<Login/>}/>
                 <Route path='/registration' element={<Registration/>}/>
+                <Route path='/confirmedEmail/:token' element={<EmailConfirmed/>}/>
             </Routes>
         </Router>
     );

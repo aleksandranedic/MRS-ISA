@@ -1,5 +1,7 @@
 package com.project.team9.model.request;
 
+import com.project.team9.model.user.User;
+
 import javax.persistence.Entity;
 
 
@@ -17,12 +19,13 @@ public class RegistrationRequest extends Request{
     private String country;
     private String userRole;
     private String biography;
+    private String registrationRationale;
 
 
     public RegistrationRequest() {
     }
 
-    public RegistrationRequest(String text, String response, String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, String userRole, String biography) {
+    public RegistrationRequest(String text, String response, String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, String userRole, String biography, String registrationRationale) {
         super(text, response);
         this.password = password;
         this.firstName = firstName;
@@ -35,6 +38,15 @@ public class RegistrationRequest extends Request{
         this.country = country;
         this.userRole = userRole;
         this.biography = biography;
+        this.registrationRationale = registrationRationale;
+    }
+
+    public String getRegistrationRationale() {
+        return registrationRationale;
+    }
+
+    public void setRegistrationRationale(String registrationRationale) {
+        this.registrationRationale = registrationRationale;
     }
 
     public String getBiography() {

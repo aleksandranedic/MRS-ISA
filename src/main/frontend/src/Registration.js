@@ -1,15 +1,12 @@
 import React, {useState} from 'react'
 import {Button, Form, Modal} from "react-bootstrap";
 import background from "./images/registration.jpg"
+import axios from "axios";
+import Collapse from "react-bootstrap/Collapse";
 
 export default function Registration() {
-
-    const getInitialState = () => {
-        return "USER";
-    };
     const [form, setForm] = useState({})
     const [errors, setErrors] = useState({})
-    const [isFishingInstructor, setBool] = useState({})
 
     const stringRegExp = new RegExp("[A-Z][A-Za-z]+")
     const streetRegExp = new RegExp("[A-Z][A-Za-z]+.?[A-Za-z]*")
@@ -51,7 +48,12 @@ export default function Registration() {
         else if (!emailRegExp.test(email)) newErrors.email = 'Mora da sadrzi @gmail.com!'
 
         if (role === undefined || !role) newErrors.role = 'Mora te izabrati vrstu korisnika'
+
+        // if (biography === undefined || !biography) newErrors.biography = 'Mora te izabrati vrstu korisnika'
+
+        // if (registrationRationale === undefined || !registrationRationale) newErrors.registrationRationale = 'Mora te izabrati vrstu korisnika'
         return newErrors
+
     }
 
     const handleSubmit = e => {
@@ -69,30 +71,56 @@ export default function Registration() {
                 password: form.password,
                 phoneNumber: form.phoneNumber,
                 email: form.email,
-                role: form.role,
-                address: {
-                    number: form.number,
-                    street: form.street,
-                    place: form.place,
-                    country: form.country
-                }
+                userRole: form.role,
+                biography: form.biography === undefined ? "" : form.biography,
+                registrationRationale: form.registrationRationale === undefined ? "" : form.registrationRationale,
+                number: form.number,
+                street: form.street,
+                place: form.place,
+                country: form.country
             }
             console.log(userDTO)
-            // updateClient(userDTO)
+            registerUser(userDTO)
             // handleClose()
         }
     }
 
+    function registerUser(userDTO) {
+        axios.post("http://localhost:4444/registration", userDTO).then(res => {
+            console.log(res.data)
+            // uradi pop up za dobar zahtev
+            //     if (res.data!==null && res.data > 0) {
+            //         localStorage.setItem('user', res.data)
+            //         setText("Uspesno ste se ulogovali")
+            //         handleShow()
+            //     } else {
+            //         setText("Ne postoji ovaj klijent u bazi")
+            //         handleShow()
+            //     }
+        })
+    }
+
+    const [openForInstructor, setOpenForInstructor] = useState(false);
+    const [openForOtherVendors, setOpenForOtherVendors] = useState(false);
+
+
     const setField = (field, value) => {
-        console.log(value)
         setForm({
             ...form,
             [field]: value
         })
-        if(field==='role' && value==="FISHING_INSTRUCTOR"){
-            setBool(true)
-        }else if(field==='role' && value!=="FISHING_INSTRUCTOR"){
-            setBool(false)
+        if (field === 'role' && value === "FISHING_INSTRUCTOR") {
+            setOpenForInstructor(true)
+            setOpenForOtherVendors(true)
+        } else if (field === 'role' && value === "CLIENT") {
+            setOpenForOtherVendors(false)
+            setOpenForInstructor(false)
+        } else if (field === 'role' && (value === "BOAT_OWNER" || value === "VACATION_HOUSE_OWNER")) {
+            setOpenForOtherVendors(true)
+            setOpenForInstructor(false)
+        } else if (field === 'role' && value === "") {
+            setOpenForOtherVendors(false)
+            setOpenForInstructor(false)
         }
         if (!!errors[field]) setErrors({
             ...errors,
@@ -103,8 +131,8 @@ export default function Registration() {
         <div className="m-0 p-0 min-vw-90 min-vh-100" style={{
             backgroundImage: `url(${background})`, backgroundSize: "cover",
         }}>
-            <div className="d-flex justify-content-center h-50 w-100" >
-                <Modal.Dialog size="lg" >
+            <div className="d-flex justify-content-center h-50 w-100">
+                <Modal.Dialog size="lg">
                     <Modal.Header>
                         <Modal.Title>Registracija</Modal.Title>
                     </Modal.Header>
@@ -187,10 +215,20 @@ export default function Registration() {
                                     </Form.Control.Feedback>
                                 </Form.Group>
                             </div>
-                            <Form.Group className="mb-3 m-2 hidden"  controlId="formBasicBiography"  >
-                                <Form.Label  >Biografija</Form.Label>
-                                <Form.Control disabled={!isFishingInstructor} as="textarea" rows={2} onChange={e => setField('biography', e.target.value)}/>
-                            </Form.Group>
+                            <Collapse in={openForInstructor} dimension="height">
+                                <Form.Group className="mb-3 m-2 hidden" controlId="formBasicBiography">
+                                    <Form.Label>Biografija</Form.Label>
+                                    <Form.Control as="textarea" rows={2}
+                                                  onChange={e => setField('biography', e.target.value)}/>
+                                </Form.Group>
+                            </Collapse>
+                            <Collapse in={openForOtherVendors} dimension="height">
+                                <Form.Group className="mb-3 m-2 hidden" controlId="formBasicRegistrationReason">
+                                    <Form.Label>Zahtev za registraciju</Form.Label>
+                                    <Form.Control as="textarea" rows={2}
+                                                  onChange={e => setField('ration', e.target.value)}/>
+                                </Form.Group>
+                            </Collapse>
                         </Form>
                         <Form className="d-flex gap-4">
                             <Form.Group className="mb-3 m-2" controlId="formNumOfAddress">
