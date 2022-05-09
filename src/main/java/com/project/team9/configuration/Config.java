@@ -4,15 +4,11 @@ import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
-import com.project.team9.model.reservation.AdventureReservation;
-import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.resource.Adventure;
-import com.project.team9.model.user.Client;
-import com.project.team9.model.user.Client;
 import com.project.team9.model.resource.VacationHouse;
-import com.project.team9.model.user.UserRole;
+import com.project.team9.model.user.Client;
+import com.project.team9.model.user.Role;
 import com.project.team9.model.user.vendor.FishingInstructor;
-import com.project.team9.model.user.vendor.RegistrationType;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.*;
 import org.springframework.boot.CommandLineRunner;
@@ -20,7 +16,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -38,9 +33,21 @@ public class Config {
             ImageRepository imageRepository,
             ClientRepository clientRepository,
             VacationHouseOwnerRepository vacationHouseOwnerRepository,
-            VacationHouseRepository vacationHouseRepository
+            VacationHouseRepository vacationHouseRepository,
+            RoleRepository roleRepository
     ) {
+
         return args -> {
+            Role roleClient=new Role("CLIENT");
+            Role roleFishingInstructor=new Role("FISHING_INSTRUCTOR");
+            Role roleVacationHouseOwner=new Role("VACATION_HOUSE_OWNER");
+            Role roleBoatOwner=new Role("BOAT_OWNER");
+            roleRepository.save(roleClient);
+            roleRepository.save(roleFishingInstructor);
+            roleRepository.save(roleVacationHouseOwner);
+            roleRepository.save(roleBoatOwner);
+
+
             Address fishingInstructorAddress = new Address("Novi Sad", "23", "Bulevar Cara Lazara", "Srbija");
             addressRepository.save(fishingInstructorAddress);
             FishingInstructor fishingInstructor = new FishingInstructor(
@@ -50,10 +57,11 @@ public class Config {
                     "petar.jovanovic@email.com",
                     "0601233215",
                     fishingInstructorAddress,
-                    UserRole.FISHING_INSTRUCTOR,
                     false,
                     "Imam zavrseni pecaroski fakultet.",
-                    "Jos sam bio savim mlad, neke barske ptice sam lovio tad, kad je dosla da se kupa lepa protina kci."
+                    "Jos sam bio savim mlad, neke barske ptice sam lovio tad, kad je dosla da se kupa lepa protina kci.",
+                    roleFishingInstructor,
+                    new ArrayList<Adventure>()
             );
 
             Address adventureAddress = new Address("Novi Sad", "52a", "Dunav", "Srbija");
@@ -96,7 +104,6 @@ public class Config {
             fishingInstructor.addAdventure(bigAdventure);
             fishingInstructorRepository.save(fishingInstructor);
             adventureRepository.save(bigAdventure);
-
             Address ownerAddress =  new Address("Novi Sad","21","Kralja Petra I","Srbija");
             addressRepository.save(ownerAddress);
             VacationHouseOwner owner = new VacationHouseOwner(
@@ -106,9 +113,9 @@ public class Config {
                     "pericpera@gmail.com",
                     "0600651",
                     ownerAddress,
-                    UserRole.VACATION_HOUSE_OWNER,
                     false,
-                    "registrationRationale");
+                    "registrationRationale",
+                    roleVacationHouseOwner);
             vacationHouseOwnerRepository.save(owner);
             Address houseAddress = new Address("Novi Sad","7","Braće Krkljuš","Srbija");
             addressRepository.save(houseAddress);
@@ -143,9 +150,8 @@ public class Config {
                     "perap@gmail.com",
                     "0601233215",
                     clientAddress,
-                    UserRole.CLIENT,
-                    false
-            );
+                    false,
+                    roleClient);
             clientRepository.save(client);
         };
     }
