@@ -80,10 +80,6 @@ public class VacationHouseService {
         return new VacationHouseDTO(vh.getId(), vh.getTitle(), address, vh.getAddress().getNumber(), vh.getAddress().getStreet(), vh.getAddress().getPlace(), vh.getAddress().getCountry(), vh.getDescription(), images, vh.getRulesAndRegulations(), vh.getAdditionalServices(), vh.getPricelist().getPrice(), vh.getCancellationFee(), vh.getNumberOfRooms(), capacity, vh.getQuickReservations());
     }
 
-    public void updateVacationHouses(VacationHouse house) {
-        repository.save(house);
-    }
-
     public void addVacationHouses(VacationHouse house) {
         repository.save(house);
     }

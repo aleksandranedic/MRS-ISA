@@ -6,13 +6,28 @@ import BeginButton from '../BeginButton';
 import OwnerInfo from '../OwnerInfo';
 import OwnerHouses from './OwnerHouses';
 import AddVacationHouse from './AddVacationHouse';
+import HouseOwnerForm from "./HouseOwnerForm";
 import { useParams } from "react-router-dom";
 import Navigation from "../Navigation/Navigation";
+
+
+const  UpdateOwner = ({show, setShow, owner}) => {
+    if (typeof owner.firstName !== "undefined"){
+        return <HouseOwnerForm show={show} setShow={setShow} owner={owner} />
+    }
+    else {
+        return <></>
+    }
+}
 
 function HouseOwnerPage() {
     const {id} = useParams();
     const [houseOwner, setHouseOwner] = useState({address:''});
     let [ownerHouses, setOwnerHouses] = useState([]);
+
+    const [show, setShow] = useState(false);
+    const handleShow = () => setShow(true);
+    
     const HOST = "http://localhost:4444";  
     const fetchOwnerHouses = () => {
       axios
@@ -48,8 +63,9 @@ function HouseOwnerPage() {
                     {text: "Rezervacije", path: "#sales"},
                     {text: "Izveštaji", path: "#reports"}
                 ]}
-                        editable={true} searchable={true} showProfile={true}/>
+                        editable={true} editFunction={handleShow} searchable={true} showProfile={true}/>
             <AddVacationHouse/>
+            <UpdateOwner show={show} setShow={setShow} owner={houseOwner}/>
             <div className='p-5 pt-0'>
                 <OwnerInfo bio = {houseOwner.registrationRationale}
                     name={houseOwner.firstName + " " + houseOwner.lastName}

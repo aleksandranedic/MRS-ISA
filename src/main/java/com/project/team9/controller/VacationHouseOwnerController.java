@@ -1,5 +1,7 @@
 package com.project.team9.controller;
 
+import com.project.team9.dto.UpdateOwnerDTO;
+import com.project.team9.dto.VacationHouseDTO;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
@@ -9,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 import java.util.List;
 
@@ -45,7 +50,21 @@ public class VacationHouseOwnerController {
         vh.setOwner(vho);
         vacationHouseService.save(vh);
         vho.addVacationHouse(vh);
-        service.save(vho);
+        service.addOwner(vho);
+    }
+    @PostMapping(value = "updateOwner/{id}")
+    public void updateOwner(@PathVariable String id, UpdateOwnerDTO owner) {
+        service.updateOwner(Long.parseLong(id), owner);
+    }
+
+    @PostMapping(value = "checkPassword/{id}", consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Boolean checkPassword(@PathVariable String id, @RequestBody  String oldPassword) {
+        return service.checkPassword(Long.parseLong(id), oldPassword);
+    }
+
+    @PostMapping(value = "updatePassword/{id}",consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void updatePassword(@PathVariable String id, @RequestBody String newPassword) {
+        service.updatePassword(Long.parseLong(id), newPassword);
     }
 
     @PostMapping("/{id}/add")

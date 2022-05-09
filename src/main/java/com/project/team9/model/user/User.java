@@ -164,4 +164,17 @@ public class User implements UserDetails {
     public void setLastPasswordResetDate(Timestamp lastPasswordResetDate) {
         this.lastPasswordResetDate = lastPasswordResetDate;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", password='" + password + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", address=" + address +
+                '}';
+    }
 }
