@@ -6,22 +6,25 @@ import ClientLoyalty from "./ClientLoyalty";
 import UpdateClientInfo from "./UpdateClientInfo"
 import Navigation from "../Navigation/Navigation";
 
-// localStorage.setItem('user', '2');
-//
-// axios.interceptors.request.use(config => {
-//         config.headers.authorization = "Bearer " + localStorage.getItem('token')
-//         return config
-//     }
-// )
+axios.interceptors.request.use(config => {
+        config.headers.authorization = "Bearer " + localStorage.getItem('token')
+        return config
+    }
+)
 const Client = () => {
     const [client, setClient] = useState([]);
 
     let html;
     const fetchClient = () => {
-        // axios.get("http://localhost:4444/client/" + localStorage.getItem('user')).then(res => {
         axios.get("http://localhost:4444/getLoggedUser").then(res => {
             console.log(res);
-            // setClient(res.data);
+            setClient({
+                firstName: res.data.firstName,
+                lastName: res.data.lastName,
+                address: res.data.address,
+                email: res.data.email,
+                phoneNumber: res.data.phoneNumber
+            })
         });
     };
 

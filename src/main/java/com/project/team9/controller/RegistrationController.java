@@ -2,6 +2,7 @@ package com.project.team9.controller;
 
 import com.project.team9.model.request.RegistrationRequest;
 import com.project.team9.service.RegistrationService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,14 +20,14 @@ public class RegistrationController {
     public String register(@RequestBody RegistrationRequest registrationRequest){
         return registrationService.register(registrationRequest);
     }
+
     @GetMapping(path = "/confirm/{token}")
     public ResponseEntity<String> confirm(@PathVariable("token") String token){
-        //ovde treba da ga vratim na login stranicu ne znam kako to jos
         String response=registrationService.confirmToken(token);
         if(response.equals("Vasa verifikacija je uspesna"))
-            return ResponseEntity.ok(response);
+            return new ResponseEntity<String>(response, HttpStatus.OK);
         else
-            return ResponseEntity.badRequest().body(response);
+            return new ResponseEntity<String>(response,HttpStatus.CONFLICT);
     }
 
 }

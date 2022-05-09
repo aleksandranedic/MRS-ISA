@@ -1,8 +1,10 @@
 import React, {useState} from 'react'
 import {Button, Form, Modal} from "react-bootstrap";
-import background from "./images/registration.jpg"
+// import background from "../public/images/registration.jpg"
 import axios from "axios";
 import Collapse from "react-bootstrap/Collapse";
+import {frontLink} from "./Consts";
+import PopUp from "./PopUp";
 
 export default function Registration() {
     const [form, setForm] = useState({})
@@ -14,6 +16,12 @@ export default function Registration() {
     const numExp = new RegExp("[1-9][0-9]*[a-z]?")
     const phoneNumRegExp = new RegExp("^[0-9]{7,10}$")
     const emailRegExp = new RegExp(".+@gmail\\.com")
+
+
+    const [show, setShow] = useState(false)
+    const [text, setText] = useState("")
+    const handleClose = () => setShow(false)
+
 
     const findFormErrors = () => {
         const {firstName, lastName, password, confPass, number, street, place, country, phoneNumber, email, role} = form
@@ -49,9 +57,6 @@ export default function Registration() {
 
         if (role === undefined || !role) newErrors.role = 'Mora te izabrati vrstu korisnika'
 
-        // if (biography === undefined || !biography) newErrors.biography = 'Mora te izabrati vrstu korisnika'
-
-        // if (registrationRationale === undefined || !registrationRationale) newErrors.registrationRationale = 'Mora te izabrati vrstu korisnika'
         return newErrors
 
     }
@@ -81,22 +86,14 @@ export default function Registration() {
             }
             console.log(userDTO)
             registerUser(userDTO)
-            // handleClose()
         }
     }
 
     function registerUser(userDTO) {
         axios.post("http://localhost:4444/registration", userDTO).then(res => {
             console.log(res.data)
-            // uradi pop up za dobar zahtev
-            //     if (res.data!==null && res.data > 0) {
-            //         localStorage.setItem('user', res.data)
-            //         setText("Uspesno ste se ulogovali")
-            //         handleShow()
-            //     } else {
-            //         setText("Ne postoji ovaj klijent u bazi")
-            //         handleShow()
-            //     }
+            setText(res.data)
+            setShow(true)
         })
     }
 
@@ -128,9 +125,9 @@ export default function Registration() {
         })
     }
     return (
-        <div className="m-0 p-0 min-vw-90 min-vh-100" style={{
-            backgroundImage: `url(${background})`, backgroundSize: "cover",
-        }}>
+        <div className="m-0 p-0 min-vw-90 min-vh-100"
+             // style={{backgroundImage: `url(${background})`, backgroundSize: "cover",}}
+        >
             <div className="d-flex justify-content-center h-50 w-100">
                 <Modal.Dialog size="lg">
                     <Modal.Header>
@@ -272,7 +269,7 @@ export default function Registration() {
                         </Form>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="btn btn-outline-primary">
+                        <Button variant="btn btn-outline-primary" href={frontLink+"login"}>
                             Prijavi se
                         </Button>
                         <Button variant="success" onClick={handleSubmit}>
@@ -281,6 +278,7 @@ export default function Registration() {
                     </Modal.Footer>
                 </Modal.Dialog>
             </div>
+            <PopUp text={text} handleClose={handleClose} show={show}/>
         </div>
     );
 }
