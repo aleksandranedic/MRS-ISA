@@ -145,14 +145,15 @@ public class RegistrationService {
     }
 
     public String confirmToken(String token) {
-        ConfirmationToken confirmationToken = confirmationTokenService.getToken(token).orElseThrow(() -> new IllegalStateException("token not found"));
+        ConfirmationToken confirmationToken = confirmationTokenService.getToken(token).orElse(null);
+        if(confirmationToken==null)
+            return "Token ne postoji";
         if (confirmationToken.getConfirmedAt() != null) {
-            return "Vas email je vec verifikovan"; //da se ne baca exception nego nesto drguo da se javi
+            return "Vas email je vec verifikovan";
         }
         LocalDateTime expiredAt = confirmationToken.getExpiresAt();
         if (expiredAt.isBefore(LocalDateTime.now())) {
             return "Vas verifikacioni token je istekao";
-//            throw new IllegalStateException("token expired");   //da se ne baca exception nego nesto drguo da se javi
         }
         confirmationTokenService.setConfirmedAt(token);
         User user = (User) userServiceSecurity.loadUserByUsername(confirmationToken.getUser().getEmail());

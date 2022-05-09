@@ -15,6 +15,7 @@ import {AdminPage} from "./Admin/AdminPage";
 import {RegistrationRequests} from "./Admin/RegistrationRequests";
 import {DeletionRequests} from "./Admin/DeletionRequests";
 
+import {HomePage} from "./Home/HomePage";
 
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
                 <Route path="/search/:searchTerm" element={<SearchResultsPage/>}/>
                 <Route path='/registration' element={<Registration/>}/>
                 <Route path='/confirmedEmail/:token' element={<EmailConfirmed/>}/>
+                <Route path='' element={<HomePage/>}/>
             </Routes>
         </Router>
     );
