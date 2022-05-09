@@ -5,18 +5,37 @@ import com.project.team9.repo.BoatOwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BoatOwnerService {
-    private final BoatOwnerRepository boatOwnerRepository;
+
+    private final BoatOwnerRepository repository;
+
 
     @Autowired
-    public BoatOwnerService(BoatOwnerRepository boatOwnerRepository) {
-        this.boatOwnerRepository = boatOwnerRepository;
+    public BoatOwnerService(BoatOwnerRepository repository) {
+        this.repository = repository;
     }
 
-    public BoatOwner addClient(BoatOwner boatOwner) {
-        return boatOwnerRepository.save(boatOwner);
+    public BoatOwner getOwner(Long id) {
+        return repository.getById(id);
     }
+
+    public void addOwner(BoatOwner owner) {
+        repository.save(owner);
+    }
+
+    public void deleteById(Long id) {
+        repository.deleteById(id);
+    }
+
+    public BoatOwner save(BoatOwner owner) {
+        return repository.save(owner);
+    }
+
+    public List<BoatOwner> getAll() {
+        return repository.findAll();
 
     public BoatOwner getBoatOwnerByEmail(String username) {
         return boatOwnerRepository.findByEmail(username);

@@ -94,6 +94,10 @@ public abstract class Resource {
         this.additionalServices = additionalServices;
     }
 
+    public void addAdditionalService(Tag additionalService) {
+        additionalServices.add(additionalService);
+    }
+
     public Pricelist getPricelist() {
         return pricelist;
     }
@@ -124,5 +128,20 @@ public abstract class Resource {
 
     public void addImage(Image image) {
         this.images.add(image);
+    }
+
+    @Override
+    public String toString() {
+        return "Resource{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", address=" + address +
+                ", description='" + description + '\'' +
+                ", images=" + images +
+                ", rulesAndRegulations='" + rulesAndRegulations + '\'' +
+                ", additionalServices=" + additionalServices +
+                ", pricelist=" + pricelist +
+                ", cancellationFee=" + cancellationFee +
+                '}';
     }
 }

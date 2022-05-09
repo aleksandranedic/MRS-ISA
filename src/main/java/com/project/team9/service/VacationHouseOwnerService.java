@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class VacationHouseOwnerService {
@@ -37,5 +36,8 @@ public class VacationHouseOwnerService {
 
     public VacationHouseOwner getVacationHouseOwnerByEmail(String username) {
         return repository.findByEmail(username);
+    }
+    public List<VacationHouseOwner> getAll() {
+        return repository.findAll();
     }
 }

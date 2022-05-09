@@ -1,9 +1,6 @@
 package com.project.team9.model.request;
 
-import com.project.team9.model.user.User;
-
 import javax.persistence.Entity;
-import javax.persistence.Id;
 
 @Entity
 public class DeleteRequest extends Request{

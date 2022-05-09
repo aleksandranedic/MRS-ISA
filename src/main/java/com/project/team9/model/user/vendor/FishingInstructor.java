@@ -35,6 +35,14 @@ public class FishingInstructor extends Vendor {
     }
 
 
+    public String getBiography() {
+        return biography;
+    }
+
+    public void setBiography(String biography) {
+        this.biography = biography;
+    }
+
     public void addAdventure(Adventure adventure) {
         this.adventures.add(adventure);
     }

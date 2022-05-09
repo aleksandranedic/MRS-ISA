@@ -5,9 +5,12 @@ import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.resource.Adventure;
+import com.project.team9.model.resource.Boat;
+import com.project.team9.model.user.Client;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.Role;
+import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.*;
@@ -35,6 +38,9 @@ public class Config {
             VacationHouseOwnerRepository vacationHouseOwnerRepository,
             VacationHouseRepository vacationHouseRepository,
             RoleRepository roleRepository
+            VacationHouseRepository vacationHouseRepository,
+            BoatOwnerRepository boatOwnerRepository,
+            BoatRepository boatRepository
     ) {
 
         return args -> {
@@ -93,9 +99,10 @@ public class Config {
                     adventurePricelist,
                     10,
                     fishingInstructor,
-                    2,
-                    fishingEquipment
+                    2
+
             );
+            bigAdventure.setFishingEquipment(fishingEquipment);
 
             bigAdventure.addImage(image1);
             bigAdventure.addImage(image2);
@@ -123,9 +130,9 @@ public class Config {
             pricelistRepository.save(housePriceList);
             VacationHouse vacationHouse = new VacationHouse("Lepa Brena", houseAddress, "lepa, velika, zuta zgrada blizu centra", "Dozvoljeno slušanje Čole, zyabranjeno smaranje",housePriceList,10,owner,5,3);
             owner.addVacationHouse(vacationHouse);
-            Image vhImg1 = new Image("./images/vikendica1.jpeg");
-            Image vhImg2 = new Image("./images/vikendica2.jpeg");
-            Image vhImg3 = new Image("./images/vikendica3.jpeg");
+            Image vhImg1 = new Image("/images/houses/2/vikendica1.jpeg");
+            Image vhImg2 = new Image("/images/houses/2/vikendica2.jpeg");
+            Image vhImg3 = new Image("/images/houses/2/vikendica3.jpeg");
             ArrayList<Tag> additionalServices =new ArrayList<Tag>();
             additionalServices.add(new Tag("Bazen"));
             additionalServices.add(new Tag("Pet-friendly"));
@@ -140,6 +147,41 @@ public class Config {
             vacationHouse.addImage(vhImg3);
             vacationHouse.setAdditionalServices(additionalServices);
             vacationHouseRepository.save(vacationHouse);
+
+
+            Address boatOwnerAddress =  new Address("Novi Sad","21","Kralja Milutina","Srbija");
+            addressRepository.save(boatOwnerAddress);
+            BoatOwner boatOwner = new BoatOwner("1", "Lena", "Leric", "lericlena@gmail.com", "0651525", boatOwnerAddress, RegistrationType.BoatOwner ,"registrationRationale");
+            boatOwnerRepository.save(boatOwner);
+            Address boatAddress = new Address("Novi Sad","7","Ribarsko ostrvo","Srbija");
+            addressRepository.save(boatAddress);
+            Pricelist boatPriceList = new Pricelist(70, new Date());
+            pricelistRepository.save(boatPriceList);
+            List<Tag> navigationEquipment = new ArrayList<Tag>();
+            navigationEquipment.add(new Tag("GPS"));
+            navigationEquipment.add(new Tag("Radar"));
+            tagRepository.saveAll(navigationEquipment);
+            List<Tag> fishingEquipmentBoat = new ArrayList<Tag>();
+            fishingEquipmentBoat.add(new Tag("Štap za pecanje"));
+            fishingEquipmentBoat.add(new Tag("2 udice"));
+            tagRepository.saveAll(fishingEquipmentBoat);
+            List<Tag> additionalServicesBoat = new ArrayList<Tag>();
+            additionalServicesBoat.add(new Tag("Bazen"));
+            additionalServicesBoat.add(new Tag("Ručak"));
+            tagRepository.saveAll(additionalServicesBoat);
+            Boat boat = new Boat("Bela ladja", boatAddress, "Veliki, beli, lepi brod kao na filmu", "Dozvoljeno unosene hrane, zabranjeno skakanje sa broda", boatPriceList, 12, boatOwner, "Jahta", 50.5, "tri motora", 23 ,115.5, navigationEquipment, fishingEquipmentBoat, additionalServicesBoat,72);
+            boatOwner.addBoat(boat);
+            Image boatImg1 = new Image("/images/boats/3/boat1.jpg");
+            Image boatImg2 = new Image("/images/boats/3/boat2.jpg");
+            Image boatImg3 = new Image("/images/boats/3/boat3.jpg");
+            imageRepository.save(boatImg1);
+            imageRepository.save(boatImg2);
+            imageRepository.save(boatImg3);
+            boat.addImage(boatImg1);
+            boat.addImage(boatImg2);
+            boat.addImage(boatImg3);
+            boatRepository.save(boat);
+            boatOwnerRepository.save(boatOwner);
 
             Address clientAddress=new Address("Novi Sad", "16", "Puskinova", "Srbija");
             addressRepository.save(clientAddress);

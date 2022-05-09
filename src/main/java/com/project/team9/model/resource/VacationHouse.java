@@ -63,4 +63,14 @@ public class VacationHouse extends Resource{
     public void setQuickReservations(List<VacationHouseReservation> quickReservations) {
         this.quickReservations = quickReservations;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "VacationHouse{" +
+                "owner=" + owner +
+                ", numberOfRooms=" + numberOfRooms +
+                ", numberOfBedsPerRoom=" + numberOfBedsPerRoom +
+                ", quickReservations=" + quickReservations +
+                '}';
+    }
 }

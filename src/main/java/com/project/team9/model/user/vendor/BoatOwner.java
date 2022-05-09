@@ -1,16 +1,17 @@
 package com.project.team9.model.user.vendor;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.Address;
-import com.project.team9.model.user.Role;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class BoatOwner extends Vendor {
-    @OneToMany
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+public class BoatOwner extends Vendor{
+   @OneToMany
     List<Boat> boats;
 
     public BoatOwner() {
@@ -36,7 +37,7 @@ public class BoatOwner extends Vendor {
     }
 
     public Boat getBoat(int id) {
-        for (Boat b : boats) {
+        for (Boat b: boats) {
             if (b.getId() == id) {
                 return b;
             }
