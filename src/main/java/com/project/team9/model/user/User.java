@@ -1,14 +1,13 @@
 package com.project.team9.model.user;
 
 import com.project.team9.model.Address;
+import org.hibernate.mapping.Array;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @MappedSuperclass
 public class User implements UserDetails {
@@ -29,21 +28,17 @@ public class User implements UserDetails {
     private String phoneNumber;
     @OneToOne
     private Address address;
-    @Enumerated(EnumType.STRING)
     private Boolean enabled = false;
     private Boolean deleted = false;
     private Timestamp lastPasswordResetDate;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            joinColumns = @JoinColumn(referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(referencedColumnName = "id"))
-    private List<Role> roles;
+    @ManyToOne
+    private Role role;
 
     public User() {
     }
 
-    public User(String password, String firstName, String lastName, String email, String phoneNumber, Address address, Boolean deleted, List<Role> roles) {
+    public User(String password, String firstName, String lastName, String email, String phoneNumber, Address address, Boolean deleted, Role role) {
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -51,17 +46,17 @@ public class User implements UserDetails {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.deleted = deleted;
-        this.roles = roles;
+        this.role = role;
     }
 
-    public User(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, List<Role> roles) {
+    public User(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, Role role) {
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.deleted = deleted;
-        this.roles = roles;
+        this.role = role;
         this.address = new Address(place, number, street, country);
     }
 
@@ -85,7 +80,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles;
+        return new ArrayList<Role>(Arrays.asList(this.role));
     }
 
     @Override

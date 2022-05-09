@@ -20,13 +20,13 @@ public class VacationHouseOwner extends Vendor {
         vacationHouses = new ArrayList<VacationHouse>();
     }
 
-    public VacationHouseOwner(String password, String firstName, String lastName, String email, String phoneNumber, Address address, Boolean deleted, String registrationRationale, List<Role> roles) {
-        super(password, firstName, lastName, email, phoneNumber, address, deleted, registrationRationale, roles);
+    public VacationHouseOwner(String password, String firstName, String lastName, String email, String phoneNumber, Address address, Boolean deleted, String registrationRationale, Role role) {
+        super(password, firstName, lastName, email, phoneNumber, address, deleted, registrationRationale, role);
         vacationHouses = new ArrayList<>();
     }
 
-    public VacationHouseOwner(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, String registrationRationale, List<Role> roles) {
-        super(password, firstName, lastName, email, phoneNumber, place, number, street, country, deleted, registrationRationale, roles);
+    public VacationHouseOwner(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, String registrationRationale, Role role) {
+        super(password, firstName, lastName, email, phoneNumber, place, number, street, country, deleted, registrationRationale, role);
         vacationHouses = new ArrayList<>();
     }
 

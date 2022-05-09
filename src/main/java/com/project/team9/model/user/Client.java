@@ -10,12 +10,12 @@ import java.util.List;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Client extends User {
 
-    public Client(String password, String firstName, String lastName, String email, String phoneNumber, Address address, Boolean deleted, List<Role> roles) {
-        super(password, firstName, lastName, email, phoneNumber, address,  deleted, roles);
+    public Client(String password, String firstName, String lastName, String email, String phoneNumber, Address address, Boolean deleted, Role role) {
+        super(password, firstName, lastName, email, phoneNumber, address,  deleted, role);
     }
 
-    public Client(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, List<Role> roles) {
-        super(password, firstName, lastName, email, phoneNumber, place, number, street, country,  deleted, roles);
+    public Client(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, Role role) {
+        super(password, firstName, lastName, email, phoneNumber, place, number, street, country,  deleted, role);
     }
 
     public Client() {

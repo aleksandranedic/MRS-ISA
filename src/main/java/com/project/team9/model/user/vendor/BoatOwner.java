@@ -17,13 +17,13 @@ public class BoatOwner extends Vendor {
         this.boats = new ArrayList<Boat>();
     }
 
-    public BoatOwner(String password, String firstName, String lastName, String email, String phoneNumber, Address address, Boolean deleted, String registrationRationale, List<Boat> boats, List<Role> roles) {
-        super(password, firstName, lastName, email, phoneNumber, address, deleted, registrationRationale, roles);
+    public BoatOwner(String password, String firstName, String lastName, String email, String phoneNumber, Address address, Boolean deleted, String registrationRationale, List<Boat> boats, Role role) {
+        super(password, firstName, lastName, email, phoneNumber, address, deleted, registrationRationale, role);
         this.boats = boats;
     }
 
-    public BoatOwner(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, String registrationRationale, List<Boat> boats, List<Role> roles) {
-        super(password, firstName, lastName, email, phoneNumber, place, number, street, country, deleted, registrationRationale, roles);
+    public BoatOwner(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, String registrationRationale, List<Boat> boats, Role role) {
+        super(password, firstName, lastName, email, phoneNumber, place, number, street, country, deleted, registrationRationale, role);
         this.boats = boats;
     }
 

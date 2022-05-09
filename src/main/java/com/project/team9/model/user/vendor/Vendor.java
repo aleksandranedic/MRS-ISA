@@ -14,13 +14,13 @@ public class Vendor extends User {
     public Vendor() {
     }
 
-    public Vendor(String password, String firstName, String lastName, String email, String phoneNumber, Address address, Boolean deleted, String registrationRationale, List<Role> roles) {
-        super(password, firstName, lastName, email, phoneNumber, address,  deleted, roles);
+    public Vendor(String password, String firstName, String lastName, String email, String phoneNumber, Address address, Boolean deleted, String registrationRationale, Role role) {
+        super(password, firstName, lastName, email, phoneNumber, address,  deleted, role);
         this.registrationRationale = registrationRationale;
     }
 
-    public Vendor(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, String registrationRationale, List<Role> roles) {
-        super(password, firstName, lastName, email, phoneNumber, place, number, street, country, deleted, roles);
+    public Vendor(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, String registrationRationale, Role role) {
+        super(password, firstName, lastName, email, phoneNumber, place, number, street, country, deleted, role);
         this.registrationRationale = registrationRationale;
     }
 

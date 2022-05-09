@@ -22,15 +22,15 @@ public class FishingInstructor extends Vendor {
         this.adventures = new ArrayList<>();
     }
 
-    public FishingInstructor(String password, String firstName, String lastName, String email, String phoneNumber, Address address, Boolean deleted, String registrationRationale, String biography, List<Role> roles) {
-        super(password, firstName, lastName, email, phoneNumber, address, deleted, registrationRationale, roles);
-        this.adventures = new ArrayList<>();
+    public FishingInstructor(String password, String firstName, String lastName, String email, String phoneNumber, Address address, Boolean deleted, String registrationRationale, String biography, Role role,List<Adventure> adventures) {
+        super(password, firstName, lastName, email, phoneNumber, address, deleted, registrationRationale, role);
+        this.adventures =adventures;
         this.biography = biography;
     }
 
-    public FishingInstructor(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, String registrationRationale, String biography, List<Role> roles) {
-        super(password, firstName, lastName, email, phoneNumber, place, number, street, country, deleted, registrationRationale, roles);
-        this.adventures = new ArrayList<>();
+    public FishingInstructor(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, String registrationRationale, String biography, Role role,List<Adventure> adventures) {
+        super(password, firstName, lastName, email, phoneNumber, place, number, street, country, deleted, registrationRationale, role);
+        this.adventures =adventures;
         this.biography = biography;
     }
 
