@@ -1,6 +1,6 @@
 package com.project.team9.service;
 
-import com.project.team9.email.EmailSender;
+import com.project.team9.security.email.EmailSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +15,9 @@ import javax.mail.internet.MimeMessage;
 @Service
 public class EmailService implements EmailSender {
 
-    private final static Logger LOGGER= LoggerFactory.getLogger(EmailService.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
 
-    private final JavaMailSender  mailSender;
+    private final JavaMailSender mailSender;
 
     @Autowired
     public EmailService(JavaMailSender mailSender) {
@@ -28,15 +28,15 @@ public class EmailService implements EmailSender {
     @Override
     @Async
     public void send(String to, String email) {
-        try{
-            MimeMessage mimeMessage=mailSender.createMimeMessage();
-            MimeMessageHelper helper=new MimeMessageHelper(mimeMessage,"utf-8");
-            helper.setText(email,true);
-            helper.setTo(to);
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+            helper.setText(email, true);
+            helper.setTo("tim9raketa+" + to);
             helper.setSubject("Confirm your email");
-            helper.setFrom("jasamperojasampero@gmail.com");
+            helper.setFrom("tim9raketa@gmail.com");
             mailSender.send(mimeMessage);
-        }catch (MessagingException e){
+        } catch (MessagingException e) {
             LOGGER.error("failed to send email,e");
             throw new IllegalStateException("failed to send email");
         }
