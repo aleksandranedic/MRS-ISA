@@ -2,7 +2,7 @@ import React from 'react'
 import {Button, Modal} from "react-bootstrap";
 import {Info} from "./Info";
 
-export default function LoginPopUp({show, handleClose, text}) {
+export default function PopUp({show, handleClose, text}) {
     return (
         <Modal show={show} onHide={handleClose} size="sm" className="mt-lg-5">
             <Modal.Header closeButton>

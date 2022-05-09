@@ -2,21 +2,22 @@ import React, {useState} from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 import {Form} from "react-bootstrap";
 import axios from "axios";
-import LoginPopUp from "./LoginPopUp";
-
+import PopUp from "./PopUp";
+import Button from "react-bootstrap/Button";
+import {frontLink} from "./Consts";
 
 
 export default function Login() {
     function handleValidateLogIn({email, password}) {
-        let loginDto={
-            username:email,
-            password:password
+        let loginDto = {
+            username: email,
+            password: password
         }
-        axios.post("http://localhost:4444/login",loginDto).then(res => {
+        axios.post("http://localhost:4444/login", loginDto).then(res => {
             console.log(res.data)
-            localStorage.setItem("token",res.data)
+            localStorage.setItem("token", res.data)
             //jwt token treba da prosledjujes u samom zahtev znaci nesto sa axios i tako dalje
-            window.location.href="http://localhost:3000/registration" //ovde treba sad preusmeriti na client profil
+            window.location.href = frontLink //ovde treba sad preusmeriti na client profil
         })
     }
 
@@ -42,6 +43,14 @@ export default function Login() {
         if (!email || !emailRegExp.test(email)) newErrors.email = 'cannot be blank! must have @ and .com'
 
         return newErrors
+    }
+
+    function redirectToRegistration() {
+        window.location.href = "http://localhost:3000/registration"
+    }
+
+    function redirectToHomePage() {
+        window.location.href = "http://localhost:3000"
     }
 
     const handleSubmit = e => {
@@ -93,13 +102,14 @@ export default function Login() {
                 <button onClick={handleSubmit} type="submit" className="btn btn-primary btn-block mt-2">Submit
                 </button>
                 <div className="d-flex flex-column mt-5 pt-lg-5">
-                    <label>Don't have an account?</label>
-                    <button className="btn btn-primary btn-block mt-2">Register</button>
-                    <label>Want to explore?</label>
-                    <button className="btn btn-primary btn-block mt-2">Log in as a guest</button>
+                    <label>Želite da se registrujete?</label>
+                    <Button className="btn btn-primary btn-block mt-2"
+                            href={frontLink + "registration"}>Registracija</Button>
+                    <label>Da li želite da posetite sajt?</label>
+                    <Button className="btn btn-primary btn-block mt-2" href={frontLink}>Nazad na početnu stranu</Button>
                 </div>
             </div>
-            <LoginPopUp text={text} show={show} handleClose={handleClose}/>
+            <PopUp text={text} show={show} handleClose={handleClose}/>
         </div>
     )
 }

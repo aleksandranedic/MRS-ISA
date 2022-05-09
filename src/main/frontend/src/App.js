@@ -11,7 +11,7 @@ import {SearchResultsPage} from "./Search/SearchResultsPage";
 import Registration from "./Registration";
 import EmailConfirmed from "./EmailConfirmed";
 import Login from "./LogIn";
-
+import {HomePage} from "./Home/HomePage";
 
 
 function App() {
@@ -29,6 +29,7 @@ function App() {
                 <Route path="/search/:searchTerm" element={<SearchResultsPage/>}/>
                 <Route path='/registration' element={<Registration/>}/>
                 <Route path='/confirmedEmail/:token' element={<EmailConfirmed/>}/>
+                <Route path='' element={<HomePage/>}/>
             </Routes>
         </Router>
     );
