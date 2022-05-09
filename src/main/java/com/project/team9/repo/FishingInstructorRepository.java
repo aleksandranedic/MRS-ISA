@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface FishingInstructorRepository extends JpaRepository<FishingInstructor, Long> {
-    Optional<FishingInstructor> findByEmail(String email);
+    FishingInstructor findByEmail(String email);
 }

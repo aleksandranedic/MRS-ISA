@@ -11,11 +11,5 @@ import java.util.Optional;
 
 @Repository
 public interface ClientRepository extends JpaRepository<Client,Long> {
-    Optional<Client> findByEmail(String email);
-
-    @Transactional
-    @Modifying
-    @Query("UPDATE Client a " +
-            "SET a.enabled = TRUE WHERE a.email = ?1")
-    int enableAppUser(String email);
+    Client findByEmail(String email);
 }
