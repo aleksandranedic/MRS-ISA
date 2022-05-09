@@ -78,7 +78,7 @@ export default function Navigation(props) {
                         {props.showProfile && <Button variant="outline-light"
                                                       className="border-0 p-0 ms-2 d-flex justify-content-right align-items-center"
                                                       width="2rem" height="1rem"
-                                                      href="http://localhost:3000/fishingInstructor">
+                                                      href="">
                             <BsPerson style={{width: '2rem', height: '1rem', color: "rgb(106,106,106)"}}/>
                         </Button>}
                         {props.editable && <Button variant="outline-light"
