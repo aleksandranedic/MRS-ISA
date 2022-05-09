@@ -1,5 +1,5 @@
 import React from 'react'
-import {AddressInfo, Info} from "./Info";
+import {AddressInfo, Info} from "../Info";
 
 export default function ClientInfo({firstName, lastName, email, phoneNumber, address, biography}) {
   return (

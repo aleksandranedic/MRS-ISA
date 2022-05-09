@@ -36,10 +36,12 @@ public class ClientService {
     public Client getClientByEmailAndPassword(LoginDTO loginDTO){
         for (Client client :
                 clientRepository.findAll()) {
-            if(client.getPassword().equals(loginDTO.getPassword()) && client.getEmail().equals(loginDTO.getEmail())){
+            if(client.getPassword().equals(loginDTO.getPassword()) && client.getEmail().equals(loginDTO.getUsername())){
                 return client;
             }
         }
         return null;
     }
+    public Client getClientByEmail(String email) {return clientRepository.findByEmail(email);}
+
 }

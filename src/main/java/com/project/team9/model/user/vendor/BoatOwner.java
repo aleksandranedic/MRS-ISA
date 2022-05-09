@@ -3,6 +3,7 @@ package com.project.team9.model.user.vendor;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.Address;
+import com.project.team9.model.user.Role;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -18,14 +19,14 @@ public class BoatOwner extends Vendor{
         this.boats = new ArrayList<Boat>();
     }
 
-    public BoatOwner(String password, String firstName, String lastName, String email, String phoneNumber, Address address, RegistrationType registrationType, String registrationRationale) {
-        super(password, firstName, lastName, email, phoneNumber, address, registrationType, registrationRationale);
-        this.boats = new ArrayList<Boat>();
+    public BoatOwner(String password, String firstName, String lastName, String email, String phoneNumber, Address address, Boolean deleted, String registrationRationale, List<Boat> boats, Role role) {
+        super(password, firstName, lastName, email, phoneNumber, address, deleted, registrationRationale, role);
+        this.boats = boats;
     }
 
-    public BoatOwner(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, RegistrationType registrationType, String registrationRationale) {
-        super(password, firstName, lastName, email, phoneNumber, place, number, street, country, registrationType, registrationRationale);
-        this.boats = new ArrayList<Boat>();
+    public BoatOwner(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, String registrationRationale, List<Boat> boats, Role role) {
+        super(password, firstName, lastName, email, phoneNumber, place, number, street, country, deleted, registrationRationale, role);
+        this.boats = boats;
     }
 
     public void addBoat(Boat boat) {

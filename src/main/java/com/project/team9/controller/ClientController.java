@@ -15,7 +15,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "client")
-@CrossOrigin("*")
 public class ClientController {
 
     private final ClientService clientService;
@@ -34,10 +33,10 @@ public class ClientController {
         return ResponseEntity.ok().body(clientService.getClients());
     }
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Client> getById(@PathVariable String id) {
-        return ResponseEntity.ok().body(clientService.getById(id));
-    }
+//    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public String getById(@PathVariable String id) {
+//        return "ResponseEntity.ok().body(clientService.getById(id))";
+//    }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<Client> updateClient(@PathVariable String id, @RequestBody Client client) {
@@ -65,8 +64,8 @@ public class ClientController {
     public ResponseEntity<DeleteRequest> deleteClient(@PathVariable Long id) {
         DeleteRequest deleteRequest=new DeleteRequest();
         deleteRequest.setUser_id(id);
-        deleteRequest.setText(""); //sta ovde napisati
-        deleteRequest.setResponse(""); //sta ovde napisati
+        deleteRequest.setText(""); //TODO sta ovde napisati
+        deleteRequest.setResponse(""); //TODO sta ovde napisati
         deleteRequestService.addDeleteRequest(deleteRequest);
         return ResponseEntity.ok().body(deleteRequest);
     }
