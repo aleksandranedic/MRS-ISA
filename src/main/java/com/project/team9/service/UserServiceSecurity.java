@@ -2,9 +2,11 @@ package com.project.team9.service;
 
 import com.project.team9.model.Address;
 import com.project.team9.model.user.Client;
+import com.project.team9.model.user.vendor.BoatOwner;
+import com.project.team9.model.user.vendor.FishingInstructor;
+import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.*;
 import com.project.team9.security.token.ConfirmationToken;
-import org.aspectj.apache.bcel.generic.InstructionConstants;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,57 +19,53 @@ import java.util.UUID;
 @Service
 public class UserServiceSecurity implements UserDetailsService {
 
-    private final ClientRepository clientRepository;
-    private final FishingInstructorRepository fishingInstructorRepository;
-    private final VacationHouseOwnerRepository vacationHouseOwnerRepository;
-    private final BoatOwnerRepository boatOwnerRepository;
+    private final ClientService clientService;
+    private final FishingInstructorService fishingInstructorService;
+    private final VacationHouseOwnerService vacationHouseOwnerService;
+    private final BoatOwnerService boatOwnerService;
     private final AddressService addressService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
 
     private final static String USER_NOT_FOUND_MSG = "User with email %s not found";
 
-    public UserServiceSecurity(ClientRepository clientRepository, FishingInstructorRepository fishingInstructorRepository, VacationHouseOwnerRepository vacationHouseOwnerRepository, BoatOwnerRepository boatOwnerRepository, AddressService addressService, BCryptPasswordEncoder bCryptPasswordEncoder, ConfirmationTokenService confirmationTokenService) {
-        this.clientRepository = clientRepository;
-        this.fishingInstructorRepository = fishingInstructorRepository;
-        this.vacationHouseOwnerRepository = vacationHouseOwnerRepository;
-        this.boatOwnerRepository = boatOwnerRepository;
+    public UserServiceSecurity(ClientService clientService, FishingInstructorService fishingInstructorService, VacationHouseOwnerService vacationHouseOwnerService, BoatOwnerService boatOwnerService, AddressService addressService, BCryptPasswordEncoder bCryptPasswordEncoder, ConfirmationTokenService confirmationTokenService) {
+        this.clientService = clientService;
+        this.fishingInstructorService = fishingInstructorService;
+        this.vacationHouseOwnerService = vacationHouseOwnerService;
+        this.boatOwnerService = boatOwnerService;
         this.addressService = addressService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.confirmationTokenService = confirmationTokenService;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        if (clientRepository.findByEmail(email).isPresent())
-            return clientRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, email)));
-        else if (fishingInstructorRepository.findByEmail(email).isPresent())
-            return clientRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, email)));
-        else if (vacationHouseOwnerRepository.findByEmail(email).isPresent())
-            return clientRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, email)));
-        else if (boatOwnerRepository.findByEmail(email).isPresent())
-            return clientRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, email)));
-        return null;
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        if (clientService.getClientByEmail(username) != null) {
+            return clientService.getClientByEmail(username);
+        } else if (fishingInstructorService.getFishingInstructorByEmail(username) != null) {
+            return fishingInstructorService.getFishingInstructorByEmail(username);
+        } else if (vacationHouseOwnerService.getVacationHouseOwnerByEmail(username) != null) {
+            return vacationHouseOwnerService.getVacationHouseOwnerByEmail(username);
+        } else if (boatOwnerService.getBoatOwnerByEmail(username) != null) {
+            return boatOwnerService.getBoatOwnerByEmail(username);
+        } else {
+            throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
+        }
     }
 
-    public String signUpUser(Client user, String email) {
-        if (user == null)
-            return "nije klijent ovo funkcija admina";
-        boolean userExists = clientRepository.findByEmail(user.getEmail()).isPresent();
-        if (userExists) return "korisnik vec postoji";
-
+    public String signUpUser(Client user) {
+        if (clientService.getClientByEmail(user.getUsername()) != null)
+            return "korisnik vec postoji";
         String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
-
         user.setPassword(encodedPassword);
-
         Address address = addressService.getByAttributes(user.getAddress());
         if (address == null) {
             addressService.addAddress(user.getAddress());
         } else {
             user.setAddress(address);
         }
-        clientRepository.save(user);
-
+        clientService.addClient(user);
         String token = UUID.randomUUID().toString();
         ConfirmationToken confirmationToken = new ConfirmationToken(
                 token,
@@ -76,11 +74,21 @@ public class UserServiceSecurity implements UserDetailsService {
                 user
         );
         confirmationTokenService.saveConfirmationToken(confirmationToken);
-
         return token;
     }
+    public void addFishingInstructor(FishingInstructor fishingInstructor){
+        fishingInstructorService.addFishingInstructor(fishingInstructor);
+    }
 
-    public int enableUser(String email) {
-        return clientRepository.enableAppUser(email);
+    public void addBoatOwner(BoatOwner boatOwner){
+        boatOwnerService.addClient(boatOwner);
+    }
+
+    public void addVacationHouseOwner(VacationHouseOwner vacationHouseOwner){
+        vacationHouseOwnerService.addOwner(vacationHouseOwner);
+    }
+
+    public void addClient(Client client){
+        clientService.addClient(client);
     }
 }

@@ -4,6 +4,7 @@ import com.project.team9.exceptions.UserNotFoundException;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.repo.FishingInstructorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,5 +44,12 @@ public class FishingInstructorService {
             fishingInstructor.setPassword(newPassword);
             return repository.save(fishingInstructor);
         }).orElseThrow(()->  new UserNotFoundException(id));
+    }
+
+    public FishingInstructor getFishingInstructorByEmail(String username) {
+        return repository.findByEmail(username);
+    }
+    public FishingInstructor addFishingInstructor(FishingInstructor fishingInstructor){
+        return repository.save(fishingInstructor);
     }
 }
