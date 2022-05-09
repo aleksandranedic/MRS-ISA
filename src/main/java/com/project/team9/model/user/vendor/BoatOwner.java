@@ -3,6 +3,7 @@ package com.project.team9.model.user.vendor;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.Address;
+import com.project.team9.model.user.Role;
 
 import javax.persistence.*;
 import java.util.ArrayList;

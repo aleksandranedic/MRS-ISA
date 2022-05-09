@@ -81,7 +81,7 @@ public class UserServiceSecurity implements UserDetailsService {
     }
 
     public void addBoatOwner(BoatOwner boatOwner){
-        boatOwnerService.addClient(boatOwner);
+        boatOwnerService.save(boatOwner);
     }
 
     public void addVacationHouseOwner(VacationHouseOwner vacationHouseOwner){

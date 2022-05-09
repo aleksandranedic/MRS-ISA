@@ -132,7 +132,7 @@ public class RegistrationService {
                         new ArrayList<Boat>(),
                         role
                 );
-                boatOwnerService.addClient(boatOwner);
+                boatOwnerService.save(boatOwner);
                 response = "Uspesno ste poslali zahtev o registraciji";
 
                 break;

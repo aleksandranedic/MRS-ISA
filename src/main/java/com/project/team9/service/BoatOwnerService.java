@@ -36,8 +36,9 @@ public class BoatOwnerService {
 
     public List<BoatOwner> getAll() {
         return repository.findAll();
+    }
 
     public BoatOwner getBoatOwnerByEmail(String username) {
-        return boatOwnerRepository.findByEmail(username);
+        return repository.findByEmail(username);
     }
 }

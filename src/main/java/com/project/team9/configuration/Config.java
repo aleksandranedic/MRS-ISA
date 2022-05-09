@@ -37,17 +37,16 @@ public class Config {
             ClientRepository clientRepository,
             VacationHouseOwnerRepository vacationHouseOwnerRepository,
             VacationHouseRepository vacationHouseRepository,
-            RoleRepository roleRepository
-            VacationHouseRepository vacationHouseRepository,
+            RoleRepository roleRepository,
             BoatOwnerRepository boatOwnerRepository,
             BoatRepository boatRepository
     ) {
 
         return args -> {
-            Role roleClient=new Role("CLIENT");
-            Role roleFishingInstructor=new Role("FISHING_INSTRUCTOR");
-            Role roleVacationHouseOwner=new Role("VACATION_HOUSE_OWNER");
-            Role roleBoatOwner=new Role("BOAT_OWNER");
+            Role roleClient = new Role("CLIENT");
+            Role roleFishingInstructor = new Role("FISHING_INSTRUCTOR");
+            Role roleVacationHouseOwner = new Role("VACATION_HOUSE_OWNER");
+            Role roleBoatOwner = new Role("BOAT_OWNER");
             roleRepository.save(roleClient);
             roleRepository.save(roleFishingInstructor);
             roleRepository.save(roleVacationHouseOwner);
@@ -75,8 +74,8 @@ public class Config {
 
             Pricelist adventurePricelist = new Pricelist(75, new Date());
             pricelistRepository.save(adventurePricelist);
-            
-            ArrayList<Tag> fishingEquipment =new ArrayList<Tag>();
+
+            ArrayList<Tag> fishingEquipment = new ArrayList<Tag>();
             fishingEquipment.add(new Tag("Stap za pecanje marke BestFishing rod"));
             fishingEquipment.add(new Tag("250g crva"));
             fishingEquipment.add(new Tag("3 udice"));
@@ -111,7 +110,7 @@ public class Config {
             fishingInstructor.addAdventure(bigAdventure);
             fishingInstructorRepository.save(fishingInstructor);
             adventureRepository.save(bigAdventure);
-            Address ownerAddress =  new Address("Novi Sad","21","Kralja Petra I","Srbija");
+            Address ownerAddress = new Address("Novi Sad", "21", "Kralja Petra I", "Srbija");
             addressRepository.save(ownerAddress);
             VacationHouseOwner owner = new VacationHouseOwner(
                     "1",
@@ -124,16 +123,16 @@ public class Config {
                     "registrationRationale",
                     roleVacationHouseOwner);
             vacationHouseOwnerRepository.save(owner);
-            Address houseAddress = new Address("Novi Sad","7","Braće Krkljuš","Srbija");
+            Address houseAddress = new Address("Novi Sad", "7", "Braće Krkljuš", "Srbija");
             addressRepository.save(houseAddress);
             Pricelist housePriceList = new Pricelist(100, new Date());
             pricelistRepository.save(housePriceList);
-            VacationHouse vacationHouse = new VacationHouse("Lepa Brena", houseAddress, "lepa, velika, zuta zgrada blizu centra", "Dozvoljeno slušanje Čole, zyabranjeno smaranje",housePriceList,10,owner,5,3);
+            VacationHouse vacationHouse = new VacationHouse("Lepa Brena", houseAddress, "lepa, velika, zuta zgrada blizu centra", "Dozvoljeno slušanje Čole, zyabranjeno smaranje", housePriceList, 10, owner, 5, 3);
             owner.addVacationHouse(vacationHouse);
             Image vhImg1 = new Image("/images/houses/2/vikendica1.jpeg");
             Image vhImg2 = new Image("/images/houses/2/vikendica2.jpeg");
             Image vhImg3 = new Image("/images/houses/2/vikendica3.jpeg");
-            ArrayList<Tag> additionalServices =new ArrayList<Tag>();
+            ArrayList<Tag> additionalServices = new ArrayList<Tag>();
             additionalServices.add(new Tag("Bazen"));
             additionalServices.add(new Tag("Pet-friendly"));
             additionalServices.add(new Tag("WiFi"));
@@ -149,11 +148,11 @@ public class Config {
             vacationHouseRepository.save(vacationHouse);
 
 
-            Address boatOwnerAddress =  new Address("Novi Sad","21","Kralja Milutina","Srbija");
+            Address boatOwnerAddress = new Address("Novi Sad", "21", "Kralja Milutina", "Srbija");
             addressRepository.save(boatOwnerAddress);
-            BoatOwner boatOwner = new BoatOwner("1", "Lena", "Leric", "lericlena@gmail.com", "0651525", boatOwnerAddress, RegistrationType.BoatOwner ,"registrationRationale");
+            BoatOwner boatOwner = new BoatOwner("1", "Lena", "Leric", "lericlena@gmail.com", "0651525", boatOwnerAddress,false, "registrationRationale",new ArrayList<>(),roleBoatOwner);
             boatOwnerRepository.save(boatOwner);
-            Address boatAddress = new Address("Novi Sad","7","Ribarsko ostrvo","Srbija");
+            Address boatAddress = new Address("Novi Sad", "7", "Ribarsko ostrvo", "Srbija");
             addressRepository.save(boatAddress);
             Pricelist boatPriceList = new Pricelist(70, new Date());
             pricelistRepository.save(boatPriceList);
@@ -169,7 +168,7 @@ public class Config {
             additionalServicesBoat.add(new Tag("Bazen"));
             additionalServicesBoat.add(new Tag("Ručak"));
             tagRepository.saveAll(additionalServicesBoat);
-            Boat boat = new Boat("Bela ladja", boatAddress, "Veliki, beli, lepi brod kao na filmu", "Dozvoljeno unosene hrane, zabranjeno skakanje sa broda", boatPriceList, 12, boatOwner, "Jahta", 50.5, "tri motora", 23 ,115.5, navigationEquipment, fishingEquipmentBoat, additionalServicesBoat,72);
+            Boat boat = new Boat("Bela ladja", boatAddress, "Veliki, beli, lepi brod kao na filmu", "Dozvoljeno unosene hrane, zabranjeno skakanje sa broda", boatPriceList, 12, boatOwner, "Jahta", 50.5, "tri motora", 23, 115.5, navigationEquipment, fishingEquipmentBoat, additionalServicesBoat, 72);
             boatOwner.addBoat(boat);
             Image boatImg1 = new Image("/images/boats/3/boat1.jpg");
             Image boatImg2 = new Image("/images/boats/3/boat2.jpg");
@@ -183,7 +182,7 @@ public class Config {
             boatRepository.save(boat);
             boatOwnerRepository.save(boatOwner);
 
-            Address clientAddress=new Address("Novi Sad", "16", "Puskinova", "Srbija");
+            Address clientAddress = new Address("Novi Sad", "16", "Puskinova", "Srbija");
             addressRepository.save(clientAddress);
             Client client = new Client(
                     "petar123",
