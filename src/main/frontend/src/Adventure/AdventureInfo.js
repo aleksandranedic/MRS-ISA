@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 export default function AdventureInfo({adventure}) {
 
     return (
-        <div className="p-5 pt-3 mt-4">
+        <div id="info" className="p-5 pt-3 mt-4">
             <h4 className="fw-light text-center">
                 {adventure.description}
             </h4>
@@ -16,9 +16,8 @@ export default function AdventureInfo({adventure}) {
                     <div className="m-3">
                         <TagInfo title="Oprema za pecanje" tagList={adventure?.fishingEquipment}/>
                     </div>
-
                     <Info title="Pravila ponasanja" text={adventure?.rulesAndRegulations}/>
-                    <LinkInfo title="Vlasnik" text={adventure?.owner.firstName + " " + adventure?.owner.lastName} link={"http://localhost:3000/fishingInstructor"}/>
+                    <LinkInfo title="Vlasnik" text={adventure?.owner.firstName + " " + adventure?.owner.lastName} link={"http://localhost:3000/fishingInstructor/"+adventure.owner.id}/>
                 </div>
 
                 <div id="right-column" className="w-50">

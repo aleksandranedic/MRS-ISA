@@ -11,6 +11,9 @@ import {SearchResultsPage} from "./Search/SearchResultsPage";
 import Registration from "./Registration";
 import EmailConfirmed from "./EmailConfirmed";
 import Login from "./LogIn";
+import {AdminPage} from "./Admin/AdminPage";
+import {RegistrationRequests} from "./Admin/RegistrationRequests";
+import {DeletionRequests} from "./Admin/DeletionRequests";
 
 
 
@@ -26,6 +29,9 @@ function App() {
                 <Route path="/fishingInstructor/:id" element={<FishingInstructorPage/>}/>
                 <Route path="/boat/:id" element={<BoatProfilePage/>}/>
                 <Route path="/login" element={<Login/>}/>
+                <Route path="/admin" element={<AdminPage/>}/>
+                <Route path="/admin/registrationRequests" element={<RegistrationRequests/>}/>
+                <Route path="/admin/deletionRequests" element={<DeletionRequests/>}/>
                 <Route path="/search/:searchTerm" element={<SearchResultsPage/>}/>
                 <Route path='/registration' element={<Registration/>}/>
                 <Route path='/confirmedEmail/:token' element={<EmailConfirmed/>}/>

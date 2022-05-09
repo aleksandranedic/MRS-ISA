@@ -3,7 +3,7 @@ import {useParams} from "react-router-dom";
 import axios from "axios";
 // import {BsCheckCircle} from "@react-icons/all-files/bs/BsCheckCircle";
 import {BsFillCheckCircleFill} from "react-icons/bs";
-import background from "./images/registration.jpg";
+import background from "./images/fishing3.jpg";
 import {IoCloseCircleSharp} from "react-icons/io5";
 // import {BsFillCheckCircleFill} from "react-icons/all";
 
