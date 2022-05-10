@@ -193,6 +193,7 @@ public class Config {
                     clientAddress,
                     false,
                     roleClient);
+            client.setEnabled(true);
             clientRepository.save(client);
         };
     }

@@ -7,11 +7,23 @@ import {BsFilter, BsPencilSquare, BsSearch, BsPerson} from "react-icons/bs";
 import {FilterModal} from "../Filter/FilterModal";
 
 import {frontLink} from "../Consts";
+import axios from "axios";
 
+axios.interceptors.request.use(config => {
+        config.headers.authorization = "Bearer " + localStorage.getItem('token')
+        return config
+    },
+    error => {
+    return Promise.reject(error)
+    }
+)
 export default function Navigation(props) {
 
     const [searchTerm, setSearchTerm] = useState("");
 
+    function isLoggedIn(){
+        return localStorage.getItem('token') !== "";
+    }
 
     const [open, setOpen] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
@@ -64,6 +76,7 @@ export default function Navigation(props) {
                     </div>
 
                     <div className="d-flex justify-content-center" style={{width:"90%"}}>
+                        <NavigationButton text={"Početna strana"} path={frontLink} key={999999}/>
                         {props.buttons.map(
                             (button, index) => {
                                 return <NavigationButton text={button.text} path={button.path} key={index}/>
@@ -75,10 +88,10 @@ export default function Navigation(props) {
 
 
 
-                        {props.showProfile && <Button variant="outline-light"
+                        {(isLoggedIn()) && <Button variant="outline-light"
                                                       className="border-0 p-0 ms-2 d-flex justify-content-right align-items-center"
                                                       width="2rem" height="1rem"
-                                                      href="http://localhost:3000/fishingInstructor">
+                                                      href={"http://localhost:3000/client"}>
                             <BsPerson style={{width: '2rem', height: '1rem', color: "rgb(106,106,106)"}}/>
                         </Button>}
                         {props.editable && <Button variant="outline-light"
@@ -89,7 +102,7 @@ export default function Navigation(props) {
                     </div>
 
 
-                    {props.loggedIn ?
+                    {(!isLoggedIn()) ?
 
                         <Button className="ms-3 font-monospace"
                         style={{background: "#eaeaea", borderColor: "#eaeaea", color: "#6a6a6a", minWidth: "8rem"}}>
