@@ -32,7 +32,7 @@ export function HomePage() {
                     {text: "Avanture", path: "#adventures"},
                     {text: "Instruktori pecanja", path: "#fishingInstructors"}
                 ]}
-                        editable={false} searchable={false} loggedIn={false}
+                        editable={false} searchable={false} loggedIn={false} showProfile={true}
             />
             <img className="hero-img" src={require("../images/Home1.jpg")} alt={"banner"}/>
 

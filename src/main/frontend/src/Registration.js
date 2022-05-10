@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import {Button, Form, Modal} from "react-bootstrap";
-// import background from "../public/images/registration.jpg"
+import background from "./images/registration1.jpg"
 import axios from "axios";
 import Collapse from "react-bootstrap/Collapse";
 import {frontLink} from "./Consts";
@@ -126,7 +126,7 @@ export default function Registration() {
     }
     return (
         <div className="m-0 p-0 min-vw-90 min-vh-100"
-             // style={{backgroundImage: `url(${background})`, backgroundSize: "cover",}}
+             style={{backgroundImage: `url(${background})`, backgroundSize: "cover",}}
         >
             <div className="d-flex justify-content-center h-50 w-100">
                 <Modal.Dialog size="lg">
