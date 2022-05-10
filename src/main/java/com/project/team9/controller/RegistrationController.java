@@ -27,7 +27,7 @@ public class RegistrationController {
         if(response.equals("Vasa verifikacija je uspesna"))
             return new ResponseEntity<String>(response, HttpStatus.OK);
         else
-            return new ResponseEntity<String>(response,HttpStatus.CONFLICT);
+            return new ResponseEntity<String>(response,HttpStatus.OK);
     }
 
 }
