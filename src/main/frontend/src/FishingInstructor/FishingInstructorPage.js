@@ -8,6 +8,7 @@ import {FishingInstructorForm} from "./FishingInstructorForm";
 import AdventureCarousel from "../Adventure/AdventureCarousel";
 import Navigation from "../Navigation/Navigation";
 import {useParams} from "react-router-dom";
+import {Calendar} from "../Calendar/Calendar";
 
 
 const FishingInstructors = ({id}) => {
@@ -49,21 +50,20 @@ const FishingInstructors = ({id}) => {
 
             <Navigation buttons={
                 [
-                    {text: "Osnovne informacije", path: "#"},
-                    {text: "Avanture", path: "#"},
-                    {text: "Kalendar zauzetosti", path: "#"}
+                    {text: "Osnovne informacije", path: "#info"},
+                    {text: "Avanture", path: "#adventures"},
+                    {text: "Kalendar zauzetosti", path: "#calendar"}
                 ]}
                         editable={true} editFunction={handleShow} searchable={true} showProfile={true}
             />
 
             <FishingInstructorInfo fishingInstructor={fishingInstructor}/>
             <hr className="me-5 ms-5"/>
-            {/*<ImageGallery/>*/}
-            <hr className="me-5 ms-5"/>
+
             <AdventureCarousel adventures={adventures} add={true}/>
             <hr className="me-5 ms-5"/>
             <FishingInstructorForm show={show} setShow={setShow} fishingInstructor={fishingInstructor}/>
-
+            <Calendar adventure={fishingInstructor} reservable={false}/>
         </div>)
     }
 

@@ -6,7 +6,7 @@ import {AddressInfo, Info} from "../Info";
 export function FishingInstructorInfo({fishingInstructor}) {
     console.log(fishingInstructor)
     return (
-        <div className="p-5 pt-3 mt-4">
+        <div className="p-5 pt-3 mt-4" id="info">
             <h4 className="fw-light text-center">
                 {fishingInstructor.biography}
             </h4>

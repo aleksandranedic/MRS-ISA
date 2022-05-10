@@ -1,8 +1,8 @@
 import {Badge, Button, Card, Form, Modal} from "react-bootstrap";
 import React, {useState} from "react";
-import image from "../images/document.png"
+import image from "../images/cover.png"
 
-export function RegistrationRequestCard({props, remove}) {
+export function DeletionRequestCard({props, remove}) {
     const [show, setShow] = useState(false);
 
     function handleSubmit() {
@@ -35,7 +35,7 @@ export function RegistrationRequestCard({props, remove}) {
                     <Modal.Title>{props.name}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <img style={{width:"100%", objectFit: "contain"}} src={image} alt={"Nema dokumenata."}/>
+                    {props.text}
 
                     <hr className="mb-3 mt-3"/>
 
@@ -47,7 +47,6 @@ export function RegistrationRequestCard({props, remove}) {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button onClick={() => setShow(false)} variant="outline-primary" className="ms-auto m-1">Otkaži</Button>
-
                     <Button onClick={handleSubmit} variant="outline-success" className="m-1">Odobri</Button>
                     <Button onClick={handleSubmit} variant="outline-danger" className="m-1">Poništi</Button>
                 </Modal.Footer>

@@ -17,14 +17,17 @@ export function AdventurePage() {
     )
 }
 
+
 const Adventures = ({id})  =>{
 
-    console.log(id);
     const [adventure, setAdventure] = useState([]);
+    const [images, setImages] = useState([]);
+
     let html;
     const fetchAdventures = () => {
         axios.get("http://localhost:4444/adventure/"+ id).then(res => {
             setAdventure(res.data);
+            setImages([]);
         });
     };
 
@@ -40,20 +43,16 @@ const Adventures = ({id})  =>{
             <Banner caption={adventure.title}/>
             <Navigation buttons={
                 [
-                    {text: "Osnovne informacije", path: "#"},
-                    {text: "Fotografije", path: "#"},
-                    {text: "Akcije", path: "#"},
-                    {text: "Kalendar zauzetosti", path: "#"}
+                    {text: "Osnovne informacije", path: "#info"},
+                    // {text: "Fotografije", path: "#"},
+                    // {text: "Akcije", path: "#"},
+                    {text: "Kalendar zauzetosti", path: "#calendar"}
                 ]}
                         editable={true} editFunction={handleShow} searchable={true}
             />
             <AdventureForm show={show} setShow={setShow} adventure={adventure}/>
             <AdventureInfo adventure={adventure}/>
-            {/*<ImagesGallery images={[
-            {original:
-            thumbnail:
-
-            }]} />*/}
+            <Calendar adventure={adventure} reservable={true}/>
             )
         </div>)
     }

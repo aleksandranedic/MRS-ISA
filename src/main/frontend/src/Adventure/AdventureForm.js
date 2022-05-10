@@ -58,25 +58,27 @@ export function AdventureForm({adventure, show, setShow}) {
 
     function addAdventure() {
         axios
-            .post(backLink + "/adventure/add", formValues)
+            .post(backLink + "adventure/add", formValues)
             .then(response => {
                 console.log(response)
             })
             .catch(error => {
                 console.log(error)
             })
+        window.location.reload();
     }
 
     function editAdventure() {
         console.log(adventure.id);
         axios
-            .post(backLink + "/adventure/" + adventure.id + "/edit", formValues)
+            .post(backLink + "adventure/" + adventure.id + "/edit", formValues)
             .then(response => {
                 console.log(response)
             })
             .catch(error => {
                 console.log(error)
             })
+        window.location.reload();
     }
 
     const handleSubmit = e => {

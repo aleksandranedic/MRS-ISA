@@ -35,7 +35,7 @@ export default function AdventureCarousel({adventures, add}) {
     let editable;
     editable = add === true;
 
-    return (<div className="m-5">
+    return (<div className="m-5" id="adventures">
             <Carousel responsive={responsive} interval="25000">
                 {adventures.map((adventure) => {
                         return <AdventureCard key={adventure.id} adventure={adventure} editable={editable}/>
