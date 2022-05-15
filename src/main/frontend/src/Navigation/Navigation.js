@@ -88,7 +88,7 @@ export default function Navigation(props) {
 
 
 
-                        {(isLoggedIn()) && <Button variant="outline-light"
+                        {(!isLoggedIn()) && <Button variant="outline-light"
                                                       className="border-0 p-0 ms-2 d-flex justify-content-right align-items-center"
                                                       width="2rem" height="1rem"
                                                       href={"http://localhost:3000/client"}>

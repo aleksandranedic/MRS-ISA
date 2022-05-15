@@ -2,10 +2,10 @@ import React, {useEffect, useState} from 'react'
 import {useParams} from "react-router-dom";
 import axios from "axios";
 import {BsFillCheckCircleFill} from "react-icons/bs";
+import background from "./images/cover.png";
 import {IoCloseCircleSharp} from "react-icons/io5";
 import Button from "react-bootstrap/Button";
 import {frontLink} from "./Consts";
-import background from "./images/registration1.jpg"
 
 
 export default function EmailConfirmed() {
