@@ -76,7 +76,7 @@ export function ChangeClientPassword({show, setShow}) {
                             </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group className="mb-3 m-2" controlId="newPassword">
-                            <Form.Label>Stara lozinka</Form.Label>
+                            <Form.Label>Nova lozinka</Form.Label>
                             <Form.Control type="password"
                                           onChange={e => setField('newPassword', e.target.value)}
                                           isInvalid={!!errors.newPassword}/>

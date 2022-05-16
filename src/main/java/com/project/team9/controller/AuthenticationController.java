@@ -80,12 +80,12 @@ public class AuthenticationController {
     public ResponseEntity<String> changePassword(@RequestBody PasswordsDTO passwordsDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof AnonymousAuthenticationToken)
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Neuspešno. Ne postoji ulogovani korisnik",HttpStatus.NOT_FOUND);
         User user = (User) authentication.getPrincipal();
         if (user == null)
-            return new ResponseEntity<>("Neuspešno.Pokušajte ponovo",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Neuspešno. Ne postoji ulogovani korisnik",HttpStatus.EXPECTATION_FAILED);
         if (!passwordEncoder.bCryptPasswordEncoder().matches(passwordsDTO.getOldPassword(), user.getPassword()))
-            return new ResponseEntity<>("Neuspešno.Pokušajte ponovo",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Neuspešno. Stara šifra i uneta stara šifra Vam se ne poklapaju",HttpStatus.EXPECTATION_FAILED);
         user.setPassword(passwordEncoder.bCryptPasswordEncoder().encode(passwordsDTO.getNewPassword()));
         user.setLastPasswordResetDate(Timestamp.valueOf(LocalDateTime.now()));
         if (user instanceof Client) {
