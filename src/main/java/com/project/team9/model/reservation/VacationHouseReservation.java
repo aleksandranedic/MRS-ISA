@@ -24,7 +24,7 @@ public class VacationHouseReservation extends Reservation{
         this.resource = vacationHouse;
     }
     public VacationHouseReservation(int numberOfClients, int price) {
-        super(null, numberOfClients, null, price, null);
+        super(null, numberOfClients, null, price, null, false, false);
         this.resource = null;
     }
 

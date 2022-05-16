@@ -81,7 +81,7 @@ export function BoatProfilePage() {
             <hr/>
             <Gallery boat={boat} images={imgs}/>
             <hr/>
-            <QuickReservations/>
+            {/*<QuickReservations/>*/}
         </div>
         <BeginButton/>
     </>
