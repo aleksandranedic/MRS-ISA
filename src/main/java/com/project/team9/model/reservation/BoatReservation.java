@@ -16,8 +16,8 @@ public class BoatReservation extends Reservation{
     public BoatReservation() {
     }
 
-    public BoatReservation(List<Appointment> appointments, int numberOfClients, List<Tag> additionalServices, int price, Client client, Boat boat) {
-        super(appointments, numberOfClients, additionalServices, price, client);
+    public BoatReservation(List<Appointment> appointments, int numberOfClients, List<Tag> additionalServices, int price, Client client, Boat boat, boolean isBusyPeriod, boolean isQuickReservation) {
+        super(appointments, numberOfClients, additionalServices, price, client, isBusyPeriod, isQuickReservation);
         this.resource = boat;
     }
 

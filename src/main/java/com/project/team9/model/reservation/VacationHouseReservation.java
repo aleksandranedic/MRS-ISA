@@ -17,8 +17,8 @@ public class VacationHouseReservation extends Reservation{
     public VacationHouseReservation() {
     }
 
-    public VacationHouseReservation(List<Appointment> appointments, int numberOfClients, List<Tag> additionalServices, int price, Client client, VacationHouse vacationHouse) {
-        super(appointments, numberOfClients, additionalServices, price, client);
+    public VacationHouseReservation(List<Appointment> appointments, int numberOfClients, List<Tag> additionalServices, int price, Client client, VacationHouse vacationHouse, boolean isBusyPeriod, boolean isQuickReservation) {
+        super(appointments, numberOfClients, additionalServices, price, client, isBusyPeriod, isQuickReservation);
         this.resource = vacationHouse;
     }
 

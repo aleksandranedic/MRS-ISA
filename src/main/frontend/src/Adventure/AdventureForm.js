@@ -1,11 +1,19 @@
-import React, {useState} from "react";
-import {Button, Form, Modal} from "react-bootstrap";
+import React, {useRef, useState} from "react";
+import {Button, Col, Form, InputGroup, Modal} from "react-bootstrap";
 import axios from "axios";
 import {backLink, missingDataErrors} from "../Consts";
+import UpdateHouseImages from "../VacationHousePage/UpdateHouseImages";
+import AdventureFormImages from "./AdventureFormImages";
+import {TagInfo} from "../Info";
 
 
 export function AdventureForm({adventure, show, setShow}) {
     let initialState = {}
+
+    const [additionalServicesText, setAdditionalServicesText] = useState('');
+    const [fishingEquipmentText, setFishingEquipmentText] = useState('');
+
+
     if (adventure) {
         initialState = {
             title: adventure.title,
@@ -17,12 +25,13 @@ export function AdventureForm({adventure, show, setShow}) {
             numberOfClients: adventure.numberOfClients,
             price: adventure.pricelist.price,
             cancellationFee: adventure.cancellationFee,
-            additionalServices: "",
+            additionalServices: [],
+            fishingEquipment: adventure.fishingEquipment,
             rulesAndRegulations: adventure.rulesAndRegulations,
             ownerId: adventure.owner.id,
+            images: []
         };
-    }
-    else {
+    } else {
         initialState = {
             title: "",
             description: "",
@@ -33,13 +42,15 @@ export function AdventureForm({adventure, show, setShow}) {
             numberOfClients: "",
             price: "",
             cancellationFee: "",
-            additionalServices: "",
+            additionalServices: [],
+            fishingEquipment: [],
             rulesAndRegulations: "",
             ownerId: 1,
+            images: [],
         };
     }
 
-
+    const imagesRef = useRef();
     const [formValues, setFormValues] = useState(initialState);
     const [formErrors, setFormErrors] = useState({});
 
@@ -89,8 +100,7 @@ export function AdventureForm({adventure, show, setShow}) {
         } else {
             if (adventure) {
                 editAdventure();
-            }
-            else {
+            } else {
                 addAdventure();
             }
         }
@@ -131,6 +141,51 @@ export function AdventureForm({adventure, show, setShow}) {
         return errors;
     }
 
+    const setImages = (value) => {
+        setFormValues({
+                ...formValues,
+                ["images"]: value
+            }
+        )
+    }
+
+    function addAdditionalServicesTag() {
+        let id = 0;
+        if (formValues.additionalServices.length > 0) {
+            id = formValues.additionalServices.at(-1).id + 1;
+        }
+        setFormValues({
+            ...formValues,
+            additionalServices: [...formValues.additionalServices, {id: id, text: additionalServicesText}]
+        })
+
+        setAdditionalServicesText('')
+    }
+
+    function addFishingEquipmentTag() {
+        let id = 0;
+        if (formValues.fishingEquipment.length > 0) {
+            id = formValues.fishingEquipment.at(-1).id + 1;
+        }
+        setFormValues({
+            ...formValues,
+            fishingEquipment: [...formValues.fishingEquipment, {id: id, text: fishingEquipmentText}]
+        })
+
+        setFishingEquipmentText('')
+    }
+
+    function addImages() {
+        let imageList = formValues.images;
+        console.log(imageList);
+
+        for (let file of imagesRef.current.files) {
+            imageList.push(URL.createObjectURL(file))
+        }
+        document.getElementById("noImages").style.display = "none"
+        setField("images", imageList)
+    }
+
     return (
         <>
             <Modal show={show} onHide={() => setShow(false)} size="lg">
@@ -162,7 +217,6 @@ export function AdventureForm({adventure, show, setShow}) {
                                 {formErrors.description}
                             </Form.Control.Feedback>
                         </Form.Group>
-
 
                         <div className="d-flex" id="address">
                             <Form.Group className="mb-3 m-2">
@@ -207,52 +261,97 @@ export function AdventureForm({adventure, show, setShow}) {
                             </Form.Group>
                         </div>
 
-                        <div className="d-flex">
-                            <div className="m-2 w-50">
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Broj klijenata</Form.Label>
-                                    <Form.Control type="text" name="numberOfClients"
-                                                  value={formValues.numberOfClients}
-                                                  onChange={(e) => setField("numberOfClients", e.target.value)}
-                                                  isInvalid={!!formErrors.numberOfClients}/>
-                                    <Form.Control.Feedback type="invalid">
-                                        {formErrors.numberOfClients}
-                                    </Form.Control.Feedback>
-                                </Form.Group>
-                                <Form.Group controlId="images" className="mb-3">
-                                    <Form.Label>Fotografije</Form.Label>
-                                    <Form.Control type="file" multiple/>
-                                </Form.Group>
-                            </div>
-                            <div className="m-2 w-50">
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Cena</Form.Label>
-                                    <Form.Control type="number" name="price"
-                                                  value={formValues.price}
-                                                  onChange={(e) => setField("price", e.target.value)}
-                                                  isInvalid={!!formErrors.price}/>
-                                    <Form.Control.Feedback type="invalid">
-                                        {formErrors.price}
-                                    </Form.Control.Feedback>
-                                </Form.Group>
+                        <Form.Group className="m-2">
+                            <Form.Label>Fotografije avanture</Form.Label>
+                            <AdventureFormImages images={formValues.images} setImages={setImages}/>
+                            <p id="noImages" style={{
+                                color: "#dc3545",
+                                fontSize: "0.875em",
+                                marginLeft: "34%",
+                                display: "none"
+                            }}>Molimo Vas postavite bar jednu fotografiju.</p>
+                            <InputGroup className="mb-3">
+                                <Form.Control ref={imagesRef} type="file" multiple name="images"/>
+                                <Button variant="primary" id="button-addon2" onClick={e => addImages()}> Dodaj </Button>
+                            </InputGroup>
+                        </Form.Group>
 
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Naknada za otkazivanje</Form.Label>
-                                    <Form.Control type="number" name="cancellationFee"
-                                                  value={formValues.cancellationFee}
-                                                  onChange={(e) => setField("cancellationFee", e.target.value)}
-                                                  isInvalid={!!formErrors.cancellationFee}/>
-                                    <Form.Control.Feedback type="invalid">
-                                        {formErrors.cancellationFee}
-                                    </Form.Control.Feedback>
-                                </Form.Group>
-                            </div>
+                        <div className="d-flex">
+
+                            <Form.Group className="mb-3 m-2 w-50">
+                                <Form.Label>Broj klijenata</Form.Label>
+                                <Form.Control type="text" name="numberOfClients"
+                                              value={formValues.numberOfClients}
+                                              onChange={(e) => setField("numberOfClients", e.target.value)}
+                                              isInvalid={!!formErrors.numberOfClients}/>
+                                <Form.Control.Feedback type="invalid">
+                                    {formErrors.numberOfClients}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+
+                            <Form.Group className="mb-3 m-2 w-25">
+                                <Form.Label>Cena</Form.Label>
+                                <Form.Control type="number" name="price"
+                                              value={formValues.price}
+                                              onChange={(e) => setField("price", e.target.value)}
+                                              isInvalid={!!formErrors.price}/>
+
+                                <Form.Control.Feedback type="invalid">
+                                    {formErrors.price}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+
+                            <Form.Group className="mb-3 m-2 w-25">
+                                <Form.Label>Naknada za otkazivanje</Form.Label>
+
+                                <Form.Control type="number" name="cancellationFee"
+                                              value={formValues.cancellationFee}
+                                              onChange={(e) => setField("cancellationFee", e.target.value)}
+                                              isInvalid={!!formErrors.cancellationFee}/>
+
+                                <Form.Control.Feedback type="invalid">
+                                    {formErrors.cancellationFee}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+
                         </div>
 
-                        <Form.Group className="mb-3 m-2">
-                            <Form.Label>Dodatne usluge</Form.Label>
-                            <Form.Control type="text" name="additionalServices"/>
-                        </Form.Group>
+                        <div>
+
+                            <Form.Group as={Col} className="mb-3 m-2">
+                                <Form.Label>Dodatne usluge</Form.Label>
+                                <div className='d-flex justify-content-start align-items-center'>
+                                    <TagInfo tagList={formValues.additionalServices} edit={true}
+                                             setState={setFormValues} entity="additionalServices"/>
+                                    <InputGroup className="p-0 mt-2 ms-auto"
+                                                style={{maxWidth: "17vw", maxHeight: "4vh"}}>
+                                        <Form.Control aria-describedby="basic-addon2" placeholder='Dodaj tag'
+                                                      value={additionalServicesText}
+                                                      onChange={e => setAdditionalServicesText(e.target.value)}/>
+                                        <Button className="p-0 pe-2 ps-2" variant="primary" id="button-addon2"
+                                                onClick={addAdditionalServicesTag}> + </Button>
+                                    </InputGroup>
+                                </div>
+                            </Form.Group>
+
+                            <Form.Group as={Col} className="mb-3 m-2">
+                                <Form.Label>Oprema za pecanje</Form.Label>
+                                <div className='d-flex justify-content-start align-items-center'>
+                                    <TagInfo className="m-2" tagList={formValues.fishingEquipment} edit={true}
+                                             setState={setFormValues} entity="fishingEquipment"/>
+                                    <InputGroup className="ps-2 mt-2 ms-auto"
+                                                style={{maxWidth: "17vw", maxHeight: "4vh"}}>
+                                        <Form.Control aria-describedby="basic-addon2" placeholder='Dodaj tag'
+                                                      value={fishingEquipmentText}
+                                                      onChange={e => setFishingEquipmentText(e.target.value)}/>
+                                        <Button className="p-0 pe-2 ps-2" variant="primary" id="button-addon2"
+                                                onClick={addFishingEquipmentTag}> + </Button>
+                                    </InputGroup>
+                                </div>
+                            </Form.Group>
+
+                        </div>
+
                         <Form.Group className="mb-3 m-2">
                             <Form.Label>Pravila ponasanja</Form.Label>
                             <Form.Control as="textarea" rows={3} name="rulesAndRegulations"

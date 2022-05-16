@@ -35,9 +35,15 @@ export function AddressInfo({title, address}) {
 }
 
 export function TagInfo({title, tagList, edit, setState, entity}) {
+
     function removeTag(id){
-        var object = tagList.find((element) => {return element.id === id;})
-        var newTagList = tagList.filter(function(tag) { return tag !== object })
+
+        let object = tagList.find((element) => {
+            return element.id === id;
+        });
+        let newTagList = tagList.filter(function (tag) {
+            return tag !== object
+        });
         if (newTagList.length === 0){
             newTagList = [{id:0, text:''}]
         }
@@ -70,7 +76,7 @@ export function TagInfo({title, tagList, edit, setState, entity}) {
     return (
         <div className="m-0">
             <p className="lead fw-normal m-0 p-0">{title}</p>
-            {tagList.map((tagData)=> {
+            {tagList !== [] && tagList.map((tagData)=> {
                 return <Tag key={tagData.id} tag={tagData.text} edit={edit} id={tagData.id} remove={removeTag}/>
             })}
         </div>

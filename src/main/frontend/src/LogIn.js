@@ -75,11 +75,11 @@ export default function Login() {
         })
     }
     return (
-        <div className="mt-4 d-flex justify-content-center ">
-            <img className="border rounded-start border-end-0 border-2 border-dark" src={require("./images/cover.png")}
-                 alt="login"/>
-            <div className="py-5 px-4 border rounded-end border-2 border-start-0 border-dark d-flex flex-column"
-                 style={{width: "335px"}}>
+        <div className="d-flex justify-content-center " style={{backgroundImage: 'url("./images/boatsnotext.png")'}}>
+            {/*<img className="border rounded-start border-end-0 border-2 border-dark" src={require("./images/")}*/}
+            {/*     alt="login"/>*/}
+            <div className="py-5 px-4 d-flex flex-column"
+                 style={{width: "335px", backgroundColor: "white"}}>
                 <h1 className="mb-5">Login</h1>
                 <Form.Group className="mb-3" controlId="formEmail">
                     <Form.Label>Email</Form.Label>
@@ -99,7 +99,7 @@ export default function Login() {
                         {errors.password}
                     </Form.Control.Feedback>
                 </Form.Group>
-                <button onClick={handleSubmit} type="submit" className="btn btn-primary btn-block mt-2">Submit
+                <button onClick={handleSubmit} type="submit" className="btn btn-primary btn-block mt-2">Prijavi se
                 </button>
                 <div className="d-flex flex-column mt-5 pt-lg-5">
                     <label>Želite da se registrujete?</label>

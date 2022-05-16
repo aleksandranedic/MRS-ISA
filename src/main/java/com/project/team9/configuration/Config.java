@@ -1,9 +1,12 @@
 package com.project.team9.configuration;
 
+import com.project.team9.Application;
 import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
+import com.project.team9.model.reservation.AdventureReservation;
+import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.user.Client;
@@ -20,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Configuration
 public class Config {
@@ -43,7 +47,37 @@ public class Config {
 
         return args -> {
 //            fillData(adventureRepository, fishingInstructorRepository, pricelistRepository, addressRepository, tagRepository, imageRepository, clientRepository, vacationHouseOwnerRepository, vacationHouseRepository, roleRepository, boatOwnerRepository, boatRepository);
+
+//            addAdventureReservations(adventureRepository, tagRepository, adventureReservationRepository, appointmentRepository, clientRepository);
+
         };
+    }
+
+    private void addAdventureReservations(AdventureRepository adventureRepository, TagRepository tagRepository, AdventureReservationRepository adventureReservationRepository, AppointmentRepository appointmentRepository, ClientRepository clientRepository) {
+        List<Appointment> appointments1 = new ArrayList<Appointment>();
+        appointments1.add(Appointment.getAdventureAppointment(2022, 6, 1, 6, 0));
+        appointments1.add(Appointment.getAdventureAppointment(2022, 6, 1, 7, 0));
+        appointments1.add(Appointment.getAdventureAppointment(2022, 6, 1, 8, 0));
+        appointmentRepository.saveAll(appointments1);
+
+        List<Tag> additionalServices1 = new ArrayList<Tag>();
+        additionalServices1.add(new Tag("Pecanje na brodu"));
+        tagRepository.saveAll(additionalServices1);
+
+        Adventure adventure = adventureRepository.findById(1L).orElse(null);
+
+        AdventureReservation reservation1 = new AdventureReservation(
+                appointments1,
+                3,
+                additionalServices1,
+                100,
+                clientRepository.getById(4L),
+                adventure,
+                false,
+                false
+        );
+
+        adventureReservationRepository.save(reservation1);
     }
 
     private void fillData(AdventureRepository adventureRepository, FishingInstructorRepository fishingInstructorRepository, PricelistRepository pricelistRepository, AddressRepository addressRepository, TagRepository tagRepository, ImageRepository imageRepository, ClientRepository clientRepository, VacationHouseOwnerRepository vacationHouseOwnerRepository, VacationHouseRepository vacationHouseRepository, RoleRepository roleRepository, BoatOwnerRepository boatOwnerRepository, BoatRepository boatRepository) {

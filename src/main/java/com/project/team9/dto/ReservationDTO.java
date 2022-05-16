@@ -1,11 +1,5 @@
 package com.project.team9.dto;
 
-import com.project.team9.model.Tag;
-import com.project.team9.model.reservation.Appointment;
-import com.project.team9.model.user.Client;
-
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,11 +12,13 @@ public class ReservationDTO {
     private int price;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private boolean isBusyPeriod;
+    private boolean isQuickReservation;
 
     public ReservationDTO() {
     }
 
-    public ReservationDTO(Long id, Long clientId, Long resourceId, int numberOfClients, List<String> additionalServicesStrings, int price, LocalDateTime startTime, LocalDateTime endTime) {
+    public ReservationDTO(Long id, Long clientId, Long resourceId, int numberOfClients, List<String> additionalServicesStrings, int price, LocalDateTime startTime, LocalDateTime endTime, boolean isBusyPeriod, boolean isQuickReservation) {
         this.id = id;
         this.clientId = clientId;
         this.resourceId = resourceId;
@@ -31,6 +27,8 @@ public class ReservationDTO {
         this.price = price;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.isBusyPeriod = isBusyPeriod;
+        this.isQuickReservation = isQuickReservation;
     }
 
     public Long getId() {
@@ -95,5 +93,21 @@ public class ReservationDTO {
 
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
+    }
+
+    public boolean isBusyPeriod() {
+        return isBusyPeriod;
+    }
+
+    public void setBusyPeriod(boolean busyPeriod) {
+        isBusyPeriod = busyPeriod;
+    }
+
+    public boolean isQuickReservation() {
+        return isQuickReservation;
+    }
+
+    public void setQuickReservation(boolean quickReservation) {
+        isQuickReservation = quickReservation;
     }
 }
