@@ -137,7 +137,6 @@ public class VacationHouseService {
 
     public Boolean updateQuickReservation(Long id, VacationHouseQuickReservationDTO quickReservationDTO){
         VacationHouse house = this.getVacationHouse(id);
-        System.out.println(quickReservationDTO);
         VacationHouseReservation newReservation = getReservationFromDTO(quickReservationDTO);
         VacationHouseReservation originalReservation = reservationService.getVacationHouseReservation(quickReservationDTO.getReservationID());
         updateQuickReservation(originalReservation, newReservation);

@@ -4,7 +4,7 @@ import { TagInfo } from './Info';
 import axios from "axios";  
 import { useParams } from "react-router-dom";
 
-function UpdateQuickReservation({state, setState, closeModal, showModal}) {
+function UpdateQuickReservation({state, setState, closeModal, showModal, entity}) {
     const [originalState, setOriginalState] = useState(state);
     const [tagText, setTagText] = useState('');
     const [validated, setValidated] = useState(false);
@@ -36,7 +36,7 @@ function UpdateQuickReservation({state, setState, closeModal, showModal}) {
             data.append("reservationID", state.reservationID);
             console.log(state)
             axios
-            .post("http://localhost:4444/house/updateQuickReservation/" + id, data)
+            .post("http://localhost:4444/" + entity + "/updateQuickReservation/" + id, data)
             .then(res => {
                 window.location.reload();
             });

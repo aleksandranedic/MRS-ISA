@@ -6,7 +6,7 @@ import {BsPencilSquare, BsPeople} from "react-icons/bs";
 import {AiOutlineCalendar, AiOutlineClockCircle} from "react-icons/ai";
 import UpdateQuickReservation from './UpdateQuickReservation';
 
-function QuickReservation({reservation, name, address, image}) {
+function QuickReservation({reservation, name, address, image, entity, priceText}) {
     const [state, setState] = useState({startDate:'', price:'', numberOfPeople:'', duration:'', discount:'', additionalServices:[{id:'', text:''}]});
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -64,7 +64,7 @@ function QuickReservation({reservation, name, address, image}) {
                                 </span>
                                 <span className='align-self-end pb-2'>
                                     <small className="text-secondary">/</small>
-                                    <small className="text-secondary">po noćenju</small>
+                                    <small className="text-secondary">{priceText}</small>
                                 </span>
                             </div>
                             <Button className="btn btn-primary align-self-center h-75" style={{zIndex:"3"}}>Rezerviši</Button>
@@ -73,7 +73,7 @@ function QuickReservation({reservation, name, address, image}) {
                 </div>
                 </Card.Body>
                 {state.discount !== '' ?
-                   (<UpdateQuickReservation state={state} setState={setState} closeModal={handleClose} showModal={show}/> ) : <></>
+                   (<UpdateQuickReservation state={state} setState={setState} closeModal={handleClose} showModal={show} entity={entity}/> ) : <></>
                 }
             </Card>
     )

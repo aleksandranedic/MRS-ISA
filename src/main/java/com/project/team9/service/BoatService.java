@@ -1,18 +1,17 @@
 package com.project.team9.service;
 
-import com.project.team9.dto.BoatCardDTO;
-import com.project.team9.dto.BoatDTO;
-import com.project.team9.dto.HouseCardDTO;
-import com.project.team9.dto.VacationHouseDTO;
+import com.project.team9.dto.*;
 import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
+import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
+import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.resource.VacationHouse;
+import com.project.team9.repo.AppointmentRepository;
 import com.project.team9.repo.BoatRepository;
-import com.project.team9.repo.VacationHouseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,10 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,18 +32,23 @@ public class BoatService {
     private final PricelistService pricelistService;
     private final TagService tagService;
     private final ImageService imageService;
+    private final BoatReservationService reservationService;
+    private final AppointmentRepository appointmentRepository;
+
 
     final String STATIC_PATH = "src/main/resources/static/";
     final String STATIC_PATH_TARGET = "target/classes/static/";
     final String IMAGES_PATH = "/images/boats/";
 
     @Autowired
-    public BoatService(BoatRepository repository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService) {
+    public BoatService(BoatRepository repository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, BoatReservationService reservationService, AppointmentRepository appointmentRepository) {
         this.repository = repository;
         this.addressService = addressService;
         this.pricelistService = pricelistService;
         this.tagService = tagService;
         this.imageService = imageService;
+        this.reservationService = reservationService;
+        this.appointmentRepository = appointmentRepository;
     }
 
     public List<Boat> getBoats() {
@@ -58,6 +61,65 @@ public class BoatService {
         return new BoatCardDTO(boat.getId(), boat.getImages().get(0).getPath(), boat.getTitle(), boat.getDescription(), address);
     }
 
+    public Boolean addQuickReservation(Long id, BoatQuickReservationDTO quickReservationDTO){
+        Boat boat = this.getBoat(id);
+        BoatReservation reservation = getReservationFromDTO(quickReservationDTO);
+        reservation.setResource(boat);
+        reservationService.addReservation(reservation);
+        boat.addQuickReservations(reservation);
+        this.addBoat(boat);
+        return true;
+    }
+
+    private BoatReservation getReservationFromDTO(BoatQuickReservationDTO dto){
+        List<Appointment> appointments = new ArrayList<Appointment>();
+        String[] splitDate = dto.getStartDate().split("-");
+        Appointment startDateAppointment = Appointment.getVacationHouseAppointment(Integer.parseInt(splitDate[0]), Integer.parseInt(splitDate[1]), Integer.parseInt(splitDate[2]));
+        appointments.add(startDateAppointment);
+        appointmentRepository.save(startDateAppointment);
+        Appointment currApp = startDateAppointment;
+        for (int i=0; i < dto.getDuration() - 1; i++){
+            LocalDateTime startDate = currApp.getEndTime();
+            LocalDateTime endDate = startDate.plusDays(1);
+            currApp = new Appointment(startDate, endDate);
+            appointmentRepository.save(currApp);
+            appointments.add(currApp);
+        }
+        List<Tag> tags = new ArrayList<Tag>();
+        for (String tagText : dto.getTagsText()){
+            Tag tag = new Tag(tagText);
+            tagService.addTag(tag);
+            tags.add(tag);
+        }
+        BoatReservation reservation = new BoatReservation(dto.getNumberOfPeople(), dto.getPrice());
+        reservation.setClient(null);
+        reservation.setAdditionalServices(tags);
+        reservation.setAppointments(appointments);
+        return reservation;
+    }
+
+    public Boolean updateQuickReservation(Long id, BoatQuickReservationDTO quickReservationDTO){
+        Boat boat = this.getBoat(id);
+        BoatReservation newReservation = getReservationFromDTO(quickReservationDTO);
+        BoatReservation originalReservation = reservationService.getBoatReservation(quickReservationDTO.getReservationID());
+        updateQuickReservation(originalReservation, newReservation);
+        reservationService.addReservation(originalReservation);
+        this.addBoat(boat);
+        return true;
+    }
+    private void updateQuickReservation(BoatReservation originalReservation, BoatReservation newReservation){
+        originalReservation.setAppointments(newReservation.getAppointments());
+        originalReservation.setAdditionalServices(newReservation.getAdditionalServices());
+        originalReservation.setNumberOfClients(newReservation.getNumberOfClients());
+        originalReservation.setPrice(newReservation.getPrice());
+    }
+    public Boolean deleteQuickReservation(Long id, BoatQuickReservationDTO quickReservationDTO){
+        Boat boat = this.getBoat(id);
+        reservationService.deleteById(quickReservationDTO.getReservationID());
+        //izbaci se reservation iz house
+        this.addBoat(boat);
+        return true;
+    }
     public List<BoatCardDTO> getOwnerBoats(Long owner_id) {
         List<Boat> boats = repository.findByOwnerId(owner_id);
         List<BoatCardDTO> boatCards = new ArrayList<BoatCardDTO>();
@@ -83,7 +145,44 @@ public class BoatService {
         for (Image img : bt.getImages()) {
             images.add(img.getPath());
         }
-        return new BoatDTO(bt.getId(), bt.getTitle(), address, bt.getAddress().getNumber(), bt.getAddress().getStreet(), bt.getAddress().getPlace(), bt.getAddress().getCountry(), bt.getDescription(), bt.getType(), images, bt.getRulesAndRegulations(), bt.getEngineNumber(), bt.getEngineStrength(), bt.getTopSpeed(), bt.getLength(), bt.getNavigationEquipment(), bt.getFishingEquipment(), bt.getAdditionalServices(), bt.getPricelist().getPrice(), bt.getCancellationFee(), bt.getCapacity(), bt.getQuickReservations());
+        List<BoatQuickReservationDTO> quickReservations = getQuickReservations(bt);
+        return new BoatDTO(bt.getId(), bt.getTitle(), address, bt.getAddress().getNumber(), bt.getAddress().getStreet(), bt.getAddress().getPlace(), bt.getAddress().getCountry(), bt.getDescription(), bt.getType(), images, bt.getRulesAndRegulations(), bt.getEngineNumber(), bt.getEngineStrength(), bt.getTopSpeed(), bt.getLength(), bt.getNavigationEquipment(), bt.getFishingEquipment(), bt.getAdditionalServices(), bt.getPricelist().getPrice(), bt.getCancellationFee(), bt.getCapacity(), quickReservations);
+    }
+
+    private List<BoatQuickReservationDTO> getQuickReservations(Boat bt){
+        List<BoatQuickReservationDTO> quickReservations = new ArrayList<BoatQuickReservationDTO>();
+        for (BoatReservation reservation :  bt.getQuickReservations()){
+            if (reservation.getPrice() < bt.getPricelist().getPrice() && reservation.getClient() == null)
+                quickReservations.add(createBoatReservationDTO(bt.getPricelist().getPrice(), reservation));
+        }
+        return quickReservations;
+    }
+
+    private BoatQuickReservationDTO createBoatReservationDTO(int boatPrice, BoatReservation reservation){
+        Appointment firstAppointment = getFirstAppointment(reservation.getAppointments());
+        LocalDateTime startDate = firstAppointment.getStartTime();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String strDate = startDate.format(formatter);
+        int numberOfPeople = reservation.getNumberOfClients();
+        List<Tag> additionalServices = reservation.getAdditionalServices();
+        int duration = reservation.getAppointments().size();
+        int price = reservation.getPrice();
+        int discount = 100 - ( 100 * price / boatPrice);
+        return new BoatQuickReservationDTO(reservation.getId(), strDate, numberOfPeople, additionalServices, duration, price, discount);
+    }
+    private Appointment getFirstAppointment(List<Appointment> appointments){
+        List<Appointment> sortedAppointments = getSortedAppointments(appointments);
+        return sortedAppointments.get(0);
+    }
+
+    private List<Appointment> getSortedAppointments(List<Appointment> appointments) {
+        Collections.sort(appointments, new Comparator<Appointment>() {
+            @Override
+            public int compare(Appointment a1, Appointment a2) {
+                return a1.getStartTime().compareTo(a2.getStartTime());
+            }
+        });
+        return appointments;
     }
 
     public void addBoat(Boat boat) {
