@@ -1,5 +1,7 @@
 package com.project.team9.model.reservation;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.project.team9.model.Tag;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
@@ -21,7 +23,12 @@ public class VacationHouseReservation extends Reservation{
         super(appointments, numberOfClients, additionalServices, price, client, isBusyPeriod, isQuickReservation);
         this.resource = vacationHouse;
     }
+    public VacationHouseReservation(int numberOfClients, int price) {
+        super(null, numberOfClients, null, price, null);
+        this.resource = null;
+    }
 
+    @JsonBackReference
     public VacationHouse getResource() {
         return resource;
     }

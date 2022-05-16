@@ -22,11 +22,11 @@ public class VacationHouseDTO {
     private int cancellationFee;
     private int numberOfRooms;
     private int capacity;
-    private List<VacationHouseReservation> quickReservations;
+    private List<VacationHouseQuickReservationDTO> quickReservations;
 
     public VacationHouseDTO() {}
 
-    public VacationHouseDTO(Long id, String name,String address, String number, String street, String city, String country, String description, List<String> imagePaths, String rulesAndRegulations, List<Tag> additionalServices, int price, int cancellationFee, int numberOfRooms, int capacity, List<VacationHouseReservation> quickReservations) {
+    public VacationHouseDTO(Long id, String name,String address, String number, String street, String city, String country, String description, List<String> imagePaths, String rulesAndRegulations, List<Tag> additionalServices, int price, int cancellationFee, int numberOfRooms, int capacity, List<VacationHouseQuickReservationDTO> quickReservations) {
         this.id = id;
         this.name = name;
         this.number = number;
@@ -45,7 +45,7 @@ public class VacationHouseDTO {
         this.quickReservations = quickReservations;
     }
 
-    public VacationHouseDTO(Long id, String name,String address, String number, String street, String city, String country, String description, List<String> imagePaths, String rulesAndRegulations, List<Tag> additionalServices, List<String> tagsText, int price, int cancellationFee, int numberOfRooms, int capacity, List<VacationHouseReservation> quickReservations) {
+    public VacationHouseDTO(Long id, String name,String address, String number, String street, String city, String country, String description, List<String> imagePaths, String rulesAndRegulations, List<Tag> additionalServices, List<String> tagsText, int price, int cancellationFee, int numberOfRooms, int capacity, List<VacationHouseQuickReservationDTO> quickReservations) {
         this.id = id;
         this.name = name;
         this.number = number;
@@ -193,11 +193,11 @@ public class VacationHouseDTO {
         this.capacity = capacity;
     }
 
-    public List<VacationHouseReservation> getQuickReservations() {
+    public List<VacationHouseQuickReservationDTO> getQuickReservations() {
         return quickReservations;
     }
 
-    public void setQuickReservations(List<VacationHouseReservation> quickReservations) {
+    public void setQuickReservations(List<VacationHouseQuickReservationDTO> quickReservations) {
         this.quickReservations = quickReservations;
     }
 
