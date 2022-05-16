@@ -2,6 +2,8 @@ package com.project.team9.controller;
 
 import com.project.team9.dto.BoatCardDTO;
 import com.project.team9.dto.BoatDTO;
+import com.project.team9.dto.BoatQuickReservationDTO;
+import com.project.team9.dto.VacationHouseQuickReservationDTO;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,21 @@ public class BoatController {
     @PostMapping(value = "updateBoat/{id}")
     public BoatDTO updateVacationHouse(@PathVariable String id, BoatDTO boatDTO, @RequestParam("fileImage") MultipartFile[] multipartFiles) throws IOException {
         return service.updateBoat(id, boatDTO, multipartFiles);
+    }
+
+    @PostMapping(value = "addQuickReservation/{id}")
+    public Boolean addQuickReservation(@PathVariable String id, BoatQuickReservationDTO quickReservation) {
+        return service.addQuickReservation(Long.parseLong(id), quickReservation);
+    }
+
+    @PostMapping(value = "updateQuickReservation/{id}")
+    public Boolean updateQuickReservation(@PathVariable String id, BoatQuickReservationDTO quickReservation) {
+        return service.updateQuickReservation(Long.parseLong(id), quickReservation);
+    }
+
+    @PostMapping(value = "deleteQuickReservation/{id}")
+    public Boolean deleteQuickReservation(@PathVariable String id, BoatQuickReservationDTO quickReservation) {
+        return service.deleteQuickReservation(Long.parseLong(id), quickReservation);
     }
 
     @GetMapping(value = "boatprof/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

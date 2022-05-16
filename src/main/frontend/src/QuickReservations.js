@@ -3,7 +3,7 @@ import Carousel from "react-multi-carousel";
 import {Container, Button } from 'react-bootstrap'
 import {BsFillPlusCircleFill} from 'react-icons/bs'
 import "react-multi-carousel/lib/styles.css";
-import AddHouseQuickReservation from './VacationHousePage/AddHouseQuickReservation'
+import AddQuickReservation from './AddQuickReservation'
 import QuickReservation from "./QuickReservation";
 
 const responsive = {
@@ -29,7 +29,7 @@ const responsive = {
     }
 };
 
-function QuickReservations({reservations, name, address}) {
+function QuickReservations({reservations, name, address, entity, priceText}) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -41,14 +41,14 @@ function QuickReservations({reservations, name, address}) {
         <Container className='d-flex p-0'>          
             <Carousel className="w-100 h-100" responsive={responsive}  interval="250000" autoPlay={false} autoPlaySpeed={9000000}>
             {reservations.map( (reservation) => (
-                <QuickReservation key={reservation}  reservation={reservation} name={name} address={address} image={"http://localhost:3000/images/vikendica1.jpeg"} discount={reservation.discount}/>  
+                <QuickReservation key={reservation}  reservation={reservation} name={name} address={address} image={"http://localhost:3000/images/vikendica1.jpeg"} entity={entity} priceText={priceText}/>  
             ))}
             </Carousel>
 
             <Button className="btn btn-light add border-radius-lg align-self-center" onClick={handleShow}>
                 <BsFillPlusCircleFill viewBox='0 0 16 16' size={25} fill="#7d7d7d"/>          
             </Button>
-            <AddHouseQuickReservation closeModal={handleClose} showModal={show}/>
+            <AddQuickReservation closeModal={handleClose} showModal={show} entity={entity} priceText={priceText}/>
         </Container>
     </div>
 
