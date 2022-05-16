@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class AdventureReservationService {
@@ -21,7 +22,6 @@ public class AdventureReservationService {
     private final AdventureService adventureService;
     private final ClientService clientService;
 
-
     @Autowired
     public AdventureReservationService(AdventureReservationRepository repository, AdventureService adventureService, ClientService clientService) {
         this.repository = repository;
@@ -29,6 +29,30 @@ public class AdventureReservationService {
         this.clientService = clientService;
     }
 
+    public List<AdventureReservation> getReservationsForAdventure(Long id) {
+        List<AdventureReservation> reservations = new ArrayList<AdventureReservation>();
+
+        for (AdventureReservation ar : repository.findAll()) {
+            if (Objects.equals(ar.getResource().getId(), id)) {
+                reservations.add(ar);
+            }
+        }
+        return reservations;
+    }
+
+    public List<AdventureReservation> getReservationsForFishingInstructor(Long id) {
+        List<AdventureReservation> reservations = new ArrayList<AdventureReservation>();
+
+        for (Adventure a : adventureService.findAdventuresWithOwner(id.toString())) {
+            for (AdventureReservation ar : repository.findAll()) {
+                if (Objects.equals(ar.getResource().getId(), a.getId())) {
+                    reservations.add(ar);
+                }
+            }
+        }
+
+        return reservations;
+    }
 
     public Long createReservation(ReservationDTO dto) {
         AdventureReservation reservation = createFromDTO(dto);
@@ -42,7 +66,7 @@ public class AdventureReservationService {
         LocalDateTime startTime = dto.getStartTime();
         LocalDateTime endTime = startTime.plusHours(1);
 
-        while (startTime.isBefore(dto.getEndTime())){
+        while (startTime.isBefore(dto.getEndTime())) {
             appointments.add(new Appointment(startTime, endTime));
             startTime = endTime;
             endTime = startTime.plusHours(1);
@@ -52,13 +76,13 @@ public class AdventureReservationService {
         Adventure adventure = adventureService.getById(dto.getResourceId().toString());
 
         return new AdventureReservation(
-            appointments,
+                appointments,
                 dto.getNumberOfClients(),
                 new ArrayList<Tag>(),
                 dto.getPrice(),
                 client,
-                adventure
-        );
+                adventure,
+                dto.isBusyPeriod(), dto.isQuickReservation());
     }
 
 

@@ -24,10 +24,14 @@ public class AdventureReservation extends Reservation{
                                 List<Tag> additionalServices,
                                 int price,
                                 Client client,
-                                Adventure resource) {
-        super(appointments, numberOfClients, additionalServices, price, client);
+                                Adventure resource,
+                                boolean isBusyPeriod,
+                                boolean isQuickReservation) {
+        super(appointments, numberOfClients, additionalServices, price, client, isBusyPeriod, isQuickReservation);
         this.resource = resource;
     }
+
+
 
     public Adventure getResource() {
         return resource;
