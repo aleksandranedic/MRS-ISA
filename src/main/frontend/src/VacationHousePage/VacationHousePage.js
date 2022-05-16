@@ -40,6 +40,15 @@ const Update = ({vacationHouse, showModal, closeModal}) => {
     }
 }
 
+const Reservations = ({reservations, name, address}) => {
+    if (typeof reservations !== "undefined"){
+        return <QuickReservations reservations={reservations} name={name} address={address}/>
+    }
+    else {
+        return <></>
+    }
+}
+
 export function VacationHousePage() {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -66,7 +75,7 @@ export function VacationHousePage() {
             [
                 {text: "Osnovne informacije", path: "#info"},
                 {text: "Fotografije", path: "#gallery"},
-                {text: "Akcije", path: "#"},
+                {text: "Akcije", path: "#actions"},
                 {text: "Kalendar zauzetosti", path: "#"}
             ]}
                     editable={true} editFunction={handleShow} searchable={true} showProfile={true}/>
@@ -76,7 +85,7 @@ export function VacationHousePage() {
             <hr/>
             <Gallery house={house} images={imgs}/>
             <hr/>
-            <QuickReservations/>
+            <Reservations reservations={house.quickReservations} name={house.name} address={house.address}/>
         </div>
         <BeginButton/>
     </>

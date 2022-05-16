@@ -2,6 +2,7 @@ package com.project.team9.controller;
 
 import com.project.team9.dto.HouseCardDTO;
 import com.project.team9.dto.VacationHouseDTO;
+import com.project.team9.dto.VacationHouseQuickReservationDTO;
 import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
@@ -54,6 +55,21 @@ public class VacationHouseController {
     @PostMapping(value = "updateHouse/{id}")
     public VacationHouseDTO updateVacationHouse(@PathVariable String id, VacationHouseDTO house, @RequestParam("fileImage") MultipartFile[] multipartFiles) throws IOException {
         return service.updateHouse(id, house, multipartFiles);
+    }
+
+    @PostMapping(value = "addQuickReservation/{id}")
+    public Boolean addQuickReservation(@PathVariable String id, VacationHouseQuickReservationDTO quickReservation) {
+        return service.addQuickReservation(Long.parseLong(id), quickReservation);
+    }
+
+    @PostMapping(value = "updateQuickReservation/{id}")
+    public Boolean updateQuickReservation(@PathVariable String id, VacationHouseQuickReservationDTO quickReservation) {
+        return service.updateQuickReservation(Long.parseLong(id), quickReservation);
+    }
+
+    @PostMapping(value = "deleteQuickReservation/{id}")
+    public Boolean deleteQuickReservation(@PathVariable String id, VacationHouseQuickReservationDTO quickReservation) {
+        return service.deleteQuickReservation(Long.parseLong(id), quickReservation);
     }
 
     @GetMapping(value = "houseprof/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

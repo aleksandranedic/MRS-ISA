@@ -4,6 +4,8 @@ import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
+import com.project.team9.model.reservation.Appointment;
+import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.user.Client;
@@ -17,6 +19,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,15 +42,16 @@ public class Config {
             VacationHouseRepository vacationHouseRepository,
             RoleRepository roleRepository,
             BoatOwnerRepository boatOwnerRepository,
-            BoatRepository boatRepository
+            BoatRepository boatRepository,
+            VacationHouseReservationRepository vacationHouseReservationRepository
     ) {
 
         return args -> {
-//            fillData(adventureRepository, fishingInstructorRepository, pricelistRepository, addressRepository, tagRepository, imageRepository, clientRepository, vacationHouseOwnerRepository, vacationHouseRepository, roleRepository, boatOwnerRepository, boatRepository);
+       //     fillData(adventureRepository, fishingInstructorRepository, pricelistRepository, addressRepository, tagRepository, imageRepository, clientRepository, vacationHouseOwnerRepository, vacationHouseRepository, roleRepository, boatOwnerRepository, boatRepository, vacationHouseReservationRepository, appointmentRepository);
         };
     }
 
-    private void fillData(AdventureRepository adventureRepository, FishingInstructorRepository fishingInstructorRepository, PricelistRepository pricelistRepository, AddressRepository addressRepository, TagRepository tagRepository, ImageRepository imageRepository, ClientRepository clientRepository, VacationHouseOwnerRepository vacationHouseOwnerRepository, VacationHouseRepository vacationHouseRepository, RoleRepository roleRepository, BoatOwnerRepository boatOwnerRepository, BoatRepository boatRepository) {
+    private void fillData(AdventureRepository adventureRepository, FishingInstructorRepository fishingInstructorRepository, PricelistRepository pricelistRepository, AddressRepository addressRepository, TagRepository tagRepository, ImageRepository imageRepository, ClientRepository clientRepository, VacationHouseOwnerRepository vacationHouseOwnerRepository, VacationHouseRepository vacationHouseRepository, RoleRepository roleRepository, BoatOwnerRepository boatOwnerRepository, BoatRepository boatRepository, VacationHouseReservationRepository vacationHouseReservationRepository, AppointmentRepository appointmentRepository) {
         Role roleClient = new Role("CLIENT");
         Role roleVacationHouseOwner = new Role("VACATION_HOUSE_OWNER");
         Role roleBoatOwner = new Role("BOAT_OWNER");
@@ -64,6 +69,10 @@ public class Config {
         VacationHouseOwner owner = getVacationHouseOwner(addressRepository, vacationHouseOwnerRepository, roleVacationHouseOwner);
         vacationHouseOwnerRepository.save(owner);
         VacationHouse vacationHouse = getVacationHouse(pricelistRepository, addressRepository, tagRepository, imageRepository, owner);
+        vacationHouseRepository.save(vacationHouse);
+        VacationHouseReservation vacationHouseReservation = VacationHouseReservation(vacationHouse, tagRepository, appointmentRepository);
+        vacationHouseReservationRepository.save(vacationHouseReservation);
+        vacationHouse.addQuickReservations(vacationHouseReservation);
         vacationHouseRepository.save(vacationHouse);
 
         BoatOwner boatOwner = getBoatOwner(addressRepository, boatOwnerRepository, roleBoatOwner);
@@ -158,6 +167,27 @@ public class Config {
         return vacationHouse;
     }
 
+    private VacationHouseReservation VacationHouseReservation(VacationHouse vacationHouse, TagRepository tagRepository, AppointmentRepository appointmentRepository){
+        List<Appointment> appointments = new ArrayList<Appointment>();
+        appointments.add(Appointment.getVacationHouseAppointment(2022,4,9));
+        appointments.add(Appointment.getVacationHouseAppointment(2022,4,10));
+        appointments.add(Appointment.getVacationHouseAppointment(2022,4,11));
+        appointments.add(Appointment.getVacationHouseAppointment(2022,4,12));
+        appointmentRepository.saveAll(appointments);
+
+        ArrayList<Tag> additionalServices = new ArrayList<Tag>();
+        additionalServices.add(new Tag("Bazen"));
+        additionalServices.add(new Tag("Pet-friendly"));
+        additionalServices.add(new Tag("WiFi"));
+        tagRepository.saveAll(additionalServices);
+
+        VacationHouseReservation vr =  new VacationHouseReservation(7, 30);
+        vr.setAdditionalServices(additionalServices);
+        vr.setAppointments(appointments);
+        vr.setResource(vacationHouse);
+        vr.setClient(null);
+        return vr;
+    }
     private VacationHouseOwner getVacationHouseOwner(AddressRepository addressRepository, VacationHouseOwnerRepository vacationHouseOwnerRepository, Role roleVacationHouseOwner) {
         Address ownerAddress = new Address("Novi Sad", "21", "Kralja Petra I", "Srbija");
         addressRepository.save(ownerAddress);
