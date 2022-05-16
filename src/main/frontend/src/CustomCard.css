@@ -2,3 +2,10 @@
     color: #171818 !important;
     cursor: pointer;
 }
+.houseQuickReservationCard {
+    transition: transform .2s; /* Animation */
+}
+
+.houseQuickReservationCard:hover {
+    transform: scale(1.1);
+}

@@ -1,6 +1,5 @@
 import React from 'react';
-import {Container, Image} from'react-bootstrap'
-import OwlCarousel from 'react-owl-carousel';  
+import {Container, Image} from'react-bootstrap' 
 import Carousel from 'react-multi-carousel'
 import {BsTrashFill} from 'react-icons/bs'
 

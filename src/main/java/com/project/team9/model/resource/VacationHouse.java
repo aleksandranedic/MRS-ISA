@@ -1,6 +1,7 @@
 package com.project.team9.model.resource;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.Address;
@@ -56,6 +57,7 @@ public class VacationHouse extends Resource{
         this.numberOfBedsPerRoom = numberOfBedsPerRoom;
     }
 
+    @JsonManagedReference
     public List<VacationHouseReservation> getQuickReservations() {
         return quickReservations;
     }
@@ -63,7 +65,9 @@ public class VacationHouse extends Resource{
     public void setQuickReservations(List<VacationHouseReservation> quickReservations) {
         this.quickReservations = quickReservations;
     }
-
+    public void addQuickReservations(VacationHouseReservation quickReservation) {
+        this.quickReservations.add(quickReservation);
+    }
     @Override
     public String toString() {
         return super.toString() + "VacationHouse{" +

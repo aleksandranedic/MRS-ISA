@@ -1,13 +1,13 @@
-import React from 'react'
+import {React, useState} from 'react'
 import Carousel from "react-multi-carousel";
+import {Container, Button } from 'react-bootstrap'
+import {BsFillPlusCircleFill} from 'react-icons/bs'
 import "react-multi-carousel/lib/styles.css";
-
+import AddHouseQuickReservation from './VacationHousePage/AddHouseQuickReservation'
 import QuickReservation from "./QuickReservation";
-import PlusCard from "./PlusCard";
 
 const responsive = {
     superLargeDesktop: {
-        // the naming can be any, depends on you.
         breakpoint: {max: 4000, min: 3000},
         items: 5
     },
@@ -29,25 +29,30 @@ const responsive = {
     }
 };
 
-export default function QuickReservations({reservations}) {
-    return (<div className="m-5">
-            <Carousel responsive={responsive} interval="25000">
-
-
-                <QuickReservation startDate={"25.05."} endDate={"26.05."} numberOfPeople={7} price={100}
-                                  tags={[]} image={""}/>
-                <PlusCard/>
-            </Carousel>
+function QuickReservations({reservations, name, address}) {
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    return (
+    <div className="m-5" id="actions">
+        <div className='w-100 d-flex flex-column align-items-center mb-3'>
+            <h1 className="m-0 text-lead" style={{color: "#313041", fontSize: "46px", lineHeight: "60px", letterSpacing: "-.02em"}}> Specijalne ponude i popusti</h1>
         </div>
+        <Container className='d-flex p-0'>          
+            <Carousel className="w-100 h-100" responsive={responsive}  interval="250000" autoPlay={false} autoPlaySpeed={9000000}>
+            {reservations.map( (reservation) => (
+                <QuickReservation key={reservation}  reservation={reservation} name={name} address={address} image={"http://localhost:3000/images/vikendica1.jpeg"} discount={reservation.discount}/>  
+            ))}
+            </Carousel>
+
+            <Button className="btn btn-light add border-radius-lg align-self-center" onClick={handleShow}>
+                <BsFillPlusCircleFill viewBox='0 0 16 16' size={25} fill="#7d7d7d"/>          
+            </Button>
+            <AddHouseQuickReservation closeModal={handleClose} showModal={show}/>
+        </Container>
+    </div>
 
 
     )
-
-
-    /*{reservations.map(reservation=> {
-                        return <QuickReservation startDate={reservation.startDate} endDate={reservation.endDate} numberOfPeople={reservation.numberOfClients} price={reservation.price}
-                                                 tags={[]} image={reservation.resource.images.item(0)}/>
-
-                    })}*/
-
 }
+export default QuickReservations;
