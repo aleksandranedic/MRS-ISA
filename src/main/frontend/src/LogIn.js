@@ -99,7 +99,7 @@ export default function Login() {
                         {errors.password}
                     </Form.Control.Feedback>
                 </Form.Group>
-                <button onClick={handleSubmit} type="submit" className="btn btn-primary btn-block mt-2">Submit
+                <button onClick={handleSubmit} type="submit" className="btn btn-primary btn-block mt-2">Uloguj se
                 </button>
                 <div className="d-flex flex-column mt-5 pt-lg-5">
                     <label>Želite da se registrujete?</label>

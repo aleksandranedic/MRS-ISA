@@ -5,6 +5,7 @@ import {SearchResultCard} from "./SearchResultCard";
 import axios from "axios";
 import {useLocation} from "react-router-dom";
 import {backLink, frontLink} from "../Consts";
+import VacationHouseOwnerCard from "../VacationHouseOwnerPage/VacationHouseOwnerCard";
 
 
 const Adventures = () => {
@@ -86,6 +87,87 @@ const VacationHouses = () => {
     return html;
 }
 
+const VacationHouseOwners = () => {
+    const [vacationHouseOwners, setVacationHouseOwners] = useState([]);
+
+    const fetchVacationHouseOwners = () => {
+        axios.get(backLink + "houseowner",).then(res => {
+            console.log(res.data);
+            setVacationHouseOwners(res.data);
+        });
+    };
+
+    useEffect(() => {
+        fetchVacationHouseOwners();
+    }, []);
+
+    let html;
+    if (vacationHouseOwners.length !== 0) {
+
+        html = (vacationHouseOwners.map((vacationHouseOwner) => {
+                return <SearchResultCard key={vacationHouseOwner.id}
+                                         title={vacationHouseOwner.firstName + " " + vacationHouseOwner.lastName}
+                                         description={vacationHouseOwner.biography}
+                                         link={frontLink + "houseOwner/" + vacationHouseOwner.id}/>
+            }
+        ))
+    }
+    return html;
+}
+
+const Boats = () => {
+    const [boats, setBoats] = useState([]);
+
+    const fetchBoats = () => {
+        axios.get(backLink + "boat",).then(res => {
+            console.log(res.data);
+            setBoats(res.data);
+        });
+    };
+
+    useEffect(() => {
+        fetchBoats();
+    }, []);
+
+    let html;
+    if (boats.length !== 0) {
+
+        html = (boats.map((boat) => {
+                return <SearchResultCard title={boat.title} description={boat.description}
+                                         link={frontLink + "boat/" + boat.id}/>
+            }
+        ))
+    }
+    return html;
+}
+
+const BoatOwners = () => {
+    const [boatOwners, setBoatOwners] = useState([]);
+
+    const fetchBoatOwners = () => {
+        axios.get(backLink + "boatowner",).then(res => {
+            console.log(res.data);
+            setBoatOwners(res.data);
+        });
+    };
+
+    useEffect(() => {
+        fetchBoatOwners();
+    }, []);
+
+    let html;
+    if (boatOwners.length !== 0) {
+
+        html = (boatOwners.map((boatOwner) => {
+                return <SearchResultCard key={boatOwner.id}
+                                         title={boatOwner.firstName + " " + boatOwner.lastName}
+                                         link={frontLink + "boatOwner/" + boatOwner.id}/>
+            }
+        ))
+    }
+    return html;
+}
+
 export function SearchResultsPage() {
     const {state} = useLocation();
     console.log(state);
@@ -94,15 +176,24 @@ export function SearchResultsPage() {
             <Banner caption={"Rezultati pretrage"}/>
             <Navigation buttons={[]} editable={false} searchable={true}/>
             <div style={{marginLeft: "5%", marginRight: "10%"}}>
+                <h4 className="fw-light m-3">Vikendice</h4>
+                <hr/>
+                <VacationHouses/>
+                <h4 className="fw-light m-3">Vlasnici vikendica</h4>
+                <hr/>
+                <VacationHouseOwners/>
+                <h4 className="fw-light m-3">Brodovi</h4>
+                <hr/>
+                <Boats/>
+                <h4 className="fw-light m-3">Vlasnici brodova</h4>
+                <hr/>
+                <BoatOwners/>
                 <h4 className="fw-light m-3">Avanture</h4>
                 <hr/>
                 <Adventures/>
                 <h4 className="fw-light m-3">Instruktori pecanja</h4>
                 <hr/>
                 <FishingInstructors/>
-                <h4 className="fw-light m-3">Vikendice</h4>
-                <hr/>
-                <VacationHouses/>
             </div>
 
         </>

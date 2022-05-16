@@ -83,9 +83,9 @@ public class AuthenticationController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         User user = (User) authentication.getPrincipal();
         if (user == null)
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        if (!user.getPassword().equals(passwordEncoder.bCryptPasswordEncoder().encode(passwordsDTO.getOldPassword())))
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Neuspešno.Pokušajte ponovo",HttpStatus.NOT_FOUND);
+        if (!passwordEncoder.bCryptPasswordEncoder().matches(passwordsDTO.getOldPassword(), user.getPassword()))
+            return new ResponseEntity<>("Neuspešno.Pokušajte ponovo",HttpStatus.NOT_FOUND);
         user.setPassword(passwordEncoder.bCryptPasswordEncoder().encode(passwordsDTO.getNewPassword()));
         user.setLastPasswordResetDate(Timestamp.valueOf(LocalDateTime.now()));
         if (user instanceof Client) {

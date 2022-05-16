@@ -58,7 +58,7 @@ function UpdateClientInfo({client, handleClose, showPopUp,setClient}) {
         else if (!streetRegExp.test(form.country)) newErrors.country = 'Mora da počne sa velikim slovom!'
 
         if (!form.phoneNumber) newErrors.phoneNumber = 'Polje ne sme da bude prazno!'
-        if (!phoneNumRegExp.test(form.phoneNumber)) newErrors.phoneNumber = 'Mora da sadrži od 7 do 10 cifara!'
+        if (!phoneNumRegExp.test(form.phoneNumber)) newErrors.phoneNumber = 'Mora da sadrži od 7 do 12 cifara!'
 
         return newErrors
     }
