@@ -18,13 +18,7 @@ const Client = () => {
     const fetchClient = () => {
         axios.get("http://localhost:4444/getLoggedUser").then(res => {
             console.log(res);
-            setClient({
-                firstName: res.data.firstName,
-                lastName: res.data.lastName,
-                address: res.data.address,
-                email: res.data.email,
-                phoneNumber: res.data.phoneNumber
-            })
+            setClient(res.data)
         });
     };
 
@@ -37,28 +31,11 @@ const Client = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    function handleDeleteAccount() {
-        axios.delete("http://localhost:4444/client/delete/" + localStorage.getItem('user')).then(
-            res => {
-                console.log(res)
-            }
-        )
-    }
-
-    function handleUpdateAccount(userDTO) {
-        userDTO.email = client.email
-        console.log(userDTO)
-        axios.put("http://localhost:4444/client/update/" + localStorage.getItem('user'), userDTO).then(res => {
-            console.log(res);
-            setClient(res.data);
-        });
-    }
-
     if (client.length !== 0) {
         html = (<div>
             <Banner caption={client.firstName + " " + client.lastName}/>
-            <UpdateClientInfo client={client} handleDeleteAccount={handleDeleteAccount} handleClose={handleClose}
-                              showPopUp={show} updateClient={handleUpdateAccount}/>
+            <UpdateClientInfo client={client} handleClose={handleClose}
+                              showPopUp={show} setClient={setClient}/>
             <Navigation buttons={
                 [
                     {text: "Osnovne informacije", path: "#"}

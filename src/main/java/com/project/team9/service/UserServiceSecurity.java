@@ -1,11 +1,12 @@
 package com.project.team9.service;
 
 import com.project.team9.model.Address;
+import com.project.team9.model.user.Administrator;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
-import com.project.team9.repo.*;
+import com.project.team9.security.PasswordEncoder;
 import com.project.team9.security.token.ConfirmationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,19 +25,20 @@ public class UserServiceSecurity implements UserDetailsService {
     private final VacationHouseOwnerService vacationHouseOwnerService;
     private final BoatOwnerService boatOwnerService;
     private final AddressService addressService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final AdministratorService administratorService;
     private final ConfirmationTokenService confirmationTokenService;
 
-    private final static String USER_NOT_FOUND_MSG = "User with email %s not found";
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceSecurity(ClientService clientService, FishingInstructorService fishingInstructorService, VacationHouseOwnerService vacationHouseOwnerService, BoatOwnerService boatOwnerService, AddressService addressService, BCryptPasswordEncoder bCryptPasswordEncoder, ConfirmationTokenService confirmationTokenService) {
+    public UserServiceSecurity(ClientService clientService, FishingInstructorService fishingInstructorService, VacationHouseOwnerService vacationHouseOwnerService, BoatOwnerService boatOwnerService, AddressService addressService, AdministratorService administratorService, ConfirmationTokenService confirmationTokenService, PasswordEncoder passwordEncoder) {
         this.clientService = clientService;
         this.fishingInstructorService = fishingInstructorService;
         this.vacationHouseOwnerService = vacationHouseOwnerService;
         this.boatOwnerService = boatOwnerService;
         this.addressService = addressService;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.administratorService = administratorService;
         this.confirmationTokenService = confirmationTokenService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -57,7 +59,7 @@ public class UserServiceSecurity implements UserDetailsService {
     public String signUpUser(Client user) {
         if (clientService.getClientByEmail(user.getUsername()) != null)
             return "korisnik vec postoji";
-        String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+        String encodedPassword=passwordEncoder.bCryptPasswordEncoder().encode(user.getPassword());
         user.setPassword(encodedPassword);
         Address address = addressService.getByAttributes(user.getAddress());
         if (address == null) {
@@ -91,4 +93,6 @@ public class UserServiceSecurity implements UserDetailsService {
     public void addClient(Client client){
         clientService.addClient(client);
     }
+
+    public void addAdmin(Administrator administrator){ administratorService.addAdmin(administrator);}
 }

@@ -18,6 +18,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -185,15 +186,17 @@ public class Config {
             Address clientAddress = new Address("Novi Sad", "16", "Puskinova", "Srbija");
             addressRepository.save(clientAddress);
             Client client = new Client(
-                    "petar123",
-                    "Petar",
-                    "Peric",
-                    "perap@gmail.com",
+                    "$2a$10$EtTEhwY56Dk8gqXufkmPIujEvtR9Gh.ylJZpwPRzix7WPevGZDPSG",//mika123
+                    "Mika",
+                    "Mikic",
+                    "mika@gmail.com",
                     "0601233215",
                     clientAddress,
                     false,
                     roleClient);
             client.setEnabled(true);
+            client.setLastPasswordResetDate(Timestamp.valueOf("2022-05-12 16:32:27.922"));
+
             clientRepository.save(client);
         };
     }
