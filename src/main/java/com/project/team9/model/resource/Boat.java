@@ -1,10 +1,12 @@
 package com.project.team9.model.resource;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.Tag;
 import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.Address;
+import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.user.vendor.BoatOwner;
 
 import javax.persistence.*;
@@ -66,12 +68,17 @@ public class Boat extends Resource{
         this.quickReservations = new ArrayList<BoatReservation>();
     }
 
+    @JsonManagedReference
     public List<BoatReservation> getQuickReservations() {
         return quickReservations;
     }
 
     public void setQuickReservations(List<BoatReservation> quickReservations) {
         this.quickReservations = quickReservations;
+    }
+
+    public void addQuickReservations(BoatReservation quickReservation) {
+        this.quickReservations.add(quickReservation);
     }
 
     public BoatOwner getOwner() {

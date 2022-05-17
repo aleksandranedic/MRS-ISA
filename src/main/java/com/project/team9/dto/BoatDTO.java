@@ -32,12 +32,12 @@ public class BoatDTO {
     private int price;
     private int cancellationFee;
     private int capacity;
-    private List<BoatReservation> quickReservations;
+    private List<BoatQuickReservationDTO> quickReservations;
 
     public BoatDTO() {
     }
 
-    public BoatDTO(Long id, String name, String address, String number, String street, String city, String country, String description, String type, List<String> imagePaths, String rulesAndRegulations, String engineNumber, double engineStrength, double topSpeed, double length, List<Tag> navigationEquipment, List<Tag> fishingEquipment, List<Tag> additionalServices, List<String> tagsText, List<String> tagsFishingEquipText, List<String> tagsAdditionalServicesText, int price, int cancellationFee, int capacity, List<BoatReservation> quickReservations) {
+    public BoatDTO(Long id, String name, String address, String number, String street, String city, String country, String description, String type, List<String> imagePaths, String rulesAndRegulations, String engineNumber, double engineStrength, double topSpeed, double length, List<Tag> navigationEquipment, List<Tag> fishingEquipment, List<Tag> additionalServices, List<String> tagsText, List<String> tagsFishingEquipText, List<String> tagsAdditionalServicesText, int price, int cancellationFee, int capacity, List<BoatQuickReservationDTO> quickReservations) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -65,7 +65,7 @@ public class BoatDTO {
         this.quickReservations = quickReservations;
     }
 
-    public BoatDTO(Long id, String name, String address, String number, String street, String city, String country, String description, String type, List<String> imagePaths, String rulesAndRegulations, String engineNumber, double engineStrength, double topSpeed, double length, List<Tag> navigationEquipment, List<Tag> fishingEquipment, List<Tag> additionalServices, int price, int cancellationFee, int capacity, List<BoatReservation> quickReservations) {
+    public BoatDTO(Long id, String name, String address, String number, String street, String city, String country, String description, String type, List<String> imagePaths, String rulesAndRegulations, String engineNumber, double engineStrength, double topSpeed, double length, List<Tag> navigationEquipment, List<Tag> fishingEquipment, List<Tag> additionalServices, int price, int cancellationFee, int capacity, List<BoatQuickReservationDTO> quickReservations) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -282,11 +282,11 @@ public class BoatDTO {
         this.capacity = capacity;
     }
 
-    public List<BoatReservation> getQuickReservations() {
+    public List<BoatQuickReservationDTO> getQuickReservations() {
         return quickReservations;
     }
 
-    public void setQuickReservations(List<BoatReservation> quickReservations) {
+    public void setQuickReservations(List<BoatQuickReservationDTO> quickReservations) {
         this.quickReservations = quickReservations;
     }
 

@@ -2,9 +2,9 @@ import {React, useState, useRef} from 'react';
 import axios from "axios";  
 import { useParams } from "react-router-dom";
 import {Modal, Button, Form, Row, Col, InputGroup} from 'react-bootstrap'
-import { TagInfo } from '../Info';
+import { TagInfo } from './Info';
 
-function AddHouseQuickReservation({showModal, closeModal}) {
+function AddQuickReservation({showModal, closeModal, entity, priceText}) {
     const statePlaceHolder = {startDate:'', price:'', discount:'', numberOfPeople:'', duration:'', additionalServices:[{id:0, text:''}]};
     let [state, setState] = useState(statePlaceHolder)
     const [tagText, setTagText] = useState('');
@@ -28,8 +28,10 @@ function AddHouseQuickReservation({showModal, closeModal}) {
                 }
             } 
             data.append("tagsText", state.tagsText)
+            console.log(state)
+            console.log(entity)
             axios
-            .post("http://localhost:4444/house/addQuickReservation/" + id, data)
+            .post("http://localhost:4444/" + entity + "/addQuickReservation/" + id, data)
             .then(res => {
                 window.location.reload();
             });
@@ -108,7 +110,10 @@ function AddHouseQuickReservation({showModal, closeModal}) {
 
              
                 <Form.Group as={Col} >
-                    <Form.Label>Cena po noćenju</Form.Label>
+                    <div className='d-flex'>
+                    <Form.Label className="me-1">Cena</Form.Label>
+                    <Form.Label>{priceText}</Form.Label>
+                    </div>
                     <InputGroup>
                         <Form.Control required type="number" min={1} name="price" onChange={e => setPrice(e.target.value)}/>
                         <InputGroup.Text>€</InputGroup.Text>
@@ -137,4 +142,4 @@ function AddHouseQuickReservation({showModal, closeModal}) {
     );
 }
 
-export default AddHouseQuickReservation;
+export default AddQuickReservation;

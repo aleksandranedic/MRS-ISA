@@ -42,7 +42,7 @@ const Update = ({vacationHouse, showModal, closeModal}) => {
 
 const Reservations = ({reservations, name, address}) => {
     if (typeof reservations !== "undefined"){
-        return <QuickReservations reservations={reservations} name={name} address={address}/>
+        return <QuickReservations reservations={reservations} name={name} address={address} entity="house" priceText="po noćenju"/>
     }
     else {
         return <></>
