@@ -26,6 +26,9 @@ function AddVacationHouse({showModal, closeModal}) {
       for (let i=0; i < files.length; i++){
         images.push(files[i])
       }
+
+      console.log(images);
+
       data.append("fileImage",images);
       state.address = state.street + " " + state.number + ", " + state.city + ", " + state.country;
       state.quickReservations = [];
