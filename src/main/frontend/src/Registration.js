@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import {Button, Form, Modal} from "react-bootstrap";
-import background from "./images/cover.png"
+import background from "./images/boatsnotext.png"
 import axios from "axios";
 import Collapse from "react-bootstrap/Collapse";
 import {frontLink} from "./Consts";

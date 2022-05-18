@@ -14,6 +14,7 @@ function UpdateHouse({showModal, closeModal, vacationHouse}) {
     useEffect(() => {
       setState(vacationHouse);
     }, []);
+
   const submit = e => {
     e.preventDefault()
     if (form.current.checkValidity() === false || state.imagePaths.length === 0) {

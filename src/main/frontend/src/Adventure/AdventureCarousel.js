@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import AdventureCard from "./AdventureCard";
-import {AdventureForm} from "./AdventureForm";
+import {AdventureModal} from "./AdventureModal";
 import PlusCard from "../PlusCard";
 
 
@@ -45,7 +45,7 @@ export default function AdventureCarousel({adventures, add}) {
                     add &&
                     <>
                         <PlusCard onClick={() => setShow(true)}/>
-                        <AdventureForm show={show} setShow={setShow}/>
+                        <AdventureModal show={show} setShow={setShow}/>
                     </>
                 }
 

@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import ImagesGallery from "../ImageGallery";
 import Banner from "../Banner";
 import Navigation from "../Navigation/Navigation";
 import AdventureInfo from "./AdventureInfo";
 import {Calendar} from "../Calendar/Calendar";
-import {AdventureForm} from "./AdventureForm";
+import {AdventureModal} from "./AdventureModal";
 import {useParams} from "react-router-dom";
 import {backLink} from "../Consts";
 import {ReservationsTable} from "../Calendar/ReservationsTable";
 import {Button, Collapse} from "react-bootstrap";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
+import {AdventureGallery} from "./AdventureGallery";
 
 export function AdventurePage() {
     const {id} = useParams();
@@ -30,7 +30,7 @@ const Adventures = ({id})  =>{
     const [images, setImages] = useState([]);
 
     let html;
-    const fetchAdventures = () => {
+    const fetchAdventure = () => {
         axios.get(backLink+"adventure/"+ id).then(res => {
             setAdventure(res.data);
             setImages([]);
@@ -44,7 +44,7 @@ const Adventures = ({id})  =>{
     }
 
     useEffect(() => {
-        fetchAdventures();
+        fetchAdventure();
         fetchReservations();
     }, []);
 
@@ -61,16 +61,22 @@ const Adventures = ({id})  =>{
             <Navigation buttons={
                 [
                     {text: "Osnovne informacije", path: "#info"},
-                    // {text: "Fotografije", path: "#"},
-                    // {text: "Akcije", path: "#"},
-                    {text: "Kalendar zauzetosti", path: "#calendar"},
-                    {text: "Predstojaće rezervacije", path: "#reservations"},
-                    {text: "Istorija rezervacija", path: "#reservationsHistory"}
+                    {text: "Fotografije", path: "#photos"},
+                    {text: "Kalendar", path: "#calendar"},
+                    {text: "Rezervacije", path: "#reservations"},
+
                 ]}
                         editable={true} editFunction={handleShow} searchable={true}
             />
-            <AdventureForm show={show} setShow={setShow} adventure={adventure}/>
+            <AdventureModal show={show} setShow={setShow} adventure={adventure}/>
             <AdventureInfo adventure={adventure}/>
+
+
+            <div id="photos">
+                <AdventureGallery id={id} images={images}/>
+            </div>
+
+
             <hr className="me-5 ms-5"/>
             <Calendar reservations={reservations} reservable={true} pricelist={adventure.pricelist} perHour={true}/>
 
@@ -83,7 +89,6 @@ const Adventures = ({id})  =>{
                     aria-controls="reservationsTable"
                     aria-expanded={open}
                     style = {{cursor: "pointer"}}
-                    id="reservationsHistory"
             >Istorija rezervacija</h2>
 
             <hr className="me-5 ms-5"/>

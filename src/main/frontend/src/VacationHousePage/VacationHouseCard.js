@@ -1,11 +1,11 @@
 import CustomCard from "../CustomCard";
-import {frontLink} from "../Consts";
+import {backLink, frontLink} from "../Consts";
 import React from "react";
 
 export default function VacationHouseCard({vacationHouse, editable}) {
 
     return (<CustomCard
-        imagePath={"../images/vikendica3.jpeg"}
+        imagePath={backLink.substring(0, backLink.length-1) + vacationHouse.images.at(0).path}
         editable={editable}
         itemToEdit={vacationHouse}
         title={vacationHouse.title}

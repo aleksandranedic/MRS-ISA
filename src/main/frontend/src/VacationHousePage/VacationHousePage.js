@@ -14,12 +14,12 @@ const HOST = "http://localhost:4444";
 const Gallery = ({house, images}) => {
     if (typeof house.imagePaths !== "undefined"){
         let empty = images.length === 0;
-        for (let i=0; i<house.imagePaths.length;i++){
+        for (let i=0; i<house.imagePaths.length; i++){
             if (!house.imagePaths[i].includes(HOST)){
                 house.imagePaths[i] = HOST + house.imagePaths[i];
                 images.push({original:house.imagePaths[i], thumbnail:house.imagePaths[i]})
             } else if (empty){
-                images.push({original:house.imagePaths[i], thumbnail:house.imagePaths[i]})   
+                images.push({original:house.imagePaths[i], thumbnail:house.imagePaths[i]})
             }
         }
         return <ImagesGallery images={images}/>

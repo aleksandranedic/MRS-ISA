@@ -2,9 +2,14 @@ import React from 'react';
 import {Container, Image} from'react-bootstrap'
 import Carousel from 'react-multi-carousel'
 import {BsTrashFill} from 'react-icons/bs'
+import {backLink} from "../Consts";
 
 
 function AdventureFormImages({images, setImages}) {
+    if (!images) {
+        images = [];
+    }
+
     const responsive = {
         superLargeDesktop: {
             breakpoint: {max: 4000, min: 3000},
@@ -31,6 +36,10 @@ function AdventureFormImages({images, setImages}) {
         const imageList = images.filter((img) => img !== image);
         setImages(imageList);
     }
+
+
+
+
     return (
         <Container className='d-flex p-0 house-images-main-container'>
             <Carousel responsive={responsive} interval="250000" className='carousel w-100 h-100' autoPlay={false} autoPlaySpeed={9000000}>

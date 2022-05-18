@@ -5,7 +5,9 @@ import image from "../images/document.png"
 export function RegistrationRequestCard({props, remove}) {
     const [show, setShow] = useState(false);
 
-    function handleSubmit() {
+    function handleSubmit(type) {
+
+        //TODO  if type == accept/deny
         remove(props);
         setShow(false);
     }
@@ -48,8 +50,8 @@ export function RegistrationRequestCard({props, remove}) {
                 <Modal.Footer>
                     <Button onClick={() => setShow(false)} variant="outline-primary" className="ms-auto m-1">Otkaži</Button>
 
-                    <Button onClick={handleSubmit} variant="outline-success" className="m-1">Odobri</Button>
-                    <Button onClick={handleSubmit} variant="outline-danger" className="m-1">Poništi</Button>
+                    <Button onClick={()=>handleSubmit('accept')} variant="outline-success" className="m-1">Odobri</Button>
+                    <Button onClick={()=>handleSubmit('deny')} variant="outline-danger" className="m-1">Poništi</Button>
                 </Modal.Footer>
             </Modal>
         </div>

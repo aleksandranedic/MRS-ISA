@@ -33,7 +33,7 @@ public class AdventureReservationService {
         List<AdventureReservation> reservations = new ArrayList<AdventureReservation>();
 
         for (AdventureReservation ar : repository.findAll()) {
-            if (Objects.equals(ar.getResource().getId(), id)) {
+            if (Objects.equals(ar.getResource().getId(), id) && !ar.isQuickReservation() && !ar.isBusyPeriod()) {
                 reservations.add(ar);
             }
         }
@@ -45,7 +45,7 @@ public class AdventureReservationService {
 
         for (Adventure a : adventureService.findAdventuresWithOwner(id.toString())) {
             for (AdventureReservation ar : repository.findAll()) {
-                if (Objects.equals(ar.getResource().getId(), a.getId())) {
+                if (Objects.equals(ar.getResource().getId(), a.getId()) && !ar.isQuickReservation() && !ar.isBusyPeriod()) {
                     reservations.add(ar);
                 }
             }
