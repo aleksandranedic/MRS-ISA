@@ -81,7 +81,7 @@ public class Config {
         this.boatReservationRepository = boatReservationRepository;
 
         return args -> {
-            fillData();
+//            fillData();
         };
     }
 
