@@ -7,7 +7,7 @@ export function AdventureGallery({id, images})  {
     const [adventure, setAdventure] = useState([]);
 
     const fetchAdventure = () => {
-        axios.get(backLink+"adventure/dto/"+ id).then(res => {
+        axios.get(backLink+"/adventure/dto/"+ id).then(res => {
             setAdventure(res.data);
         });
     };

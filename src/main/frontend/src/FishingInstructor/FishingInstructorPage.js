@@ -24,19 +24,19 @@ const FishingInstructors = ({id}) => {
 
 
     const fetchReservations = () => {
-        axios.get(backLink+ "adventure/reservation/fishingInstructor/" + id).then(res => {
+        axios.get(backLink+ "/adventure/reservation/fishingInstructor/" + id).then(res => {
             setReservations(res.data);
         })
     }
 
     const fetchFishingInstructors = () => {
-        axios.get("http://localhost:4444/fishinginstructor/"+ id).then(res => {
+        axios.get(backLink+"/fishinginstructor/"+ id).then(res => {
             setFishingInstructor(res.data);
         });
     };
 
     const fetchAdventures = () => {
-        axios.get("http://localhost:4444/adventure/owner/" + id).then(res => {
+        axios.get(backLink+ "/adventure/owner/" + id).then(res => {
             setAdventures(res.data);
         });
     };

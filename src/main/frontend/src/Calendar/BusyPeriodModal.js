@@ -23,7 +23,7 @@ export function BusyPeriodModal({show, setShow, events, setEvents}) {
         }])
 
         axios
-            .post(backLink + "reservation/adventure/add", formValues)
+            .post(backLink + "/reservation/adventure/add", formValues)
             .then(response => {
                 console.log(response)
             })

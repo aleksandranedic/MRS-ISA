@@ -8,7 +8,7 @@ import {backLink, frontLink} from "../Consts";
 export default function BoatCard({boat, editable}) {
 
     return (<CustomCard
-        imagePath={backLink.substring(0, backLink.length-1) + boat.images.at(0).path}
+        imagePath={backLink + boat.images.at(0).path}
         editable={editable}
         itemToEdit={boat}
         title={boat.title}
