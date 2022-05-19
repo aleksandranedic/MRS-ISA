@@ -6,7 +6,7 @@ export function GetAllVacationHouses() {
     const [vacationHouses, setVacationHouses] = useState([]);
 
     const fetch = () => {
-        axios.get(backLink + "house").then(res => {
+        axios.get(backLink + "/house").then(res => {
             console.log(res.data);
             setVacationHouses(res.data);
         });

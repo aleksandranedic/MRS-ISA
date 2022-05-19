@@ -24,7 +24,7 @@ export function FishingInstructorForm({show, setShow, fishingInstructor}) {
             setFormErrors(errors);
         } else {
             axios
-                .post(backLink + "fishinginstructor/" + fishingInstructor.id + "/edit", formValues)
+                .post(backLink + "/fishinginstructor/" + fishingInstructor.id + "/edit", formValues)
                 .then(response => {
                     console.log(response)
                 })

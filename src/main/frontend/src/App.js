@@ -16,6 +16,9 @@ import {RegistrationRequests} from "./Admin/RegistrationRequests";
 import {DeletionRequests} from "./Admin/DeletionRequests";
 
 import {HomePage} from "./Home/HomePage";
+import {NewHomePage} from "./Home/NewHomePage";
+
+
 
 
 function App() {
@@ -37,6 +40,7 @@ function App() {
                 <Route path='/registration' element={<Registration/>}/>
                 <Route path='/confirmedEmail/:token' element={<EmailConfirmed/>}/>
                 <Route path='' element={<HomePage/>}/>
+                <Route path='/new' element={<NewHomePage/>}/>
             </Routes>
         </Router>
     );

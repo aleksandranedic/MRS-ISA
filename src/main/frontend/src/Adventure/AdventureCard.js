@@ -10,7 +10,7 @@ export default function AdventureCard({adventure, editable}) {
 
 
     return (<CustomCard
-        imagePath={backLink.substring(0, backLink.length-1) + adventure.images.at(0).path}
+        imagePath={backLink + adventure.images.at(0).path}
         editable={editable}
         itemToEdit={adventure}
         title={adventure.title}

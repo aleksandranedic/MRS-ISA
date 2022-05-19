@@ -5,7 +5,7 @@ import React from "react";
 export default function VacationHouseCard({vacationHouse, editable}) {
 
     return (<CustomCard
-        imagePath={backLink.substring(0, backLink.length-1) + vacationHouse.images.at(0).path}
+        imagePath={backLink + vacationHouse.images.at(0).path}
         editable={editable}
         itemToEdit={vacationHouse}
         title={vacationHouse.title}

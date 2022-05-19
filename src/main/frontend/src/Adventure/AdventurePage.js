@@ -31,14 +31,14 @@ const Adventures = ({id})  =>{
 
     let html;
     const fetchAdventure = () => {
-        axios.get(backLink+"adventure/"+ id).then(res => {
+        axios.get(backLink+"/adventure/"+ id).then(res => {
             setAdventure(res.data);
             setImages([]);
         });
     };
 
     const fetchReservations = () => {
-        axios.get(backLink+ "adventure/reservation/adventure/" + id).then(res => {
+        axios.get(backLink+ "/adventure/reservation/adventure/" + id).then(res => {
             setReservations(res.data);
         })
     }

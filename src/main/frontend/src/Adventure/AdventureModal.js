@@ -68,7 +68,7 @@ export function AdventureModal({adventure, show, setShow}) {
         dto.append("images", images);
 
         axios
-            .post(backLink + "adventure/add", dto)
+            .post(backLink + "/adventure/add", dto)
             .then(response => {
                 console.log(response)
             })
@@ -409,7 +409,7 @@ function getInitialAdventureState(adventure) {
     if (adventure) {
         let images = []
         for (let index in adventure.images) {
-            images.push(backLink.substring(0, backLink.length - 1) + adventure.images.at(index).path)
+            images.push(backLink + adventure.images.at(index).path)
         }
 
         return {

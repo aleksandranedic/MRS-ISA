@@ -11,7 +11,7 @@ const Adventures = ({term}) => {
     const [adventures, setAdventures] = useState([]);
 
     const fetchAdventures = () => {
-        axios.get(backLink + "adventure",).then(res => {
+        axios.get(backLink + "/adventure",).then(res => {
 
 
             let adventures = []
@@ -50,7 +50,7 @@ const FishingInstructors = ({term}) => {
     const [fishingInstructors, setFishingInstructors] = useState([]);
 
     const fetchFishingInstructors = () => {
-        axios.get(backLink + "fishinginstructor").then(res => {
+        axios.get(backLink + "/fishinginstructor").then(res => {
 
             let instructors = []
 
@@ -89,7 +89,7 @@ const VacationHouses = ({term}) => {
     const [vacationHouses, setVacationHouses] = useState([]);
 
     const fetchVacationHouses = () => {
-        axios.get(backLink + "house",).then(res => {
+        axios.get(backLink + "/house",).then(res => {
 
             let houses = []
 
