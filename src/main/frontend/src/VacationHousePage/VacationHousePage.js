@@ -7,6 +7,7 @@ import HouseInfo from "./HouseInfo";
 import UpdateHouse from "./UpdateHouse"
 import BeginButton from "../BeginButton";
 import { useParams } from "react-router-dom";
+import {Footer} from 'react-bootstrap'
 import "react-image-gallery/styles/css/image-gallery.css";
 import Navigation from "../Navigation/Navigation";
 
@@ -42,7 +43,7 @@ const Update = ({vacationHouse, showModal, closeModal}) => {
 
 const Reservations = ({reservations, name, address}) => {
     if (typeof reservations !== "undefined"){
-        return <QuickReservations reservations={reservations} name={name} address={address} entity="house" priceText="po noćenju"/>
+        return <QuickReservations reservations={reservations} name={name} address={address} entity="house" priceText="po noćenju" durationText="dana"/>
     }
     else {
         return <></>
@@ -86,6 +87,7 @@ export function VacationHousePage() {
             <Gallery house={house} images={imgs}/>
             <hr/>
             <Reservations reservations={house.quickReservations} name={house.name} address={house.address}/>
+            <footer className="blockquote-footer">Svi izlasci iz vikendice obavljaju se do 10:00h.</footer>
         </div>
         <BeginButton/>
     </>

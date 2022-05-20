@@ -49,7 +49,8 @@ const Update = ({boat, showModal, closeModal}) => {
 
 const Reservations = ({reservations, name, address}) => {
     if (typeof reservations !== "undefined"){
-        return <QuickReservations reservations={reservations} name={name} address={address} entity="boat" priceText="po vožnji"/>
+        console.log(reservations)
+        return <QuickReservations reservations={reservations} name={name} address={address} entity="boat" priceText="po vožnji" durationText="sata"/>
     }
     else {
         return <></>
@@ -80,7 +81,7 @@ export function BoatProfilePage() {
             [
                 {text: "Osnovne informacije", path: "#info"},
                 {text: "Fotografije", path: "#gallery"},
-                {text: "Akcije", path: "#"},
+                {text: "Akcije", path: "#actions"},
                 {text: "Kalendar zauzetosti", path: "#"}
             ]}
                     editable={true} editFunction={handleShow} searchable={true} showProfile={true}/>
