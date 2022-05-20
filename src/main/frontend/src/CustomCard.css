@@ -9,3 +9,11 @@
 .houseQuickReservationCard:hover {
     transform: scale(1.1);
 }
+.quick-reservation-carousel li {
+    min-width: 47vh;
+    margin-right: 3vh;
+}
+
+#house .e-time-icon {
+    display: none !important;
+}

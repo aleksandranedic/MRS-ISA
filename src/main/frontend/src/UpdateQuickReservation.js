@@ -3,8 +3,12 @@ import {Modal, InputGroup, Button, Form, Col, Row} from 'react-bootstrap'
 import { TagInfo } from './Info';
 import axios from "axios";  
 import { useParams } from "react-router-dom";
+import * as ReactDOM from 'react-dom';
+import {DateTimePickerComponent} from '@syncfusion/ej2-react-calendars';
+import './material.css'
 
 function UpdateQuickReservation({state, setState, closeModal, showModal, entity}) {
+    const [startDateInt, setStartDateInt] = useState("");
     const [originalState, setOriginalState] = useState(state);
     const [tagText, setTagText] = useState('');
     const [validated, setValidated] = useState(false);
@@ -34,7 +38,8 @@ function UpdateQuickReservation({state, setState, closeModal, showModal, entity}
             } 
             data.append("tagsText", state.tagsText);
             data.append("reservationID", state.reservationID);
-            console.log(state)
+            data.append("startDate", startDateInt);
+   
             axios
             .post("http://localhost:4444/" + entity + "/updateQuickReservation/" + id, data)
             .then(res => {
@@ -45,6 +50,11 @@ function UpdateQuickReservation({state, setState, closeModal, showModal, entity}
       
       }
       function close(){
+        if (entity === "house"){
+            var icon = document.getElementsByClassName("e-time-icon");
+            if (typeof icon[0] !== "undefined")
+                icon[0].style.display = "none"
+        }
         Reset();
         closeModal();
       }
@@ -54,9 +64,19 @@ function UpdateQuickReservation({state, setState, closeModal, showModal, entity}
       }
 
     const setStartDate = (val) => {
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var minutes = (val.getMinutes()<10?'0':'') + val.getMinutes();
+        var days = (val.getDate()<10?'0':'') + val.getDate();
+        var hours = (val.getHours()<10?'0':'') + val.getHours();
+        var newStartDate =  days + " " + monthNames[val.getMonth()] + " " + val.getFullYear() + " " + hours + ":" + minutes + "h"
+        
+        var month = val.getMonth() + 1;
+        var monthInt = (month<10?'0':'') + month;
+        var newStartDateInt =  days + " " + monthInt + " " + val.getFullYear() + " " + hours + ":" + minutes
+        setStartDateInt(newStartDateInt);
         setState( prevState => {
-            return {...prevState, startDate:val}
-        })
+            return {...prevState, startDate:newStartDate}
+        })    
     }
     const setDuration = (value) => {
         setState( prevState => {
@@ -92,9 +112,9 @@ function UpdateQuickReservation({state, setState, closeModal, showModal, entity}
             </Modal.Header>
             <Modal.Body>
           
-                <Form.Group className="mb-3">
+                <Form.Group id={entity} className="mb-3">
                             <Form.Label>Početak važenja akcije</Form.Label>
-                            <Form.Control required type="date" name="startDate" defaultValue={state.startDate} onChange={e => setStartDate(e.target.value)}/>
+                            <DateTimePickerComponent required allowEdit={false} format="dd MMM yyyy HH:mm'h'" value={state.startDate} onChange={e => setStartDate(e.target.value)} step={15}></DateTimePickerComponent>                          
                             <Form.Control.Feedback type="invalid">Molimo Vas unesite datum.</Form.Control.Feedback>               
                 </Form.Group>
 

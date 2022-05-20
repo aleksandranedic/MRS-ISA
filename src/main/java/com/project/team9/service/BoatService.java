@@ -73,8 +73,9 @@ public class BoatService {
 
     private BoatReservation getReservationFromDTO(BoatQuickReservationDTO dto){
         List<Appointment> appointments = new ArrayList<Appointment>();
-        String[] splitDate = dto.getStartDate().split("-");
-        Appointment startDateAppointment = Appointment.getVacationHouseAppointment(Integer.parseInt(splitDate[0]), Integer.parseInt(splitDate[1]), Integer.parseInt(splitDate[2]));
+        String[] splitDate = dto.getStartDate().split(" ");
+        String[] splitTime = splitDate[3].split(":");
+        Appointment startDateAppointment = Appointment.getBoatAppointment(Integer.parseInt(splitDate[2]), Integer.parseInt(splitDate[1]), Integer.parseInt(splitDate[0]), Integer.parseInt(splitTime[0]), Integer.parseInt(splitTime[1]));
         appointments.add(startDateAppointment);
         appointmentRepository.save(startDateAppointment);
         Appointment currApp = startDateAppointment;
@@ -161,7 +162,7 @@ public class BoatService {
     private BoatQuickReservationDTO createBoatReservationDTO(int boatPrice, BoatReservation reservation){
         Appointment firstAppointment = getFirstAppointment(reservation.getAppointments());
         LocalDateTime startDate = firstAppointment.getStartTime();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm'h'");
         String strDate = startDate.format(formatter);
         int numberOfPeople = reservation.getNumberOfClients();
         List<Tag> additionalServices = reservation.getAdditionalServices();

@@ -6,7 +6,7 @@ import {BsPencilSquare, BsPeople} from "react-icons/bs";
 import {AiOutlineCalendar, AiOutlineClockCircle} from "react-icons/ai";
 import UpdateQuickReservation from './UpdateQuickReservation';
 
-function QuickReservation({reservation, name, address, image, entity, priceText}) {
+function QuickReservation({reservation, name, address, image, entity, priceText, durationText}) {
     const [state, setState] = useState({startDate:'', price:'', numberOfPeople:'', duration:'', discount:'', additionalServices:[{id:'', text:''}]});
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -17,7 +17,7 @@ function QuickReservation({reservation, name, address, image, entity, priceText}
       }, []);
 
     return ( 
-            <Card className="houseQuickReservationCard m-3 mt-4" style={{ borderRadius: "15PX"}}>
+            <Card className="houseQuickReservationCard m-3 mt-4 me-5" style={{ borderRadius: "15PX", minWidth:"45vh"}}>
                 <Card.Img variant="top" src={image} style={{ borderRadius: "15px 15px 0px 0px", maxHeight:"28vh", minHeight:"28vh"}}/>
                 <Card.ImgOverlay className="p-2">
                     <div className='w-100 d-flex justify-content-end m-0 p-0'>
@@ -43,7 +43,7 @@ function QuickReservation({reservation, name, address, image, entity, priceText}
                             <span className="d-flex ms-3 me-3">
                                 <AiOutlineClockCircle className="me-1" color="#0d6efd"/>
                                 <p className="m-0 p-0 pe-1" style={{fontSize: "13px"}}>{state.duration}</p>
-                                <p className="m-0 p-0" style={{fontSize: "13px"}}>dana</p>
+                                <p className="m-0 p-0" style={{fontSize: "13px"}}>{durationText}</p>
                             </span>
                             <span className="d-flex">
                                 <BsPeople className="me-1" color="#0d6efd"/>

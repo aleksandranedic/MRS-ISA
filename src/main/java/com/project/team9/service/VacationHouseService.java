@@ -101,7 +101,7 @@ public class VacationHouseService {
     private VacationHouseQuickReservationDTO createVacationHouseQuickReservationDTO(int vacationHousePrice, VacationHouseReservation reservation){
         Appointment firstAppointment = getFirstAppointment(reservation.getAppointments());
         LocalDateTime startDate = firstAppointment.getStartTime();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm'h'");
         String strDate = startDate.format(formatter);
         int numberOfPeople = reservation.getNumberOfClients();
         List<Tag> additionalServices = reservation.getAdditionalServices();
@@ -154,8 +154,8 @@ public class VacationHouseService {
     }
     private VacationHouseReservation getReservationFromDTO(VacationHouseQuickReservationDTO dto){
         List<Appointment> appointments = new ArrayList<Appointment>();
-        String[] splitDate = dto.getStartDate().split("-");
-        Appointment startDateAppointment = Appointment.getVacationHouseAppointment(Integer.parseInt(splitDate[0]), Integer.parseInt(splitDate[1]), Integer.parseInt(splitDate[2]));
+        String[] splitDate = dto.getStartDate().split(" ");
+        Appointment startDateAppointment = Appointment.getVacationHouseAppointment(Integer.parseInt(splitDate[2]), Integer.parseInt(splitDate[1]), Integer.parseInt(splitDate[0]));
         appointments.add(startDateAppointment);
         appointmentRepository.save(startDateAppointment);
         Appointment currApp = startDateAppointment;

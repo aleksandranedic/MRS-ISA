@@ -29,7 +29,7 @@ const responsive = {
     }
 };
 
-function QuickReservations({reservations, name, address, entity, priceText}) {
+function QuickReservations({reservations, name, address, entity, priceText, durationText}) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -39,9 +39,9 @@ function QuickReservations({reservations, name, address, entity, priceText}) {
             <h1 className="m-0 text-lead" style={{color: "#313041", fontSize: "46px", lineHeight: "60px", letterSpacing: "-.02em"}}> Specijalne ponude i popusti</h1>
         </div>
         <Container className='d-flex p-0'>          
-            <Carousel className="w-100 h-100" responsive={responsive}  interval="250000" autoPlay={false} autoPlaySpeed={9000000}>
+            <Carousel className="w-100 h-100 quick-reservation-carousel" responsive={responsive}  interval="250000" autoPlay={false} autoPlaySpeed={9000000}>
             {reservations.map( (reservation) => (
-                <QuickReservation key={reservation}  reservation={reservation} name={name} address={address} image={"http://localhost:3000/images/vikendica1.jpeg"} entity={entity} priceText={priceText}/>  
+                <QuickReservation key={reservation}  reservation={reservation} name={name} address={address} image={"http://localhost:3000/images/vikendica1.jpeg"} entity={entity} priceText={priceText} durationText={durationText}/>  
             ))}
             </Carousel>
 
