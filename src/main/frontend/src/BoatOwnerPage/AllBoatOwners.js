@@ -6,7 +6,7 @@ export function GetAllBoatOwners() {
     const [boatOwners, setBoatOwners] = useState([]);
 
     const fetch = () => {
-        axios.get(backLink + "boatowner").then(res => {
+        axios.get(backLink + "/boatowner").then(res => {
             console.log(res.data);
             setBoatOwners(res.data);
         });

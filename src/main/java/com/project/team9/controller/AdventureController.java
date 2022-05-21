@@ -7,7 +7,9 @@ import com.project.team9.service.AdventureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -31,20 +33,21 @@ public class AdventureController {
         return service.getById(id);
     }
 
+    @GetMapping(value="/dto/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public AdventureDTO getDTOById(@PathVariable String id) {
+        return service.getDTOById(id);
+    }
+
     @PostMapping("/{id}/edit")
-    public Adventure edit(@RequestBody AdventureDTO adventure, @PathVariable String id) {
-        try {
-            return service.editAdventure(adventure, id);
-        } catch (AdventureNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public Adventure edit(@RequestBody AdventureDTO adventure, @PathVariable String id, @RequestParam("fileImage") MultipartFile[] multipartFiles) throws IOException {
+        return service.editAdventure(id, adventure, multipartFiles);
 
     }
 
     @PostMapping("/add")
-    public Long add(@RequestBody AdventureDTO adventure){
-        return service.createAdventure(adventure);
+    public Long add(AdventureDTO adventure, @RequestParam("fileImage")MultipartFile[] multipartFiles) throws IOException {
+        System.out.println("here");
+        return service.createAdventure(adventure, multipartFiles);
     }
 
     @GetMapping("/owner/{ownerId}")

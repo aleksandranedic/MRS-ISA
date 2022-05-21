@@ -26,16 +26,20 @@ public class Reservation {
     private int price;  //It is possible that the price is lower that the sum of appointment prices if the reservation is quick reservation
     @OneToOne
     private Client client;
+    private boolean isBusyPeriod;
+    private boolean isQuickReservation;
 
     public Reservation() {
     }
 
-    public Reservation(List<Appointment> appointments, int numberOfClients, List<Tag> additionalServices, int price, Client client) {
+    public Reservation(List<Appointment> appointments, int numberOfClients, List<Tag> additionalServices, int price, Client client, boolean isBusyPeriod, boolean isQuickReservation) {
         this.appointments = appointments;
         this.numberOfClients = numberOfClients;
         this.additionalServices = additionalServices;
         this.price = price;
         this.client = client;
+        this.isBusyPeriod = isBusyPeriod;
+        this.isQuickReservation = isQuickReservation;
     }
 
     public Long getId() {
@@ -84,5 +88,21 @@ public class Reservation {
 
     public void setClient(Client client) {
         this.client = client;
+    }
+
+    public boolean isBusyPeriod() {
+        return isBusyPeriod;
+    }
+
+    public void setBusyPeriod(boolean busyPeriod) {
+        isBusyPeriod = busyPeriod;
+    }
+
+    public boolean isQuickReservation() {
+        return isQuickReservation;
+    }
+
+    public void setQuickReservation(boolean quickReservation) {
+        isQuickReservation = quickReservation;
     }
 }

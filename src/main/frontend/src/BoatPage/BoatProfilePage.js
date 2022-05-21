@@ -9,6 +9,7 @@ import BeginButton from "../BeginButton";
 import { useParams } from "react-router-dom";
 import "react-image-gallery/styles/css/image-gallery.css";
 import Navigation from "../Navigation/Navigation";
+import QuickReservation from "../QuickReservation";
 
 const HOST = "http://localhost:4444";
 const Gallery = ({boat, images}) => {
@@ -46,6 +47,15 @@ const Update = ({boat, showModal, closeModal}) => {
     }
 }
 
+const Reservations = ({reservations, name, address}) => {
+    if (typeof reservations !== "undefined"){
+        console.log(reservations)
+        return <QuickReservations reservations={reservations} name={name} address={address} entity="boat" priceText="po vožnji" durationText="sata"/>
+    }
+    else {
+        return <></>
+    }
+}
 export function BoatProfilePage() {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -71,7 +81,7 @@ export function BoatProfilePage() {
             [
                 {text: "Osnovne informacije", path: "#info"},
                 {text: "Fotografije", path: "#gallery"},
-                {text: "Akcije", path: "#"},
+                {text: "Akcije", path: "#actions"},
                 {text: "Kalendar zauzetosti", path: "#"}
             ]}
                     editable={true} editFunction={handleShow} searchable={true} showProfile={true}/>
@@ -81,7 +91,7 @@ export function BoatProfilePage() {
             <hr/>
             <Gallery boat={boat} images={imgs}/>
             <hr/>
-            <QuickReservations/>
+            <Reservations reservations={boat.quickReservations} name={boat.name} address={boat.address}/>
         </div>
         <BeginButton/>
     </>

@@ -3,16 +3,32 @@ import axios from "axios";
 import Banner from '../Banner';
 import BeginButton from '../BeginButton';
 
+import BoatOwnerForm from './BoatOwnerForm'
 import OwnerInfo from '../OwnerInfo';
 import OwnerBoats from './OwnerBoats';
 import AddBoat from './AddBoat';
 import { useParams } from "react-router-dom";
 import Navigation from "../Navigation/Navigation";
 
+
+const  UpdateOwner = ({show, setShow, owner}) => {
+    if (typeof owner.firstName !== "undefined"){
+        return <BoatOwnerForm show={show} setShow={setShow} owner={owner} />
+    }
+    else {
+        return <></>
+    }
+}
+
 function BoatOwnerPage() {
     const {id} = useParams();
+
     const [boatOwner, setboatOwner] = useState({address:''});
     let [ownerBoats, setOwnerBoats] = useState([]);
+
+    const [show, setShow] = useState(false);
+    const handleShow = () => setShow(true);
+
     const HOST = "http://localhost:4444";  
     const fetchOwnerBoats = () => {
       axios
@@ -48,8 +64,9 @@ function BoatOwnerPage() {
                     {text: "Rezervacije", path: "#sales"},
                     {text: "Izveštaji", path: "#reports"}
                 ]}
-                        editable={true} searchable={true} showProfile={true}/>
+                        editable={true} editFunction={handleShow} searchable={true} showProfile={true}/>
             <AddBoat/>
+            <UpdateOwner show={show} setShow={setShow} owner={boatOwner}/>
             <div className='p-5 pt-0'>
                 <OwnerInfo bio = {boatOwner.registrationRationale}
                     name={boatOwner.firstName + " " + boatOwner.lastName}

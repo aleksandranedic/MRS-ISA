@@ -1,5 +1,7 @@
 package com.project.team9.model.reservation;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -37,6 +39,10 @@ public class Appointment {
         return new Appointment(LocalDateTime.of(year, month, day, hour, minute,0), LocalDateTime.of(year, month, day, hour+1, minute,0));
     }
 
+    public static Appointment getBoatAppointment(int year, int month, int day, int hour, int minute) {
+        return new Appointment(LocalDateTime.of(year, month, day, hour, minute,0), LocalDateTime.of(year, month, day, hour+1, minute,0));
+    }
+
     public Long getId() {
         return id;
     }
@@ -59,5 +65,14 @@ public class Appointment {
 
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
+    }
+
+    @Override
+    public String toString() {
+        return "Appointment{" +
+                "id=" + id +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                '}';
     }
 }

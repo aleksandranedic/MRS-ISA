@@ -2,11 +2,15 @@ package com.project.team9.service;
 
 import com.project.team9.dto.HouseCardDTO;
 import com.project.team9.dto.VacationHouseDTO;
+import com.project.team9.dto.VacationHouseQuickReservationDTO;
 import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
+import com.project.team9.model.reservation.Appointment;
+import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.resource.VacationHouse;
+import com.project.team9.repo.AppointmentRepository;
 import com.project.team9.repo.VacationHouseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,10 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,18 +32,22 @@ public class VacationHouseService {
     private final PricelistService pricelistService;
     private final TagService tagService;
     private final ImageService imageService;
+    private final VacationHouseReservationService reservationService;
+    private final AppointmentRepository appointmentRepository;
 
     final String STATIC_PATH = "src/main/resources/static/";
     final String STATIC_PATH_TARGET = "target/classes/static/";
     final String IMAGES_PATH = "/images/houses/";
 
     @Autowired
-    public VacationHouseService(VacationHouseRepository vacationHouseRepository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService) {
+    public VacationHouseService(VacationHouseRepository vacationHouseRepository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, VacationHouseReservationService reservationService, AppointmentRepository appointmentRepository) {
         this.repository = vacationHouseRepository;
         this.addressService = addressService;
         this.pricelistService = pricelistService;
         this.tagService = tagService;
         this.imageService = imageService;
+        this.reservationService = reservationService;
+        this.appointmentRepository = appointmentRepository;
     }
 
     public List<VacationHouse> getVacationHouses() {
@@ -69,6 +76,7 @@ public class VacationHouseService {
     public VacationHouse getVacationHouse(Long id) {
         return repository.getById(id);
     }
+
     public VacationHouseDTO getVacationHouseDTO(Long id) {
         VacationHouse vh = repository.getById(id);
         String address = vh.getAddress().getStreet() + " " + vh.getAddress().getNumber() + ", " + vh.getAddress().getPlace()  + ", " + vh.getAddress().getCountry();
@@ -77,13 +85,99 @@ public class VacationHouseService {
             images.add(img.getPath());
         }
         int capacity = vh.getNumberOfBedsPerRoom() * vh.getNumberOfRooms();
-        return new VacationHouseDTO(vh.getId(), vh.getTitle(), address, vh.getAddress().getNumber(), vh.getAddress().getStreet(), vh.getAddress().getPlace(), vh.getAddress().getCountry(), vh.getDescription(), images, vh.getRulesAndRegulations(), vh.getAdditionalServices(), vh.getPricelist().getPrice(), vh.getCancellationFee(), vh.getNumberOfRooms(), capacity, vh.getQuickReservations());
+        List<VacationHouseQuickReservationDTO> quickReservations = getQuickReservations(vh);
+        return new VacationHouseDTO(vh.getId(), vh.getTitle(), address, vh.getAddress().getNumber(), vh.getAddress().getStreet(), vh.getAddress().getPlace(), vh.getAddress().getCountry(), vh.getDescription(), images, vh.getRulesAndRegulations(), vh.getAdditionalServices(), vh.getPricelist().getPrice(), vh.getCancellationFee(), vh.getNumberOfRooms(), capacity, quickReservations);
     }
 
-    public void updateVacationHouses(VacationHouse house) {
-        repository.save(house);
+    private List<VacationHouseQuickReservationDTO> getQuickReservations(VacationHouse vh){
+        List<VacationHouseQuickReservationDTO> quickReservations = new ArrayList<VacationHouseQuickReservationDTO>();
+        for (VacationHouseReservation reservation :  vh.getQuickReservations()){
+            if (reservation.getPrice() < vh.getPricelist().getPrice() && reservation.getClient() == null)
+                quickReservations.add(createVacationHouseQuickReservationDTO(vh.getPricelist().getPrice(), reservation));
+        }
+        return quickReservations;
     }
 
+    private VacationHouseQuickReservationDTO createVacationHouseQuickReservationDTO(int vacationHousePrice, VacationHouseReservation reservation){
+        Appointment firstAppointment = getFirstAppointment(reservation.getAppointments());
+        LocalDateTime startDate = firstAppointment.getStartTime();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm'h'");
+        String strDate = startDate.format(formatter);
+        int numberOfPeople = reservation.getNumberOfClients();
+        List<Tag> additionalServices = reservation.getAdditionalServices();
+        int duration = reservation.getAppointments().size();
+        int price = reservation.getPrice();
+        int discount = 100 - ( 100 * price / vacationHousePrice);
+        return new VacationHouseQuickReservationDTO(reservation.getId(), strDate, numberOfPeople, additionalServices, duration, price, discount);
+    }
+    private Appointment getFirstAppointment(List<Appointment> appointments){
+        List<Appointment> sortedAppointments = getSortedAppointments(appointments);
+        return sortedAppointments.get(0);
+    }
+
+    private List<Appointment> getSortedAppointments(List<Appointment> appointments) {
+        Collections.sort(appointments, new Comparator<Appointment>() {
+            @Override
+            public int compare(Appointment a1, Appointment a2) {
+                return a1.getStartTime().compareTo(a2.getStartTime());
+            }
+        });
+        return appointments;
+    }
+
+    public Boolean addQuickReservation(Long id, VacationHouseQuickReservationDTO quickReservationDTO){
+        VacationHouse house = this.getVacationHouse(id);
+        VacationHouseReservation reservation = getReservationFromDTO(quickReservationDTO);
+        reservation.setResource(house);
+        reservationService.addReservation(reservation);
+        house.addQuickReservations(reservation);
+        this.save(house);
+        return true;
+    }
+
+    public Boolean updateQuickReservation(Long id, VacationHouseQuickReservationDTO quickReservationDTO){
+        VacationHouse house = this.getVacationHouse(id);
+        VacationHouseReservation newReservation = getReservationFromDTO(quickReservationDTO);
+        VacationHouseReservation originalReservation = reservationService.getVacationHouseReservation(quickReservationDTO.getReservationID());
+        updateQuickReservation(originalReservation, newReservation);
+        reservationService.addReservation(originalReservation);
+        this.save(house);
+        return true;
+    }
+
+    public Boolean deleteQuickReservation(Long id, VacationHouseQuickReservationDTO quickReservationDTO){
+        VacationHouse house = this.getVacationHouse(id);
+        reservationService.deleteById(quickReservationDTO.getReservationID());
+        //izbaci se reservation iz house
+        this.save(house);
+        return true;
+    }
+    private VacationHouseReservation getReservationFromDTO(VacationHouseQuickReservationDTO dto){
+        List<Appointment> appointments = new ArrayList<Appointment>();
+        String[] splitDate = dto.getStartDate().split(" ");
+        Appointment startDateAppointment = Appointment.getVacationHouseAppointment(Integer.parseInt(splitDate[2]), Integer.parseInt(splitDate[1]), Integer.parseInt(splitDate[0]));
+        appointments.add(startDateAppointment);
+        appointmentRepository.save(startDateAppointment);
+        Appointment currApp = startDateAppointment;
+        for (int i=0; i < dto.getDuration() - 1; i++){
+            LocalDateTime startDate = currApp.getEndTime();
+            LocalDateTime endDate = startDate.plusDays(1);
+            currApp = new Appointment(startDate, endDate);
+            appointmentRepository.save(currApp);
+            appointments.add(currApp);
+        }
+        List<Tag> tags = new ArrayList<Tag>();
+        for (String tagText : dto.getTagsText()){
+            Tag tag = new Tag(tagText);
+            tagService.addTag(tag);
+            tags.add(tag);
+        }
+        VacationHouseReservation reservation = new VacationHouseReservation(dto.getNumberOfPeople(), dto.getPrice());
+        reservation.setClient(null);
+        reservation.setAdditionalServices(tags);
+        reservation.setAppointments(appointments);
+        return reservation;
+    }
     public void addVacationHouses(VacationHouse house) {
         repository.save(house);
     }
@@ -105,13 +199,11 @@ public class VacationHouseService {
 
     public VacationHouseDTO updateHouse(String id, VacationHouseDTO house, MultipartFile[] multipartFiles) throws IOException {
         VacationHouse originalHouse = this.getVacationHouse(Long.parseLong(id));
-        System.out.println(house);
         VacationHouse newVacationHouse = getHouseFromDTO(house);
         updateVacationHouse(originalHouse, newVacationHouse);
         this.save(originalHouse);
         List<String> paths = saveImages(originalHouse, multipartFiles);
         List<Image> images = getImages(paths);
-        images.forEach(System.out::println);
         originalHouse.setImages(images);
         this.save(originalHouse);
         return this.getVacationHouseDTO(originalHouse.getId());
@@ -141,7 +233,12 @@ public class VacationHouseService {
         originalHouse.setCancellationFee(newVacationHouse.getCancellationFee());
         originalHouse.setImages(newVacationHouse.getImages());
     }
-
+    private void updateQuickReservation(VacationHouseReservation originalReservation, VacationHouseReservation newReservation){
+        originalReservation.setAppointments(newReservation.getAppointments());
+        originalReservation.setAdditionalServices(newReservation.getAdditionalServices());
+        originalReservation.setNumberOfClients(newReservation.getNumberOfClients());
+        originalReservation.setPrice(newReservation.getPrice());
+    }
     private List<String> saveImages(VacationHouse vh, MultipartFile[] multipartFiles) throws IOException {
         List<String> paths = new ArrayList<>();
         if (multipartFiles == null) {

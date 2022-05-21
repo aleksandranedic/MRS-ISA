@@ -3,18 +3,31 @@ import Banner from "../Banner";
 import Navigation from "../Navigation/Navigation";
 import {SearchResultCard} from "./SearchResultCard";
 import axios from "axios";
-import {useLocation} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import {backLink, frontLink} from "../Consts";
 import VacationHouseOwnerCard from "../VacationHouseOwnerPage/VacationHouseOwnerCard";
 
 
-const Adventures = () => {
+const Adventures = ({term}) => {
     const [adventures, setAdventures] = useState([]);
 
     const fetchAdventures = () => {
-        axios.get(backLink + "adventure",).then(res => {
-            console.log(res.data);
-            setAdventures(res.data);
+        axios.get(backLink + "/adventure",).then(res => {
+
+
+            let adventures = []
+
+            for (let i = 0; i < res.data.length; i++) {
+                let a = res.data[i];
+                if (a.title.toLowerCase().includes(term.toLowerCase())) {
+                    adventures.push(a);
+                }
+                if (a.description.toLowerCase().includes(term.toLowerCase())) {
+                    adventures.push(a);
+                }
+            }
+
+            setAdventures(adventures);
         });
     };
 
@@ -34,13 +47,25 @@ const Adventures = () => {
     return html;
 }
 
-const FishingInstructors = () => {
+const FishingInstructors = ({term}) => {
     const [fishingInstructors, setFishingInstructors] = useState([]);
 
     const fetchFishingInstructors = () => {
-        axios.get(backLink + "fishinginstructor").then(res => {
-            console.log(res.data);
-            setFishingInstructors(res.data);
+        axios.get(backLink + "/fishinginstructor").then(res => {
+
+            let instructors = []
+
+            for (let i = 0; i < res.data.length; i++) {
+                let a = res.data[i];
+                if (a.firstName.toLowerCase().includes(term.toLowerCase())) {
+                    instructors.push(a);
+                }
+                if (a.lastName.toLowerCase().includes(term.toLowerCase())) {
+                    instructors.push(a);
+                }
+            }
+
+            setFishingInstructors(instructors);
         });
     };
 
@@ -61,13 +86,25 @@ const FishingInstructors = () => {
     return html;
 }
 
-const VacationHouses = () => {
+const VacationHouses = ({term}) => {
     const [vacationHouses, setVacationHouses] = useState([]);
 
     const fetchVacationHouses = () => {
-        axios.get(backLink + "house",).then(res => {
-            console.log(res.data);
-            setVacationHouses(res.data);
+        axios.get(backLink + "/house",).then(res => {
+
+            let houses = []
+
+            for (let i = 0; i < res.data.length; i++) {
+                let a = res.data[i];
+                if (a.title.toLowerCase().includes(term.toLowerCase())) {
+                    houses.push(a);
+                }
+                if (a.description.toLowerCase().includes(term.toLowerCase())) {
+                    houses.push(a);
+                }
+            }
+
+            setVacationHouses(houses);
         });
     };
 
@@ -79,7 +116,7 @@ const VacationHouses = () => {
     if (vacationHouses.length !== 0) {
 
         html = (vacationHouses.map((vacationHouse) => {
-                return <SearchResultCard title={vacationHouse.title} description={vacationHouse.description}
+                return <SearchResultCard key={vacationHouse.id} title={vacationHouse.title} description={vacationHouse.description}
                                                 link={frontLink + "house/" + vacationHouse.id}/>
             }
         ))
@@ -169,8 +206,9 @@ const BoatOwners = () => {
 }
 
 export function SearchResultsPage() {
-    const {state} = useLocation();
-    console.log(state);
+
+    const {searchTerm} = useParams();
+
     return (
         <>
             <Banner caption={"Rezultati pretrage"}/>
@@ -190,10 +228,13 @@ export function SearchResultsPage() {
                 <BoatOwners/>
                 <h4 className="fw-light m-3">Avanture</h4>
                 <hr/>
-                <Adventures/>
+                <Adventures term={searchTerm}/>
                 <h4 className="fw-light m-3">Instruktori pecanja</h4>
                 <hr/>
-                <FishingInstructors/>
+                <FishingInstructors term={searchTerm}/>
+                <h4 className="fw-light m-3">Vikendice</h4>
+                <hr/>
+                <VacationHouses term={searchTerm}/>
             </div>
 
         </>

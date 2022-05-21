@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import AdventureCard from "./AdventureCard";
-import {AdventureForm} from "./AdventureForm";
+import {AdventureModal} from "./AdventureModal";
 import PlusCard from "../PlusCard";
 
 
@@ -35,7 +35,7 @@ export default function AdventureCarousel({adventures, add}) {
     let editable;
     editable = add === true;
 
-    return (<div className="m-5">
+    return (<div className="m-5" id="adventures">
             <Carousel responsive={responsive} interval="25000">
                 {adventures.map((adventure) => {
                         return <AdventureCard key={adventure.id} adventure={adventure} editable={editable}/>
@@ -45,7 +45,7 @@ export default function AdventureCarousel({adventures, add}) {
                     add &&
                     <>
                         <PlusCard onClick={() => setShow(true)}/>
-                        <AdventureForm show={show} setShow={setShow}/>
+                        <AdventureModal show={show} setShow={setShow}/>
                     </>
                 }
 

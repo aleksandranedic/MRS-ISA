@@ -1,5 +1,7 @@
 package com.project.team9.dto;
 
+import com.project.team9.model.Address;
+import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.resource.Adventure;
 
@@ -9,7 +11,6 @@ import java.util.List;
 public class AdventureDTO {
     private Long id;
     private String title;
-
     private String number;
     private String street;
     private String place;
@@ -68,7 +69,10 @@ public class AdventureDTO {
         for (Tag t: adventure.getFishingEquipment()) {
             this.fishingEquipmentText.add(t.getText());
         }
-
+        this.imagePaths = new ArrayList<String>();
+        for (Image i: adventure.getImages()) {
+            this.imagePaths.add(i.getPath());
+        }
 
     }
 

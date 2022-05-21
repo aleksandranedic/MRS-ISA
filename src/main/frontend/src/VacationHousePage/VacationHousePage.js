@@ -7,6 +7,7 @@ import HouseInfo from "./HouseInfo";
 import UpdateHouse from "./UpdateHouse"
 import BeginButton from "../BeginButton";
 import { useParams } from "react-router-dom";
+import {Footer} from 'react-bootstrap'
 import "react-image-gallery/styles/css/image-gallery.css";
 import Navigation from "../Navigation/Navigation";
 
@@ -14,12 +15,12 @@ const HOST = "http://localhost:4444";
 const Gallery = ({house, images}) => {
     if (typeof house.imagePaths !== "undefined"){
         let empty = images.length === 0;
-        for (let i=0; i<house.imagePaths.length;i++){
+        for (let i=0; i<house.imagePaths.length; i++){
             if (!house.imagePaths[i].includes(HOST)){
                 house.imagePaths[i] = HOST + house.imagePaths[i];
                 images.push({original:house.imagePaths[i], thumbnail:house.imagePaths[i]})
             } else if (empty){
-                images.push({original:house.imagePaths[i], thumbnail:house.imagePaths[i]})   
+                images.push({original:house.imagePaths[i], thumbnail:house.imagePaths[i]})
             }
         }
         return <ImagesGallery images={images}/>
@@ -34,6 +35,15 @@ const Update = ({vacationHouse, showModal, closeModal}) => {
             vacationHouse.additionalServices = [{id:0, text:''}]
         }
         return <UpdateHouse closeModal={closeModal} showModal={showModal} vacationHouse = {vacationHouse}/>
+    }
+    else {
+        return <></>
+    }
+}
+
+const Reservations = ({reservations, name, address}) => {
+    if (typeof reservations !== "undefined"){
+        return <QuickReservations reservations={reservations} name={name} address={address} entity="house" priceText="po noćenju" durationText="dana"/>
     }
     else {
         return <></>
@@ -66,7 +76,7 @@ export function VacationHousePage() {
             [
                 {text: "Osnovne informacije", path: "#info"},
                 {text: "Fotografije", path: "#gallery"},
-                {text: "Akcije", path: "#"},
+                {text: "Akcije", path: "#actions"},
                 {text: "Kalendar zauzetosti", path: "#"}
             ]}
                     editable={true} editFunction={handleShow} searchable={true} showProfile={true}/>
@@ -76,7 +86,8 @@ export function VacationHousePage() {
             <hr/>
             <Gallery house={house} images={imgs}/>
             <hr/>
-            <QuickReservations/>
+            <Reservations reservations={house.quickReservations} name={house.name} address={house.address}/>
+            <footer className="blockquote-footer">Svi izlasci iz vikendice obavljaju se do 10:00h.</footer>
         </div>
         <BeginButton/>
     </>

@@ -1,5 +1,6 @@
 package com.project.team9.controller;
 
+import com.project.team9.dto.UpdateOwnerDTO;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.service.BoatOwnerService;
@@ -35,6 +36,19 @@ public class BoatOwnerController {
         return service.getOwner(Long.parseLong(id));
     }
 
+    @PostMapping(value = "updateOwner/{id}")
+    public void updateOwner(@PathVariable String id, UpdateOwnerDTO owner) {
+        service.updateOwner(Long.parseLong(id), owner);
+    }
+    @PostMapping(value = "checkPassword/{id}", consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Boolean checkPassword(@PathVariable String id, @RequestBody  String oldPassword) {
+        return service.checkPassword(Long.parseLong(id), oldPassword);
+    }
+
+    @PostMapping(value = "updatePassword/{id}",consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void updatePassword(@PathVariable String id, @RequestBody String newPassword) {
+        service.updatePassword(Long.parseLong(id), newPassword);
+    }
     @PostMapping("addBoat/{id}")
     public void addBoatForOwner(@PathVariable String id, @RequestBody String boatId){
         boatId = boatId.substring(0, boatId.length() - 1);

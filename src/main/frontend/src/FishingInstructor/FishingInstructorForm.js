@@ -1,6 +1,7 @@
 import {Button, Form, Modal} from "react-bootstrap";
 import React, {useState} from "react";
-import {missingDataErrors} from "../Consts";
+import {backLink, missingDataErrors} from "../Consts";
+import axios from "axios";
 
 
 export function FishingInstructorForm({show, setShow, fishingInstructor}) {
@@ -17,9 +18,23 @@ export function FishingInstructorForm({show, setShow, fishingInstructor}) {
     };
 
     const handleSubmit = (e) => {
-        e.preventDefault();
-        setFormErrors(validate(formValues));
-        setIsSubmit(true);
+        e.preventDefault()
+        let errors = validate(formValues)
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+        } else {
+            axios
+                .post(backLink + "/fishinginstructor/" + fishingInstructor.id + "/edit", formValues)
+                .then(response => {
+                    console.log(response)
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+
+            setShow(false);
+            window.location.reload();
+        }
     };
 
     const validate = (formValues) => {
@@ -33,7 +48,6 @@ export function FishingInstructorForm({show, setShow, fishingInstructor}) {
         if (!formValues.phoneNumber) {
             errors.phoneNumber = missingDataErrors.phoneNumber;
         }
-
         if (!formValues.address.street) {
             errors.address.street = missingDataErrors.address.street;
         }if (!formValues.address.place) {

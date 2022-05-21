@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {Button, Card} from "react-bootstrap";
 import {BsGeoAltFill, BsLink45Deg, BsPencilSquare} from "react-icons/bs";
-import {AdventureForm} from "./Adventure/AdventureForm";
+import {AdventureModal} from "./Adventure/AdventureModal";
 import {FishingInstructorForm} from "./FishingInstructor/FishingInstructorForm";
 
 
@@ -33,7 +33,7 @@ export default function CustomCard({imagePath, editable, itemToEdit, title, subt
 
             </Card.Body>
 
-            {type === "adventure" && <AdventureForm show={show} setShow={setShow} adventure={itemToEdit}/>}
+            {type === "adventure" && <AdventureModal show={show} setShow={setShow} adventure={itemToEdit}/>}
             {type === "fishingInstructor" && <FishingInstructorForm show={show} setShow={setShow} fishingInstructor={itemToEdit}/>}
             <Card.Footer className="w-100">
                 <small className="text-muted">

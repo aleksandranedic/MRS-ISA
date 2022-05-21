@@ -1,9 +1,17 @@
-import {Badge, Button, Card, Modal} from "react-bootstrap";
+import {Badge, Button, Card, Form, Modal} from "react-bootstrap";
 import React, {useState} from "react";
-import image from "../images/cover.png"
+import image from "../images/document.png"
 
-export function RegistrationRequestCard({props}) {
+export function RegistrationRequestCard({props, remove}) {
     const [show, setShow] = useState(false);
+
+    function handleSubmit(type) {
+
+        //TODO  if type == accept/deny
+        remove(props);
+        setShow(false);
+    }
+
     return (
         <div>
             <Card className="m-3">
@@ -19,8 +27,8 @@ export function RegistrationRequestCard({props}) {
                     </ul>
 
                     <Button onClick={() => setShow(true)} variant="outline-primary" className="ms-auto m-1">Pregledaj</Button>
-                    <Button variant="outline-success" className="m-1">Odobri</Button>
-                    <Button variant="outline-danger" className="m-1">Poništi</Button>
+                    <Button variant="outline-success" className="m-1" onClick={handleSubmit}>Odobri</Button>
+                    <Button variant="outline-danger" className="m-1" onClick={handleSubmit}>Poništi</Button>
                 </Card.Body>
             </Card>
 
@@ -31,11 +39,19 @@ export function RegistrationRequestCard({props}) {
                 <Modal.Body>
                     <img style={{width:"100%", objectFit: "contain"}} src={image} alt={"Nema dokumenata."}/>
 
+                    <hr className="mb-3 mt-3"/>
+
+                    <Form.Group>
+                        <Form.Label>Komentar</Form.Label>
+                        <Form.Control as="textarea" rows={3} name="comment"/>
+                    </Form.Group>
 
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={() => setShow(false)} variant="outline-success" className="m-1">Odobri</Button>
-                    <Button onClick={() => setShow(false)} variant="outline-danger" className="m-1">Poništi</Button>
+                    <Button onClick={() => setShow(false)} variant="outline-primary" className="ms-auto m-1">Otkaži</Button>
+
+                    <Button onClick={()=>handleSubmit('accept')} variant="outline-success" className="m-1">Odobri</Button>
+                    <Button onClick={()=>handleSubmit('deny')} variant="outline-danger" className="m-1">Poništi</Button>
                 </Modal.Footer>
             </Modal>
         </div>
