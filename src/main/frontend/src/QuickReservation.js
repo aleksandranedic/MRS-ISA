@@ -73,7 +73,7 @@ function QuickReservation({reservation, name, address, image, entity, priceText,
                 </div>
                 </Card.Body>
                 {state.discount !== '' ?
-                   (<UpdateQuickReservation state={state} setState={setState} closeModal={handleClose} showModal={show} entity={entity}/> ) : <></>
+                   (<UpdateQuickReservation state={state} setState={setState} closeModal={handleClose} showModal={show} entity={entity} durationText={durationText}/> ) : <></>
                 }
             </Card>
     )

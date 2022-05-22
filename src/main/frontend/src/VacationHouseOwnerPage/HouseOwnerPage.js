@@ -9,7 +9,7 @@ import AddVacationHouse from './AddVacationHouse';
 import HouseOwnerForm from "./HouseOwnerForm";
 import { useParams } from "react-router-dom";
 import Navigation from "../Navigation/Navigation";
-
+import { profilePicturePlaceholder } from '../Consts';
 
 const  UpdateOwner = ({show, setShow, owner}) => {
     if (typeof owner.firstName !== "undefined"){
@@ -22,7 +22,7 @@ const  UpdateOwner = ({show, setShow, owner}) => {
 
 function HouseOwnerPage() {
     const {id} = useParams();
-    const [houseOwner, setHouseOwner] = useState({address:''});
+    const [houseOwner, setHouseOwner] = useState({address:'', profileImg:{path:""}});
     let [ownerHouses, setOwnerHouses] = useState([]);
 
     const [show, setShow] = useState(false);
@@ -53,6 +53,7 @@ function HouseOwnerPage() {
         fetchHouseOwner();
         fetchOwnerHouses();
     }, [ownerHouses]);
+    console.log(houseOwner)
     return (
         <>
             <Banner caption={houseOwner.firstName + " " + houseOwner.lastName}/>
@@ -67,13 +68,26 @@ function HouseOwnerPage() {
             <AddVacationHouse/>
             <UpdateOwner show={show} setShow={setShow} owner={houseOwner}/>
             <div className='p-5 pt-0'>
-                <OwnerInfo bio = {houseOwner.registrationRationale}
+                { houseOwner.profileImg !== null ? 
+
+                <OwnerInfo 
                     name={houseOwner.firstName + " " + houseOwner.lastName}
                     rate = {4.5}
                     email={houseOwner.email}
                     phoneNum={houseOwner.phoneNumber}
                     address={houseOwner.address}
+                    profileImg = {HOST + houseOwner.profileImg.path}
                     />
+                :
+                <OwnerInfo 
+                    name={houseOwner.firstName + " " + houseOwner.lastName}
+                    rate = {4.5}
+                    email={houseOwner.email}
+                    phoneNum={houseOwner.phoneNumber}
+                    address={houseOwner.address}
+                    profileImg = {profilePicturePlaceholder}
+                    />
+                }
                 <hr/>
                 <OwnerHouses houses={ownerHouses}/>
                 <hr/>

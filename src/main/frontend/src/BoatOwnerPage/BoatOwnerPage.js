@@ -9,7 +9,7 @@ import OwnerBoats from './OwnerBoats';
 import AddBoat from './AddBoat';
 import { useParams } from "react-router-dom";
 import Navigation from "../Navigation/Navigation";
-
+import { profilePicturePlaceholder } from '../Consts';
 
 const  UpdateOwner = ({show, setShow, owner}) => {
     if (typeof owner.firstName !== "undefined"){
@@ -23,7 +23,7 @@ const  UpdateOwner = ({show, setShow, owner}) => {
 function BoatOwnerPage() {
     const {id} = useParams();
 
-    const [boatOwner, setboatOwner] = useState({address:''});
+    const [boatOwner, setboatOwner] = useState({address:'', profileImg:{path:""}});
     let [ownerBoats, setOwnerBoats] = useState([]);
 
     const [show, setShow] = useState(false);
@@ -47,6 +47,7 @@ function BoatOwnerPage() {
         axios
         .get("http://localhost:4444/boatowner/" + id)
         .then(res => {
+            console.log(res.data)
             setboatOwner(res.data);
         });
     };
@@ -67,14 +68,30 @@ function BoatOwnerPage() {
                         editable={true} editFunction={handleShow} searchable={true} showProfile={true}/>
             <AddBoat/>
             <UpdateOwner show={show} setShow={setShow} owner={boatOwner}/>
-            <div className='p-5 pt-0'>
-                <OwnerInfo bio = {boatOwner.registrationRationale}
-                    name={boatOwner.firstName + " " + boatOwner.lastName}
-                    rate = {4.5}
-                    email={boatOwner.email}
-                    phoneNum={boatOwner.phoneNumber}
-                    address={boatOwner.address}
-                    />
+            
+
+                <div className='p-5 pt-0'>
+                    { boatOwner.profileImg !== null ?
+                            <OwnerInfo bio = {boatOwner.registrationRationale}
+                                name={boatOwner.firstName + " " + boatOwner.lastName}
+                                rate = {4.5}
+                                email={boatOwner.email}
+                                phoneNum={boatOwner.phoneNumber}
+                                address={boatOwner.address}
+                                profileImg = {HOST + boatOwner.profileImg.path}
+                                />
+                        :
+                    
+                            <OwnerInfo bio = {boatOwner.registrationRationale}
+                                name={boatOwner.firstName + " " + boatOwner.lastName}
+                                rate = {4.5}
+                                email={boatOwner.email}
+                                phoneNum={boatOwner.phoneNumber}
+                                address={boatOwner.address}
+                                profileImg = {profilePicturePlaceholder}
+                                />
+                    }
+
                 <hr/>
                 <OwnerBoats boats={ownerBoats}/>
                 <hr/>

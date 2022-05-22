@@ -1,10 +1,12 @@
 package com.project.team9.model.resource;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.team9.model.Address;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.AdventureReservation;
+import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -24,7 +26,7 @@ public class Adventure extends Resource {
     private int numberOfClients;
     @OneToMany
     private List<Tag> fishingEquipment;
-    @OneToMany(cascade = javax.persistence.CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = javax.persistence.CascadeType.ALL, orphanRemoval = true, mappedBy = "resource")
     private List<AdventureReservation> quickReservations;
 
 
@@ -49,7 +51,14 @@ public class Adventure extends Resource {
     }
 
 
+    @JsonManagedReference
+    public List<AdventureReservation> getQuickReservations() {
+        return quickReservations;
+    }
 
+    public void addQuickReservations(AdventureReservation quickReservation) {
+        this.quickReservations.add(quickReservation);
+    }
     public FishingInstructor getOwner() {
         return owner;
     }

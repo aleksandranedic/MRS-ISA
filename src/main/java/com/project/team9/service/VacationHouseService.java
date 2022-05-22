@@ -1,6 +1,7 @@
 package com.project.team9.service;
 
 import com.project.team9.dto.HouseCardDTO;
+import com.project.team9.dto.ReviewScoresDTO;
 import com.project.team9.dto.VacationHouseDTO;
 import com.project.team9.dto.VacationHouseQuickReservationDTO;
 import com.project.team9.model.Address;
@@ -33,6 +34,7 @@ public class VacationHouseService {
     private final TagService tagService;
     private final ImageService imageService;
     private final VacationHouseReservationService reservationService;
+    private final ReviewService reviewService;
     private final AppointmentRepository appointmentRepository;
 
     final String STATIC_PATH = "src/main/resources/static/";
@@ -40,13 +42,14 @@ public class VacationHouseService {
     final String IMAGES_PATH = "/images/houses/";
 
     @Autowired
-    public VacationHouseService(VacationHouseRepository vacationHouseRepository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, VacationHouseReservationService reservationService, AppointmentRepository appointmentRepository) {
+    public VacationHouseService(VacationHouseRepository vacationHouseRepository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, VacationHouseReservationService reservationService, ReviewService reviewService, AppointmentRepository appointmentRepository) {
         this.repository = vacationHouseRepository;
         this.addressService = addressService;
         this.pricelistService = pricelistService;
         this.tagService = tagService;
         this.imageService = imageService;
         this.reservationService = reservationService;
+        this.reviewService = reviewService;
         this.appointmentRepository = appointmentRepository;
     }
 
@@ -77,6 +80,14 @@ public class VacationHouseService {
         return repository.getById(id);
     }
 
+    public double getRatingForHouse(Long id){
+        ReviewScoresDTO reviews = reviewService.getReviewScores(id);
+        double sum = reviews.getFiveStars() * 5 + reviews.getFourStars() * 4 + reviews.getThreeStars() * 3 + reviews.getTwoStars() * 2 + reviews.getOneStars();
+        double num = reviews.getFiveStars()  + reviews.getFourStars() + reviews.getThreeStars() + reviews.getTwoStars() + reviews.getOneStars();
+        double result = sum / num;
+        double scale = Math.pow(10, 1);
+        return Math.round(result * scale) / scale;
+    }
     public VacationHouseDTO getVacationHouseDTO(Long id) {
         VacationHouse vh = repository.getById(id);
         String address = vh.getAddress().getStreet() + " " + vh.getAddress().getNumber() + ", " + vh.getAddress().getPlace()  + ", " + vh.getAddress().getCountry();

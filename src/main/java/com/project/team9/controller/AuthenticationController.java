@@ -43,6 +43,7 @@ public class AuthenticationController {
         // Ukoliko kredencijali nisu ispravni, logovanje nece biti uspesno, desice se
         // AuthenticationException
 
+        System.out.println(loginDTO.getUsername() + " -- " + loginDTO.getPassword());
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDTO.getUsername(), loginDTO.getPassword()));
 

@@ -1,6 +1,7 @@
 package com.project.team9.controller;
 
 import com.project.team9.dto.AdventureDTO;
+import com.project.team9.dto.AdventureReservationDTO;
 import com.project.team9.dto.ReservationDTO;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.service.AdventureReservationService;
@@ -29,7 +30,7 @@ public class AdventureReservationController {
     }
 
     @GetMapping("/adventure/{id}")
-    public List<AdventureReservation> getReservationsForAdventure(@PathVariable Long id) {
+    public List<AdventureReservationDTO> getReservationsForAdventure(@PathVariable Long id) {
         return  service.getReservationsForAdventure(id);
     }
 

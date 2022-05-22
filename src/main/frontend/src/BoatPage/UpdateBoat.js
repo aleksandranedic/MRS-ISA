@@ -72,6 +72,7 @@ function UpdateBoat({showModal, closeModal, boat}) {
       data.append("tagsAdditionalServicesText", state.tagsAdditionalServicesText)
       data.append("tagsFishingEquipText", state.tagsFishingEquipText)
       data.append("fileImage",images);
+      
       axios
       .post("http://localhost:4444/boat/updateBoat/" + id, data)
       .then(res => {

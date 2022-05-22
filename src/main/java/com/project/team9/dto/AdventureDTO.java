@@ -195,4 +195,25 @@ public class AdventureDTO {
     public void setFishingEquipmentText(List<String> fishingEquipmentText) {
         this.fishingEquipmentText = fishingEquipmentText;
     }
+
+    @Override
+    public String toString() {
+        return "AdventureDTO{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", number='" + number + '\'' +
+                ", street='" + street + '\'' +
+                ", place='" + place + '\'' +
+                ", country='" + country + '\'' +
+                ", description='" + description + '\'' +
+                ", imagePaths=" + imagePaths +
+                ", rulesAndRegulations='" + rulesAndRegulations + '\'' +
+                ", additionalServicesText=" + additionalServicesText +
+                ", price=" + price +
+                ", cancellationFee=" + cancellationFee +
+                ", ownerId=" + ownerId +
+                ", numberOfClients=" + numberOfClients +
+                ", fishingEquipmentText=" + fishingEquipmentText +
+                '}';
+    }
 }
