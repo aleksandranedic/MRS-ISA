@@ -7,7 +7,7 @@ import * as ReactDOM from 'react-dom';
 import {DateTimePickerComponent} from '@syncfusion/ej2-react-calendars';
 import './material.css'
 
-function UpdateQuickReservation({state, setState, closeModal, showModal, entity}) {
+function UpdateQuickReservation({state, setState, closeModal, showModal, entity, durationText}) {
     const [startDateInt, setStartDateInt] = useState("");
     const [originalState, setOriginalState] = useState(state);
     const [tagText, setTagText] = useState('');
@@ -121,9 +121,9 @@ function UpdateQuickReservation({state, setState, closeModal, showModal, entity}
                 <Row className="mb-3">
 
                     <Form.Group as={Col} >
-                        <Form.Label>Broj dana za koje akcija važi</Form.Label>
+                        <Form.Label>Broj {durationText} za koje akcija važi</Form.Label>
                         <Form.Control required type="number" min={1} name="duration" defaultValue={state.duration} onChange={e => setDuration(e.target.value)}/>
-                        <Form.Control.Feedback type="invalid">Molimo Vas unesite broj dana za koje akcija važi.</Form.Control.Feedback>
+                        <Form.Control.Feedback type="invalid">Molimo Vas unesite broj {durationText} za koje akcija važi.</Form.Control.Feedback>
                     </Form.Group>
 
                     <Form.Group as={Col}>

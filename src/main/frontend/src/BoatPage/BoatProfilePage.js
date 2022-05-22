@@ -8,10 +8,11 @@ import UpdateBoat from "./UpdateBoat"
 import BeginButton from "../BeginButton";
 import { useParams } from "react-router-dom";
 import "react-image-gallery/styles/css/image-gallery.css";
-import Navigation from "../Navigation/Navigation";
-import QuickReservation from "../QuickReservation";
+import Navigation from "../Navigation/Navigation"; 
+import Ratings from "../Reviews/Ratings";
 
 const HOST = "http://localhost:4444";
+
 const Gallery = ({boat, images}) => {
     if (typeof boat.imagePaths !== "undefined"){
         let empty = images.length === 0;
@@ -49,19 +50,30 @@ const Update = ({boat, showModal, closeModal}) => {
 
 const Reservations = ({reservations, name, address}) => {
     if (typeof reservations !== "undefined"){
-        console.log(reservations)
-        return <QuickReservations reservations={reservations} name={name} address={address} entity="boat" priceText="po vožnji" durationText="sata"/>
+        return <QuickReservations reservations={reservations} name={name} address={address} entity="boat" priceText="po vožnji" durationText="h"/>
     }
     else {
         return <></>
     }
 }
+
+const ReviewsComp = ({reviews}) => {
+    if (typeof reviews !== "undefined"){
+        return <Ratings reviews = {reviews}/>
+    }
+    else {
+        return <></>
+    }
+}
+
+
 export function BoatProfilePage() {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const {id} = useParams();
     const [boat, setBoat] = useState({});
+    const [boatReviews, setBoatReviews] = useState([])
     var [imgs, setImgs] = useState([{thumbnail: '', original: ''}]);
     const fetchBoat = () => {
         axios
@@ -71,8 +83,18 @@ export function BoatProfilePage() {
             setImgs([]);
         });
     };
+
+    const fetchReviews = () => {
+        axios
+        .get("http://localhost:4444/review/getReviews/" + id)
+        .then(res => {
+            setBoatReviews(res.data);
+        });
+    };
+
     useEffect(() => {
         fetchBoat();
+        fetchReviews();
     }, []);
     return (
     <>
@@ -92,6 +114,7 @@ export function BoatProfilePage() {
             <Gallery boat={boat} images={imgs}/>
             <hr/>
             <Reservations reservations={boat.quickReservations} name={boat.name} address={boat.address}/>
+            <ReviewsComp reviews = {boatReviews}/>
         </div>
         <BeginButton/>
     </>

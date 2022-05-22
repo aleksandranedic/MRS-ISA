@@ -11,6 +11,9 @@ import {ReservationsTable} from "../Calendar/ReservationsTable";
 import {Button, Collapse} from "react-bootstrap";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {AdventureGallery} from "./AdventureGallery";
+import QuickReservations from "../QuickReservations";
+import BeginButton from "../BeginButton";
+import Ratings from "../Reviews/Ratings";
 
 export function AdventurePage() {
     const {id} = useParams();
@@ -26,12 +29,33 @@ const Adventures = ({id})  =>{
 
     const [adventure, setAdventure] = useState([]);
     const [reservations, setReservations] = useState([]);
+    const [quickReservations, setQuickReservations] = useState([]);
 
     const [images, setImages] = useState([]);
 
     let html;
+
+    const QuickReservationsComp = ({reservations, name, address}) => {
+        if (typeof reservations !== "undefined"){
+            return <QuickReservations reservations={reservations} name={name} address={address.street +" "+ address.number +  ", " + address.place + ", " +  address.country} entity="adventure" priceText="po vožnji" durationText="h"/>
+        }
+        else {
+            return <></>
+        }
+    }
+    
+    const ReviewsComp = ({reviews}) => {
+        if (typeof reviews !== "undefined"){
+            return <Ratings reviews = {reviews}/>
+        }
+        else {
+            return <></>
+        }
+    }
+
     const fetchAdventure = () => {
         axios.get(backLink+"/adventure/"+ id).then(res => {
+            console.log(res.data)
             setAdventure(res.data);
             setImages([]);
         });
@@ -43,14 +67,32 @@ const Adventures = ({id})  =>{
         })
     }
 
+    const fetchQuickReservations = () => {
+        axios.get(backLink+ "/adventure/quickReservations/" + id).then(res => {
+           
+            setQuickReservations(res.data);
+        })
+    }
+
+    const fetchReviews = () => {
+        axios
+        .get("http://localhost:4444/review/getReviews/" + id)
+        .then(res => {
+            setAdventureReviews(res.data);
+        });
+    };
+
     useEffect(() => {
         fetchAdventure();
         fetchReservations();
+        fetchReviews();
+        fetchQuickReservations();
     }, []);
 
 
     const [show, setShow] = useState(false);
     const handleShow = () => setShow(true);
+    const [adventureReviews, setAdventureReviews] = useState([])
 
     const [open, setOpen] = useState(false);
 
@@ -76,10 +118,15 @@ const Adventures = ({id})  =>{
                 <AdventureGallery id={id} images={images}/>
             </div>
 
+            <QuickReservationsComp reservations={quickReservations} name={adventure.title} address={adventure.address}/>
 
             <hr className="me-5 ms-5"/>
             <Calendar reservations={reservations} reservable={true} pricelist={adventure.pricelist} perHour={true}/>
 
+            <div className="m-5 mb-0 me-0">
+                <ReviewsComp reviews = {adventureReviews}/>
+            </div>
+            
             <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
             <hr className="me-5 ms-5"/>
 
@@ -98,6 +145,7 @@ const Adventures = ({id})  =>{
                 </div>
             </Collapse>
 
+            <BeginButton/>
         </div>)
     }
 

@@ -2,9 +2,9 @@ import React, {useRef, useState} from "react";
 import {Button, Col, Form, InputGroup, Modal} from "react-bootstrap";
 import axios from "axios";
 import {backLink, missingDataErrors} from "../Consts";
-import UpdateHouseImages from "../VacationHousePage/UpdateHouseImages";
 import AdventureFormImages from "./AdventureFormImages";
 import {TagInfo} from "../Info";
+
 
 export function AdventureModal({adventure, show, setShow}) {
     let initialState = {}
@@ -41,19 +41,12 @@ export function AdventureModal({adventure, show, setShow}) {
             formValues.fishingEquipmentText.push(formValues.fishingEquipment.at(index).text);
         }
 
-        let dto = new FormData();
+        let dto = new FormData(formReference.current);
         dto.append("id", formValues.ownerId);
         dto.append("numberOfClients", formValues.numberOfClients);
-        dto.append("title", formValues.title);
         dto.append("ownerId", formValues.ownerId);
-        dto.append("description", formValues.description);
-        dto.append("rulesAndRegulations", formValues.rulesAndRegulations);
         dto.append("imagePaths", formValues.imagePaths)
         dto.append("cancellationFee", formValues.cancellationFee);
-        dto.append("country", formValues.country);
-        dto.append("place", formValues.place);
-        dto.append("number", formValues.number);
-        dto.append("street", formValues.street);
         dto.append("price", formValues.price);
 
         dto.append("additionalServicesText", formValues.additionalServicesText);
@@ -64,18 +57,18 @@ export function AdventureModal({adventure, show, setShow}) {
         for (let i = 0; i < files.length; i++) {
             images.push(files[i])
         }
-
-        dto.append("images", images);
-
+        
+        dto.append("fileImage", images);
+      
         axios
-            .post(backLink + "/adventure/add", dto)
+            .post("http://localhost:4444/adventure/add", dto)
             .then(response => {
                 console.log(response)
             })
             .catch(error => {
                 console.log(error)
             })
-        window.location.reload();
+        //window.location.reload();
     }
 
     function editAdventure() {
@@ -87,7 +80,7 @@ export function AdventureModal({adventure, show, setShow}) {
         //     .catch(error => {
         //         console.log(error)
         //     })
-        window.location.reload();
+        //window.location.reload();
     }
 
     const handleSubmit = e => {
@@ -310,7 +303,7 @@ function AdventureForm({
                     display: "none"
                 }}>Molimo Vas postavite bar jednu fotografiju.</p>
                 <InputGroup className="mb-3">
-                    <Form.Control ref={imagesRef} type="file" multiple name="images"/>
+                    <Form.Control ref={imagesRef} type="file" multiple name="fileImage"/>
                     <Button variant="primary" id="button-addon2" onClick={e => addImages()}> Dodaj </Button>
                 </InputGroup>
             </Form.Group>

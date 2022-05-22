@@ -7,7 +7,7 @@ import HouseInfo from "./HouseInfo";
 import UpdateHouse from "./UpdateHouse"
 import BeginButton from "../BeginButton";
 import { useParams } from "react-router-dom";
-import {Footer} from 'react-bootstrap'
+import Ratings from "../Reviews/Ratings";
 import "react-image-gallery/styles/css/image-gallery.css";
 import Navigation from "../Navigation/Navigation";
 
@@ -50,13 +50,24 @@ const Reservations = ({reservations, name, address}) => {
     }
 }
 
+const ReviewsComp = ({reviews}) => {
+    if (typeof reviews !== "undefined"){
+        return <Ratings reviews = {reviews}/>
+    }
+    else {
+        return <></>
+    }
+}
+
 export function VacationHousePage() {
+    const [houseReviews, setHouseReviews] = useState([])
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const {id} = useParams();
     const [house, setHouse] = useState({});
     var [imgs, setImgs] = useState([{thumbnail: '', original: ''}]);
+    
     const fetchHouse = () => {
         axios
         .get("http://localhost:4444/house/houseprof/" + id)
@@ -66,9 +77,18 @@ export function VacationHousePage() {
             setImgs([]);
         });
     };
+    const fetchReviews = () => {
+        axios
+        .get("http://localhost:4444/review/getReviews/" + id)
+        .then(res => {
+            setHouseReviews(res.data);
+        });
+    };
     useEffect(() => {
         fetchHouse();
+        fetchReviews();
     }, []);
+    
     return (
     <>
         <Banner caption={house.name}/>
@@ -76,8 +96,8 @@ export function VacationHousePage() {
             [
                 {text: "Osnovne informacije", path: "#info"},
                 {text: "Fotografije", path: "#gallery"},
-                {text: "Akcije", path: "#actions"},
-                {text: "Kalendar zauzetosti", path: "#"}
+                {text: "Slobodni termini", path: "#actions"},
+                {text: "Recenzije", path:"#reviews"}
             ]}
                     editable={true} editFunction={handleShow} searchable={true} showProfile={true}/>
         <HouseInfo house={house}/>
@@ -88,6 +108,7 @@ export function VacationHousePage() {
             <hr/>
             <Reservations reservations={house.quickReservations} name={house.name} address={house.address}/>
             <footer className="blockquote-footer">Svi izlasci iz vikendice obavljaju se do 10:00h.</footer>
+            <ReviewsComp reviews = {houseReviews}/>
         </div>
         <BeginButton/>
     </>

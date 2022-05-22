@@ -18,6 +18,7 @@ export const missingDataErrors = {
 
 export const frontLink = "http://localhost:3000/"
 export const backLink = "http://localhost:4444"
+export const profilePicturePlaceholder = "http://localhost:3000/images/profilePicturePlaceholder.jpg"
 
 export const responsive = {
     superLargeDesktop: {

@@ -1,6 +1,7 @@
 package com.project.team9.model.user;
 
 import com.project.team9.model.Address;
+import com.project.team9.model.Image;
 import org.hibernate.mapping.Array;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,9 +29,11 @@ public class User implements UserDetails {
     private String phoneNumber;
     @OneToOne
     private Address address;
-    private Boolean enabled = false;
+    private Boolean enabled = true;
     private Boolean deleted = false;
     private Timestamp lastPasswordResetDate;
+    @OneToOne
+    private Image profileImg;
 
     @ManyToOne
     private Role role;
@@ -38,7 +41,8 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String password, String firstName, String lastName, String email, String phoneNumber, Address address, Boolean deleted, Role role) {
+    public User(Image profileImg, String password, String firstName, String lastName, String email, String phoneNumber, Address address, Boolean deleted, Role role) {
+        this.profileImg = profileImg;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -49,7 +53,8 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    public User(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, Role role) {
+    public User(Image profileImg, String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, Role role) {
+        this.profileImg = profileImg;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -143,6 +148,13 @@ public class User implements UserDetails {
 
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public Image getProfileImg() {
+        return profileImg;
+    }
+    public void setProfileImg(Image profileImg) {
+        this.profileImg = profileImg;
     }
 
     public Boolean getDeleted() {
