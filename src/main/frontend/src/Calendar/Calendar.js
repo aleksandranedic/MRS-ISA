@@ -8,12 +8,18 @@ import {ReservationModal} from "./ReservationModal";
 import {BusyPeriodModal} from "./BusyPeriodModal";
 import {BsPlusLg} from "react-icons/bs";
 import {convertToDate} from "./ReservationDateConverter";
+import axios from "axios";
+import {backLink} from "../Consts";
 
-export function Calendar({reservations, reservable, pricelist, perHour}){
+export function Calendar({reservations, reservable, pricelist, type, resourceId}){
+
+    let perHour = false;
+    if (type === "adventure") {
+        perHour = true;
+    }
     const [showReservationDialog, setShowReservationDialog] = useState(false);
     const [showBusyPeriodDialog, setShowBusyPeriodDialog] = useState(false);
 
-    const [date, setDate] = useState("");
     const [events, setEvents] = useState([]);
     const calendarRef = React.createRef();
 
@@ -23,10 +29,14 @@ export function Calendar({reservations, reservable, pricelist, perHour}){
             let r = reservations[i_r];
 
             let clientName = r.client.firstName + " " + r.client.lastName;
+            let start = convertToDate(r.appointments.at(0).startTime);
+            start.setHours(start.getHours()+2);
+            let end = convertToDate(r.appointments.at(r.appointments.length-1).endTime);
+            end.setHours(end.getHours()+2);
             reservationEvents.push({
                 title: clientName,
-                start: convertToDate(r.appointments.at(0).startTime),
-                end: convertToDate(r.appointments.at(r.appointments.length-1).endTime),
+                start: start,
+                end: end,
                 backgroundColor: "rgb(34,215,195)"
             })
         }
@@ -35,15 +45,12 @@ export function Calendar({reservations, reservable, pricelist, perHour}){
             setEvents(reservationEvents);
         }
 
+
     })
 
-    const handleDateClick = (arg) => {
-        setDate(arg.dateStr);
-        setShowReservationDialog(true);
-    }
+
 
     const reservationClick = () => {
-        setDate("");
         setShowReservationDialog(true);
     }
 
@@ -54,8 +61,6 @@ export function Calendar({reservations, reservable, pricelist, perHour}){
     }
 
     return (<>
-
-
 
         <div id="calendar" className="d-flex justify-content-center">
 
@@ -78,7 +83,6 @@ export function Calendar({reservations, reservable, pricelist, perHour}){
                 initialView="dayGridMonth"
                 timeZone="UTC"
                 events={events}
-                dateClick={handleDateClick}
                 ref={calendarRef}
             />
         </div>
@@ -119,7 +123,7 @@ export function Calendar({reservations, reservable, pricelist, perHour}){
         }
 
 
-        <ReservationModal show={showReservationDialog} setShow={setShowReservationDialog} date={date}/>
+        <ReservationModal show={showReservationDialog} setShow={setShowReservationDialog} type={type} resourceId={resourceId}/>
         <BusyPeriodModal show={showBusyPeriodDialog} setShow={setShowBusyPeriodDialog} events={events} setEvents={setEvents}/>
     </div></>)
 }

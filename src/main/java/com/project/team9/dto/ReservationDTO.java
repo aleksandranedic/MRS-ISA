@@ -1,58 +1,41 @@
 package com.project.team9.dto;
 
-import java.time.LocalDateTime;
+import com.project.team9.model.Tag;
+import com.project.team9.model.reservation.Appointment;
+import com.project.team9.model.user.Client;
+
 import java.util.List;
 
 public class ReservationDTO {
-    private Long id;
-    private Long clientId;
-    private Long resourceId;
-    private int numberOfClients;
-    private List<String> additionalServicesStrings;
-    private int price;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-    private boolean isBusyPeriod;
-    private boolean isQuickReservation;
+    List<Appointment> appointments;
+    int numberOfClients;
+    List<Tag> additionalServices;
+    int price;
+    Client client;
+    String resourceTitle;
+    boolean isBusyPeriod;
+    boolean isQuickReservation;
 
     public ReservationDTO() {
     }
 
-    public ReservationDTO(Long id, Long clientId, Long resourceId, int numberOfClients, List<String> additionalServicesStrings, int price, LocalDateTime startTime, LocalDateTime endTime, boolean isBusyPeriod, boolean isQuickReservation) {
-        this.id = id;
-        this.clientId = clientId;
-        this.resourceId = resourceId;
+    public ReservationDTO(List<Appointment> appointments, int numberOfClients, List<Tag> additionalServices, int price, Client client, String resourceTitle, boolean isBusyPeriod, boolean isQuickReservation) {
+        this.appointments = appointments;
         this.numberOfClients = numberOfClients;
-        this.additionalServicesStrings = additionalServicesStrings;
+        this.additionalServices = additionalServices;
         this.price = price;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.client = client;
+        this.resourceTitle = resourceTitle;
         this.isBusyPeriod = isBusyPeriod;
         this.isQuickReservation = isQuickReservation;
     }
 
-    public Long getId() {
-        return id;
+    public List<Appointment> getAppointments() {
+        return appointments;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(Long clientId) {
-        this.clientId = clientId;
-    }
-
-    public Long getResourceId() {
-        return resourceId;
-    }
-
-    public void setResourceId(Long resourceId) {
-        this.resourceId = resourceId;
+    public void setAppointments(List<Appointment> appointments) {
+        this.appointments = appointments;
     }
 
     public int getNumberOfClients() {
@@ -63,12 +46,12 @@ public class ReservationDTO {
         this.numberOfClients = numberOfClients;
     }
 
-    public List<String> getAdditionalServicesStrings() {
-        return additionalServicesStrings;
+    public List<Tag> getAdditionalServices() {
+        return additionalServices;
     }
 
-    public void setAdditionalServicesStrings(List<String> additionalServicesStrings) {
-        this.additionalServicesStrings = additionalServicesStrings;
+    public void setAdditionalServices(List<Tag> additionalServices) {
+        this.additionalServices = additionalServices;
     }
 
     public int getPrice() {
@@ -79,20 +62,20 @@ public class ReservationDTO {
         this.price = price;
     }
 
-    public LocalDateTime getStartTime() {
-        return startTime;
+    public Client getClient() {
+        return client;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
+    public void setClient(Client client) {
+        this.client = client;
     }
 
-    public LocalDateTime getEndTime() {
-        return endTime;
+    public String getResourceTitle() {
+        return resourceTitle;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
+    public void setResourceTitle(String resourceTitle) {
+        this.resourceTitle = resourceTitle;
     }
 
     public boolean isBusyPeriod() {

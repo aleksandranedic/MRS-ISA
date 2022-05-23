@@ -10,6 +10,11 @@ import { useParams } from "react-router-dom";
 import "react-image-gallery/styles/css/image-gallery.css";
 import Navigation from "../Navigation/Navigation";
 import Ratings from "../Reviews/Ratings";
+import {backLink} from "../Consts";
+import {Calendar} from "../Calendar/Calendar";
+import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
+import {Collapse} from "react-bootstrap";
+import {ReservationsTable} from "../Calendar/ReservationsTable";
 
 const HOST = "http://localhost:4444";
 
@@ -75,6 +80,18 @@ export function BoatProfilePage() {
     const [boat, setBoat] = useState({});
     const [boatReviews, setBoatReviews] = useState([])
     var [imgs, setImgs] = useState([{thumbnail: '', original: ''}]);
+
+
+    const [reservations, setReservations] = useState([]);
+    const [open, setOpen] = useState(false);
+
+    const fetchReservations = () => {
+        axios.get(backLink+ "/boat/reservation/boat/" + id).then(res => {
+            setReservations(res.data);
+        })
+    }
+
+
     const fetchBoat = () => {
         axios
         .get("http://localhost:4444/boat/boatprof/" + id)
@@ -95,6 +112,7 @@ export function BoatProfilePage() {
     useEffect(() => {
         fetchBoat();
         fetchReviews();
+        fetchReservations();
     }, []);
     return (
     <>
@@ -116,6 +134,28 @@ export function BoatProfilePage() {
             <Reservations reservations={boat.quickReservations} name={boat.name} address={boat.address}/>
             <ReviewsComp reviews = {boatReviews}/>
         </div>
+
+        <hr className="me-5 ms-5"/>
+        <Calendar reservations={reservations} reservable={false} pricelist={{price: boat.price}} type="boat" resourceId={id}/>
+
+        <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
+        <hr className="me-5 ms-5"/>
+
+        <ReservationCardGrid reservations={reservations}/>
+
+        <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)}
+            aria-controls="reservationsTable"
+            aria-expanded={open}
+            style = {{cursor: "pointer"}}
+        >Istorija rezervacija</h2>
+
+        <hr className="me-5 ms-5"/>
+        <Collapse in={open}>
+            <div id="reservationsTable">
+                <ReservationsTable  reservations={reservations} showResource={false}/>
+            </div>
+        </Collapse>
+
         <BeginButton/>
     </>
 

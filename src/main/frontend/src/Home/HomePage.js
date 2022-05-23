@@ -14,7 +14,8 @@ import axios from "axios";
 export function HomePage() {
 
     function isLoggedIn() {
-        return localStorage.getItem('token') !== "";
+        console.log(localStorage.getItem('token'))
+        return localStorage.getItem('token') !== null && localStorage.getItem('token') !== "";
     }
 
     const [searchTerm, setSearchTerm] = useState("searchTerm");
@@ -26,6 +27,7 @@ export function HomePage() {
     }
 
     let vacationHouseOwners = GetAllVacationHouseOwners();
+
     if (vacationHouseOwners.length > 4) {
         vacationHouseOwners = vacationHouseOwners.subarray(0, 4);
     }
@@ -56,6 +58,10 @@ export function HomePage() {
         )
     }
 
+    const logOut=()=> {
+        localStorage.setItem('token', "");
+    }
+
     useEffect(() => {
         if(isLoggedIn()){
             getLoggedUser()
@@ -76,7 +82,7 @@ export function HomePage() {
 
                 {(!isLoggedIn()) ?
                     <Button href={frontLink + "login"} className="m-3" variant="outline-secondary">Prijavi se</Button> :
-                    <Button className="m-3" variant="outline-secondary">Odjavi se</Button>
+                    <Button className="m-3" variant="outline-secondary" onClick={()=> logOut()}>Odjavi se</Button>
                 }
 
             </div>
@@ -167,7 +173,7 @@ export function HomePage() {
                     {vacationHouseOwners.map(owner => {
                         return <HomePageVendorCard type={"houseOwner"} key={owner.id} id={owner.id}
                                                    fullName={owner.firstName + " " + owner.lastName} rate={5}
-                                                   profileImage={"../images/people/pexels-alan-cabello-4437916.jpg"}/>
+                                                   profileImage={owner.profileImg}/>
                     })}
                 </div>
             </div>
@@ -189,7 +195,7 @@ export function HomePage() {
                     {boatOwners.map(owner => {
                         return <HomePageVendorCard type={"boatOwner"} key={owner.id} id={owner.id}
                                                    fullName={owner.firstName + " " + owner.lastName} rate={5}
-                                                   profileImage={"../images/Home1.jpg"}/>
+                                                   profileImage={owner.profileImg}/>
                     })}
                 </div>
 
@@ -212,7 +218,7 @@ export function HomePage() {
                     {fishingInstructors.map(owner => {
                         return <HomePageVendorCard type={"fishingInstructor"} key={owner.id} id={owner.id}
                                                    fullName={owner.firstName + " " + owner.lastName} rate={5}
-                                                   profileImage={"../images/Home1.jpg"}/>
+                                                   profileImage={owner.profileImg}/>
                     })}
                 </div>
             </div>
@@ -236,11 +242,25 @@ function HomePageResourceCard({id, title, rate, images, type}) {
 }
 
 function HomePageVendorCard({id, fullName, rate, profileImage, type}) {
+    let path;
+    if (profileImage) {
+        path = backLink + profileImage.path;
+    }
+
     return <Card className="vendor-card m-5 reveal">
         <Card.Body className="d-flex h-100">
             <div>
                 <a href={frontLink + type + "/" + id}>
-                    <img src={require("../images/people/pexels-alan-cabello-4437916.jpg")} alt="profileImage" className="vendor-profile-image"/>
+
+                    {profileImage ?
+                        <img src={path} alt="profileImage" className="vendor-profile-image"/>
+                        :
+                        <div className="d-flex justify-content-center align-items-center vendor-profile-image-placeholder">
+                            <BsPerson style={{color: "rgba(0,0,0,0.3)"}}/>
+
+                        </div>
+                    }
+
                 </a>
             </div>
             <div className="ms-3 mt-auto mb-auto flex-column h-100">

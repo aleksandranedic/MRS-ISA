@@ -9,7 +9,11 @@ import OwnerBoats from './OwnerBoats';
 import AddBoat from './AddBoat';
 import { useParams } from "react-router-dom";
 import Navigation from "../Navigation/Navigation";
-import { profilePicturePlaceholder } from '../Consts';
+import {backLink, profilePicturePlaceholder} from '../Consts';
+import {Calendar} from "../Calendar/Calendar";
+import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
+import {Collapse} from "react-bootstrap";
+import {ReservationsTable} from "../Calendar/ReservationsTable";
 
 const  UpdateOwner = ({show, setShow, owner}) => {
     if (typeof owner.firstName !== "undefined"){
@@ -28,6 +32,16 @@ function BoatOwnerPage() {
 
     const [show, setShow] = useState(false);
     const handleShow = () => setShow(true);
+
+    const [reservations, setReservations] = useState([]);
+    const [open, setOpen] = useState(false);
+
+    const fetchReservations = () => {
+        axios.get(backLink+ "/boat/reservation/boatOwner/" + id).then(res => {
+            setReservations(res.data);
+        })
+    }
+
 
     const HOST = "http://localhost:4444";  
     const fetchOwnerBoats = () => {
@@ -54,6 +68,7 @@ function BoatOwnerPage() {
     useEffect(() => {
         fetchboatOwner();
         fetchOwnerBoats();
+        fetchReservations();
     }, [ownerBoats]);
     return (
         <>
@@ -94,9 +109,31 @@ function BoatOwnerPage() {
 
                 <hr/>
                 <OwnerBoats boats={ownerBoats}/>
-                <hr/>
+
                
             </div>
+
+            <hr className="me-5 ms-5"/>
+            <Calendar reservations={reservations} reservable={false}/>
+
+            <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
+            <hr className="me-5 ms-5"/>
+
+            <ReservationCardGrid reservations={reservations}/>
+
+            <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)}
+                aria-controls="reservationsTable"
+                aria-expanded={open}
+                style = {{cursor: "pointer"}}
+            >Istorija rezervacija</h2>
+
+            <hr className="me-5 ms-5"/>
+            <Collapse in={open}>
+                <div id="reservationsTable">
+                    <ReservationsTable  reservations={reservations} showResource={false}/>
+                </div>
+            </Collapse>
+
         <BeginButton/>
         </>
     );

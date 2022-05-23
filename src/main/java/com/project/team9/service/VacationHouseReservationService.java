@@ -6,6 +6,10 @@ import com.project.team9.repo.VacationHouseReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class VacationHouseReservationService {
     private final VacationHouseReservationRepository repository;
@@ -23,5 +27,13 @@ public class VacationHouseReservationService {
     }
     public void deleteById(Long id) {
         repository.deleteById(id);
+    }
+
+    public List<VacationHouseReservation> getAll() {
+        return repository.findAll();
+    }
+
+    public List<VacationHouseReservation> getStandardReservations() {
+        return repository.findAll().stream().filter(vacationHouseReservation -> !vacationHouseReservation.isQuickReservation()).collect(Collectors.toCollection(ArrayList::new));
     }
 }

@@ -325,4 +325,66 @@ public class BoatService {
         boat.setImages(images);
         return boat;
     }
+
+    public List<ReservationDTO> getReservationsForClient(Long id) {
+        List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
+
+        for (BoatReservation br : reservationService.getStandardReservations()) {
+            if (Objects.equals(br.getClient().getId(), id) && !br.isBusyPeriod()) {
+                reservations.add(new ReservationDTO(
+                        br.getAppointments(),
+                        br.getNumberOfClients(),
+                        br.getAdditionalServices(),
+                        br.getPrice(),
+                        br.getClient(),
+                        br.getResource().getTitle(),
+                        br.isBusyPeriod(),
+                        br.isQuickReservation()
+                ));
+            }
+        }
+        return reservations;
+
+    }
+
+    public List<ReservationDTO> getReservationsForBoat(Long id) {
+        List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
+
+        for (BoatReservation br : reservationService.getAll()) {
+            if (Objects.equals(br.getResource().getId(), id) && !br.isQuickReservation() && !br.isBusyPeriod()) {
+                reservations.add(new ReservationDTO(
+                        br.getAppointments(),
+                        br.getNumberOfClients(),
+                        br.getAdditionalServices(),
+                        br.getPrice(),
+                        br.getClient(),
+                        br.getResource().getTitle(),
+                        br.isBusyPeriod(),
+                        br.isQuickReservation()
+                ));
+            }
+        }
+        return reservations;
+
+    }
+    public List<ReservationDTO> getReservationsForOwner(Long id) {
+        List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
+
+        for (BoatReservation br : reservationService.getAll()) {
+            if (Objects.equals(br.getResource().getOwner().getId(), id) && !br.isQuickReservation() && !br.isBusyPeriod()) {
+                reservations.add(new ReservationDTO(
+                        br.getAppointments(),
+                        br.getNumberOfClients(),
+                        br.getAdditionalServices(),
+                        br.getPrice(),
+                        br.getClient(),
+                        br.getResource().getTitle(),
+                        br.isBusyPeriod(),
+                        br.isQuickReservation()
+                ));
+            }
+        }
+        return reservations;
+
+    }
 }

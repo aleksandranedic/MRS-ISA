@@ -1,12 +1,10 @@
 package com.project.team9.controller;
 
 import com.project.team9.dto.HouseCardDTO;
+import com.project.team9.dto.ReservationDTO;
 import com.project.team9.dto.VacationHouseDTO;
 import com.project.team9.dto.VacationHouseQuickReservationDTO;
-import com.project.team9.model.Address;
-import com.project.team9.model.Image;
-import com.project.team9.model.Tag;
-import com.project.team9.model.buissness.Pricelist;
+import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path="house")
@@ -41,6 +33,23 @@ public class VacationHouseController {
     public List<VacationHouse> getHouses() {
         return service.getVacationHouses();
     }
+
+
+    @GetMapping("/reservation/vacationHouseOwner/{id}")
+    public List<ReservationDTO> getReservationsForOwner(@PathVariable Long id) {
+        return  service.getReservationsForOwner(id);
+    }
+
+    @GetMapping("/reservation/vacationHouse/{id}")
+    public List<ReservationDTO> getReservationsForVacationHouse(@PathVariable Long id) {
+        return  service.getReservationsForVacationHouse(id);
+    }
+
+    @GetMapping("/reservation/client/{id}")
+    public List<ReservationDTO> getReservationsForClient(@PathVariable Long id) {
+        return  service.getReservationsForClient(id);
+    }
+
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public VacationHouse getVacationHouse(@PathVariable String id) {
