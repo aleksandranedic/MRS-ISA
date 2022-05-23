@@ -30,7 +30,7 @@ export const responsive = {
     }
 };
 
-export default function AdventureCarousel({adventures, add}) {
+export default function AdventureCarousel({adventures, add, ownerId}) {
     const [show, setShow] = useState(false);
     let editable;
     editable = add === true;
@@ -45,7 +45,7 @@ export default function AdventureCarousel({adventures, add}) {
                     add &&
                     <>
                         <PlusCard onClick={() => setShow(true)}/>
-                        <AdventureModal show={show} setShow={setShow}/>
+                        <AdventureModal show={show} setShow={setShow} ownerId={ownerId}/>
                     </>
                 }
 

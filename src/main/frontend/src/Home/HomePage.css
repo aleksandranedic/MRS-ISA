@@ -153,6 +153,13 @@
     border-radius: 10vw;
 }
 
+.vendor-profile-image-placeholder {
+    height: 6vw;
+    width: 6vw;
+    border-radius: 10vw;
+    background-color: rgba(0,0,0,0.1);
+}
+
 .vendor-card {
     position:absolute;
     background: linear-gradient(175deg, rgba(248,248,248,0.9) 50%, rgba(201, 201, 201, 0.6) 100%);

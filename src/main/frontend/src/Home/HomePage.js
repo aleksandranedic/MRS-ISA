@@ -25,6 +25,7 @@ export function HomePage() {
     }
 
     let vacationHouseOwners = GetAllVacationHouseOwners();
+    console.log(vacationHouseOwners);
     if (vacationHouseOwners.length > 4) {
         vacationHouseOwners = vacationHouseOwners.subarray(0, 4);
     }
@@ -152,7 +153,7 @@ export function HomePage() {
                     {vacationHouseOwners.map(owner => {
                         return <HomePageVendorCard type={"houseOwner"} key={owner.id} id={owner.id}
                                                    fullName={owner.firstName + " " + owner.lastName} rate={5}
-                                                   profileImage={"../images/people/pexels-alan-cabello-4437916.jpg"}/>
+                                                   profileImage={owner.profileImg}/>
                     })}
                 </div>
             </div>
@@ -174,7 +175,7 @@ export function HomePage() {
                     {boatOwners.map(owner => {
                         return <HomePageVendorCard type={"boatOwner"} key={owner.id} id={owner.id}
                                                    fullName={owner.firstName + " " + owner.lastName} rate={5}
-                                                   profileImage={"../images/Home1.jpg"}/>
+                                                   profileImage={owner.profileImg}/>
                     })}
                 </div>
 
@@ -197,7 +198,7 @@ export function HomePage() {
                     {fishingInstructors.map(owner => {
                         return <HomePageVendorCard type={"fishingInstructor"} key={owner.id} id={owner.id}
                                                    fullName={owner.firstName + " " + owner.lastName} rate={5}
-                                                   profileImage={"../images/Home1.jpg"}/>
+                                                   profileImage={owner.profileImg}/>
                     })}
                 </div>
             </div>
@@ -221,11 +222,25 @@ function HomePageResourceCard({id, title, rate, images, type}) {
 }
 
 function HomePageVendorCard({id, fullName, rate, profileImage, type}) {
+    let path;
+    if (profileImage) {
+        path = backLink + profileImage.path;
+    }
+
     return <Card className="vendor-card m-5 reveal">
         <Card.Body className="d-flex h-100">
             <div>
                 <a href={frontLink + type + "/" + id}>
-                    <img src={require("../images/people/pexels-alan-cabello-4437916.jpg")} alt="profileImage" className="vendor-profile-image"/>
+
+                    {profileImage ?
+                        <img src={path} alt="profileImage" className="vendor-profile-image"/>
+                        :
+                        <div className="d-flex justify-content-center align-items-center vendor-profile-image-placeholder">
+                            <BsPerson style={{color: "rgba(0,0,0,0.3)"}}/>
+
+                        </div>
+                    }
+
                 </a>
             </div>
             <div className="ms-3 mt-auto mb-auto flex-column h-100">

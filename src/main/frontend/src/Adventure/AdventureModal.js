@@ -6,10 +6,48 @@ import AdventureFormImages from "./AdventureFormImages";
 import {TagInfo} from "../Info";
 
 
-export function AdventureModal({adventure, show, setShow}) {
+function getDto(formValues, formReference, imagesRef) {
+    formValues.additionalServicesText = [];
+    for (let index in formValues.additionalServices) {
+        formValues.additionalServicesText.push(formValues.additionalServices.at(index).text);
+    }
+    formValues.fishingEquipmentText = [];
+    for (let index in formValues.fishingEquipment) {
+        formValues.fishingEquipmentText.push(formValues.fishingEquipment.at(index).text);
+    }
+
+    let dto = new FormData(formReference.current);
+    dto.append("id", formValues.ownerId);
+    dto.append("numberOfClients", formValues.numberOfClients);
+    dto.append("ownerId", formValues.ownerId);
+    dto.append("imagePaths", formValues.imagePaths)
+    dto.append("cancellationFee", formValues.cancellationFee);
+    dto.append("price", formValues.price);
+    dto.append("title", formValues.title);
+    dto.append("street", formValues.street);
+    dto.append("place", formValues.place);
+    dto.append("number", formValues.number);
+    dto.append("country", formValues.country);
+    dto.append("description", formValues.description);
+    dto.append("rulesAndRegulations", formValues.rulesAndRegulations);
+    dto.append("additionalServicesText", formValues.additionalServicesText);
+    dto.append("fishingEquipmentText", formValues.fishingEquipmentText);
+    dto.append("imagePaths", formValues.imagePaths)
+
+    let files = imagesRef.current.files;
+    let images = []
+    for (let i = 0; i < files.length; i++) {
+        images.push(files[i])
+    }
+
+    dto.append("fileImage", images);
+    return dto;
+}
+
+export function AdventureModal({adventure, show, setShow, ownerId}) {
     let initialState = {}
 
-    initialState = getInitialAdventureState(adventure);
+    initialState = getInitialAdventureState(adventure, ownerId);
 
     const imagesRef = useRef();
     const formReference = useRef();
@@ -32,34 +70,8 @@ export function AdventureModal({adventure, show, setShow}) {
 
     function addAdventure() {
 
-        formValues.additionalServicesText = [];
-        for (let index in formValues.additionalServices) {
-            formValues.additionalServicesText.push(formValues.additionalServices.at(index).text);
-        }
-        formValues.fishingEquipmentText = [];
-        for (let index in formValues.fishingEquipment) {
-            formValues.fishingEquipmentText.push(formValues.fishingEquipment.at(index).text);
-        }
+        let dto = getDto(formValues, formReference, imagesRef);
 
-        let dto = new FormData(formReference.current);
-        dto.append("id", formValues.ownerId);
-        dto.append("numberOfClients", formValues.numberOfClients);
-        dto.append("ownerId", formValues.ownerId);
-        dto.append("imagePaths", formValues.imagePaths)
-        dto.append("cancellationFee", formValues.cancellationFee);
-        dto.append("price", formValues.price);
-
-        dto.append("additionalServicesText", formValues.additionalServicesText);
-        dto.append("fishingEquipmentText", formValues.fishingEquipmentText);
-
-        let files = imagesRef.current.files;
-        let images = []
-        for (let i = 0; i < files.length; i++) {
-            images.push(files[i])
-        }
-        
-        dto.append("fileImage", images);
-      
         axios
             .post("http://localhost:4444/adventure/add", dto)
             .then(response => {
@@ -68,19 +80,24 @@ export function AdventureModal({adventure, show, setShow}) {
             .catch(error => {
                 console.log(error)
             })
-        //window.location.reload();
+        window.location.reload();
     }
 
     function editAdventure() {
-        // axios
-        //     .post(backLink + "adventure/" + adventure.id + "/edit", formValues)
-        //     .then(response => {
-        //         console.log(response)
-        //     })
-        //     .catch(error => {
-        //         console.log(error)
-        //     })
-        //window.location.reload();
+
+        let dto = getDto(formValues, formReference, imagesRef);
+        let url = backLink + "/adventure/" + adventure.id + "/edit";
+
+        axios
+            .post(url, dto)
+            .then(response => {
+                console.log(response);
+                adventure = response;
+            })
+            .catch(error => {
+                console.log(error);
+            })
+        // window.location.reload();
     }
 
     const handleSubmit = e => {
@@ -229,7 +246,7 @@ function AdventureForm({
         <div>
             <Form.Group className="mb-3 m-2">
                 <Form.Label>Naslov</Form.Label>
-                <Form.Control type="text" name="title"
+                <Form.Control type="text"
                               value={formValues.title}
                               onChange={(e) => setField("title", e.target.value)}
                               isInvalid={!!formErrors.title}
@@ -241,7 +258,7 @@ function AdventureForm({
             </Form.Group>
             <Form.Group className="mb-3 m-2">
                 <Form.Label>Opis</Form.Label>
-                <Form.Control as="textarea" rows={3} name="description"
+                <Form.Control as="textarea" rows={3}
                               value={formValues.description}
                               onChange={(e) => setField("description", e.target.value)}
                               isInvalid={!!formErrors.description}/>
@@ -253,7 +270,7 @@ function AdventureForm({
             <div className="d-flex" id="address">
                 <Form.Group className="mb-3 m-2">
                     <Form.Label>Ulica</Form.Label>
-                    <Form.Control type="text" name="street"
+                    <Form.Control type="text"
                                   value={formValues.street}
                                   onChange={(e) => setField("street", e.target.value)}
                                   isInvalid={!!formErrors.street}/>
@@ -263,7 +280,7 @@ function AdventureForm({
                 </Form.Group>
                 <Form.Group className="mb-3 m-2 ">
                     <Form.Label>Broj</Form.Label>
-                    <Form.Control type="text" name="number"
+                    <Form.Control type="text"
                                   value={formValues.number}
                                   onChange={(e) => setField("number", e.target.value)}
                                   isInvalid={!!formErrors.number}/>
@@ -273,7 +290,7 @@ function AdventureForm({
                 </Form.Group>
                 <Form.Group className="mb-3 m-2">
                     <Form.Label>Mesto</Form.Label>
-                    <Form.Control type="text" name="place"
+                    <Form.Control type="text"
                                   value={formValues.place}
                                   onChange={(e) => setField("place", e.target.value)}
                                   isInvalid={!!formErrors.place}/>
@@ -283,7 +300,7 @@ function AdventureForm({
                 </Form.Group>
                 <Form.Group className="mb-3 m-2">
                     <Form.Label>Drzava</Form.Label>
-                    <Form.Control type="text" name="country"
+                    <Form.Control type="text"
                                   value={formValues.country}
                                   onChange={(e) => setField("country", e.target.value)}
                                   isInvalid={!!formErrors.country}/>
@@ -312,7 +329,7 @@ function AdventureForm({
 
                 <Form.Group className="mb-3 m-2 w-50">
                     <Form.Label>Broj klijenata</Form.Label>
-                    <Form.Control type="text" name="numberOfClients"
+                    <Form.Control type="number"
                                   value={formValues.numberOfClients}
                                   onChange={(e) => setField("numberOfClients", e.target.value)}
                                   isInvalid={!!formErrors.numberOfClients}/>
@@ -323,7 +340,7 @@ function AdventureForm({
 
                 <Form.Group className="mb-3 m-2 w-25">
                     <Form.Label>Cena</Form.Label>
-                    <Form.Control type="number" name="price"
+                    <Form.Control type="number"
                                   value={formValues.price}
                                   onChange={(e) => setField("price", e.target.value)}
                                   isInvalid={!!formErrors.price}/>
@@ -336,7 +353,7 @@ function AdventureForm({
                 <Form.Group className="mb-3 m-2 w-25">
                     <Form.Label>Naknada za otkazivanje</Form.Label>
 
-                    <Form.Control type="number" name="cancellationFee"
+                    <Form.Control type="number"
                                   value={formValues.cancellationFee}
                                   onChange={(e) => setField("cancellationFee", e.target.value)}
                                   isInvalid={!!formErrors.cancellationFee}/>
@@ -386,7 +403,7 @@ function AdventureForm({
 
             <Form.Group className="mb-3 m-2">
                 <Form.Label>Pravila ponasanja</Form.Label>
-                <Form.Control as="textarea" rows={3} name="rulesAndRegulations"
+                <Form.Control as="textarea" rows={3}
                               value={formValues.rulesAndRegulations}
                               onChange={(e) => setField("rulesAndRegulations", e.target.value)}
                               isInvalid={!!formErrors.rulesAndRegulations}/>
@@ -398,7 +415,7 @@ function AdventureForm({
     )
 }
 
-function getInitialAdventureState(adventure) {
+function getInitialAdventureState(adventure, ownerId) {
     if (adventure) {
         let images = []
         for (let index in adventure.images) {
@@ -438,7 +455,7 @@ function getInitialAdventureState(adventure) {
             additionalServices: [],
             fishingEquipment: [],
             rulesAndRegulations: "",
-            ownerId: 1,
+            ownerId: ownerId,
             imagePaths: []
         };
     }

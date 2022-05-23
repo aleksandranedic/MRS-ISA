@@ -1,9 +1,6 @@
 package com.project.team9.service;
 
-import com.project.team9.dto.HouseCardDTO;
-import com.project.team9.dto.ReviewScoresDTO;
-import com.project.team9.dto.VacationHouseDTO;
-import com.project.team9.dto.VacationHouseQuickReservationDTO;
+import com.project.team9.dto.*;
 import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
@@ -57,18 +54,19 @@ public class VacationHouseService {
         return repository.findAll();
     }
 
-    public HouseCardDTO getVacationHouseCard(Long id){
+    public HouseCardDTO getVacationHouseCard(Long id) {
         VacationHouse vh = getVacationHouse(id);
         String address = vh.getAddress().getStreet() + " " + vh.getAddress().getNumber() + ", " + vh.getAddress().getPlace() + ", " + vh.getAddress().getCountry();
         return new HouseCardDTO(vh.getId(), vh.getImages().get(0).getPath(), vh.getTitle(), vh.getDescription(), address);
     }
+
     public List<HouseCardDTO> getOwnerHouses(Long owner_id) {
         List<VacationHouse> houses = repository.findByOwnerId(owner_id);
         List<HouseCardDTO> houseCards = new ArrayList<HouseCardDTO>();
-        for(VacationHouse house : houses){
+        for (VacationHouse house : houses) {
             String address = house.getAddress().getStreet() + " " + house.getAddress().getNumber() + ", " + house.getAddress().getPlace() + ", " + house.getAddress().getCountry();
             String thumbnail = "./images/housenotext.png";
-            if (house.getImages().size() > 0){
+            if (house.getImages().size() > 0) {
                 thumbnail = house.getImages().get(0).getPath();
             }
             houseCards.add(new HouseCardDTO(house.getId(), thumbnail, house.getTitle(), house.getDescription(), address));
@@ -80,17 +78,18 @@ public class VacationHouseService {
         return repository.getById(id);
     }
 
-    public double getRatingForHouse(Long id){
+    public double getRatingForHouse(Long id) {
         ReviewScoresDTO reviews = reviewService.getReviewScores(id);
         double sum = reviews.getFiveStars() * 5 + reviews.getFourStars() * 4 + reviews.getThreeStars() * 3 + reviews.getTwoStars() * 2 + reviews.getOneStars();
-        double num = reviews.getFiveStars()  + reviews.getFourStars() + reviews.getThreeStars() + reviews.getTwoStars() + reviews.getOneStars();
+        double num = reviews.getFiveStars() + reviews.getFourStars() + reviews.getThreeStars() + reviews.getTwoStars() + reviews.getOneStars();
         double result = sum / num;
         double scale = Math.pow(10, 1);
         return Math.round(result * scale) / scale;
     }
+
     public VacationHouseDTO getVacationHouseDTO(Long id) {
         VacationHouse vh = repository.getById(id);
-        String address = vh.getAddress().getStreet() + " " + vh.getAddress().getNumber() + ", " + vh.getAddress().getPlace()  + ", " + vh.getAddress().getCountry();
+        String address = vh.getAddress().getStreet() + " " + vh.getAddress().getNumber() + ", " + vh.getAddress().getPlace() + ", " + vh.getAddress().getCountry();
         List<String> images = new ArrayList<String>();
         for (Image img : vh.getImages()) {
             images.add(img.getPath());
@@ -100,16 +99,16 @@ public class VacationHouseService {
         return new VacationHouseDTO(vh.getId(), vh.getTitle(), address, vh.getAddress().getNumber(), vh.getAddress().getStreet(), vh.getAddress().getPlace(), vh.getAddress().getCountry(), vh.getDescription(), images, vh.getRulesAndRegulations(), vh.getAdditionalServices(), vh.getPricelist().getPrice(), vh.getCancellationFee(), vh.getNumberOfRooms(), capacity, quickReservations);
     }
 
-    private List<VacationHouseQuickReservationDTO> getQuickReservations(VacationHouse vh){
+    private List<VacationHouseQuickReservationDTO> getQuickReservations(VacationHouse vh) {
         List<VacationHouseQuickReservationDTO> quickReservations = new ArrayList<VacationHouseQuickReservationDTO>();
-        for (VacationHouseReservation reservation :  vh.getQuickReservations()){
+        for (VacationHouseReservation reservation : vh.getQuickReservations()) {
             if (reservation.getPrice() < vh.getPricelist().getPrice() && reservation.getClient() == null)
                 quickReservations.add(createVacationHouseQuickReservationDTO(vh.getPricelist().getPrice(), reservation));
         }
         return quickReservations;
     }
 
-    private VacationHouseQuickReservationDTO createVacationHouseQuickReservationDTO(int vacationHousePrice, VacationHouseReservation reservation){
+    private VacationHouseQuickReservationDTO createVacationHouseQuickReservationDTO(int vacationHousePrice, VacationHouseReservation reservation) {
         Appointment firstAppointment = getFirstAppointment(reservation.getAppointments());
         LocalDateTime startDate = firstAppointment.getStartTime();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm'h'");
@@ -118,10 +117,11 @@ public class VacationHouseService {
         List<Tag> additionalServices = reservation.getAdditionalServices();
         int duration = reservation.getAppointments().size();
         int price = reservation.getPrice();
-        int discount = 100 - ( 100 * price / vacationHousePrice);
+        int discount = 100 - (100 * price / vacationHousePrice);
         return new VacationHouseQuickReservationDTO(reservation.getId(), strDate, numberOfPeople, additionalServices, duration, price, discount);
     }
-    private Appointment getFirstAppointment(List<Appointment> appointments){
+
+    private Appointment getFirstAppointment(List<Appointment> appointments) {
         List<Appointment> sortedAppointments = getSortedAppointments(appointments);
         return sortedAppointments.get(0);
     }
@@ -136,7 +136,7 @@ public class VacationHouseService {
         return appointments;
     }
 
-    public Boolean addQuickReservation(Long id, VacationHouseQuickReservationDTO quickReservationDTO){
+    public Boolean addQuickReservation(Long id, VacationHouseQuickReservationDTO quickReservationDTO) {
         VacationHouse house = this.getVacationHouse(id);
         VacationHouseReservation reservation = getReservationFromDTO(quickReservationDTO);
         reservation.setResource(house);
@@ -146,7 +146,7 @@ public class VacationHouseService {
         return true;
     }
 
-    public Boolean updateQuickReservation(Long id, VacationHouseQuickReservationDTO quickReservationDTO){
+    public Boolean updateQuickReservation(Long id, VacationHouseQuickReservationDTO quickReservationDTO) {
         VacationHouse house = this.getVacationHouse(id);
         VacationHouseReservation newReservation = getReservationFromDTO(quickReservationDTO);
         VacationHouseReservation originalReservation = reservationService.getVacationHouseReservation(quickReservationDTO.getReservationID());
@@ -156,21 +156,22 @@ public class VacationHouseService {
         return true;
     }
 
-    public Boolean deleteQuickReservation(Long id, VacationHouseQuickReservationDTO quickReservationDTO){
+    public Boolean deleteQuickReservation(Long id, VacationHouseQuickReservationDTO quickReservationDTO) {
         VacationHouse house = this.getVacationHouse(id);
         reservationService.deleteById(quickReservationDTO.getReservationID());
         //izbaci se reservation iz house
         this.save(house);
         return true;
     }
-    private VacationHouseReservation getReservationFromDTO(VacationHouseQuickReservationDTO dto){
+
+    private VacationHouseReservation getReservationFromDTO(VacationHouseQuickReservationDTO dto) {
         List<Appointment> appointments = new ArrayList<Appointment>();
         String[] splitDate = dto.getStartDate().split(" ");
         Appointment startDateAppointment = Appointment.getVacationHouseAppointment(Integer.parseInt(splitDate[2]), Integer.parseInt(splitDate[1]), Integer.parseInt(splitDate[0]));
         appointments.add(startDateAppointment);
         appointmentRepository.save(startDateAppointment);
         Appointment currApp = startDateAppointment;
-        for (int i=0; i < dto.getDuration() - 1; i++){
+        for (int i = 0; i < dto.getDuration() - 1; i++) {
             LocalDateTime startDate = currApp.getEndTime();
             LocalDateTime endDate = startDate.plusDays(1);
             currApp = new Appointment(startDate, endDate);
@@ -178,7 +179,7 @@ public class VacationHouseService {
             appointments.add(currApp);
         }
         List<Tag> tags = new ArrayList<Tag>();
-        for (String tagText : dto.getTagsText()){
+        for (String tagText : dto.getTagsText()) {
             Tag tag = new Tag(tagText);
             tagService.addTag(tag);
             tags.add(tag);
@@ -189,6 +190,7 @@ public class VacationHouseService {
         reservation.setAppointments(appointments);
         return reservation;
     }
+
     public void addVacationHouses(VacationHouse house) {
         repository.save(house);
     }
@@ -244,12 +246,14 @@ public class VacationHouseService {
         originalHouse.setCancellationFee(newVacationHouse.getCancellationFee());
         originalHouse.setImages(newVacationHouse.getImages());
     }
-    private void updateQuickReservation(VacationHouseReservation originalReservation, VacationHouseReservation newReservation){
+
+    private void updateQuickReservation(VacationHouseReservation originalReservation, VacationHouseReservation newReservation) {
         originalReservation.setAppointments(newReservation.getAppointments());
         originalReservation.setAdditionalServices(newReservation.getAdditionalServices());
         originalReservation.setNumberOfClients(newReservation.getNumberOfClients());
         originalReservation.setPrice(newReservation.getPrice());
     }
+
     private List<String> saveImages(VacationHouse vh, MultipartFile[] multipartFiles) throws IOException {
         List<String> paths = new ArrayList<>();
         if (multipartFiles == null) {
@@ -259,7 +263,7 @@ public class VacationHouseService {
         Path path_target = Paths.get(STATIC_PATH_TARGET + IMAGES_PATH + vh.getId());
         savePicturesOnPath(vh, multipartFiles, paths, path);
         savePicturesOnPath(vh, multipartFiles, paths, path_target);
-        if (vh.getImages() != null && vh.getImages().size() > 0){
+        if (vh.getImages() != null && vh.getImages().size() > 0) {
             for (Image image : vh.getImages()) {
                 paths.add(image.getPath());
             }
@@ -294,14 +298,14 @@ public class VacationHouseService {
         addressService.addAddress(adr);
         VacationHouse vh = new VacationHouse(house.getName(), adr, house.getDescription(), house.getRulesAndRegulations(), pl, house.getCancellationFee(), null, house.getNumberOfRooms(), numberOfBedsPerRoom);
         List<Tag> tags = new ArrayList<Tag>();
-        for (String tagText : house.getTagsText()){
+        for (String tagText : house.getTagsText()) {
             Tag tag = new Tag(tagText);
             tagService.addTag(tag);
             tags.add(tag);
         }
         vh.setAdditionalServices(tags);
         List<Image> images = new ArrayList<Image>();
-        if (house.getImagePaths() != null){
+        if (house.getImagePaths() != null) {
             for (String path : house.getImagePaths()) {
                 Optional<Image> optImage = imageService.getImageByPath(path);
                 optImage.ifPresent(images::add);
@@ -310,7 +314,71 @@ public class VacationHouseService {
         vh.setImages(images);
         return vh;
     }
+
     public VacationHouse save(VacationHouse house) {
         return repository.save(house);
+    }
+
+    public List<ReservationDTO> getReservationsForOwner(Long id) {
+        List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
+
+        for (VacationHouseReservation vhr : reservationService.getAll()) {
+            if (Objects.equals(vhr.getResource().getOwner().getId(), id) && !vhr.isQuickReservation() && !vhr.isBusyPeriod()) {
+                reservations.add(new ReservationDTO(
+                        vhr.getAppointments(),
+                        vhr.getNumberOfClients(),
+                        vhr.getAdditionalServices(),
+                        vhr.getPrice(),
+                        vhr.getClient(),
+                        vhr.getResource().getTitle(),
+                        vhr.isBusyPeriod(),
+                        vhr.isQuickReservation()
+                ));
+            }
+        }
+
+        return reservations;
+    }
+
+    public List<ReservationDTO> getReservationsForVacationHouse(Long id) {
+        List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
+
+        for (VacationHouseReservation vhr : reservationService.getAll()) {
+            if (Objects.equals(vhr.getResource().getId(), id) && !vhr.isQuickReservation() && !vhr.isBusyPeriod()) {
+                reservations.add(new ReservationDTO(
+                        vhr.getAppointments(),
+                        vhr.getNumberOfClients(),
+                        vhr.getAdditionalServices(),
+                        vhr.getPrice(),
+                        vhr.getClient(),
+                        vhr.getResource().getTitle(),
+                        vhr.isBusyPeriod(),
+                        vhr.isQuickReservation()
+                ));
+            }
+        }
+        return reservations;
+
+    }
+
+    public List<ReservationDTO> getReservationsForClient(Long id) {
+        List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
+
+        for (VacationHouseReservation vhr : reservationService.getAll()) {
+            if (Objects.equals(vhr.getClient().getId(), id) && !vhr.isQuickReservation() && !vhr.isBusyPeriod()) {
+                reservations.add(new ReservationDTO(
+                        vhr.getAppointments(),
+                        vhr.getNumberOfClients(),
+                        vhr.getAdditionalServices(),
+                        vhr.getPrice(),
+                        vhr.getClient(),
+                        vhr.getResource().getTitle(),
+                        vhr.isBusyPeriod(),
+                        vhr.isQuickReservation()
+                ));
+            }
+        }
+        return reservations;
+
     }
 }

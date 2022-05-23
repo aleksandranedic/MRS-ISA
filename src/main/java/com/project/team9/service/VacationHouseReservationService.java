@@ -6,6 +6,8 @@ import com.project.team9.repo.VacationHouseReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class VacationHouseReservationService {
     private final VacationHouseReservationRepository repository;
@@ -23,5 +25,9 @@ public class VacationHouseReservationService {
     }
     public void deleteById(Long id) {
         repository.deleteById(id);
+    }
+
+    public List<VacationHouseReservation> getAll() {
+        return repository.findAll();
     }
 }

@@ -10,6 +10,11 @@ import { useParams } from "react-router-dom";
 import Ratings from "../Reviews/Ratings";
 import "react-image-gallery/styles/css/image-gallery.css";
 import Navigation from "../Navigation/Navigation";
+import {backLink} from "../Consts";
+import {Collapse} from "react-bootstrap";
+import {ReservationsTable} from "../Calendar/ReservationsTable";
+import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
+import {Calendar} from "../Calendar/Calendar";
 
 const HOST = "http://localhost:4444";
 const Gallery = ({house, images}) => {
@@ -62,18 +67,27 @@ const ReviewsComp = ({reviews}) => {
 export function VacationHousePage() {
     const [houseReviews, setHouseReviews] = useState([])
     const [show, setShow] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [reservations, setReservations] = useState([]);
+
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const {id} = useParams();
     const [house, setHouse] = useState({});
     var [imgs, setImgs] = useState([{thumbnail: '', original: ''}]);
+
+    const fetchReservations = () => {
+        axios.get(backLink+ "/house/reservation/vacationHouse/" + id).then(res => {
+            setReservations(res.data);
+        })
+    }
     
     const fetchHouse = () => {
         axios
         .get("http://localhost:4444/house/houseprof/" + id)
         .then(res => {
             setHouse(res.data);
-
+            console.log(res.data);
             setImgs([]);
         });
     };
@@ -87,6 +101,7 @@ export function VacationHousePage() {
     useEffect(() => {
         fetchHouse();
         fetchReviews();
+        fetchReservations();
     }, []);
     
     return (
@@ -109,7 +124,37 @@ export function VacationHousePage() {
             <Reservations reservations={house.quickReservations} name={house.name} address={house.address}/>
             <footer className="blockquote-footer">Svi izlasci iz vikendice obavljaju se do 10:00h.</footer>
             <ReviewsComp reviews = {houseReviews}/>
+
         </div>
+
+        <hr className="me-5 ms-5"/>
+        <Calendar reservations={reservations} reservable={false} pricelist={{price: house.price}} resourceId={house.id} type={"vacationHouse"}/>
+
+
+        <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
+        <hr className="me-5 ms-5"/>
+
+        <ReservationCardGrid reservations={reservations}/>
+
+        <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)}
+            aria-controls="reservationsTable"
+            aria-expanded={open}
+            style = {{cursor: "pointer"}}
+        >Istorija rezervacija</h2>
+
+        <hr className="me-5 ms-5"/>
+        <Collapse in={open}>
+            <div id="reservationsTable">
+                <ReservationsTable  reservations={reservations} showResource={false}/>
+            </div>
+        </Collapse>
+
+
+
+
+
+
+
         <BeginButton/>
     </>
 

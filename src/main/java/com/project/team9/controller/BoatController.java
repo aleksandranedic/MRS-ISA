@@ -1,9 +1,6 @@
 package com.project.team9.controller;
 
-import com.project.team9.dto.BoatCardDTO;
-import com.project.team9.dto.BoatDTO;
-import com.project.team9.dto.BoatQuickReservationDTO;
-import com.project.team9.dto.VacationHouseQuickReservationDTO;
+import com.project.team9.dto.*;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +18,6 @@ import java.util.List;
 public class BoatController {
 
     private final BoatService service;
-
 
     @Autowired
     public BoatController(BoatService service) {
@@ -84,5 +80,20 @@ public class BoatController {
     public ResponseEntity deleteVacationHouse(@PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/reservation/boatOwner/{id}")
+    public List<ReservationDTO> getReservationsForOwner(@PathVariable Long id) {
+        return  service.getReservationsForOwner(id);
+    }
+
+    @GetMapping("/reservation/boat/{id}")
+    public List<ReservationDTO> getReservationsForBoat(@PathVariable Long id) {
+        return  service.getReservationsForBoat(id);
+    }
+
+    @GetMapping("/reservation/client/{id}")
+    public List<ReservationDTO> getReservationsForClient(@PathVariable Long id) {
+        return  service.getReservationsForClient(id);
     }
 }

@@ -121,7 +121,7 @@ const Adventures = ({id})  =>{
             <QuickReservationsComp reservations={quickReservations} name={adventure.title} address={adventure.address}/>
 
             <hr className="me-5 ms-5"/>
-            <Calendar reservations={reservations} reservable={true} pricelist={adventure.pricelist} perHour={true}/>
+            <Calendar reservations={reservations} reservable={true} pricelist={adventure.pricelist} resourceId={adventure.id} type={"adventure"}/>
 
             <div className="m-5 mb-0 me-0">
                 <ReviewsComp reviews = {adventureReviews}/>
