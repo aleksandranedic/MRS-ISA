@@ -4,21 +4,31 @@ import javax.persistence.Entity;
 
 @Entity
 public class DeleteRequest extends Request{
-    private Long user_id;
+    private String userDeletionIdentification;
+    private String userType;
 
     public DeleteRequest() {
     }
 
-    public DeleteRequest(String text, String response, Long user_id) {
+    public DeleteRequest(String text, String response,String userDeletionIdentification, String userType) {
         super(text, response);
-        this.user_id = user_id;
+        this.userDeletionIdentification = userDeletionIdentification;
+        this.userType = userType;
     }
 
-    public Long getUser_id() {
-        return user_id;
+    public String getUserDeletionIdentification() {
+        return userDeletionIdentification;
     }
 
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
+    public void setUserDeletionIdentification(String userDeletionIdentification) {
+        this.userDeletionIdentification = userDeletionIdentification;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
 }

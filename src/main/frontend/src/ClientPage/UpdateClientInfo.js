@@ -5,6 +5,11 @@ import axios from "axios";
 import {ChangeClientPassword} from "./ChangeClientPassword";
 import {backLink} from "../Consts";
 
+axios.interceptors.request.use(config => {
+        config.headers.authorization = "Bearer " + localStorage.getItem('token')
+        return config
+    }
+)
 function UpdateClientInfo({client, handleClose, showPopUp,setClient}) {
     const [showDeleteClient, setShow] = useState(false);
 
@@ -13,7 +18,7 @@ function UpdateClientInfo({client, handleClose, showPopUp,setClient}) {
 
 
     function handleUpdateAccount(userDTO) {
-        axios.put(backLink+"client/update/" + client.id, userDTO).then(res => {
+        axios.put(backLink+"/client/update/" + client.id, userDTO).then(res => {
             console.log(res);
             setClient(res.data)
         });
@@ -29,7 +34,7 @@ function UpdateClientInfo({client, handleClose, showPopUp,setClient}) {
         street: client.address.street,
         place: client.address.place,
         country: client.address.country,
-        phoneNumber: client.address.phoneNumber
+        phoneNumber: client.phoneNumber
     })
     const [errors, setErrors] = useState({})
 

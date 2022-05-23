@@ -19,10 +19,7 @@ const Adventures = ({term}) => {
 
             for (let i = 0; i < res.data.length; i++) {
                 let a = res.data[i];
-                if (a.title.toLowerCase().includes(term.toLowerCase())) {
-                    adventures.push(a);
-                }
-                if (a.description.toLowerCase().includes(term.toLowerCase())) {
+                if (a.title.includes(term)) {
                     adventures.push(a);
                 }
             }
@@ -57,12 +54,10 @@ const FishingInstructors = ({term}) => {
 
             for (let i = 0; i < res.data.length; i++) {
                 let a = res.data[i];
-                if (a.firstName.toLowerCase().includes(term.toLowerCase())) {
+                if (a.firstName.includes(term)) {
                     instructors.push(a);
                 }
-                if (a.lastName.toLowerCase().includes(term.toLowerCase())) {
-                    instructors.push(a);
-                }
+
             }
 
             setFishingInstructors(instructors);
@@ -96,10 +91,7 @@ const VacationHouses = ({term}) => {
 
             for (let i = 0; i < res.data.length; i++) {
                 let a = res.data[i];
-                if (a.title.toLowerCase().includes(term.toLowerCase())) {
-                    houses.push(a);
-                }
-                if (a.description.toLowerCase().includes(term.toLowerCase())) {
+                if (a.title.includes(term)) {
                     houses.push(a);
                 }
             }
@@ -124,13 +116,21 @@ const VacationHouses = ({term}) => {
     return html;
 }
 
-const VacationHouseOwners = () => {
+const VacationHouseOwners = ({term}) => {
     const [vacationHouseOwners, setVacationHouseOwners] = useState([]);
 
     const fetchVacationHouseOwners = () => {
-        axios.get(backLink + "houseowner",).then(res => {
-            console.log(res.data);
-            setVacationHouseOwners(res.data);
+        axios.get(backLink + "/houseowner",).then(res => {
+            let vacationHouseOwners = []
+
+            for (let i = 0; i < res.data.length; i++) {
+                let a = res.data[i];
+                if (a.firstName.includes(term)) {
+                    vacationHouseOwners.push(a);
+                }
+            }
+
+            setVacationHouseOwners(vacationHouseOwners);
         });
     };
 
@@ -152,13 +152,21 @@ const VacationHouseOwners = () => {
     return html;
 }
 
-const Boats = () => {
+const Boats = ({term}) => {
     const [boats, setBoats] = useState([]);
 
     const fetchBoats = () => {
-        axios.get(backLink + "boat",).then(res => {
-            console.log(res.data);
-            setBoats(res.data);
+        axios.get(backLink + "/boat",).then(res => {
+            let boats = []
+
+            for (let i = 0; i < res.data.length; i++) {
+                let a = res.data[i];
+                if (a.title.includes(term)) {
+                    boats.push(a);
+                }
+            }
+            setBoats(boats)
+
         });
     };
 
@@ -170,7 +178,7 @@ const Boats = () => {
     if (boats.length !== 0) {
 
         html = (boats.map((boat) => {
-                return <SearchResultCard title={boat.title} description={boat.description}
+                return <SearchResultCard key={boat.id} title={boat.title} description={boat.description}
                                          link={frontLink + "boat/" + boat.id}/>
             }
         ))
@@ -178,13 +186,21 @@ const Boats = () => {
     return html;
 }
 
-const BoatOwners = () => {
+const BoatOwners = ({term}) => {
     const [boatOwners, setBoatOwners] = useState([]);
 
     const fetchBoatOwners = () => {
-        axios.get(backLink + "boatowner",).then(res => {
-            console.log(res.data);
-            setBoatOwners(res.data);
+        axios.get(backLink + "/boatowner",).then(res => {
+            let boatOwners = []
+
+            for (let i = 0; i < res.data.length; i++) {
+                let a = res.data[i];
+                if (a.firstName.includes(term)) {
+                    boatOwners.push(a);
+                }
+            }
+
+            setBoatOwners(boatOwners);
         });
     };
 
@@ -216,25 +232,26 @@ export function SearchResultsPage() {
             <div style={{marginLeft: "5%", marginRight: "10%"}}>
                 <h4 className="fw-light m-3">Vikendice</h4>
                 <hr/>
-                <VacationHouses/>
+                <VacationHouses term={searchTerm}/>
                 <h4 className="fw-light m-3">Vlasnici vikendica</h4>
                 <hr/>
-                <VacationHouseOwners/>
+                <VacationHouseOwners term={searchTerm}/>
                 <h4 className="fw-light m-3">Brodovi</h4>
                 <hr/>
-                <Boats/>
+                <Boats term={searchTerm}/>
                 <h4 className="fw-light m-3">Vlasnici brodova</h4>
                 <hr/>
-                <BoatOwners/>
+                <BoatOwners term={searchTerm}/>
                 <h4 className="fw-light m-3">Avanture</h4>
                 <hr/>
-                <Adventures term={searchTerm}/>
+                <Adventures
+                    term={searchTerm}
+                />
                 <h4 className="fw-light m-3">Instruktori pecanja</h4>
                 <hr/>
-                <FishingInstructors term={searchTerm}/>
-                <h4 className="fw-light m-3">Vikendice</h4>
-                <hr/>
-                <VacationHouses term={searchTerm}/>
+                <FishingInstructors
+                    term={searchTerm}
+                />
             </div>
 
         </>

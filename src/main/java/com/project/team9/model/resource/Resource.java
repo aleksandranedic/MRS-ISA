@@ -35,6 +35,7 @@ public abstract class Resource {
     @OneToOne
     private Pricelist pricelist;
     private int cancellationFee;
+    //TODO treba dodati delete
 
     public Resource() {
     }

@@ -59,6 +59,7 @@ public class UserServiceSecurity implements UserDetailsService {
     public String signUpUser(Client user) {
         if (clientService.getClientByEmail(user.getUsername()) != null)
             return "korisnik vec postoji";
+
         String encodedPassword=passwordEncoder.bCryptPasswordEncoder().encode(user.getPassword());
         user.setPassword(encodedPassword);
         Address address = addressService.getByAttributes(user.getAddress());

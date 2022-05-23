@@ -14,14 +14,15 @@ public abstract class Request {
             generator="request_sequence"
     )
     private Long id;
-    private String text;
+    private String comment;
     private String response;
+    private Boolean deleted=false;
 
     public Request() {
     }
 
-    public Request(String text, String response) {
-        this.text = text;
+    public Request(String comment, String response) {
+        this.comment = comment;
         this.response = response;
     }
 
@@ -33,12 +34,12 @@ public abstract class Request {
         this.id = id;
     }
 
-    public String getText() {
-        return text;
+    public String getComment() {
+        return comment;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setComment(String text) {
+        this.comment = text;
     }
 
     public String getResponse() {
@@ -47,5 +48,13 @@ public abstract class Request {
 
     public void setResponse(String response) {
         this.response = response;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 }

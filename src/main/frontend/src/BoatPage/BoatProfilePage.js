@@ -8,7 +8,7 @@ import UpdateBoat from "./UpdateBoat"
 import BeginButton from "../BeginButton";
 import { useParams } from "react-router-dom";
 import "react-image-gallery/styles/css/image-gallery.css";
-import Navigation from "../Navigation/Navigation"; 
+import Navigation from "../Navigation/Navigation";
 import Ratings from "../Reviews/Ratings";
 import {backLink} from "../Consts";
 import {Calendar} from "../Calendar/Calendar";
@@ -37,13 +37,13 @@ const Gallery = ({boat, images}) => {
 }
 const Update = ({boat, showModal, closeModal}) => {
     if (typeof boat.name !== "undefined"){
-        if (boat.navigationEquipment.length == 0){
+        if (boat.navigationEquipment.length === 0){
             boat.navigationEquipment = [{id:0, text:''}]
         }
-        if (boat.additionalServices.length == 0){
+        if (boat.additionalServices.length === 0){
             boat.additionalServices = [{id:0, text:''}]
         }
-        if (boat.fishingEquipment.length == 0){
+        if (boat.fishingEquipment.length === 0){
             boat.fishingEquipment = [{id:0, text:''}]
         }
         return <UpdateBoat closeModal={closeModal} showModal={showModal} boat = {boat}/>

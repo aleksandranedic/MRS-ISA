@@ -8,7 +8,7 @@ export default function DeleteClientPopUp({client, showDeleteClient, handleClose
     const [deleteReason, setReason] = useState("")
 
     function handleDeleteAccount() {
-        axios.post("http://localhost:4444/client/delete/" + client.id, deleteReason).then(
+        axios.post("http://localhost:4444/client/delete/" + client.id.toString(), deleteReason).then(
             res => {
                 console.log(res)
             }

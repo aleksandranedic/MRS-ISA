@@ -1,6 +1,6 @@
 import "../Home/HomePage.css"
 import {Button, Card, Form, Nav} from "react-bootstrap";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {GetAllVacationHouses} from "../VacationHousePage/AllVacationHouses";
 import {GetAllAdventures} from "../Adventure/AllAdventures";
 import {GetAllBoats} from "../BoatPage/AllBoats";
@@ -10,7 +10,7 @@ import {GetAllVacationHouseOwners} from "../VacationHouseOwnerPage/AllVacationHo
 import {GetAllFishingInstructors} from "../FishingInstructor/AllFishingInstructors";
 import {GetAllBoatOwners} from "../BoatOwnerPage/AllBoatOwners";
 import {BsPerson, BsSearch} from "react-icons/bs";
-
+import axios from "axios";
 export function HomePage() {
 
     function isLoggedIn() {
@@ -18,6 +18,7 @@ export function HomePage() {
     }
 
     const [searchTerm, setSearchTerm] = useState("searchTerm");
+    const [id,setID]=useState("")
 
     let vacationHouses = GetAllVacationHouses();
     if (vacationHouses.length > 6) {
@@ -48,19 +49,33 @@ export function HomePage() {
     if (boatOwners.length > 4) {
         boatOwners = boatOwners.subarray(0, 4);
     }
+    const getLoggedUser=()=>{
+        axios.get(backLink+"/getLoggedUser").then(
+            response=>{
+                setID(response.data.id)
+            }
+        )
+    }
+
+    useEffect(() => {
+        if(isLoggedIn()){
+            getLoggedUser()
+        }
+    },[])
 
     return (<div className="page">
         <div id="hero">
 
             <div className="w-100 d-flex justify-content-end align-items-center">
 
-                {(!isLoggedIn()) &&
-                    <a href={"http://localhost:3000/client"} className="m-3">
+                {(isLoggedIn()) &&
+
+                    <a href={"http://localhost:3000/client/"+id} className="m-3">
                         <BsPerson className="icon"/>
                     </a>
                 }
 
-                {(isLoggedIn()) ?
+                {(!isLoggedIn()) ?
                     <Button href={frontLink + "login"} className="m-3" variant="outline-secondary">Prijavi se</Button> :
                     <Button className="m-3" variant="outline-secondary">Odjavi se</Button>
                 }
