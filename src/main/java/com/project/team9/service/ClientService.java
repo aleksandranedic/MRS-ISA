@@ -26,7 +26,11 @@ public class ClientService {
     }
 
     public void deleteById(Long id) {
-        clientRepository.deleteById(id);
+        clientRepository.findById(id).ifPresent(client -> {
+            client.setDeleted(true);
+            addClient(client);
+        });
+
     }
 
     public Client addClient(Client client) {

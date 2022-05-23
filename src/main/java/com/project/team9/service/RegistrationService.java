@@ -1,13 +1,11 @@
 package com.project.team9.service;
 
 import com.project.team9.model.request.RegistrationRequest;
-import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.Role;
 import com.project.team9.model.user.User;
 import com.project.team9.model.user.vendor.BoatOwner;
-import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.RegistrationRequestRepository;
 import com.project.team9.security.email.EmailSender;
@@ -22,33 +20,30 @@ import java.util.ArrayList;
 public class RegistrationService {
 
     private final UserServiceSecurity userServiceSecurity;
-    private final RegistrationRequestRepository registrationRequestRepository;
+    private final RegistrationRequestService registrationRequestService;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
     private final RoleService roleService;
-    private final FishingInstructorService fishingInstructorService;
-    private final BoatOwnerService boatOwnerService;
-    private final VacationHouseOwnerService vacationHouseOwnerService;
+
 
     @Autowired
-    public RegistrationService(UserServiceSecurity userServiceSecurity, RegistrationRequestRepository registrationRequestRepository, ConfirmationTokenService confirmationTokenService, EmailSender emailSender, RoleService roleService, FishingInstructorService fishingInstructorService, BoatOwnerService boatOwnerService, VacationHouseOwnerService vacationHouseOwnerService) {
+    public RegistrationService(UserServiceSecurity userServiceSecurity, RegistrationRequestService registrationRequestService, ConfirmationTokenService confirmationTokenService, EmailSender emailSender, RoleService roleService) {
         this.userServiceSecurity = userServiceSecurity;
-        this.registrationRequestRepository = registrationRequestRepository;
+        this.registrationRequestService = registrationRequestService;
         this.confirmationTokenService = confirmationTokenService;
         this.emailSender = emailSender;
         this.roleService = roleService;
-        this.fishingInstructorService = fishingInstructorService;
-        this.boatOwnerService = boatOwnerService;
-        this.vacationHouseOwnerService = vacationHouseOwnerService;
     }
 
     public String register(RegistrationRequest registrationRequest) {
+
         Role role = roleService.findRoleByName(registrationRequest.getUserRole());
         String response = "";
         if (role == null) {
             role = new Role(registrationRequest.getUserRole());
             roleService.save(role);
         }
+
         switch (registrationRequest.getUserRole()) {
             case "CLIENT":
                 Client user = new Client(
@@ -67,7 +62,6 @@ public class RegistrationService {
                 emailSender.send(
                         registrationRequest.getEmail(),
                         buildEmail(registrationRequest.getFirstName() + " " + registrationRequest.getLastName(), link));
-                //moras da napravis token bre
                 ConfirmationToken confirmationToken = new ConfirmationToken(
                         token,
                         LocalDateTime.now(),
@@ -77,72 +71,15 @@ public class RegistrationService {
                 response = "Uspesno ste izvrsili registraciju.\nProverite email kako biste verifikovali svoj nalog";
                 break;
             case "FISHING_INSTRUCTOR":
-                FishingInstructor fishingInstructor = new FishingInstructor(
-                        registrationRequest.getPassword(),
-                        registrationRequest.getFirstName(),
-                        registrationRequest.getLastName(),
-                        registrationRequest.getEmail(),
-                        registrationRequest.getPhoneNumber(),
-                        registrationRequest.getPlace(),
-                        registrationRequest.getNumber(),
-                        registrationRequest.getStreet(),
-                        registrationRequest.getCountry(),
-                        false,
-                        registrationRequest.getRegistrationRationale(),
-                        registrationRequest.getBiography(),
-                        role,
-                        new ArrayList<Adventure>()
-                );
-                fishingInstructorService.addFishingInstructor(fishingInstructor);
-                response = "Uspesno ste poslali zahtev o registraciji";
-
-                break;
-            case "VACATION_HOUSE_OWNER":
-                VacationHouseOwner vacationHouseOwner = new VacationHouseOwner(
-                        registrationRequest.getPassword(),
-                        registrationRequest.getFirstName(),
-                        registrationRequest.getLastName(),
-                        registrationRequest.getEmail(),
-                        registrationRequest.getPhoneNumber(),
-                        registrationRequest.getPlace(),
-                        registrationRequest.getNumber(),
-                        registrationRequest.getStreet(),
-                        registrationRequest.getCountry(),
-                        false,
-                        registrationRequest.getRegistrationRationale(),
-                        role
-                );
-                vacationHouseOwnerService.addOwner(vacationHouseOwner);
-                response = "Uspesno ste poslali zahtev o registraciji";
-
-                break;
             case "BOAT_OWNER":
-                BoatOwner boatOwner = new BoatOwner(
-                        registrationRequest.getPassword(),
-                        registrationRequest.getFirstName(),
-                        registrationRequest.getLastName(),
-                        registrationRequest.getEmail(),
-                        registrationRequest.getPhoneNumber(),
-                        registrationRequest.getPlace(),
-                        registrationRequest.getNumber(),
-                        registrationRequest.getStreet(),
-                        registrationRequest.getCountry(),
-                        false,
-                        registrationRequest.getRegistrationRationale(),
-                        new ArrayList<Boat>(),
-                        role
-                );
-                boatOwnerService.save(boatOwner);
+            case "VACATION_HOUSE_OWNER":
+                registrationRequestService.addRegistrationRequest(registrationRequest);
                 response = "Uspesno ste poslali zahtev o registraciji";
-
                 break;
         }
         return response;
     }
 
-    public RegistrationRequest addRegistrationRequest(RegistrationRequest registrationRequest) {
-        return registrationRequestRepository.save(registrationRequest);
-    }
 
     public String confirmToken(String token) {
         ConfirmationToken confirmationToken = confirmationTokenService.getToken(token).orElse(null);

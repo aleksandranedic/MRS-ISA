@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AdventureService {
@@ -43,6 +44,7 @@ public class AdventureService {
     public List<Adventure> getAdventures() {
         return repository.findAll();
     }
+
 
     public void addAdventure(Adventure adventure) {
         repository.save(adventure);

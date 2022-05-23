@@ -2,12 +2,15 @@ package com.project.team9.service;
 
 import com.project.team9.dto.UpdateOwnerDTO;
 import com.project.team9.model.Address;
+import com.project.team9.model.user.User;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.VacationHouseOwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -70,5 +73,15 @@ public class VacationHouseOwnerService {
     }
     public List<VacationHouseOwner> getAll() {
         return repository.findAll();
+    }
+
+    public List<VacationHouseOwner> getUnregisteredVacationHouseOwners() {
+        List<VacationHouseOwner> owners=this.getAll();
+        List<VacationHouseOwner> filtered=new ArrayList<>();
+        for (VacationHouseOwner vacationHouseOwner : owners) {
+            if (!vacationHouseOwner.isEnabled() && !vacationHouseOwner.getDeleted())
+                filtered.add(vacationHouseOwner);
+        }
+        return filtered;
     }
 }
