@@ -74,6 +74,7 @@ public class VendorRegistrationService {
             switch (registrationRequest.getUserRole()) {
                 case "FISHING_INSTRUCTOR":
                     FishingInstructor fishingInstructor = new FishingInstructor(
+                            null,
                             passwordEncoder.bCryptPasswordEncoder().encode(registrationRequest.getPassword()),
                             registrationRequest.getFirstName(),
                             registrationRequest.getLastName(),
@@ -92,6 +93,7 @@ public class VendorRegistrationService {
                     break;
                 case "VACATION_HOUSE_OWNER":
                     VacationHouseOwner vacationHouseOwner = new VacationHouseOwner(
+                            null,
                             passwordEncoder.bCryptPasswordEncoder().encode(registrationRequest.getPassword()),
                             registrationRequest.getFirstName(),
                             registrationRequest.getLastName(),
@@ -108,6 +110,7 @@ public class VendorRegistrationService {
                     break;
                 case "BOAT_OWNER":
                     BoatOwner boatOwner = new BoatOwner(
+                            null,
                             passwordEncoder.bCryptPasswordEncoder().encode(registrationRequest.getPassword()),
                             registrationRequest.getFirstName(),
                             registrationRequest.getLastName(),

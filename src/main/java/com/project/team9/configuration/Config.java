@@ -137,6 +137,13 @@ public class Config {
 
         DeleteRequest deleteRequest = addDeleteRequest();
         deleteRequestRepository.save(deleteRequest);
+
+        ClientReview clientReview = getClientReview(vacationHouse.getId(), client.getId(), 4, "Odlična vikendica, prijatan boravak, malo udaljena od centra.");
+        reviewRepository.save(clientReview);
+        ClientReview clientReview1 = getClientReview(vacationHouse.getId(), client.getId(), 5, "Čista i sjajna vikendica, sve preporuke!.");
+        reviewRepository.save(clientReview1);
+        ClientReview clientReview2 = getClientReview(vacationHouse.getId(), client.getId(), 4, "Vikendica je super, gazda takođe. Potrudili su se maksimalno. Stara stolarija.");
+        reviewRepository.save(clientReview2);
     }
 
     private DeleteRequest addDeleteRequest() {
@@ -164,13 +171,6 @@ public class Config {
                 "Cool tip",
                 ""
         );
-
-        ClientReview clientReview = getClientReview(vacationHouse.getId(), client.getId(), 4, "Odlična vikendica, prijatan boravak, malo udaljena od centra.");
-        reviewRepository.save(clientReview);
-        ClientReview clientReview1 = getClientReview(vacationHouse.getId(), client.getId(), 5, "Čista i sjajna vikendica, sve preporuke!.");
-        reviewRepository.save(clientReview1);
-        ClientReview clientReview2 = getClientReview(vacationHouse.getId(), client.getId(), 4, "Vikendica je super, gazda takođe. Potrudili su se maksimalno. Stara stolarija.");
-        reviewRepository.save(clientReview2);
     }
 
     private ClientReview getClientReview(Long resourceID, Long clientID, int rating, String text) {
