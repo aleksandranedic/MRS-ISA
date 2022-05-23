@@ -5,6 +5,7 @@ import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
+import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.reservation.VacationHouseReservation;
@@ -63,15 +64,15 @@ public class BoatService {
 
     public Boolean addQuickReservation(Long id, BoatQuickReservationDTO quickReservationDTO){
         Boat boat = this.getBoat(id);
-        BoatReservation reservation = getReservationFromDTO(quickReservationDTO);
+        BoatReservation reservation = getReservationFromDTO(quickReservationDTO, true);
         reservation.setResource(boat);
         reservationService.addReservation(reservation);
-        boat.addQuickReservations(reservation);
+        boat.addReservation(reservation);
         this.addBoat(boat);
         return true;
     }
 
-    private BoatReservation getReservationFromDTO(BoatQuickReservationDTO dto){
+    private BoatReservation getReservationFromDTO(BoatQuickReservationDTO dto, Boolean isQuick){
         List<Appointment> appointments = new ArrayList<Appointment>();
         String[] splitDate = dto.getStartDate().split(" ");
         String[] splitTime = splitDate[3].split(":");
@@ -96,12 +97,13 @@ public class BoatService {
         reservation.setClient(null);
         reservation.setAdditionalServices(tags);
         reservation.setAppointments(appointments);
+        reservation.setQuickReservation(isQuick);
         return reservation;
     }
 
     public Boolean updateQuickReservation(Long id, BoatQuickReservationDTO quickReservationDTO){
         Boat boat = this.getBoat(id);
-        BoatReservation newReservation = getReservationFromDTO(quickReservationDTO);
+        BoatReservation newReservation = getReservationFromDTO(quickReservationDTO, true);
         BoatReservation originalReservation = reservationService.getBoatReservation(quickReservationDTO.getReservationID());
         updateQuickReservation(originalReservation, newReservation);
         reservationService.addReservation(originalReservation);
@@ -113,6 +115,20 @@ public class BoatService {
         originalReservation.setAdditionalServices(newReservation.getAdditionalServices());
         originalReservation.setNumberOfClients(newReservation.getNumberOfClients());
         originalReservation.setPrice(newReservation.getPrice());
+    }
+    public List<BoatReservationDTO> getReservations(Long id){
+        Boat boat = this.getBoat(id);
+        List<BoatReservationDTO> reservations = new ArrayList<BoatReservationDTO>();
+
+        for (BoatReservation boatReservation : boat.getReservations()) {
+            if (!boatReservation.isQuickReservation() && !boatReservation.isBusyPeriod()) {
+                reservations.add(createDTOFromReservation(boatReservation));
+            }
+        }
+        return reservations;
+    }
+    private BoatReservationDTO createDTOFromReservation(BoatReservation reservation){
+        return new BoatReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation());
     }
     public Boolean deleteQuickReservation(Long id, BoatQuickReservationDTO quickReservationDTO){
         Boat boat = this.getBoat(id);
@@ -152,7 +168,7 @@ public class BoatService {
 
     private List<BoatQuickReservationDTO> getQuickReservations(Boat bt){
         List<BoatQuickReservationDTO> quickReservations = new ArrayList<BoatQuickReservationDTO>();
-        for (BoatReservation reservation :  bt.getQuickReservations()){
+        for (BoatReservation reservation :  bt.getReservations()){
             if (reservation.getPrice() < bt.getPricelist().getPrice() && reservation.getClient() == null)
                 quickReservations.add(createBoatReservationDTO(bt.getPricelist().getPrice(), reservation));
         }

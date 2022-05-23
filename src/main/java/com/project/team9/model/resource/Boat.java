@@ -31,8 +31,8 @@ public class Boat extends Resource{
     @OneToMany
     private List<Tag> navigationEquipment;
     private int capacity;
-    @OneToMany
-    private List<BoatReservation> quickReservations;
+    @OneToMany(cascade = javax.persistence.CascadeType.ALL, orphanRemoval = true, mappedBy = "resource")
+    private List<BoatReservation> reservations;
 
 
     public Boat() {
@@ -51,7 +51,7 @@ public class Boat extends Resource{
         this.fishingEquipment = fishingEquipment;
         this.setAdditionalServices(additionalServices);
         this.capacity = capacity;
-        this.quickReservations = new ArrayList<BoatReservation>();
+        this.reservations = new ArrayList<BoatReservation>();
     }
 
     public Boat(String title, Address address, String description, String rulesAndRegulations, Pricelist pricelist, int cancellationFee, BoatOwner owner, String type, double length, String engineNumber, double engineStrength, double topSpeed, int capacity) {
@@ -65,20 +65,20 @@ public class Boat extends Resource{
         this.navigationEquipment = new ArrayList<Tag>();
         this.fishingEquipment = new ArrayList<Tag>();
         this.capacity = capacity;
-        this.quickReservations = new ArrayList<BoatReservation>();
+        this.reservations = new ArrayList<BoatReservation>();
     }
 
     @JsonManagedReference
-    public List<BoatReservation> getQuickReservations() {
-        return quickReservations;
+    public List<BoatReservation> getReservations() {
+        return reservations;
     }
 
-    public void setQuickReservations(List<BoatReservation> quickReservations) {
-        this.quickReservations = quickReservations;
+    public void setReservations(List<BoatReservation> quickReservations) {
+        this.reservations = quickReservations;
     }
 
-    public void addQuickReservations(BoatReservation quickReservation) {
-        this.quickReservations.add(quickReservation);
+    public void addReservation(BoatReservation quickReservation) {
+        this.reservations.add(quickReservation);
     }
 
     public BoatOwner getOwner() {

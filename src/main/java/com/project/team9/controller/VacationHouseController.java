@@ -1,8 +1,6 @@
 package com.project.team9.controller;
 
-import com.project.team9.dto.HouseCardDTO;
-import com.project.team9.dto.VacationHouseDTO;
-import com.project.team9.dto.VacationHouseQuickReservationDTO;
+import com.project.team9.dto.*;
 import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
@@ -51,6 +49,12 @@ public class VacationHouseController {
     public double getRating(@PathVariable String id) {
         return service.getRatingForHouse(Long.parseLong(id));
     }
+
+    @GetMapping(value = "getReservations/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<HouseReservationDTO> getReservations(@PathVariable String id) {
+        return service.getReservations(Long.parseLong(id));
+    }
+
     @PostMapping(value = "createHouse")
     public Long addVacationHouseForOwner(VacationHouseDTO house, @RequestParam("fileImage") MultipartFile[] multipartFiles) throws IOException {
         return service.createHouse(house, multipartFiles);

@@ -4,7 +4,7 @@ import Reviews from './Reviews';
 
 function Ratings({reviews}) {
     return (
-        <div id="reviews">
+        <div className='mt-5' id="reviews">
             <ReviewScores/>
             {   reviews.length > 1 ?
                 <Reviews reviews={reviews}/>

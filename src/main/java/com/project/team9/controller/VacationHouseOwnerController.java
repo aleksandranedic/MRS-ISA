@@ -42,6 +42,11 @@ public class VacationHouseOwnerController {
         return service.getOwner(ownerId);
     }
 
+    @PostMapping(value = "changeProfilePicture/{id}")
+    public Boolean changeProfilePicture(@PathVariable String id, @RequestParam("fileImage") MultipartFile multipartFile) throws IOException {
+        return service.changeProfilePicture(Long.parseLong(id), multipartFile);
+    }
+
     @PostMapping("addHouse/{id}")
     public void addVacationHouseForOwner(@PathVariable String id, @RequestBody String houseId){
         houseId = houseId.substring(0, houseId.length() - 1);

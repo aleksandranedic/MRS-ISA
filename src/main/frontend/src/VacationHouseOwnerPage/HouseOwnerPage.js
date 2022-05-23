@@ -9,11 +9,18 @@ import AddVacationHouse from './AddVacationHouse';
 import HouseOwnerForm from "./HouseOwnerForm";
 import { useParams } from "react-router-dom";
 import Navigation from "../Navigation/Navigation";
-import { profilePicturePlaceholder } from '../Consts';
+import { profilePicturePlaceholder, backLink } from '../Consts';
+
 
 const  UpdateOwner = ({show, setShow, owner}) => {
     if (typeof owner.firstName !== "undefined"){
-        return <HouseOwnerForm show={show} setShow={setShow} owner={owner} />
+        if (owner.profileImg !== null) {
+            var profileImg = backLink + owner.profileImg.path;
+        }
+        else {
+            var profileImg = profilePicturePlaceholder;
+        }
+        return <HouseOwnerForm show={show} setShow={setShow} owner={owner} profileImg={profileImg} />
     }
     else {
         return <></>
@@ -53,7 +60,6 @@ function HouseOwnerPage() {
         fetchHouseOwner();
         fetchOwnerHouses();
     }, [ownerHouses]);
-    console.log(houseOwner)
     return (
         <>
             <Banner caption={houseOwner.firstName + " " + houseOwner.lastName}/>

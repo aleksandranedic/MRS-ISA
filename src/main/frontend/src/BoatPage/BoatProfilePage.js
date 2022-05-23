@@ -10,6 +10,7 @@ import { useParams } from "react-router-dom";
 import "react-image-gallery/styles/css/image-gallery.css";
 import Navigation from "../Navigation/Navigation"; 
 import Ratings from "../Reviews/Ratings";
+import { Calendar } from "../Calendar/Calendar";
 
 const HOST = "http://localhost:4444";
 
@@ -57,6 +58,17 @@ const Reservations = ({reservations, name, address}) => {
     }
 }
 
+const CalendarComp = ({reservations, reservable, boat, perHour}) => {
+    if (typeof boat !== "undefined"){
+        var priceList = {id:"1", price:boat.price}
+        return <Calendar reservations={reservations} reservable={reservable} pricelist={priceList} perHour={perHour}/>
+    }
+    else {
+        return <></>
+    }
+}
+
+
 const ReviewsComp = ({reviews}) => {
     if (typeof reviews !== "undefined"){
         return <Ratings reviews = {reviews}/>
@@ -74,6 +86,8 @@ export function BoatProfilePage() {
     const {id} = useParams();
     const [boat, setBoat] = useState({});
     const [boatReviews, setBoatReviews] = useState([])
+    const [reservations, setReservations] = useState([])
+
     var [imgs, setImgs] = useState([{thumbnail: '', original: ''}]);
     const fetchBoat = () => {
         axios
@@ -92,9 +106,18 @@ export function BoatProfilePage() {
         });
     };
 
+    const fetchReservations = () => {
+        axios
+         .get("http://localhost:4444/boat/getReservations/" + id)
+         .then(res => {        
+             setReservations(res.data);
+         })
+    };
+
     useEffect(() => {
         fetchBoat();
         fetchReviews();
+        fetchReservations();
     }, []);
     return (
     <>
@@ -110,10 +133,11 @@ export function BoatProfilePage() {
         <BoatInfo boat={boat}/>
         <Update closeModal={handleClose} showModal={show} boat = {boat}/>
         <div className='p-5 pt-0'>
-            <hr/>
             <Gallery boat={boat} images={imgs}/>
             <hr/>
             <Reservations reservations={boat.quickReservations} name={boat.name} address={boat.address}/>
+            <hr/>
+            <CalendarComp reservations={reservations} reservable={true} boat={boat} perHour={true}/>
             <ReviewsComp reviews = {boatReviews}/>
         </div>
         <BeginButton/>

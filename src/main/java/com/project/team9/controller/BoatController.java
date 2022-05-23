@@ -1,9 +1,7 @@
 package com.project.team9.controller;
 
-import com.project.team9.dto.BoatCardDTO;
-import com.project.team9.dto.BoatDTO;
-import com.project.team9.dto.BoatQuickReservationDTO;
-import com.project.team9.dto.VacationHouseQuickReservationDTO;
+import com.project.team9.dto.*;
+import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +65,11 @@ public class BoatController {
     public BoatDTO getBoatDTO(@PathVariable String id) {
         Long boatId = Long.parseLong(id);
         return service.getBoatDTO(boatId);
+    }
+
+    @GetMapping(value = "getReservations/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<BoatReservationDTO> getReservations(@PathVariable String id) {
+        return service.getReservations(Long.parseLong(id));
     }
 
     @GetMapping(value = "getownerboats/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

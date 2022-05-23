@@ -18,8 +18,8 @@ public class VacationHouse extends Resource{
     private VacationHouseOwner owner;
     private int numberOfRooms;
     private int numberOfBedsPerRoom;
-    @OneToMany
-    private List<VacationHouseReservation> quickReservations;
+    @OneToMany(cascade = javax.persistence.CascadeType.ALL, orphanRemoval = true, mappedBy = "resource")
+    private List<VacationHouseReservation> reservations;
 
     public VacationHouse() {
         super();
@@ -30,7 +30,7 @@ public class VacationHouse extends Resource{
         this.owner = owner;
         this.numberOfRooms = numberOfRooms;
         this.numberOfBedsPerRoom = numberOfBedsPerRoom;
-        this.quickReservations = new ArrayList<VacationHouseReservation>();
+        this.reservations = new ArrayList<VacationHouseReservation>();
     }
 
     public VacationHouseOwner getOwner() {
@@ -58,15 +58,16 @@ public class VacationHouse extends Resource{
     }
 
     @JsonManagedReference
-    public List<VacationHouseReservation> getQuickReservations() {
-        return quickReservations;
+    public List<VacationHouseReservation> getReservations() {
+        return reservations;
     }
 
-    public void setQuickReservations(List<VacationHouseReservation> quickReservations) {
-        this.quickReservations = quickReservations;
+    public void setReservations(List<VacationHouseReservation> quickReservations) {
+        this.reservations = quickReservations;
     }
-    public void addQuickReservations(VacationHouseReservation quickReservation) {
-        this.quickReservations.add(quickReservation);
+
+    public void addReservation(VacationHouseReservation quickReservation) {
+        this.reservations.add(quickReservation);
     }
     @Override
     public String toString() {
@@ -74,7 +75,7 @@ public class VacationHouse extends Resource{
                 "owner=" + owner +
                 ", numberOfRooms=" + numberOfRooms +
                 ", numberOfBedsPerRoom=" + numberOfBedsPerRoom +
-                ", quickReservations=" + quickReservations +
+                ", quickReservations=" + reservations +
                 '}';
     }
 }

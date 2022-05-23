@@ -10,6 +10,7 @@ import { useParams } from "react-router-dom";
 import Ratings from "../Reviews/Ratings";
 import "react-image-gallery/styles/css/image-gallery.css";
 import Navigation from "../Navigation/Navigation";
+import { Calendar } from "../Calendar/Calendar";
 
 const HOST = "http://localhost:4444";
 const Gallery = ({house, images}) => {
@@ -50,6 +51,16 @@ const Reservations = ({reservations, name, address}) => {
     }
 }
 
+const CalendarComp = ({reservations, reservable, house, perHour}) => {
+    if (typeof house !== "undefined"){
+        var priceList = {id:"1", price:house.price}
+        return <Calendar reservations={reservations} reservable={reservable} pricelist={priceList} perHour={perHour}/>
+    }
+    else {
+        return <></>
+    }
+}
+
 const ReviewsComp = ({reviews}) => {
     if (typeof reviews !== "undefined"){
         return <Ratings reviews = {reviews}/>
@@ -60,12 +71,13 @@ const ReviewsComp = ({reviews}) => {
 }
 
 export function VacationHousePage() {
+    const [house, setHouse] = useState({});
     const [houseReviews, setHouseReviews] = useState([])
+    const [reservations, setReservations] = useState([])
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const {id} = useParams();
-    const [house, setHouse] = useState({});
     var [imgs, setImgs] = useState([{thumbnail: '', original: ''}]);
     
     const fetchHouse = () => {
@@ -73,7 +85,6 @@ export function VacationHousePage() {
         .get("http://localhost:4444/house/houseprof/" + id)
         .then(res => {
             setHouse(res.data);
-
             setImgs([]);
         });
     };
@@ -84,9 +95,19 @@ export function VacationHousePage() {
             setHouseReviews(res.data);
         });
     };
+
+    const fetchReservations = () => {
+        axios
+         .get("http://localhost:4444/house/getReservations/" + id)
+         .then(res => {        
+            setReservations(res.data);
+         })
+    };
+
     useEffect(() => {
         fetchHouse();
         fetchReviews();
+        fetchReservations();
     }, []);
     
     return (
@@ -103,11 +124,12 @@ export function VacationHousePage() {
         <HouseInfo house={house}/>
         <Update closeModal={handleClose} showModal={show} vacationHouse = {house}/>
         <div className='p-5 pt-0'>
-            <hr/>
             <Gallery house={house} images={imgs}/>
             <hr/>
             <Reservations reservations={house.quickReservations} name={house.name} address={house.address}/>
             <footer className="blockquote-footer">Svi izlasci iz vikendice obavljaju se do 10:00h.</footer>
+            <hr/>
+            <CalendarComp reservations={reservations} reservable={true} house={house} perHour={false}/>    
             <ReviewsComp reviews = {houseReviews}/>
         </div>
         <BeginButton/>

@@ -9,11 +9,17 @@ import OwnerBoats from './OwnerBoats';
 import AddBoat from './AddBoat';
 import { useParams } from "react-router-dom";
 import Navigation from "../Navigation/Navigation";
-import { profilePicturePlaceholder } from '../Consts';
+import { profilePicturePlaceholder, backLink } from '../Consts';
 
 const  UpdateOwner = ({show, setShow, owner}) => {
     if (typeof owner.firstName !== "undefined"){
-        return <BoatOwnerForm show={show} setShow={setShow} owner={owner} />
+        if (owner.profileImg !== null) {
+            var profileImg = backLink + owner.profileImg.path;
+        }
+        else {
+            var profileImg = profilePicturePlaceholder;
+        }
+        return <BoatOwnerForm show={show} setShow={setShow} owner={owner} profileImg={profileImg}/>
     }
     else {
         return <></>
@@ -47,7 +53,6 @@ function BoatOwnerPage() {
         axios
         .get("http://localhost:4444/boatowner/" + id)
         .then(res => {
-            console.log(res.data)
             setboatOwner(res.data);
         });
     };
