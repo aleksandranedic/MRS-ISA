@@ -115,6 +115,9 @@ public class Config {
         vacationHouse.addQuickReservations(vacationHouseReservation);
         vacationHouseRepository.save(vacationHouse);
 
+        addVacationHouseReservation(client, vacationHouse);
+
+
         BoatOwner boatOwner = getBoatOwner();
         Boat boat = getBoat(boatOwner);
         boatOwner.addBoat(boat);
@@ -125,12 +128,62 @@ public class Config {
         boat.addQuickReservations(boatReservationReservation);
         boatRepository.save(boat);
 
+        addBoatReservation(client, boat);
+
+
         ClientReview clientReview = getClientReview(vacationHouse.getId(), client.getId(), 4, "Odlična vikendica, prijatan boravak, malo udaljena od centra.");
         reviewRepository.save(clientReview);
         ClientReview clientReview1 = getClientReview(vacationHouse.getId(), client.getId(), 5, "Čista i sjajna vikendica, sve preporuke!.");
         reviewRepository.save(clientReview1);
         ClientReview clientReview2 = getClientReview(vacationHouse.getId(), client.getId(), 4, "Vikendica je super, gazda takođe. Potrudili su se maksimalno. Stara stolarija.");
         reviewRepository.save(clientReview2);
+    }
+
+    private void addBoatReservation(Client client, Boat boat) {
+        BoatReservation br = new BoatReservation(5, 100);
+
+        List<Appointment> appointments1 = new ArrayList<Appointment>();
+        appointments1.add(Appointment.getBoatAppointment(2022, 6, 5, 12, 0));
+        appointments1.add(Appointment.getBoatAppointment(2022, 6, 5, 13, 0));
+        appointments1.add(Appointment.getBoatAppointment(2022, 6, 5, 14, 0));
+        appointments1.add(Appointment.getBoatAppointment(2022, 6, 5, 15, 0));
+        appointmentRepository.saveAll(appointments1);
+        br.setAppointments(appointments1);
+
+
+        List<Tag> additionalServices1 = new ArrayList<Tag>();
+        additionalServices1.add(new Tag("Pecanje"));
+        tagRepository.saveAll(additionalServices1);
+        br.setAdditionalServices(additionalServices1);
+
+        br.setQuickReservation(false);
+        br.setBusyPeriod(false);
+        br.setResource(boat);
+        br.setClient(client);
+
+        boatReservationRepository.save(br);
+    }
+
+    private void addVacationHouseReservation(Client client, VacationHouse vacationHouse) {
+        VacationHouseReservation vr = new VacationHouseReservation(5, 150);
+        List<Appointment> appointments1 = new ArrayList<Appointment>();
+        appointments1.add(Appointment.getVacationHouseAppointment(2022, 6, 3));
+        appointments1.add(Appointment.getVacationHouseAppointment(2022, 6, 4));
+        appointmentRepository.saveAll(appointments1);
+        vr.setAppointments(appointments1);
+
+
+        List<Tag> additionalServices1 = new ArrayList<Tag>();
+        additionalServices1.add(new Tag("WiFi"));
+        tagRepository.saveAll(additionalServices1);
+        vr.setAdditionalServices(additionalServices1);
+
+        vr.setQuickReservation(false);
+        vr.setBusyPeriod(false);
+        vr.setResource(vacationHouse);
+        vr.setClient(client);
+
+        vacationHouseReservationRepository.save(vr);
     }
 
     private ClientReview getClientReview(Long resourceID, Long clientID, int rating, String text) {
