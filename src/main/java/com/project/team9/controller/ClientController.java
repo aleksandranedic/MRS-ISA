@@ -4,17 +4,13 @@ import com.project.team9.dto.UserDTO;
 import com.project.team9.model.Address;
 import com.project.team9.model.request.DeleteRequest;
 import com.project.team9.model.user.Client;
-import com.project.team9.security.PasswordEncoder;
 import com.project.team9.service.AddressService;
 import com.project.team9.service.ClientService;
 import com.project.team9.service.DeleteRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -25,14 +21,18 @@ public class ClientController {
     private final ClientService clientService;
     private final AddressService addressService;
     private final DeleteRequestService deleteRequestService;
-    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public ClientController(ClientService clientService, AddressService addressService, DeleteRequestService deleteRequestService, PasswordEncoder passwordEncoder) {
+    public ClientController(ClientService clientService, AddressService addressService, DeleteRequestService deleteRequestService) {
         this.clientService = clientService;
         this.addressService = addressService;
         this.deleteRequestService = deleteRequestService;
-        this.passwordEncoder = passwordEncoder;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Client> getClient(@PathVariable String id) {
+
+        return ResponseEntity.ok(clientService.getById(id));
     }
 
     @GetMapping
@@ -43,14 +43,13 @@ public class ClientController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<Client> updateClient(@PathVariable String id, @RequestBody UserDTO userDTO) {
-        System.out.println("Dosli smo do funkcuje");
         Client currentClient = clientService.getById(id);
         currentClient.setFirstName(userDTO.getFirstName());
         currentClient.setLastName(userDTO.getLastName());
         currentClient.setPhoneNumber(userDTO.getPhoneNumber());
-        Address address=addressService.getByAttributes(userDTO.getAddress());
-        if(address==null){
-            address=new Address();
+        Address address = addressService.getByAttributes(userDTO.getAddress());
+        if (address == null) {
+            address = new Address();
             address.setStreet(userDTO.getAddress().getStreet());
             address.setNumber(userDTO.getAddress().getNumber());
             address.setCountry(userDTO.getAddress().getCountry());
@@ -63,11 +62,12 @@ public class ClientController {
     }
 
     @PostMapping("/delete/{id}")
-    public ResponseEntity<DeleteRequest> deleteClient(@PathVariable Long id,@RequestParam String deletingReason) {
-        DeleteRequest deleteRequest=new DeleteRequest();
-        deleteRequest.setUser_id(id);
-        deleteRequest.setText(deletingReason);
-        deleteRequest.setResponse(""); //TODO sta ovde napisati
+    public ResponseEntity<DeleteRequest> deleteClient(@PathVariable String id, @RequestParam String deletingReason) {
+        DeleteRequest deleteRequest = new DeleteRequest();
+        deleteRequest.setUserDeletionIdentification(id);
+        deleteRequest.setUserType("CLIENT");
+        deleteRequest.setComment(deletingReason);
+        deleteRequest.setResponse("");
         deleteRequestService.addDeleteRequest(deleteRequest);
         return ResponseEntity.ok().body(deleteRequest);
     }

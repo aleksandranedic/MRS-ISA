@@ -5,18 +5,17 @@ import ClientInfo from "./ClientInfo";
 import ClientLoyalty from "./ClientLoyalty";
 import UpdateClientInfo from "./UpdateClientInfo"
 import Navigation from "../Navigation/Navigation";
+import {useParams} from "react-router-dom";
+import {backLink} from "../Consts";
 
-axios.interceptors.request.use(config => {
-        config.headers.authorization = "Bearer " + localStorage.getItem('token')
-        return config
-    }
-)
+
 const Client = () => {
     const [client, setClient] = useState([]);
 
+    const {id}=useParams()
     let html;
     const fetchClient = () => {
-        axios.get("http://localhost:4444/getLoggedUser").then(res => {
+        axios.get(backLink+"/client/"+id).then(res => {
             console.log(res);
             setClient(res.data)
         });

@@ -4,6 +4,8 @@ import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
+import com.project.team9.model.request.DeleteRequest;
+import com.project.team9.model.request.RegistrationRequest;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
@@ -22,7 +24,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,6 +47,8 @@ public class Config {
     VacationHouseReservationRepository vacationHouseReservationRepository;
     BoatReservationRepository boatReservationRepository;
     ReviewRepository reviewRepository;
+    RegistrationRequestRepository registrationRequestRepository;
+    DeleteRequestRepository deleteRequestRepository;
 
     @Bean
     CommandLineRunner configureTestData(
@@ -65,7 +68,9 @@ public class Config {
             BoatRepository boatRepository,
             VacationHouseReservationRepository vacationHouseReservationRepository,
             BoatReservationRepository boatReservationRepository,
-            ReviewRepository reviewRepository
+            ReviewRepository reviewRepository,
+            RegistrationRequestRepository registrationRequestRepository,
+            DeleteRequestRepository deleteRequestRepository
     ) {
         this.adventureRepository = adventureRepository;
         this.fishingInstructorRepository = fishingInstructorRepository;
@@ -85,15 +90,17 @@ public class Config {
         this.boatReservationRepository = boatReservationRepository;
         this.reviewRepository = reviewRepository;
 
+        this.registrationRequestRepository = registrationRequestRepository;
+        this.deleteRequestRepository = deleteRequestRepository;
         return args -> {
             fillData();
         };
     }
 
     private void fillData() {
-        Client client  = addClient();
+        Client client = addClient();
 
-        FishingInstructor fishingInstructor =  getFishingInstructor();
+        FishingInstructor fishingInstructor = getFishingInstructor();
         fishingInstructorRepository.save(fishingInstructor);
         Adventure bigAdventure = getBigAdventure(fishingInstructor);
         adventureRepository.save(bigAdventure);
@@ -125,12 +132,45 @@ public class Config {
         boat.addQuickReservations(boatReservationReservation);
         boatRepository.save(boat);
 
+        RegistrationRequest registrationRequest = addRegistrationRequest();
+        registrationRequestRepository.save(registrationRequest);
+
+        DeleteRequest deleteRequest = addDeleteRequest();
+        deleteRequestRepository.save(deleteRequest);
+
         ClientReview clientReview = getClientReview(vacationHouse.getId(), client.getId(), 4, "Odlična vikendica, prijatan boravak, malo udaljena od centra.");
         reviewRepository.save(clientReview);
         ClientReview clientReview1 = getClientReview(vacationHouse.getId(), client.getId(), 5, "Čista i sjajna vikendica, sve preporuke!.");
         reviewRepository.save(clientReview1);
         ClientReview clientReview2 = getClientReview(vacationHouse.getId(), client.getId(), 4, "Vikendica je super, gazda takođe. Potrudili su se maksimalno. Stara stolarija.");
         reviewRepository.save(clientReview2);
+    }
+
+    private DeleteRequest addDeleteRequest() {
+        return new DeleteRequest(
+                "Korisnik je los",
+                "",
+                "1",
+                "CLIENT");
+    }
+
+    private RegistrationRequest addRegistrationRequest() {
+        return new RegistrationRequest(
+                "Zelim registraciju",
+                "",
+                "zika123",
+                "Zika",
+                "Zikic",
+                "zika@gmail.com",
+                "0658632153",
+                "Novi Sad",
+                "16",
+                "Puskinova",
+                "Srbija",
+                "FISHING_INSTRUCTOR",
+                "Cool tip",
+                ""
+        );
     }
 
     private ClientReview getClientReview(Long resourceID, Long clientID, int rating, String text) {
@@ -181,7 +221,7 @@ public class Config {
             imageRepository.save(clientProfileImg);
             Client client = new Client(
                     clientProfileImg,
-                    "petar123",
+                    "$2a$10$SJZLMGQt7FmIuCl.Ea/wXuGX9xd7BOfC5/0BMd95Qke.xG.eQFwfG",//petar123
                     "Petar",
                     "Peric",
                     "perap@gmail.com",
@@ -194,145 +234,143 @@ public class Config {
             return client;
         }
 
-        private Boat getBoat (BoatOwner boatOwner){
-            Address boatAddress = new Address("Novi Sad", "7", "Ribarsko ostrvo", "Srbija");
-            addressRepository.save(boatAddress);
-            Pricelist boatPriceList = new Pricelist(70, new Date());
-            pricelistRepository.save(boatPriceList);
-            List<Tag> navigationEquipment = new ArrayList<Tag>();
-            navigationEquipment.add(new Tag("GPS"));
-            navigationEquipment.add(new Tag("Radar"));
-            tagRepository.saveAll(navigationEquipment);
-            List<Tag> fishingEquipmentBoat = new ArrayList<Tag>();
-            fishingEquipmentBoat.add(new Tag("Štap za pecanje"));
-            fishingEquipmentBoat.add(new Tag("2 udice"));
-            tagRepository.saveAll(fishingEquipmentBoat);
-            List<Tag> additionalServicesBoat = new ArrayList<Tag>();
-            additionalServicesBoat.add(new Tag("Bazen"));
-            additionalServicesBoat.add(new Tag("Ručak"));
-            tagRepository.saveAll(additionalServicesBoat);
-            Boat boat = new Boat("Bela ladja", boatAddress, "Veliki, beli, lepi brod kao na filmu", "Dozvoljeno unosene hrane, zabranjeno skakanje sa broda", boatPriceList, 12, boatOwner, "Jahta", 50.5, "tri motora", 23, 115.5, navigationEquipment, fishingEquipmentBoat, additionalServicesBoat, 72);
+    private Boat getBoat(BoatOwner boatOwner) {
+        Address boatAddress = new Address("Novi Sad", "7", "Ribarsko ostrvo", "Srbija");
+        addressRepository.save(boatAddress);
+        Pricelist boatPriceList = new Pricelist(70, new Date());
+        pricelistRepository.save(boatPriceList);
+        List<Tag> navigationEquipment = new ArrayList<Tag>();
+        navigationEquipment.add(new Tag("GPS"));
+        navigationEquipment.add(new Tag("Radar"));
+        tagRepository.saveAll(navigationEquipment);
+        List<Tag> fishingEquipmentBoat = new ArrayList<Tag>();
+        fishingEquipmentBoat.add(new Tag("Štap za pecanje"));
+        fishingEquipmentBoat.add(new Tag("2 udice"));
+        tagRepository.saveAll(fishingEquipmentBoat);
+        List<Tag> additionalServicesBoat = new ArrayList<Tag>();
+        additionalServicesBoat.add(new Tag("Bazen"));
+        additionalServicesBoat.add(new Tag("Ručak"));
+        tagRepository.saveAll(additionalServicesBoat);
+        Boat boat = new Boat("Bela ladja", boatAddress, "Veliki, beli, lepi brod kao na filmu", "Dozvoljeno unosene hrane, zabranjeno skakanje sa broda", boatPriceList, 12, boatOwner, "Jahta", 50.5, "tri motora", 23, 115.5, navigationEquipment, fishingEquipmentBoat, additionalServicesBoat, 72);
 
-            Image boatImg1 = new Image("/images/boats/3/boat1.jpg");
-            Image boatImg2 = new Image("/images/boats/3/boat2.jpg");
-            Image boatImg3 = new Image("/images/boats/3/boat3.jpg");
-            imageRepository.save(boatImg1);
-            imageRepository.save(boatImg2);
-            imageRepository.save(boatImg3);
-            boat.addImage(boatImg1);
-            boat.addImage(boatImg2);
-            boat.addImage(boatImg3);
-            return boat;
-        }
+        Image boatImg1 = new Image("/images/boats/3/boat1.jpg");
+        Image boatImg2 = new Image("/images/boats/3/boat2.jpg");
+        Image boatImg3 = new Image("/images/boats/3/boat3.jpg");
+        imageRepository.save(boatImg1);
+        imageRepository.save(boatImg2);
+        imageRepository.save(boatImg3);
+        boat.addImage(boatImg1);
+        boat.addImage(boatImg2);
+        boat.addImage(boatImg3);
+        return boat;
+    }
 
-        private BoatOwner getBoatOwner (){
-            Role roleBoatOwner = new Role("BOAT_OWNER");
-            roleRepository.save(roleBoatOwner);
+    private BoatOwner getBoatOwner() {
+        Role roleBoatOwner = new Role("BOAT_OWNER");
+        roleRepository.save(roleBoatOwner);
 
-            Address boatOwnerAddress = new Address("Novi Sad", "21", "Kralja Milutina", "Srbija");
-            addressRepository.save(boatOwnerAddress);
-            Image boatProfileImg = new Image("/images/boatOwners/4/boatOwner.jpg");
-            imageRepository.save(boatProfileImg);
-            BoatOwner boatOwner = new BoatOwner(null, "1", "Lena", "Leric", "lericlena@gmail.com", "0651525", boatOwnerAddress, false, "registrationRationale", new ArrayList<>(), roleBoatOwner);
-            boatOwnerRepository.save(boatOwner);
-            return boatOwner;
-        }
+        Address boatOwnerAddress = new Address("Novi Sad", "21", "Kralja Milutina", "Srbija");
+        addressRepository.save(boatOwnerAddress);
+        Image boatProfileImg = new Image("/images/boatOwners/4/boatOwner.jpg");
+        imageRepository.save(boatProfileImg);
+        BoatOwner boatOwner = new BoatOwner(null, "1", "Lena", "Leric", "lericlena@gmail.com", "0651525", boatOwnerAddress, false, "registrationRationale", new ArrayList<>(), roleBoatOwner);
+        boatOwnerRepository.save(boatOwner);
+        return boatOwner;
+    }
 
-        private VacationHouse getVacationHouse (VacationHouseOwner owner){
-            Address houseAddress = new Address("Novi Sad", "7", "Braće Krkljuš", "Srbija");
-            addressRepository.save(houseAddress);
-            Pricelist housePriceList = new Pricelist(100, new Date());
-            pricelistRepository.save(housePriceList);
-            VacationHouse vacationHouse = new VacationHouse("Lepa Brena", houseAddress, "lepa, velika, zuta zgrada blizu centra", "Dozvoljeno slušanje Čole, zyabranjeno smaranje", housePriceList, 10, owner, 5, 3);
-            owner.addVacationHouse(vacationHouse);
-            Image vhImg1 = new Image("/images/houses/2/vikendica1.jpeg");
-            Image vhImg2 = new Image("/images/houses/2/vikendica2.jpeg");
-            Image vhImg3 = new Image("/images/houses/2/vikendica3.jpeg");
-            ArrayList<Tag> additionalServices = new ArrayList<Tag>();
-            additionalServices.add(new Tag("Bazen"));
-            additionalServices.add(new Tag("Pet-friendly"));
-            additionalServices.add(new Tag("WiFi"));
-            additionalServices.add(new Tag("Parking"));
-            tagRepository.saveAll(additionalServices);
-            imageRepository.save(vhImg1);
-            imageRepository.save(vhImg2);
-            imageRepository.save(vhImg3);
-            vacationHouse.addImage(vhImg1);
-            vacationHouse.addImage(vhImg2);
-            vacationHouse.addImage(vhImg3);
-            vacationHouse.setAdditionalServices(additionalServices);
-            return vacationHouse;
-        }
+    private VacationHouse getVacationHouse(VacationHouseOwner owner) {
+        Address houseAddress = new Address("Novi Sad", "7", "Braće Krkljuš", "Srbija");
+        addressRepository.save(houseAddress);
+        Pricelist housePriceList = new Pricelist(100, new Date());
+        pricelistRepository.save(housePriceList);
+        VacationHouse vacationHouse = new VacationHouse("Lepa Brena", houseAddress, "lepa, velika, zuta zgrada blizu centra", "Dozvoljeno slušanje Čole, zyabranjeno smaranje", housePriceList, 10, owner, 5, 3);
+        owner.addVacationHouse(vacationHouse);
+        Image vhImg1 = new Image("/images/houses/2/vikendica1.jpeg");
+        Image vhImg2 = new Image("/images/houses/2/vikendica2.jpeg");
+        Image vhImg3 = new Image("/images/houses/2/vikendica3.jpeg");
+        ArrayList<Tag> additionalServices = new ArrayList<Tag>();
+        additionalServices.add(new Tag("Bazen"));
+        additionalServices.add(new Tag("Pet-friendly"));
+        additionalServices.add(new Tag("WiFi"));
+        additionalServices.add(new Tag("Parking"));
+        tagRepository.saveAll(additionalServices);
+        imageRepository.save(vhImg1);
+        imageRepository.save(vhImg2);
+        imageRepository.save(vhImg3);
+        vacationHouse.addImage(vhImg1);
+        vacationHouse.addImage(vhImg2);
+        vacationHouse.addImage(vhImg3);
+        vacationHouse.setAdditionalServices(additionalServices);
+        return vacationHouse;
+    }
 
-        private VacationHouseReservation VacationHouseReservation (VacationHouse vacationHouse){
-            List<Appointment> appointments = new ArrayList<Appointment>();
-            appointments.add(Appointment.getVacationHouseAppointment(2022, 4, 9));
-            appointments.add(Appointment.getVacationHouseAppointment(2022, 4, 10));
-            appointments.add(Appointment.getVacationHouseAppointment(2022, 4, 11));
-            appointments.add(Appointment.getVacationHouseAppointment(2022, 4, 12));
-            appointmentRepository.saveAll(appointments);
+    private VacationHouseReservation VacationHouseReservation(VacationHouse vacationHouse) {
+        List<Appointment> appointments = new ArrayList<Appointment>();
+        appointments.add(Appointment.getVacationHouseAppointment(2022, 4, 9));
+        appointments.add(Appointment.getVacationHouseAppointment(2022, 4, 10));
+        appointments.add(Appointment.getVacationHouseAppointment(2022, 4, 11));
+        appointments.add(Appointment.getVacationHouseAppointment(2022, 4, 12));
+        appointmentRepository.saveAll(appointments);
 
-            ArrayList<Tag> additionalServices = new ArrayList<Tag>();
-            additionalServices.add(new Tag("Bazen"));
-            additionalServices.add(new Tag("Pet-friendly"));
-            additionalServices.add(new Tag("WiFi"));
-            tagRepository.saveAll(additionalServices);
+        ArrayList<Tag> additionalServices = new ArrayList<Tag>();
+        additionalServices.add(new Tag("Bazen"));
+        additionalServices.add(new Tag("Pet-friendly"));
+        additionalServices.add(new Tag("WiFi"));
+        tagRepository.saveAll(additionalServices);
 
-            VacationHouseReservation vr = new VacationHouseReservation(7, 30);
-            vr.setAdditionalServices(additionalServices);
-            vr.setAppointments(appointments);
-            vr.setResource(vacationHouse);
-            vr.setClient(null);
-            vr.setQuickReservation(true);
-            return vr;
-        }
+        VacationHouseReservation vr = new VacationHouseReservation(7, 30);
+        vr.setAdditionalServices(additionalServices);
+        vr.setAppointments(appointments);
+        vr.setResource(vacationHouse);
+        vr.setClient(null);
+        vr.setQuickReservation(true);
+        return vr;
+    }
 
+    private AdventureReservation getAdventureQuickReservation(Adventure adventure){
+        List<Appointment> appointments = new ArrayList<Appointment>();
+        appointments.add(Appointment.getAdventureAppointment(2022,6,6,15,15));
+        appointments.add(Appointment.getAdventureAppointment(2022,6,6,16,15));
+        appointmentRepository.saveAll(appointments);
 
-        private AdventureReservation getAdventureQuickReservation(Adventure adventure){
-            List<Appointment> appointments = new ArrayList<Appointment>();
-            appointments.add(Appointment.getAdventureAppointment(2022,6,6,15,15));
-            appointments.add(Appointment.getAdventureAppointment(2022,6,6,16,15));
-            appointmentRepository.saveAll(appointments);
+        ArrayList<Tag> additionalServices = new ArrayList<Tag>();
+        additionalServices.add(new Tag("Minibar"));
+        tagRepository.saveAll(additionalServices);
 
-            ArrayList<Tag> additionalServices = new ArrayList<Tag>();
-            additionalServices.add(new Tag("Minibar"));
-            tagRepository.saveAll(additionalServices);
+        AdventureReservation adv = new AdventureReservation(3, 60);
+        adv.setQuickReservation(true);
 
-            AdventureReservation adv = new AdventureReservation(3, 60);
-            adv.setQuickReservation(true);
+        adv.setAdditionalServices(additionalServices);
+        adv.setAppointments(appointments);
+        adv.setResource(adventure);
+        adv.setClient(null);
+        return adv;
+    }
+    private BoatReservation getBoatReservation(Boat boat) {
+        List<Appointment> appointments = new ArrayList<Appointment>();
+        appointments.add(Appointment.getVacationHouseAppointment(2022, 9, 9));
+        appointments.add(Appointment.getVacationHouseAppointment(2022, 9, 10));
+        appointments.add(Appointment.getVacationHouseAppointment(2022, 9, 11));
+        appointmentRepository.saveAll(appointments);
 
-            adv.setAdditionalServices(additionalServices);
-            adv.setAppointments(appointments);
-            adv.setResource(adventure);
-            adv.setClient(null);
-            return adv;
-        }
+        ArrayList<Tag> additionalServices = new ArrayList<Tag>();
+        additionalServices.add(new Tag("Minibar"));
+        tagRepository.saveAll(additionalServices);
 
-        private BoatReservation getBoatReservation (Boat boat){
-            List<Appointment> appointments = new ArrayList<Appointment>();
-            appointments.add(Appointment.getBoatAppointment(2022, 9, 9, 15, 15));
-            appointments.add(Appointment.getBoatAppointment(2022, 9, 9, 15, 45));
-            appointments.add(Appointment.getBoatAppointment(2022, 9, 9, 16, 15));
-            appointmentRepository.saveAll(appointments);
+        BoatReservation br = new BoatReservation(3, 60);
+        br.setQuickReservation(true);
 
-            ArrayList<Tag> additionalServices = new ArrayList<Tag>();
-            additionalServices.add(new Tag("Minibar"));
-            tagRepository.saveAll(additionalServices);
+        br.setAdditionalServices(additionalServices);
+        br.setAppointments(appointments);
+        br.setResource(boat);
+        br.setClient(null);
+        return br;
+    }
 
-            BoatReservation br = new BoatReservation(3, 60);
-            br.setQuickReservation(true);
+    private VacationHouseOwner getVacationHouseOwner() {
 
-            br.setAdditionalServices(additionalServices);
-            br.setAppointments(appointments);
-            br.setResource(boat);
-            br.setClient(null);
-            return br;
-        }
-
-        private VacationHouseOwner getVacationHouseOwner (){
-
-            Role roleVacationHouseOwner = new Role("VACATION_HOUSE_OWNER");
-            roleRepository.save(roleVacationHouseOwner);
+        Role roleVacationHouseOwner = new Role("VACATION_HOUSE_OWNER");
+        roleRepository.save(roleVacationHouseOwner);
 
             Address ownerAddress = new Address("Novi Sad", "21", "Kralja Petra I", "Srbija");
             addressRepository.save(ownerAddress);
@@ -351,9 +389,9 @@ public class Config {
                     roleVacationHouseOwner);
         }
 
-        private FishingInstructor getFishingInstructor() {
-            Role roleFishingInstructor = new Role("FISHING_INSTRUCTOR");
-            roleRepository.save(roleFishingInstructor);
+    private FishingInstructor getFishingInstructor() {
+        Role roleFishingInstructor = new Role("FISHING_INSTRUCTOR");
+        roleRepository.save(roleFishingInstructor);
 
             Address fishingInstructorAddress = new Address("Novi Sad", "23", "Bulevar Cara Lazara", "Srbija");
             addressRepository.save(fishingInstructorAddress);
@@ -374,50 +412,50 @@ public class Config {
                     new ArrayList<Adventure>()
             );
 
-            return fishingInstructor;
+        return fishingInstructor;
 
-        }
-
-        private Adventure getBigAdventure(FishingInstructor fishingInstructor){
-            Address adventureAddress = new Address("Novi Sad", "52a", "Dunav", "Srbija");
-            addressRepository.save(adventureAddress);
-
-            Pricelist adventurePricelist = new Pricelist(75, new Date());
-            pricelistRepository.save(adventurePricelist);
-
-            ArrayList<Tag> fishingEquipment = new ArrayList<Tag>();
-            fishingEquipment.add(new Tag("Stap za pecanje marke BestFishing rod"));
-            fishingEquipment.add(new Tag("3 udice"));
-
-            tagRepository.saveAll(fishingEquipment);
-
-            Image image1 = new Image("/images/adventures/1/fishing1.jpg");
-            Image image2 = new Image("/images/adventures/1/fishing2.jpg");
-            Image image3 = new Image("/images/adventures/1/fishing3.jpg");
-
-            imageRepository.save(image1);
-            imageRepository.save(image2);
-            imageRepository.save(image3);
-
-
-            Adventure bigAdventure = new Adventure(
-                    "Velika ribarska avantura",
-                    adventureAddress,
-                    "Ovo je jedna zahtevna i izazovna avanutura u kojoj pecamo samo najvece sarane i somove.",
-                    "Obavezno se pojavite na vreme, a vreme je uvek rano.",
-                    adventurePricelist,
-                    10,
-                    fishingInstructor,
-                    2
-
-            );
-
-            bigAdventure.setFishingEquipment(fishingEquipment);
-
-            bigAdventure.addImage(image1);
-            bigAdventure.addImage(image2);
-            bigAdventure.addImage(image3);
-
-            return bigAdventure;
-        }
     }
+
+    private Adventure getBigAdventure(FishingInstructor fishingInstructor) {
+        Address adventureAddress = new Address("Novi Sad", "52a", "Dunav", "Srbija");
+        addressRepository.save(adventureAddress);
+
+        Pricelist adventurePricelist = new Pricelist(75, new Date());
+        pricelistRepository.save(adventurePricelist);
+
+        ArrayList<Tag> fishingEquipment = new ArrayList<Tag>();
+        fishingEquipment.add(new Tag("Stap za pecanje marke BestFishing rod"));
+        fishingEquipment.add(new Tag("3 udice"));
+
+        tagRepository.saveAll(fishingEquipment);
+
+        Image image1 = new Image("/images/adventures/1/fishing1.jpg");
+        Image image2 = new Image("/images/adventures/1/fishing2.jpg");
+        Image image3 = new Image("/images/adventures/1/fishing3.jpg");
+
+        imageRepository.save(image1);
+        imageRepository.save(image2);
+        imageRepository.save(image3);
+
+
+        Adventure bigAdventure = new Adventure(
+                "Velika ribarska avantura",
+                adventureAddress,
+                "Ovo je jedna zahtevna i izazovna avanutura u kojoj pecamo samo najvece sarane i somove.",
+                "Obavezno se pojavite na vreme, a vreme je uvek rano.",
+                adventurePricelist,
+                10,
+                fishingInstructor,
+                2
+
+        );
+
+        bigAdventure.setFishingEquipment(fishingEquipment);
+
+        bigAdventure.addImage(image1);
+        bigAdventure.addImage(image2);
+        bigAdventure.addImage(image3);
+
+        return bigAdventure;
+    }
+}

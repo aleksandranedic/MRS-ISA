@@ -79,12 +79,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and()
 
                 // svim korisnicima dopusti da pristupe sledecim putanjama:
-                .authorizeRequests().antMatchers("/registration/**").permitAll()// /auth/**
+//                .authorizeRequests().antMatchers("/registration/**").permitAll()// /auth/**
 //                .antMatchers("/api/foo").permitAll()		// /api/foo
 //                .antMatchers("/getLoggedUser").permitAll()
 //                .antMatchers("/adventure/**").permitAll()
 //                .antMatchers("/client/**").permitAll()
-                .antMatchers("/**").permitAll()
+                .authorizeRequests().antMatchers("/**").permitAll()
+
+                .antMatchers("/client/update/**").authenticated() //postaviti da mora da bude ulogovan korisnik
+
                 // ukoliko ne zelimo da koristimo @PreAuthorize anotacije nad metodama kontrolera, moze se iskoristiti hasRole() metoda da se ogranici
                 // koji tip korisnika moze da pristupi odgovarajucoj ruti. Npr. ukoliko zelimo da definisemo da ruti 'admin' moze da pristupi
                 // samo korisnik koji ima rolu 'ADMIN', navodimo na sledeci nacin:
@@ -112,7 +115,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // Dozvoljena POST metoda na ruti /auth/login, za svaki drugi tip HTTP metode greska je 401 Unauthorized
         web.ignoring().antMatchers(HttpMethod.POST, "/login");
         web.ignoring().antMatchers(HttpMethod.POST, "/registration");
-        web.ignoring().antMatchers(HttpMethod.GET, "/client");
 
         // Ovim smo dozvolili pristup statickim resursima aplikacije
         web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "favicon.ico", "/**/*.html",
