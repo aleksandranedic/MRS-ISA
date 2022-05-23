@@ -14,7 +14,8 @@ import axios from "axios";
 export function HomePage() {
 
     function isLoggedIn() {
-        return localStorage.getItem('token') !== "";
+        console.log(localStorage.getItem('token'))
+        return localStorage.getItem('token') !== null && localStorage.getItem('token') !== "";
     }
 
     const [searchTerm, setSearchTerm] = useState("searchTerm");
@@ -26,7 +27,7 @@ export function HomePage() {
     }
 
     let vacationHouseOwners = GetAllVacationHouseOwners();
-    console.log(vacationHouseOwners);
+
     if (vacationHouseOwners.length > 4) {
         vacationHouseOwners = vacationHouseOwners.subarray(0, 4);
     }
@@ -57,6 +58,10 @@ export function HomePage() {
         )
     }
 
+    const logOut=()=> {
+        localStorage.setItem('token', "");
+    }
+
     useEffect(() => {
         if(isLoggedIn()){
             getLoggedUser()
@@ -77,7 +82,7 @@ export function HomePage() {
 
                 {(!isLoggedIn()) ?
                     <Button href={frontLink + "login"} className="m-3" variant="outline-secondary">Prijavi se</Button> :
-                    <Button className="m-3" variant="outline-secondary">Odjavi se</Button>
+                    <Button className="m-3" variant="outline-secondary" onClick={()=> logOut()}>Odjavi se</Button>
                 }
 
             </div>

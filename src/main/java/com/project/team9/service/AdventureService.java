@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AdventureService {
@@ -280,13 +281,13 @@ public class AdventureService {
     private ReservationDTO createDTOFromReservation(AdventureReservation reservation){
         return new ReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation());
     }
-    public List<AdventureReservation> getReservationsForFishingInstructor(Long id) {
-        List<AdventureReservation> reservations = new ArrayList<AdventureReservation>();
+    public List<ReservationDTO> getReservationsForFishingInstructor(Long id) {
+        List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
 
         for (Adventure a : this.findAdventuresWithOwner(id.toString())) {
             for (AdventureReservation ar : reservationRepository.findAll()) {
                 if (Objects.equals(ar.getResource().getId(), a.getId()) && !ar.isQuickReservation() && !ar.isBusyPeriod()) {
-                    reservations.add(ar);
+                    reservations.add(createDTOFromReservation(ar));
                 }
             }
         }
@@ -294,13 +295,14 @@ public class AdventureService {
         return reservations;
     }
 
-    public List<AdventureReservation> getReservationsForClient(Long id) {
+    public List<ReservationDTO> getReservationsForClient(Long id) {
 
-        List<AdventureReservation> reservations = new ArrayList<AdventureReservation>();
+        List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
 
-        for (AdventureReservation ar : reservationRepository.findAll()) {
+        ArrayList<AdventureReservation> adventureReservations = reservationRepository.findAll().stream().filter(adventureReservation -> !adventureReservation.isQuickReservation()).collect(Collectors.toCollection(ArrayList::new));
+        for (AdventureReservation ar : adventureReservations) {
             if (Objects.equals(ar.getClient().getId(), id) && !ar.isQuickReservation() && !ar.isBusyPeriod()) {
-                reservations.add(ar);
+                reservations.add(createDTOFromReservation(ar));
             }
         }
 

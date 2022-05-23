@@ -37,7 +37,7 @@ public class AdventureController {
     }
 
     @GetMapping("/reservation/fishingInstructor/{id}")
-    public List<AdventureReservation> getReservationsForInstructor(@PathVariable Long id) {
+    public List<ReservationDTO> getReservationsForInstructor(@PathVariable Long id) {
         return  service.getReservationsForFishingInstructor(id);
     }
 
@@ -47,7 +47,7 @@ public class AdventureController {
     }
 
     @GetMapping("/reservation/client/{id}")
-    public List<AdventureReservation> getReservationsForClient(@PathVariable Long id) {
+    public List<ReservationDTO> getReservationsForClient(@PathVariable Long id) {
         return  service.getReservationsForClient(id);
     }
 

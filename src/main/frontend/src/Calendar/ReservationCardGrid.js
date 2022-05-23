@@ -24,9 +24,9 @@ export function ReservationCardGrid({reservations}) {
                      maxHeight: "60vh",
                      overflowY: "scroll"}}>
         <Row xs={1} md={2} lg={3} className="g-4">
-            {reservations.map((reservation) => (
+            {reservations.map((reservation, index) => (
                 <Col >
-                    <Card key={reservation.id} style={{
+                    <Card key={index} style={{
                         borderRadius: "0"
                     }}>
                         <Card.Header className="d-flex text-light lead" style={{

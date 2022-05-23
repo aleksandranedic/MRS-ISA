@@ -24,7 +24,7 @@ public class Reservation {
     @OneToMany
     private List<Tag> additionalServices;
     private int price;  //It is possible that the price is lower that the sum of appointment prices if the reservation is quick reservation
-    @OneToOne
+    @ManyToOne
     private Client client;
     private boolean isBusyPeriod;
     private boolean isQuickReservation;

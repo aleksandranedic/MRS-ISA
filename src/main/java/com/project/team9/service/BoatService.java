@@ -329,8 +329,8 @@ public class BoatService {
     public List<ReservationDTO> getReservationsForClient(Long id) {
         List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
 
-        for (BoatReservation br : reservationService.getAll()) {
-            if (Objects.equals(br.getClient().getId(), id) && !br.isQuickReservation() && !br.isBusyPeriod()) {
+        for (BoatReservation br : reservationService.getStandardReservations()) {
+            if (Objects.equals(br.getClient().getId(), id) && !br.isBusyPeriod()) {
                 reservations.add(new ReservationDTO(
                         br.getAppointments(),
                         br.getNumberOfClients(),

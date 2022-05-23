@@ -19,13 +19,12 @@ export function RegistrationRequestCard({props}) {
         axios.post(backLink + "/vendorRegistration/validate", dto).then(
             response => {
                 console.log(response.data)
-                // window.location.reload()
+                setShow(false);
                 //TODO postaviti pop up da je uspesno
             }
         )
 
-        setShow(false);
-
+        window.location.reload();
     }
 
     return (

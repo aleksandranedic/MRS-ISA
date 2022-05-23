@@ -27,9 +27,31 @@ const Client = () => {
     };
 
     const fetchReservations = () => {
-        axios.get(backLink+ "/adventure/reservation/adventure/" + client.id).then(res => {
-            setReservations(res.data);
+
+        let newReservations = [];
+        axios.get(backLink+ "/adventure/reservation/client/" + id).then(res => {
+
+            for (let index in res.data) {
+                newReservations.push(res.data.at(index))
+            }
         })
+
+        axios.get(backLink+ "/boat/reservation/client/" + id).then(res => {
+
+
+            for (let index in res.data) {
+                newReservations.push(res.data.at(index))
+            }
+
+        })
+
+        axios.get(backLink+ "/house/reservation/client/" + id).then(res => {
+            for (let index in res.data) {
+                newReservations.push(res.data.at(index))
+            }
+
+        })
+        setReservations(newReservations);
     }
 
     useEffect(() => {

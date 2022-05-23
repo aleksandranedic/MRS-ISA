@@ -23,6 +23,7 @@ export function DeletionRequestCard({request}) {
                 setShow(false)
             }
         )
+        window.location.reload();
 
     }
 

@@ -364,7 +364,7 @@ public class VacationHouseService {
     public List<ReservationDTO> getReservationsForClient(Long id) {
         List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
 
-        for (VacationHouseReservation vhr : reservationService.getAll()) {
+        for (VacationHouseReservation vhr : reservationService.getStandardReservations()) {
             if (Objects.equals(vhr.getClient().getId(), id) && !vhr.isQuickReservation() && !vhr.isBusyPeriod()) {
                 reservations.add(new ReservationDTO(
                         vhr.getAppointments(),
