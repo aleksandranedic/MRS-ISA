@@ -1,24 +1,26 @@
 package com.project.team9.service;
 
 import com.project.team9.dto.AdventureDTO;
-import com.project.team9.exceptions.AdventureNotFoundException;
+import com.project.team9.dto.AdventureQuickReservationDTO;
 import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
+import com.project.team9.model.reservation.AdventureReservation;
+import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.repo.AdventureRepository;
+import com.project.team9.repo.AdventureReservationRepository;
+import com.project.team9.repo.AppointmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 public class AdventureService {
@@ -28,23 +30,125 @@ public class AdventureService {
     private final AddressService addressService;
     private final PricelistService pricelistService;
     private final ImageService imageService;
+    private final AdventureReservationRepository reservationRepository;
+    private final AppointmentRepository appointmentRepository;
 
     final String IMAGES_PATH = "/images/adventures/";
 
     @Autowired
-    public AdventureService(AdventureRepository adventureRepository, FishingInstructorService fishingInstructorService, TagService tagService, AddressService addressService, PricelistService pricelistService, ImageService imageService) {
+    public AdventureService(AdventureRepository adventureRepository, FishingInstructorService fishingInstructorService, TagService tagService, AddressService addressService, PricelistService pricelistService, ImageService imageService, AdventureReservationRepository reservationRepository, AppointmentRepository appointmentRepository) {
         this.repository = adventureRepository;
         this.fishingInstructorService = fishingInstructorService;
         this.tagService = tagService;
         this.addressService = addressService;
         this.pricelistService = pricelistService;
         this.imageService = imageService;
+        this.reservationRepository = reservationRepository;
+        this.appointmentRepository = appointmentRepository;
     }
+
+    public List<AdventureQuickReservationDTO> getQuickReservations(String id) {
+        Adventure adv = this.getById(id);
+        return getQuickReservations(adv);
+    }
+
+    private List<AdventureQuickReservationDTO> getQuickReservations(Adventure adv){
+        List<AdventureQuickReservationDTO> quickReservations = new ArrayList<AdventureQuickReservationDTO>();
+        for (AdventureReservation reservation :  adv.getQuickReservations()){
+            if (reservation.getPrice() < adv.getPricelist().getPrice() && reservation.getClient() == null)
+                quickReservations.add(createAdventureReservationDTO(adv.getPricelist().getPrice(), reservation));
+        }
+        return quickReservations;
+    }
+
+    public Boolean addQuickReservation(String id, AdventureQuickReservationDTO quickReservationDTO){
+        Adventure adventure = this.getById(id);
+        AdventureReservation reservation = getReservationFromDTO(quickReservationDTO);
+        reservation.setResource(adventure);
+        reservationRepository.save(reservation);
+        adventure.addQuickReservations(reservation);
+        this.addAdventure(adventure);
+        return true;
+    }
+
+    private AdventureReservation getReservationFromDTO(AdventureQuickReservationDTO dto){
+        List<Appointment> appointments = new ArrayList<Appointment>();
+        String[] splitDate = dto.getStartDate().split(" ");
+        String[] splitTime = splitDate[3].split(":");
+        Appointment startDateAppointment = Appointment.getBoatAppointment(Integer.parseInt(splitDate[2]), Integer.parseInt(splitDate[1]), Integer.parseInt(splitDate[0]), Integer.parseInt(splitTime[0]), Integer.parseInt(splitTime[1]));
+        appointments.add(startDateAppointment);
+        appointmentRepository.save(startDateAppointment);
+        Appointment currApp = startDateAppointment;
+        for (int i=0; i < dto.getDuration() - 1; i++){
+            LocalDateTime startDate = currApp.getEndTime();
+            LocalDateTime endDate = startDate.plusDays(1);
+            currApp = new Appointment(startDate, endDate);
+            appointmentRepository.save(currApp);
+            appointments.add(currApp);
+        }
+        List<Tag> tags = new ArrayList<Tag>();
+        for (String tagText : dto.getTagsText()){
+            Tag tag = new Tag(tagText);
+            tagService.addTag(tag);
+            tags.add(tag);
+        }
+        AdventureReservation reservation = new AdventureReservation(dto.getNumberOfPeople(), dto.getPrice());
+        reservation.setClient(null);
+        reservation.setAdditionalServices(tags);
+        reservation.setAppointments(appointments);
+        reservation.setQuickReservation(true);
+        return reservation;
+    }
+
+    public Boolean updateQuickReservation(String id, AdventureQuickReservationDTO quickReservationDTO){
+        Adventure adventure = this.getById(id);
+        AdventureReservation newReservation = getReservationFromDTO(quickReservationDTO);
+        AdventureReservation originalReservation = reservationRepository.getById(quickReservationDTO.getReservationID());
+        updateQuickReservation(originalReservation, newReservation);
+        reservationRepository.save(originalReservation);
+        this.addAdventure(adventure);
+        return true;
+    }
+    private void updateQuickReservation(AdventureReservation originalReservation, AdventureReservation newReservation){
+        originalReservation.setAppointments(newReservation.getAppointments());
+        originalReservation.setAdditionalServices(newReservation.getAdditionalServices());
+        originalReservation.setNumberOfClients(newReservation.getNumberOfClients());
+        originalReservation.setPrice(newReservation.getPrice());
+    }
+
+    private AdventureQuickReservationDTO createAdventureReservationDTO(int boatPrice, AdventureReservation reservation){
+        Appointment firstAppointment = getFirstAppointment(reservation.getAppointments());
+        LocalDateTime startDate = firstAppointment.getStartTime();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm'h'");
+        String strDate = startDate.format(formatter);
+        int numberOfPeople = reservation.getNumberOfClients();
+        List<Tag> additionalServices = reservation.getAdditionalServices();
+        int duration = reservation.getAppointments().size();
+        int price = reservation.getPrice();
+        int discount = 100 - ( 100 * price / boatPrice);
+        return new AdventureQuickReservationDTO(reservation.getId(), strDate, numberOfPeople, additionalServices, duration, price, discount);
+    }
+    private Appointment getFirstAppointment(List<Appointment> appointments){
+        List<Appointment> sortedAppointments = getSortedAppointments(appointments);
+        return sortedAppointments.get(0);
+    }
+
+    private List<Appointment> getSortedAppointments(List<Appointment> appointments) {
+        Collections.sort(appointments, new Comparator<Appointment>() {
+            @Override
+            public int compare(Appointment a1, Appointment a2) {
+                return a1.getStartTime().compareTo(a2.getStartTime());
+            }
+        });
+        return appointments;
+    }
+
+
+
 
     public List<Adventure> getAdventures() {
         return repository.findAll();
     }
-
 
     public void addAdventure(Adventure adventure) {
         repository.save(adventure);

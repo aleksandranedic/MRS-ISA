@@ -14,4 +14,12 @@ public class ClientReview extends Review{
         super(resourceId, vendorId, rating, text);
         this.clientId = clientId;
     }
+
+    public long getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(long clientId) {
+        this.clientId = clientId;
+    }
 }

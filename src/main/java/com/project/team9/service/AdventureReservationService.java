@@ -1,9 +1,11 @@
 package com.project.team9.service;
 
+import com.project.team9.dto.AdventureReservationDTO;
 import com.project.team9.dto.ReservationDTO;
 import com.project.team9.model.Tag;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
+import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.user.Client;
 import com.project.team9.repo.AdventureReservationRepository;
@@ -29,17 +31,20 @@ public class AdventureReservationService {
         this.clientService = clientService;
     }
 
-    public List<AdventureReservation> getReservationsForAdventure(Long id) {
-        List<AdventureReservation> reservations = new ArrayList<AdventureReservation>();
+    public List<AdventureReservationDTO> getReservationsForAdventure(Long id) {
+        List<AdventureReservationDTO> reservations = new ArrayList<AdventureReservationDTO>();
 
         for (AdventureReservation ar : repository.findAll()) {
             if (Objects.equals(ar.getResource().getId(), id) && !ar.isQuickReservation() && !ar.isBusyPeriod()) {
-                reservations.add(ar);
+                reservations.add(createDTOFromReservation(ar));
             }
         }
         return reservations;
     }
 
+    private AdventureReservationDTO createDTOFromReservation(AdventureReservation reservation){
+        return new AdventureReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation());
+    }
     public List<AdventureReservation> getReservationsForFishingInstructor(Long id) {
         List<AdventureReservation> reservations = new ArrayList<AdventureReservation>();
 

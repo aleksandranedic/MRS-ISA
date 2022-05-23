@@ -47,6 +47,10 @@ public class VacationHouseController {
         Long houseId = Long.parseLong(id);
         return service.getVacationHouse(houseId);
     }
+    @GetMapping(value = "getRating/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public double getRating(@PathVariable String id) {
+        return service.getRatingForHouse(Long.parseLong(id));
+    }
     @PostMapping(value = "createHouse")
     public Long addVacationHouseForOwner(VacationHouseDTO house, @RequestParam("fileImage") MultipartFile[] multipartFiles) throws IOException {
         return service.createHouse(house, multipartFiles);

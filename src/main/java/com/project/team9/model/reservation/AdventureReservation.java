@@ -1,5 +1,6 @@
 package com.project.team9.model.reservation;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.project.team9.model.Tag;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.user.Client;
@@ -31,13 +32,25 @@ public class AdventureReservation extends Reservation{
         this.resource = resource;
     }
 
+    public AdventureReservation(int numberOfClients, int price) {
+        super(null, numberOfClients, null, price, null, false, false);
+        this.resource = null;
+    }
 
-
+    @JsonBackReference
     public Adventure getResource() {
         return resource;
     }
 
     public void setResource(Adventure adventure) {
         this.resource = adventure;
+    }
+
+    @Override
+    public String toString() {
+        return "AdventureReservation{" +
+                "resource=" + resource +
+                ", appointments=" + appointments +
+                '}';
     }
 }

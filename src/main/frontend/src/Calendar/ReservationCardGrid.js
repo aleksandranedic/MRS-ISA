@@ -30,7 +30,7 @@ export function ReservationCardGrid({reservations}) {
                             background: "linear-gradient(50deg, rgba(9,56,126,1) 38%, rgba(10,138,126) 96%)",
                             borderRadius: "0"
                         }}>
-                            <div>{reservation.resource.title}</div>
+                            <div>{reservation.resourceTitle}</div>
                             <div className="ms-auto fw-bold">
                                 {reservation.client.firstName + " " + reservation.client.lastName}
                             </div>

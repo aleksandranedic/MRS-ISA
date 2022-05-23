@@ -1,6 +1,7 @@
 package com.project.team9.model.user.vendor;
 
 import com.project.team9.model.Address;
+import com.project.team9.model.Image;
 import com.project.team9.model.user.Role;
 import com.project.team9.model.user.User;
 
@@ -14,13 +15,18 @@ public class Vendor extends User {
     public Vendor() {
     }
 
-    public Vendor(String password, String firstName, String lastName, String email, String phoneNumber, Address address, Boolean deleted, String registrationRationale, Role role) {
-        super(password, firstName, lastName, email, phoneNumber, address,  deleted, role);
+    public Vendor(Image profileImg, String password, String firstName, String lastName, String email, String phoneNumber, Address address, Boolean deleted, String registrationRationale, Role role) {
+        super(profileImg, password, firstName, lastName, email, phoneNumber, address,  deleted, role);
+        this.registrationRationale = registrationRationale;
+    }
+
+    public Vendor(Image profileImg, String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, String registrationRationale, Role role) {
+        super(profileImg, password, firstName, lastName, email, phoneNumber, place, number, street, country, deleted, role);
         this.registrationRationale = registrationRationale;
     }
 
     public Vendor(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, String registrationRationale, Role role) {
-        super(password, firstName, lastName, email, phoneNumber, place, number, street, country, deleted, role);
+        super(null, password, firstName, lastName, email, phoneNumber, place, number, street, country, deleted, role);
         this.registrationRationale = registrationRationale;
     }
 
@@ -31,4 +37,5 @@ public class Vendor extends User {
     public void setRegistrationRationale(String registrationRationale) {
         this.registrationRationale = registrationRationale;
     }
+
 }

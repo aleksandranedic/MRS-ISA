@@ -3,23 +3,37 @@ import StarRatings from 'react-star-ratings';
 import ProfileInfo from './ProfileInfo'
 import {BsEnvelope, BsTelephone, BsGeoAlt} from 'react-icons/bs'
 
-function OwnerInfo({name, rate, bio, email, phoneNum, address}) {
+function OwnerInfo({name, rate, bio, email, phoneNum, address, profileImg}) {
     return (
-        <div className = "d-flex ps-2" id="info">
-            <div className="w-50 d-flex flex-column">
-                <h2 className="fw-normal align-self-start pt-4">{name}</h2>
-                <div className="d-flex align-itens-center">     
-                <p className="fw-bold m-0 mt-1 me-2 p-0"> {rate} </p>
-                <StarRatings rating={rate} starDimension="17px" starSpacing="1px" starRatedColor="#f4b136"/>
-                </div>
-                <p className="mt-4 pe-5"  style={{ textAlign: 'justify', textJustify: 'inter-word'}}>
-                    {bio}
-                </p>
+        <div className = "d-flex align-items-center justify-content-center ps-2 m-5" id="info">
+            <div className='pt-4 ps-0 d-flex justify-content-center me-2' style={{width:"15%"}}>
+                <img className="rounded-circle" style={{objectFit: "cover", maxWidth: "30vh", minWidth: "30vh", maxHeight: "30vh", minHeight: "30vh"}} src={profileImg}/>
             </div>
-            <div className='w-50 pt-5 ps-0'>
-                <ProfileInfo icon={BsEnvelope} label={"Email"} text={email}/>
-                <ProfileInfo icon={BsTelephone} label={"Broj telefona"} text={phoneNum}/>
-                <ProfileInfo icon={BsGeoAlt} label={"Adresa"} text={address.street + " " + address.number + ", " + address.place +", " + address.country}/>
+            <div className='d-flex flex-column align-items-center justify-content-center ps-2 m-0 w-100' style={{width:"85%"}}>
+                <div className='h-75 w-100'>
+                    <div className='pt-3 ps-0 d-flex justify-content-between' style={{width:"100%"}}>
+                        <div className="d-flex align-items-center justify-content-around infoDiv" style={{width:"100%"}}>
+                            <div className="d-flex flex-column justify-content-start">
+                                <h2 className="fw-normal p-0 m-0 pt-2">{name}</h2>
+                                <div className="d-flex align-itens-center">     
+                                    <p className="fw-bold m-0 mt-1 p-0"> {rate} </p>
+                                    <StarRatings rating={rate} starDimension="17px" starSpacing="1px" starRatedColor="#f4b136"/>
+                                </div>
+                            </div>
+                        </div>
+                        <ProfileInfo icon={BsEnvelope} label={"Email"} text={email}/>
+                        <ProfileInfo icon={BsTelephone} label={"Broj telefona"} text={phoneNum}/>
+                        <ProfileInfo icon={BsGeoAlt} label={"Adresa"} text={address.street + " " + address.number + ", " + address.place +", " + address.country}/>
+                    </div>
+                </div>
+                {  typeof bio != "undefined" ?
+                    <div className='h-25 w-100'>
+                        <p className="mt-4 ms-3"  style={{ textAlign: 'justify', textJustify: 'inter-word', fontSize: "18px"}}>
+                            {bio}
+                        </p>
+                    </div>
+                    : <></>
+                }
             </div>
         </div>
     );

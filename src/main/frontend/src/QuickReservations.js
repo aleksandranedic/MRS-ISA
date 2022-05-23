@@ -41,14 +41,14 @@ function QuickReservations({reservations, name, address, entity, priceText, dura
         <Container className='d-flex p-0'>          
             <Carousel className="w-100 h-100 quick-reservation-carousel" responsive={responsive}  interval="250000" autoPlay={false} autoPlaySpeed={9000000}>
             {reservations.map( (reservation) => (
-                <QuickReservation key={reservation}  reservation={reservation} name={name} address={address} image={"http://localhost:3000/images/vikendica1.jpeg"} entity={entity} priceText={priceText} durationText={durationText}/>  
+                <QuickReservation key={reservation.reservationID}  reservation={reservation} name={name} address={address} image={"http://localhost:3000/images/vikendica1.jpeg"} entity={entity} priceText={priceText} durationText={durationText}/>  
             ))}
             </Carousel>
 
             <Button className="btn btn-light add border-radius-lg align-self-center" onClick={handleShow}>
                 <BsFillPlusCircleFill viewBox='0 0 16 16' size={25} fill="#7d7d7d"/>          
             </Button>
-            <AddQuickReservation closeModal={handleClose} showModal={show} entity={entity} priceText={priceText}/>
+            <AddQuickReservation closeModal={handleClose} showModal={show} entity={entity} priceText={priceText} durationText={durationText}/>
         </Container>
     </div>
 
