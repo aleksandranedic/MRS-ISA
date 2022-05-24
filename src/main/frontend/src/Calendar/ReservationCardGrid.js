@@ -1,5 +1,5 @@
 import {Card, Col, Row} from "react-bootstrap";
-import {convertToDate, getEndTime, getStartTime} from "./ReservationDateConverter";
+import {convertToDate} from "./ReservationDateConverter";
 import Tag from "../Tag";
 import React from "react";
 
@@ -25,7 +25,7 @@ export function ReservationCardGrid({reservations}) {
                      overflowY: "scroll"}}>
         <Row xs={1} md={2} lg={3} className="g-4">
             {reservations.map((reservation, index) => (
-                <Col >
+                <Col key={index + "col"}>
                     <Card key={index} style={{
                         borderRadius: "0"
                     }}>
@@ -70,8 +70,6 @@ function TimeFooter ({reservation}) {
 
     let startDateArray = reservation.appointments.at(0).startTime;
     let endDateArray = reservation.appointments.at(reservation.appointments.length - 1).endTime;
-
-    console.log(reservation);
 
     let startDate = startDateArray.at(2).toString().padStart(2, '0') +
         "."

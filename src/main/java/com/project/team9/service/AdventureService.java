@@ -15,7 +15,6 @@ import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.repo.AdventureRepository;
-import com.project.team9.repo.AdventureReservationRepository;
 import com.project.team9.repo.AppointmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +25,6 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class AdventureService {
@@ -36,23 +34,25 @@ public class AdventureService {
     private final AddressService addressService;
     private final PricelistService pricelistService;
     private final ImageService imageService;
-    private final AdventureReservationRepository reservationRepository;
-    private final AppointmentRepository appointmentRepository;
+    private final AppointmentService appointmentService;
     private final ClientService clientService;
+    private final AdventureReservationService adventureReservationService;
+    private final ReservationService reservationService;
 
     final String IMAGES_PATH = "/images/adventures/";
 
     @Autowired
-    public AdventureService(AdventureRepository adventureRepository, FishingInstructorService fishingInstructorService, TagService tagService, AddressService addressService, PricelistService pricelistService, ImageService imageService, AdventureReservationRepository reservationRepository, AppointmentRepository appointmentRepository, ClientService clientService) {
+    public AdventureService(AdventureRepository adventureRepository, FishingInstructorService fishingInstructorService, TagService tagService, AddressService addressService, PricelistService pricelistService, ImageService imageService, AppointmentService appointmentService, ClientService clientService, AdventureReservationService adventureReservationService, ReservationService reservationService) {
         this.repository = adventureRepository;
         this.fishingInstructorService = fishingInstructorService;
         this.tagService = tagService;
         this.addressService = addressService;
         this.pricelistService = pricelistService;
         this.imageService = imageService;
-        this.reservationRepository = reservationRepository;
-        this.appointmentRepository = appointmentRepository;
+        this.appointmentService = appointmentService;
         this.clientService = clientService;
+        this.adventureReservationService = adventureReservationService;
+        this.reservationService = reservationService;
     }
 
     public List<AdventureQuickReservationDTO> getQuickReservations(String id) {
@@ -73,7 +73,7 @@ public class AdventureService {
         Adventure adventure = this.getById(id);
         AdventureReservation reservation = getReservationFromDTO(quickReservationDTO);
         reservation.setResource(adventure);
-        reservationRepository.save(reservation);
+        adventureReservationService.save(reservation);
         adventure.addQuickReservations(reservation);
         this.addAdventure(adventure);
         return true;
@@ -85,13 +85,13 @@ public class AdventureService {
         String[] splitTime = splitDate[3].split(":");
         Appointment startDateAppointment = Appointment.getBoatAppointment(Integer.parseInt(splitDate[2]), Integer.parseInt(splitDate[1]), Integer.parseInt(splitDate[0]), Integer.parseInt(splitTime[0]), Integer.parseInt(splitTime[1]));
         appointments.add(startDateAppointment);
-        appointmentRepository.save(startDateAppointment);
+        appointmentService.save(startDateAppointment);
         Appointment currApp = startDateAppointment;
         for (int i=0; i < dto.getDuration() - 1; i++){
             LocalDateTime startDate = currApp.getEndTime();
             LocalDateTime endDate = startDate.plusDays(1);
             currApp = new Appointment(startDate, endDate);
-            appointmentRepository.save(currApp);
+            appointmentService.save(currApp);
             appointments.add(currApp);
         }
         List<Tag> tags = new ArrayList<Tag>();
@@ -111,9 +111,9 @@ public class AdventureService {
     public Boolean updateQuickReservation(String id, AdventureQuickReservationDTO quickReservationDTO){
         Adventure adventure = this.getById(id);
         AdventureReservation newReservation = getReservationFromDTO(quickReservationDTO);
-        AdventureReservation originalReservation = reservationRepository.getById(quickReservationDTO.getReservationID());
+        AdventureReservation originalReservation = adventureReservationService.getById(quickReservationDTO.getReservationID());
         updateQuickReservation(originalReservation, newReservation);
-        reservationRepository.save(originalReservation);
+        adventureReservationService.save(originalReservation);
         this.addAdventure(adventure);
         return true;
     }
@@ -270,8 +270,8 @@ public class AdventureService {
     public List<ReservationDTO> getReservationsForAdventure(Long id) {
         List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
 
-        for (AdventureReservation ar : reservationRepository.findAll()) {
-            if (Objects.equals(ar.getResource().getId(), id) && !ar.isQuickReservation() && !ar.isBusyPeriod()) {
+        for (AdventureReservation ar : adventureReservationService.getStandardReservations()) {
+            if (Objects.equals(ar.getResource().getId(), id)) {
                 reservations.add(createDTOFromReservation(ar));
             }
         }
@@ -285,8 +285,8 @@ public class AdventureService {
         List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
 
         for (Adventure a : this.findAdventuresWithOwner(id.toString())) {
-            for (AdventureReservation ar : reservationRepository.findAll()) {
-                if (Objects.equals(ar.getResource().getId(), a.getId()) && !ar.isQuickReservation() && !ar.isBusyPeriod()) {
+            for (AdventureReservation ar : adventureReservationService.getStandardReservations()) {
+                if (Objects.equals(ar.getResource().getId(), a.getId())) {
                     reservations.add(createDTOFromReservation(ar));
                 }
             }
@@ -299,9 +299,8 @@ public class AdventureService {
 
         List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
 
-        ArrayList<AdventureReservation> adventureReservations = reservationRepository.findAll().stream().filter(adventureReservation -> !adventureReservation.isQuickReservation()).collect(Collectors.toCollection(ArrayList::new));
-        for (AdventureReservation ar : adventureReservations) {
-            if (Objects.equals(ar.getClient().getId(), id) && !ar.isQuickReservation() && !ar.isBusyPeriod()) {
+        for (AdventureReservation ar : adventureReservationService.getStandardReservations()) {
+            if (Objects.equals(ar.getClient().getId(), id)) {
                 reservations.add(createDTOFromReservation(ar));
             }
         }
@@ -312,29 +311,16 @@ public class AdventureService {
     public Long createReservation(NewReservationDTO dto) throws ReservationNotAvailableException {
         AdventureReservation reservation = createFromDTO(dto);
 
-        List<ReservationDTO> reservations = this.getReservationsForAdventure(reservation.getResource().getId());
-        for (ReservationDTO r: reservations) {
+        List<AdventureReservation> reservations = adventureReservationService.getPossibleCollisionReservations(reservation.getResource().getId(), reservation.getResource().getOwner().getId());
+        for (AdventureReservation r: reservations) {
             for (Appointment a: r.getAppointments()) {
                 for (Appointment newAppointment: reservation.getAppointments()) {
-                    if (newAppointment.getStartTime().isAfter(a.getStartTime()) && newAppointment.getStartTime().isBefore(a.getEndTime())) {
-                        throw new ReservationNotAvailableException("Reservation not available");
-                    }
-                    if (newAppointment.getEndTime().isAfter(a.getStartTime()) && newAppointment.getEndTime().isBefore(a.getEndTime())) {
-                        throw new ReservationNotAvailableException("Reservation not available");
-                    }
-
-                    if (newAppointment.getStartTime().isBefore(a.getStartTime()) && newAppointment.getEndTime().isAfter(a.getEndTime())) {
-                        throw new ReservationNotAvailableException("Reservation not available");
-                    }
-
-                    if (newAppointment.getStartTime().isAfter(a.getStartTime()) && newAppointment.getEndTime().isBefore(a.getEndTime())) {
-                        throw new ReservationNotAvailableException("Reservation not available");
-                    }
+                    reservationService.checkAppointmentCollision(a, newAppointment);
                 }
             }
         }
 
-        reservationRepository.save(reservation);
+        adventureReservationService.save(reservation);
         return reservation.getId();
     }
 
@@ -350,7 +336,7 @@ public class AdventureService {
             startTime = endTime;
             endTime = startTime.plusHours(1);
         }
-        appointmentRepository.saveAll(appointments);
+        appointmentService.saveAll(appointments);
 
         Client client = clientService.getById(dto.getClientId().toString());
         String id = dto.getResourceId().toString();

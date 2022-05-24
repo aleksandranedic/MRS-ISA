@@ -8,7 +8,7 @@ import {AdventureModal} from "./AdventureModal";
 import {useParams} from "react-router-dom";
 import {backLink} from "../Consts";
 import {ReservationsTable} from "../Calendar/ReservationsTable";
-import {Button, Collapse} from "react-bootstrap";
+import {Collapse} from "react-bootstrap";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {AdventureGallery} from "./AdventureGallery";
 import QuickReservations from "../QuickReservations";
@@ -55,7 +55,6 @@ const Adventures = ({id})  =>{
 
     const fetchAdventure = () => {
         axios.get(backLink+"/adventure/"+ id).then(res => {
-            console.log(res.data)
             setAdventure(res.data);
             setImages([]);
         });

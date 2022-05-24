@@ -1,10 +1,7 @@
 package com.project.team9.controller;
 
-import com.project.team9.dto.HouseCardDTO;
-import com.project.team9.dto.ReservationDTO;
-import com.project.team9.dto.VacationHouseDTO;
-import com.project.team9.dto.VacationHouseQuickReservationDTO;
-import com.project.team9.model.reservation.VacationHouseReservation;
+import com.project.team9.dto.*;
+import com.project.team9.exceptions.ReservationNotAvailableException;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +14,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping(path="house")
+@RequestMapping(path = "house")
 @CrossOrigin("*")
 public class VacationHouseController {
 
@@ -37,17 +34,22 @@ public class VacationHouseController {
 
     @GetMapping("/reservation/vacationHouseOwner/{id}")
     public List<ReservationDTO> getReservationsForOwner(@PathVariable Long id) {
-        return  service.getReservationsForOwner(id);
+        return service.getReservationsForOwner(id);
     }
 
     @GetMapping("/reservation/vacationHouse/{id}")
     public List<ReservationDTO> getReservationsForVacationHouse(@PathVariable Long id) {
-        return  service.getReservationsForVacationHouse(id);
+        return service.getReservationsForVacationHouse(id);
     }
 
     @GetMapping("/reservation/client/{id}")
     public List<ReservationDTO> getReservationsForClient(@PathVariable Long id) {
-        return  service.getReservationsForClient(id);
+        return service.getReservationsForClient(id);
+    }
+
+    @PostMapping("/reservation/add")
+    public Long addReservation(@RequestBody NewReservationDTO dto) throws ReservationNotAvailableException {
+        return service.createReservation(dto);
     }
 
 
@@ -56,10 +58,12 @@ public class VacationHouseController {
         Long houseId = Long.parseLong(id);
         return service.getVacationHouse(houseId);
     }
+
     @GetMapping(value = "getRating/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public double getRating(@PathVariable String id) {
         return service.getRatingForHouse(Long.parseLong(id));
     }
+
     @PostMapping(value = "createHouse")
     public Long addVacationHouseForOwner(VacationHouseDTO house, @RequestParam("fileImage") MultipartFile[] multipartFiles) throws IOException {
         return service.createHouse(house, multipartFiles);

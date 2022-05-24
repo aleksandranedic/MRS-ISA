@@ -136,7 +136,7 @@ export function BoatProfilePage() {
         </div>
 
         <hr className="me-5 ms-5"/>
-        <Calendar reservations={reservations} reservable={false} pricelist={{price: boat.price}} type="boat" resourceId={id}/>
+        <Calendar reservations={reservations} reservable={true} pricelist={{price: boat.price}} type="boat" resourceId={id}/>
 
         <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
         <hr className="me-5 ms-5"/>

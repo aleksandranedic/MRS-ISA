@@ -35,6 +35,14 @@ public class BoatReservationService {
     }
 
     public List<BoatReservation> getStandardReservations() {
-        return repository.findAll().stream().filter(boatReservation -> !boatReservation.isQuickReservation()).collect(Collectors.toCollection(ArrayList::new));
+        return repository.findStandardReservations();
+    }
+
+    public List<BoatReservation> getPossibleCollisionReservations(Long id){
+        return repository.findPossibleCollisionReservations(id);
+    }
+
+    public void save(BoatReservation reservation) {
+        repository.save(reservation);
     }
 }
