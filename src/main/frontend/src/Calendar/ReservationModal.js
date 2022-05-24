@@ -1,9 +1,10 @@
-import {Alert, Button, Col, Form, InputGroup, Modal} from "react-bootstrap";
+import {Button, Col, Form, InputGroup, Modal} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {backLink} from "../Consts";
 import {Typeahead} from "react-bootstrap-typeahead";
 import {TagInfo} from "../Info";
+import {MessagePopupAlert} from "../MessagePopupAlert";
 
 export function ReservationModal({show, setShow, type, resourceId}) {
 
@@ -92,6 +93,8 @@ export function ReservationModal({show, setShow, type, resourceId}) {
         return {startYear, startMonth, startDay, startHour, startMinute, endYear, endMonth, endDay, endHour, endMinute};
     }
 
+    const [showAlert, setShowAlert] = useState(false);
+
     function addReservation() {
 
         let additionalServicesStrings = [];
@@ -128,7 +131,7 @@ export function ReservationModal({show, setShow, type, resourceId}) {
         }
 
         let dto = {
-            clientId : clientId,
+            clientId: clientId,
             resourceId: resourceId,
             numberOfClients: formValues.numberOfClients,
             additionalServicesStrings: additionalServicesStrings,
@@ -149,22 +152,43 @@ export function ReservationModal({show, setShow, type, resourceId}) {
 
         }
 
-        axios
-            .post(backLink + "/adventure/reservation/add", dto)
-            .then(response => {
-                console.log(response);
+        if (type === "adventure") {
+            axios
+                .post(backLink + "/adventure/reservation/add", dto)
+                .then(response => {
+                    console.log(response);
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.log(error);
+                    setShowAlert(true);
 
-                if (response.data === -1) {
-                    alert("Termin koji ste pokušali da rezervišete je zauzet.");
-                }
+                })
+        } else if (type === "boat") {
+            axios
+                .post(backLink + "/boat/reservation/add", dto)
+                .then(response => {
+                    console.log(response);
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.log(error);
+                    setShowAlert(true);
 
-            })
-            .catch(error => {
-                console.log(error);
+                })
+        } else if (type === "vacationHouse") {
+            axios
+                .post(backLink + "/house/reservation/add", dto)
+                .then(response => {
+                    console.log(response);
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.log(error);
+                    setShowAlert(true);
 
-            })
-        window.location.reload();
-
+                })
+        }
     }
 
     function addAdditionalServicesTag() {
@@ -179,7 +203,6 @@ export function ReservationModal({show, setShow, type, resourceId}) {
 
         setAdditionalServicesText('')
     }
-
 
 
     let html;
@@ -211,7 +234,7 @@ export function ReservationModal({show, setShow, type, resourceId}) {
                         </Form.Group>
                     </div>
 
-
+                    { type !== "vacationHouse" &&
                     <div className="d-flex w-100 m-2">
                         <Form.Group className="me-2 w-50 mt-2">
                             <Form.Label>Vreme početka</Form.Label>
@@ -229,7 +252,7 @@ export function ReservationModal({show, setShow, type, resourceId}) {
 
                             />
                         </Form.Group>
-                    </div>
+                    </div> }
 
                     <Form.Group className="m-2">
                         <Form.Label>Klijent</Form.Label>
@@ -281,7 +304,12 @@ export function ReservationModal({show, setShow, type, resourceId}) {
             </Modal.Footer>
         </Modal>
 
-
+            <MessagePopupAlert
+                show={showAlert}
+                setShow={setShowAlert}
+                message="Termin koji ste pokušali da zauzmete nije dostupan. Pogledajte kalendar zauzetosti i pokušajte ponovo."
+                heading="Zauzet termin"
+            />
         </>;
     }
     return html
