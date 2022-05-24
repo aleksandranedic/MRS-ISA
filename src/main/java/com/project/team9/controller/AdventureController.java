@@ -28,12 +28,10 @@ public class AdventureController {
     }
 
     @PostMapping("/reservation/add")
-    public Long addReservation(@RequestBody NewReservationDTO dto){
-        try {
+    public Long addReservation(@RequestBody NewReservationDTO dto) throws ReservationNotAvailableException {
+
             return service.createReservation(dto);
-        } catch (ReservationNotAvailableException e) {
-            return -1L;
-        }
+
     }
 
     @GetMapping("/reservation/fishingInstructor/{id}")
@@ -88,7 +86,7 @@ public class AdventureController {
     }
 
     @PostMapping("/add")
-    public Long addReservation(AdventureDTO adventure, @RequestParam("fileImage") MultipartFile[] multipartFiles) throws IOException {
+    public Long addAdventure(AdventureDTO adventure, @RequestParam("fileImage") MultipartFile[] multipartFiles) throws IOException {
         return service.createAdventure(adventure, multipartFiles);
     }
 
