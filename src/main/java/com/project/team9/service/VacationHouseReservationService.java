@@ -34,6 +34,14 @@ public class VacationHouseReservationService {
     }
 
     public List<VacationHouseReservation> getStandardReservations() {
-        return repository.findAll().stream().filter(vacationHouseReservation -> !vacationHouseReservation.isQuickReservation()).collect(Collectors.toCollection(ArrayList::new));
+        return repository.findStandardReservations();
+    }
+
+    public List<VacationHouseReservation> getPossibleCollisionReservations(Long id) {
+        return repository.findPossibleCollisionReservations(id);
+    }
+
+    public void save(VacationHouseReservation reservation) {
+        repository.save(reservation);
     }
 }

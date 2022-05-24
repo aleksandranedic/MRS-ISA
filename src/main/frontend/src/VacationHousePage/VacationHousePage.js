@@ -87,7 +87,6 @@ export function VacationHousePage() {
         .get("http://localhost:4444/house/houseprof/" + id)
         .then(res => {
             setHouse(res.data);
-            console.log(res.data);
             setImgs([]);
         });
     };
@@ -128,8 +127,7 @@ export function VacationHousePage() {
         </div>
 
         <hr className="me-5 ms-5"/>
-        <Calendar reservations={reservations} reservable={false} pricelist={{price: house.price}} resourceId={house.id} type={"vacationHouse"}/>
-
+        <Calendar reservations={reservations} reservable={true} pricelist={{price: house.price}} resourceId={house.id} type={"vacationHouse"}/>
 
         <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
         <hr className="me-5 ms-5"/>
