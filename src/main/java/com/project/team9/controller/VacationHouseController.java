@@ -52,6 +52,16 @@ public class VacationHouseController {
         return service.createReservation(dto);
     }
 
+    @PostMapping("/reservation/busyPeriod/add")
+    public Long addBusyPeriod(@RequestBody NewBusyPeriodDTO dto) throws ReservationNotAvailableException {
+        return service.createBusyPeriod(dto);
+    }
+
+    @GetMapping("/reservation/busyPeriod/vacationHouse/{id}")
+    public List<ReservationDTO> getBusyPeriodForVacationHouse(@PathVariable Long id) {
+        return  service.getBusyPeriodForVacationHouse(id);
+    }
+
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public VacationHouse getVacationHouse(@PathVariable String id) {
@@ -110,5 +120,10 @@ public class VacationHouseController {
     public ResponseEntity deleteVacationHouse(@PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/clientCanReview/{resourceId}/{clientId}")
+    public Boolean clientCanReview(@PathVariable Long resourceId, @PathVariable Long clientId){
+        return service.clientCanReview(resourceId, clientId);
     }
 }

@@ -1,9 +1,6 @@
 package com.project.team9.controller;
 
-import com.project.team9.dto.AdventureDTO;
-import com.project.team9.dto.AdventureQuickReservationDTO;
-import com.project.team9.dto.ReservationDTO;
-import com.project.team9.dto.NewReservationDTO;
+import com.project.team9.dto.*;
 import com.project.team9.exceptions.ReservationNotAvailableException;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.resource.Adventure;
@@ -29,9 +26,22 @@ public class AdventureController {
 
     @PostMapping("/reservation/add")
     public Long addReservation(@RequestBody NewReservationDTO dto) throws ReservationNotAvailableException {
-
             return service.createReservation(dto);
+    }
 
+    @PostMapping("/reservation/busyPeriod/add")
+    public Long addBusyPeriod(@RequestBody NewBusyPeriodDTO dto) throws ReservationNotAvailableException {
+        return service.createBusyPeriod(dto);
+    }
+
+    @GetMapping("/reservation/busyPeriod/fishingInstructor/{id}")
+    public List<ReservationDTO> getBusyPeriodForInstructor(@PathVariable Long id) {
+        return  service.getBusyPeriodsForFishingInstructor(id);
+    }
+
+    @GetMapping("/reservation/busyPeriod/adventure/{id}")
+    public List<ReservationDTO> getBusyPeriodForAdventure(@PathVariable Long id) {
+        return  service.getBusyPeriodsForAdventure(id);
     }
 
     @GetMapping("/reservation/fishingInstructor/{id}")
@@ -85,6 +95,11 @@ public class AdventureController {
 
     }
 
+    @GetMapping("/clientCanReview/{resourceId}/{clientId}")
+    public Boolean clientCanReview(@PathVariable Long resourceId, @PathVariable Long clientId){
+        return service.clientCanReview(resourceId, clientId);
+    }
+
     @PostMapping("/add")
     public Long addAdventure(AdventureDTO adventure, @RequestParam("fileImage") MultipartFile[] multipartFiles) throws IOException {
         return service.createAdventure(adventure, multipartFiles);
@@ -94,7 +109,6 @@ public class AdventureController {
     List<Adventure> findAdventuresWithOwner(@PathVariable String ownerId) {
         return service.findAdventuresWithOwner(ownerId);
     }
-
 
     @DeleteMapping("/{id}/delete")
     void deleteById(@PathVariable String id) {

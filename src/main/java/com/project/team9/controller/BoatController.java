@@ -102,4 +102,19 @@ public class BoatController {
     public Long addReservation(@RequestBody NewReservationDTO dto) throws ReservationNotAvailableException {
         return service.createReservation(dto);
     }
+
+    @PostMapping("/reservation/busyPeriod/add")
+    public Long addBusyPeriod(@RequestBody NewBusyPeriodDTO dto) throws ReservationNotAvailableException {
+        return service.createBusyPeriod(dto);
+    }
+
+    @GetMapping("/reservation/busyPeriod/boat/{id}")
+    public List<ReservationDTO> getBusyPeriodForVacationHouse(@PathVariable Long id) {
+        return  service.getBusyPeriodForBoat(id);
+    }
+
+    @GetMapping("/clientCanReview/{resourceId}/{clientId}")
+    public Boolean clientCanReview(@PathVariable Long resourceId, @PathVariable Long clientId){
+        return service.clientCanReview(resourceId, clientId);
+    }
 }

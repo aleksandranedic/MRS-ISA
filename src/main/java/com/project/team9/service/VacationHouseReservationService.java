@@ -4,6 +4,7 @@ import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.repo.VacationHouseReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -43,5 +44,14 @@ public class VacationHouseReservationService {
 
     public void save(VacationHouseReservation reservation) {
         repository.save(reservation);
+    }
+
+    public List<VacationHouseReservation> getBusyPeriodForVacationHouse(Long id) {
+        return repository.findBusyPeriodForVacationHouse(id);
+    }
+
+    @Query("FROM VacationHouseReservation WHERE resource.id=?1 AND client.id = ?2")
+    public boolean clientHasReservations(Long resourceId, Long clientId) {
+        return repository.findReservationsForClient(resourceId, clientId).size() > 0;
     }
 }
