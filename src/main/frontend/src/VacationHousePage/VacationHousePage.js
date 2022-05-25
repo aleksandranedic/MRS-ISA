@@ -57,7 +57,7 @@ const Reservations = ({reservations, name, address}) => {
 
 const ReviewsComp = ({reviews}) => {
     if (typeof reviews !== "undefined"){
-        return <Ratings reviews = {reviews}/>
+        return <Ratings reviews = {reviews} type={"vacationHouse"}/>
     }
     else {
         return <></>
@@ -75,6 +75,13 @@ export function VacationHousePage() {
     const {id} = useParams();
     const [house, setHouse] = useState({});
     var [imgs, setImgs] = useState([{thumbnail: '', original: ''}]);
+
+    const [busyPeriod, setBusyPeriod] = useState([]);
+    const fetchBusyPeriod = () => {
+        axios.get(backLink+ "/house/reservation/busyPeriod/vacationHouse/" + id).then(res => {
+            setBusyPeriod(res.data);
+        })
+    }
 
     const fetchReservations = () => {
         axios.get(backLink+ "/house/reservation/vacationHouse/" + id).then(res => {
@@ -101,6 +108,7 @@ export function VacationHousePage() {
         fetchHouse();
         fetchReviews();
         fetchReservations();
+        fetchBusyPeriod();
     }, []);
     
     return (
@@ -127,7 +135,7 @@ export function VacationHousePage() {
         </div>
 
         <hr className="me-5 ms-5"/>
-        <Calendar reservations={reservations} reservable={true} pricelist={{price: house.price}} resourceId={house.id} type={"vacationHouse"}/>
+        <Calendar reservations={reservations} reservable={true} pricelist={{price: house.price}} resourceId={house.id} type={"vacationHouse"} busyPeriods={busyPeriod}/>
 
         <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
         <hr className="me-5 ms-5"/>

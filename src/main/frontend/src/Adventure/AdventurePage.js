@@ -30,6 +30,7 @@ const Adventures = ({id})  =>{
     const [adventure, setAdventure] = useState([]);
     const [reservations, setReservations] = useState([]);
     const [quickReservations, setQuickReservations] = useState([]);
+    const [busyPeriod, setBusyPeriod] = useState([])
 
     const [images, setImages] = useState([]);
 
@@ -46,7 +47,7 @@ const Adventures = ({id})  =>{
     
     const ReviewsComp = ({reviews}) => {
         if (typeof reviews !== "undefined"){
-            return <Ratings reviews = {reviews}/>
+            return <Ratings reviews = {reviews} type={"adventure"}/>
         }
         else {
             return <></>
@@ -63,6 +64,12 @@ const Adventures = ({id})  =>{
     const fetchReservations = () => {
         axios.get(backLink+ "/adventure/reservation/adventure/" + id).then(res => {
             setReservations(res.data);
+        })
+    }
+
+    const fetchBusyPeriods = () => {
+        axios.get(backLink+ "/adventure/reservation/busyPeriod/adventure/" + id).then(res => {
+            setBusyPeriod(res.data);
         })
     }
 
@@ -86,6 +93,7 @@ const Adventures = ({id})  =>{
         fetchReservations();
         fetchReviews();
         fetchQuickReservations();
+        fetchBusyPeriods();
     }, []);
 
 
@@ -120,7 +128,7 @@ const Adventures = ({id})  =>{
             <QuickReservationsComp reservations={quickReservations} name={adventure.title} address={adventure.address}/>
 
             <hr className="me-5 ms-5"/>
-            <Calendar reservations={reservations} reservable={true} pricelist={adventure.pricelist} resourceId={adventure.id} type={"adventure"}/>
+            <Calendar reservations={reservations} reservable={true} pricelist={adventure.pricelist} resourceId={adventure.id} type={"adventure"} busyPeriods={busyPeriod}/>
 
             <div className="m-5 mb-0 me-0">
                 <ReviewsComp reviews = {adventureReviews}/>
