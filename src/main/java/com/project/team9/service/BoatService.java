@@ -10,7 +10,6 @@ import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.user.Client;
-import com.project.team9.repo.AppointmentRepository;
 import com.project.team9.repo.BoatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +26,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class BoatService {
+    final String STATIC_PATH = "src/main/resources/static/";
+    final String STATIC_PATH_TARGET = "target/classes/static/";
+    final String IMAGES_PATH = "/images/boats/";
 
     private final BoatRepository repository;
     private final AddressService addressService;
@@ -37,14 +39,12 @@ public class BoatService {
     private final AppointmentService appointmentService;
     private final ClientService clientService;
     private final ReservationService reservationService;
-
-    final String STATIC_PATH = "src/main/resources/static/";
-    final String STATIC_PATH_TARGET = "target/classes/static/";
-    final String IMAGES_PATH = "/images/boats/";
+    private final ReviewService reviewService;
+    private final ReviewRequestService reviewRequestService;
 
 
     @Autowired
-    public BoatService(BoatRepository repository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, BoatReservationService boatReservationService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService) {
+    public BoatService(BoatRepository repository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, BoatReservationService boatReservationService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService, ReviewService reviewService, ReviewRequestService reviewRequestService) {
         this.repository = repository;
         this.addressService = addressService;
         this.pricelistService = pricelistService;
@@ -54,6 +54,8 @@ public class BoatService {
         this.appointmentService = appointmentService;
         this.clientService = clientService;
         this.reservationService = reservationService;
+        this.reviewService = reviewService;
+        this.reviewRequestService = reviewRequestService;
     }
 
     public List<Boat> getBoats() {
@@ -402,9 +404,9 @@ public class BoatService {
         BoatReservation reservation = createFromDTO(dto);
 
         List<BoatReservation> reservations = boatReservationService.getPossibleCollisionReservations(reservation.getResource().getId());
-        for (BoatReservation r: reservations) {
-            for (Appointment a: r.getAppointments()) {
-                for (Appointment newAppointment: reservation.getAppointments()) {
+        for (BoatReservation r : reservations) {
+            for (Appointment a : r.getAppointments()) {
+                for (Appointment newAppointment : reservation.getAppointments()) {
                     reservationService.checkAppointmentCollision(a, newAppointment);
                 }
             }
@@ -453,4 +455,84 @@ public class BoatService {
                 dto.isBusyPeriod(), dto.isQuickReservation());
     }
 
+    public Long createBusyPeriod(NewBusyPeriodDTO dto) {
+        BoatReservation reservation = createBusyPeriodReservationFromDTO(dto);
+
+        List<BoatReservation> reservations = boatReservationService.getPossibleCollisionReservations(reservation.getResource().getId());
+        for (BoatReservation r : reservations) {
+            for (Appointment a : r.getAppointments()) {
+                for (Appointment newAppointment : reservation.getAppointments()) {
+                    reservationService.checkAppointmentCollision(a, newAppointment);
+                    reservationService.checkAppointmentCollision(newAppointment, a);
+                }
+            }
+        }
+        boatReservationService.save(reservation);
+        return reservation.getId();
+    }
+
+    private ReservationDTO createDTOFromReservation(BoatReservation r) {
+        return new ReservationDTO(
+                r.getAppointments(),
+                r.getNumberOfClients(),
+                r.getAdditionalServices(),
+                r.getPrice(),
+                r.getClient(),
+                r.getResource().getTitle(),
+                r.isBusyPeriod(),
+                r.isQuickReservation()
+        );
+    }
+
+    private BoatReservation createBusyPeriodReservationFromDTO(NewBusyPeriodDTO dto) {
+
+        List<Appointment> appointments = new ArrayList<Appointment>();
+
+        LocalDateTime startTime = LocalDateTime.of(dto.getStartYear(), Month.of(dto.getStartMonth()), dto.getStartDay(), 0, 0);
+        LocalDateTime endTime = startTime.plusDays(1);
+
+        while (startTime.isBefore(LocalDateTime.of(dto.getEndYear(), Month.of(dto.getEndMonth()), dto.getEndDay(), 23, 59))) {
+            appointments.add(new Appointment(startTime, endTime));
+            startTime = endTime;
+            endTime = startTime.plusHours(1);
+        }
+        appointmentService.saveAll(appointments);
+
+        Long id = dto.getResourceId();
+        Boat boat = this.getBoat(id);
+
+        return new BoatReservation(
+                appointments,
+                0,
+                null,
+                0,
+                null,
+                boat,
+                true,
+                false
+
+        );
+    }
+
+    public List<ReservationDTO> getBusyPeriodForBoat(Long id) {
+        List<ReservationDTO> periods = new ArrayList<ReservationDTO>();
+
+        for (BoatReservation ar : boatReservationService.getBusyPeriodForBoat(id)) {
+            periods.add(createDTOFromReservation(ar));
+        }
+
+        return periods;
+    }
+
+    public boolean clientCanReview(Long resourceId, Long clientId) {
+
+        return hasReservations(resourceId, clientId) &&
+                !reviewService.clientHasReview(resourceId, clientId) &&
+                !reviewRequestService.hasReviewRequests(resourceId, clientId);
+
+    }
+
+    private boolean hasReservations(Long resourceId, Long clientId) {
+        return boatReservationService.hasReservations(resourceId, clientId);
+    }
 }

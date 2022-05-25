@@ -1,6 +1,6 @@
 import {Modal} from "react-bootstrap";
 
-export function MessagePopupAlert(props) {
+export function MessagePopupModal(props) {
     if (props.show) {
         return (
             <>

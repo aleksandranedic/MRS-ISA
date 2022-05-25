@@ -11,7 +11,7 @@ import {convertToDate} from "./ReservationDateConverter";
 import axios from "axios";
 import {backLink} from "../Consts";
 
-export function Calendar({reservations, reservable, pricelist, type, resourceId}){
+export function Calendar({reservations, reservable, pricelist, type, resourceId, busyPeriods}){
 
     let perHour = false;
     if (type === "adventure") {
@@ -38,6 +38,21 @@ export function Calendar({reservations, reservable, pricelist, type, resourceId}
                 start: start,
                 end: end,
                 backgroundColor: "rgb(34,215,195)"
+            })
+        }
+
+        for (let i_r in busyPeriods) {
+            let r = busyPeriods[i_r];
+
+            let start = convertToDate(r.appointments.at(0).startTime);
+            start.setHours(start.getHours()+2);
+            let end = convertToDate(r.appointments.at(r.appointments.length-1).endTime);
+            end.setHours(end.getHours()+2);
+            reservationEvents.push({
+                title: "",
+                start: start,
+                end: end,
+                backgroundColor: "rgb(173,58,58)"
             })
         }
 
@@ -122,8 +137,7 @@ export function Calendar({reservations, reservable, pricelist, type, resourceId}
             </div>
         }
 
-
         <ReservationModal show={showReservationDialog} setShow={setShowReservationDialog} type={type} resourceId={resourceId}/>
-        <BusyPeriodModal show={showBusyPeriodDialog} setShow={setShowBusyPeriodDialog} events={events} setEvents={setEvents}/>
+        <BusyPeriodModal show={showBusyPeriodDialog} setShow={setShowBusyPeriodDialog} type={type} resourceId={resourceId}/>
     </div></>)
 }

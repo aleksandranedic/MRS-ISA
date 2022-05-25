@@ -6,7 +6,7 @@ import NavigationButton from "./NavigationButton";
 import {BsFilter, BsPencilSquare, BsSearch, BsPerson} from "react-icons/bs";
 import {FilterModal} from "../Filter/FilterModal";
 
-import {frontLink} from "../Consts";
+import {frontLink, isLoggedIn, logOut} from "../Consts";
 import axios from "axios";
 
 axios.interceptors.request.use(config => {
@@ -20,11 +20,6 @@ axios.interceptors.request.use(config => {
 export default function Navigation(props) {
 
     const [searchTerm, setSearchTerm] = useState("");
-
-    function isLoggedIn(){
-        return localStorage.getItem('token') !== "";
-    }
-
     const [open, setOpen] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
     const handleShow = () => setShowFilters(true);
@@ -102,10 +97,11 @@ export default function Navigation(props) {
                     </div>
 
 
-                    {(!isLoggedIn()) ?
+                    {(isLoggedIn()) ?
 
                         <Button className="ms-3 font-monospace"
-                        style={{background: "#eaeaea", borderColor: "#eaeaea", color: "#6a6a6a", minWidth: "8rem"}}>
+                        style={{background: "#eaeaea", borderColor: "#eaeaea", color: "#6a6a6a", minWidth: "8rem"}}
+                        onClick={()=> logOut()}>
                         Odjavi se
                         </Button>
 

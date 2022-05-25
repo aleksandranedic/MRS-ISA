@@ -1,22 +1,18 @@
 import "../Home/HomePage.css"
-import {Button, Card, Form, Nav} from "react-bootstrap";
+import {Button, Card, Form} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import {GetAllVacationHouses} from "../VacationHousePage/AllVacationHouses";
 import {GetAllAdventures} from "../Adventure/AllAdventures";
 import {GetAllBoats} from "../BoatPage/AllBoats";
-import {backLink, frontLink, responsive} from "../Consts";
+import {backLink, frontLink, isLoggedIn, logOut} from "../Consts";
 import StarRatings from 'react-star-ratings';
 import {GetAllVacationHouseOwners} from "../VacationHouseOwnerPage/AllVacationHouseOwners";
 import {GetAllFishingInstructors} from "../FishingInstructor/AllFishingInstructors";
 import {GetAllBoatOwners} from "../BoatOwnerPage/AllBoatOwners";
 import {BsPerson, BsSearch} from "react-icons/bs";
 import axios from "axios";
-export function HomePage() {
 
-    function isLoggedIn() {
-        console.log(localStorage.getItem('token'))
-        return localStorage.getItem('token') !== null && localStorage.getItem('token') !== "";
-    }
+export function HomePage() {
 
     const [searchTerm, setSearchTerm] = useState("searchTerm");
     const [id,setID]=useState("")
@@ -58,9 +54,7 @@ export function HomePage() {
         )
     }
 
-    const logOut=()=> {
-        localStorage.setItem('token', "");
-    }
+
 
     useEffect(() => {
         if(isLoggedIn()){

@@ -189,4 +189,8 @@ public class User implements UserDetails {
                 ", address=" + address +
                 '}';
     }
+
+    public String getRoleName() {
+        return role.toString();
+    }
 }

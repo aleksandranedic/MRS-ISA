@@ -25,11 +25,28 @@ public class AdventureReservationService {
         return repository.findPossibleCollisionReservations(resourceId, ownerId);
     }
 
+    public List<AdventureReservation> getBusyPeriods() {
+        return repository.findBusyPeriods();
+    }
+
+
     public void save(AdventureReservation reservation) {
         repository.save(reservation);
     }
 
     public AdventureReservation getById(Long reservationID) {
         return repository.getById(reservationID);
+    }
+
+    public List<AdventureReservation> getBusyPeriodsForFishingInstructor(Long id) {
+        return repository.findBusyPeriodsForFishingInstructor(id);
+    }
+
+    public List<AdventureReservation> getBusyPeriodsForAdventure(Long id, Long ownerId) {
+        return repository.findBusyPeriodsForAdventure(id, ownerId);
+    }
+
+    public boolean clientHasReservations(Long resourceId, Long clientId) {
+        return repository.findReservationsForClient(resourceId, clientId).size() > 0;
     }
 }

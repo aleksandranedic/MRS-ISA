@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ReservationService {
 
-    public void checkAppointmentCollision(Appointment existingAppointment, Appointment newAppointment) {
+    public void checkAppointmentCollision(Appointment existingAppointment, Appointment newAppointment) throws ReservationNotAvailableException{
         if (newAppointment.getStartTime().isAfter(existingAppointment.getStartTime()) && newAppointment.getStartTime().isBefore(existingAppointment.getEndTime())) {
             throw new ReservationNotAvailableException("Reservation not available");
         }
@@ -20,5 +20,20 @@ public class ReservationService {
         if (newAppointment.getStartTime().isAfter(existingAppointment.getStartTime()) && newAppointment.getEndTime().isBefore(existingAppointment.getEndTime())) {
             throw new ReservationNotAvailableException("Reservation not available");
         }
+        if (newAppointment.getStartTime().isEqual(existingAppointment.getStartTime())){
+            throw new ReservationNotAvailableException("Reservation not available");
+        }
+        if (newAppointment.getEndTime().isEqual(existingAppointment.getStartTime())){
+            throw new ReservationNotAvailableException("Reservation not available");
+        }
+        if (newAppointment.getStartTime().isEqual(existingAppointment.getEndTime())){
+            throw new ReservationNotAvailableException("Reservation not available");
+        }
+        if (newAppointment.getEndTime().isEqual(existingAppointment.getEndTime())){
+            throw new ReservationNotAvailableException("Reservation not available");
+        }
+
     }
+
+
 }

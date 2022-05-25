@@ -45,4 +45,12 @@ public class BoatReservationService {
     public void save(BoatReservation reservation) {
         repository.save(reservation);
     }
+
+    public List<BoatReservation> getBusyPeriodForBoat(Long id) {
+        return repository.findBusyPeriodForBoat(id);
+    }
+
+    public boolean hasReservations(Long resourceId, Long clientId) {
+        return repository.findReservationsForClient(resourceId, clientId).size() > 0;
+    }
 }

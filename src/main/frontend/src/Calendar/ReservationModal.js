@@ -4,7 +4,7 @@ import axios from "axios";
 import {backLink} from "../Consts";
 import {Typeahead} from "react-bootstrap-typeahead";
 import {TagInfo} from "../Info";
-import {MessagePopupAlert} from "../MessagePopupAlert";
+import {MessagePopupModal} from "../MessagePopupModal";
 
 export function ReservationModal({show, setShow, type, resourceId}) {
 
@@ -304,7 +304,7 @@ export function ReservationModal({show, setShow, type, resourceId}) {
             </Modal.Footer>
         </Modal>
 
-            <MessagePopupAlert
+            <MessagePopupModal
                 show={showAlert}
                 setShow={setShowAlert}
                 message="Termin koji ste pokušali da zauzmete nije dostupan. Pogledajte kalendar zauzetosti i pokušajte ponovo."

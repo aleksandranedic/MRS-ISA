@@ -26,6 +26,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class VacationHouseService {
+    final String STATIC_PATH = "src/main/resources/static/";
+    final String STATIC_PATH_TARGET = "target/classes/static/";
+    final String IMAGES_PATH = "/images/houses/";
 
     private final VacationHouseRepository repository;
     private final AddressService addressService;
@@ -37,14 +40,11 @@ public class VacationHouseService {
     private final AppointmentService appointmentService;
     private final ClientService clientService;
     private final ReservationService reservationService;
-
-    final String STATIC_PATH = "src/main/resources/static/";
-    final String STATIC_PATH_TARGET = "target/classes/static/";
-    final String IMAGES_PATH = "/images/houses/";
+    private final ReviewRequestService reviewRequestService;
 
 
     @Autowired
-    public VacationHouseService(VacationHouseRepository vacationHouseRepository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, VacationHouseReservationService vacationHouseReservationService, ReviewService reviewService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService) {
+    public VacationHouseService(VacationHouseRepository vacationHouseRepository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, VacationHouseReservationService vacationHouseReservationService, ReviewService reviewService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService, ReviewRequestService reviewRequestService) {
         this.repository = vacationHouseRepository;
         this.addressService = addressService;
         this.pricelistService = pricelistService;
@@ -55,6 +55,7 @@ public class VacationHouseService {
         this.appointmentService = appointmentService;
         this.clientService = clientService;
         this.reservationService = reservationService;
+        this.reviewRequestService = reviewRequestService;
     }
 
     public List<VacationHouse> getVacationHouses() {
@@ -373,20 +374,25 @@ public class VacationHouseService {
 
         for (VacationHouseReservation vhr : vacationHouseReservationService.getStandardReservations()) {
             if (Objects.equals(vhr.getClient().getId(), id) && !vhr.isQuickReservation() && !vhr.isBusyPeriod()) {
-                reservations.add(new ReservationDTO(
-                        vhr.getAppointments(),
-                        vhr.getNumberOfClients(),
-                        vhr.getAdditionalServices(),
-                        vhr.getPrice(),
-                        vhr.getClient(),
-                        vhr.getResource().getTitle(),
-                        vhr.isBusyPeriod(),
-                        vhr.isQuickReservation()
-                ));
+
+                reservations.add(createDTOFromReservation(vhr));
             }
         }
         return reservations;
 
+    }
+
+    private ReservationDTO createDTOFromReservation(VacationHouseReservation vhr) {
+        return new ReservationDTO(
+                vhr.getAppointments(),
+                vhr.getNumberOfClients(),
+                vhr.getAdditionalServices(),
+                vhr.getPrice(),
+                vhr.getClient(),
+                vhr.getResource().getTitle(),
+                vhr.isBusyPeriod(),
+                vhr.isQuickReservation()
+        );
     }
 
     public Long createReservation(NewReservationDTO dto) throws ReservationNotAvailableException {
@@ -442,5 +448,72 @@ public class VacationHouseService {
                 client,
                 vacationHouse,
                 dto.isBusyPeriod(), dto.isQuickReservation());
+    }
+
+    public List<ReservationDTO> getBusyPeriodForVacationHouse(Long id) {
+        List<ReservationDTO> periods = new ArrayList<ReservationDTO>();
+
+        for (VacationHouseReservation ar: vacationHouseReservationService.getBusyPeriodForVacationHouse(id)) {
+            periods.add(createDTOFromReservation(ar));
+        }
+
+        return periods;
+    }
+
+    public Long createBusyPeriod(NewBusyPeriodDTO dto) {
+
+        VacationHouseReservation reservation = createBusyPeriodReservationFromDTO(dto);
+
+        List<VacationHouseReservation> reservations = vacationHouseReservationService.getPossibleCollisionReservations(reservation.getResource().getId());
+        for (VacationHouseReservation r: reservations) {
+            for (Appointment a: r.getAppointments()) {
+                for (Appointment newAppointment: reservation.getAppointments()) {
+                    reservationService.checkAppointmentCollision(a, newAppointment);
+                    reservationService.checkAppointmentCollision(newAppointment, a);
+                }
+            }
+        }
+        vacationHouseReservationService.save(reservation);
+        return reservation.getId();
+    }
+
+    private VacationHouseReservation createBusyPeriodReservationFromDTO(NewBusyPeriodDTO dto) {
+
+        List<Appointment> appointments = new ArrayList<Appointment>();
+
+        LocalDateTime startTime = LocalDateTime.of(dto.getStartYear(), Month.of(dto.getStartMonth()), dto.getStartDay(), 0, 0);
+        LocalDateTime endTime = startTime.plusDays(1);
+
+        while (startTime.isBefore(LocalDateTime.of(dto.getEndYear(), Month.of(dto.getEndMonth()), dto.getEndDay(), 23, 59))) {
+            appointments.add(new Appointment(startTime, endTime));
+            startTime = endTime;
+            endTime = startTime.plusHours(1);
+        }
+        appointmentService.saveAll(appointments);
+
+        Long id = dto.getResourceId();
+        VacationHouse vacationHouse = this.getVacationHouse(id);
+
+        return new VacationHouseReservation(
+                appointments,
+                0,
+                null,
+                0,
+                null,
+                vacationHouse,
+                true,
+                false
+
+        );
+    }
+
+    public boolean clientCanReview(Long resourceId, Long clientId)  {
+        return hasReservations(resourceId, clientId) &&
+                !reviewService.clientHasReview(resourceId, clientId) &&
+                !reviewRequestService.hasReviewRequests(resourceId, clientId);
+    }
+
+    public boolean hasReservations(Long resourceId, Long clientId) {
+        return vacationHouseReservationService.clientHasReservations(resourceId, clientId);
     }
 }
