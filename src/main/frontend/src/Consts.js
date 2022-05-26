@@ -42,3 +42,12 @@ export const responsive = {
         items: 1
     }
 };
+
+export function isLoggedIn() {
+    return localStorage.getItem('token') !== null && localStorage.getItem('token') !== "";
+}
+
+export const logOut = () => {
+    localStorage.setItem('token', "");
+    window.location.reload();
+}

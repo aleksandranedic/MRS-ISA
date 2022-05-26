@@ -22,9 +22,9 @@ export function ReservationsTable(props) {
                 </tr>
                 </thead>
                 <tbody>
-                {reservations.map((reservation) => {
+                {reservations.map((reservation, index) => {
                     return (
-                        <tr key={reservation.id}>
+                        <tr key={index}>
                             <td>{reservation.id}</td>
                             <td>{getStartTime(reservation)}</td>
                             <td>{getEndTime(reservation)}</td>

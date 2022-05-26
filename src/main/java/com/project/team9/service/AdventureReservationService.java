@@ -1,94 +1,52 @@
 package com.project.team9.service;
 
-import com.project.team9.dto.AdventureReservationDTO;
-import com.project.team9.dto.ReservationDTO;
-import com.project.team9.model.Tag;
 import com.project.team9.model.reservation.AdventureReservation;
-import com.project.team9.model.reservation.Appointment;
-import com.project.team9.model.reservation.BoatReservation;
-import com.project.team9.model.resource.Adventure;
-import com.project.team9.model.user.Client;
 import com.project.team9.repo.AdventureReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class AdventureReservationService {
 
     private final AdventureReservationRepository repository;
-    private final AdventureService adventureService;
-    private final ClientService clientService;
 
     @Autowired
-    public AdventureReservationService(AdventureReservationRepository repository, AdventureService adventureService, ClientService clientService) {
+    public AdventureReservationService(AdventureReservationRepository repository) {
         this.repository = repository;
-        this.adventureService = adventureService;
-        this.clientService = clientService;
     }
 
-    public List<AdventureReservationDTO> getReservationsForAdventure(Long id) {
-        List<AdventureReservationDTO> reservations = new ArrayList<AdventureReservationDTO>();
-
-        for (AdventureReservation ar : repository.findAll()) {
-            if (Objects.equals(ar.getResource().getId(), id) && !ar.isQuickReservation() && !ar.isBusyPeriod()) {
-                reservations.add(createDTOFromReservation(ar));
-            }
-        }
-        return reservations;
+    public List<AdventureReservation> getStandardReservations() {
+        return repository.findStandardReservations();
     }
 
-    private AdventureReservationDTO createDTOFromReservation(AdventureReservation reservation){
-        return new AdventureReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation());
-    }
-    public List<AdventureReservation> getReservationsForFishingInstructor(Long id) {
-        List<AdventureReservation> reservations = new ArrayList<AdventureReservation>();
-
-        for (Adventure a : adventureService.findAdventuresWithOwner(id.toString())) {
-            for (AdventureReservation ar : repository.findAll()) {
-                if (Objects.equals(ar.getResource().getId(), a.getId()) && !ar.isQuickReservation() && !ar.isBusyPeriod()) {
-                    reservations.add(ar);
-                }
-            }
-        }
-
-        return reservations;
+    public List<AdventureReservation> getPossibleCollisionReservations(Long resourceId, Long ownerId) {
+        return repository.findPossibleCollisionReservations(resourceId, ownerId);
     }
 
-    public Long createReservation(ReservationDTO dto) {
-        AdventureReservation reservation = createFromDTO(dto);
+    public List<AdventureReservation> getBusyPeriods() {
+        return repository.findBusyPeriods();
+    }
+
+
+    public void save(AdventureReservation reservation) {
         repository.save(reservation);
-        return reservation.getId();
     }
 
-    private AdventureReservation createFromDTO(ReservationDTO dto) {
-        List<Appointment> appointments = new ArrayList<Appointment>();
-
-        LocalDateTime startTime = dto.getStartTime();
-        LocalDateTime endTime = startTime.plusHours(1);
-
-        while (startTime.isBefore(dto.getEndTime())) {
-            appointments.add(new Appointment(startTime, endTime));
-            startTime = endTime;
-            endTime = startTime.plusHours(1);
-        }
-
-        Client client = clientService.getById(dto.getClientId().toString());
-        Adventure adventure = adventureService.getById(dto.getResourceId().toString());
-
-        return new AdventureReservation(
-                appointments,
-                dto.getNumberOfClients(),
-                new ArrayList<Tag>(),
-                dto.getPrice(),
-                client,
-                adventure,
-                dto.isBusyPeriod(), dto.isQuickReservation());
+    public AdventureReservation getById(Long reservationID) {
+        return repository.getById(reservationID);
     }
 
+    public List<AdventureReservation> getBusyPeriodsForFishingInstructor(Long id) {
+        return repository.findBusyPeriodsForFishingInstructor(id);
+    }
 
+    public List<AdventureReservation> getBusyPeriodsForAdventure(Long id, Long ownerId) {
+        return repository.findBusyPeriodsForAdventure(id, ownerId);
+    }
+
+    public boolean clientHasReservations(Long resourceId, Long clientId) {
+        return repository.findReservationsForClient(resourceId, clientId).size() > 0;
+    }
 }

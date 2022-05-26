@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -51,5 +52,15 @@ public class FishingInstructorService {
     }
     public FishingInstructor addFishingInstructor(FishingInstructor fishingInstructor){
         return repository.save(fishingInstructor);
+    }
+
+    public List<FishingInstructor> getUnregisteredFishingInstructors(){
+        List<FishingInstructor> instructors=this.getFishingInstructors();
+        List<FishingInstructor> filtered=new ArrayList<>();
+        for (FishingInstructor instructor: instructors) {
+            if(!instructor.isEnabled() && !instructor.getDeleted())
+                filtered.add(instructor);
+        }
+        return filtered;
     }
 }

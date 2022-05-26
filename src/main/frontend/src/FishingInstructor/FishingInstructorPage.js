@@ -93,7 +93,7 @@ const FishingInstructors = ({id}) => {
             }
             <hr className="me-5 ms-5"/>
 
-            <AdventureCarousel adventures={adventures} add={true}/>
+            <AdventureCarousel adventures={adventures} add={true} ownerId={fishingInstructor.id}/>
             <hr className="me-5 ms-5"/>
             <FishingInstructorForm show={show} setShow={setShow} fishingInstructor={fishingInstructor}/>
             <Calendar reservations={reservations} reservable={false}/>

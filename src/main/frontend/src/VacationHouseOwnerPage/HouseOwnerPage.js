@@ -9,6 +9,11 @@ import AddVacationHouse from './AddVacationHouse';
 import HouseOwnerForm from "./HouseOwnerForm";
 import { useParams } from "react-router-dom";
 import Navigation from "../Navigation/Navigation";
+import {backLink, profilePicturePlaceholder} from '../Consts';
+import {Calendar} from "../Calendar/Calendar";
+import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
+import {Collapse} from "react-bootstrap";
+import {ReservationsTable} from "../Calendar/ReservationsTable";
 import { profilePicturePlaceholder, backLink } from '../Consts';
 
 
@@ -35,7 +40,17 @@ function HouseOwnerPage() {
     const [show, setShow] = useState(false);
     const handleShow = () => setShow(true);
     
-    const HOST = "http://localhost:4444";  
+    const HOST = "http://localhost:4444";
+
+    const [reservations, setReservations] = useState([]);
+    const [open, setOpen] = useState(false);
+
+    const fetchReservations = () => {
+        axios.get(backLink+ "/house/reservation/vacationHouseOwner/" + id).then(res => {
+            setReservations(res.data);
+        })
+    }
+
     const fetchOwnerHouses = () => {
       axios
       .get("http://localhost:4444/house/getownerhouses/" + id)
@@ -59,6 +74,8 @@ function HouseOwnerPage() {
     useEffect(() => {
         fetchHouseOwner();
         fetchOwnerHouses();
+        fetchReservations();
+
     }, [ownerHouses]);
     return (
         <>
@@ -97,9 +114,32 @@ function HouseOwnerPage() {
                 <hr/>
                 <OwnerHouses houses={ownerHouses}/>
                 <hr/>
-               
+
             </div>
-        <BeginButton/>
+
+
+            <hr className="me-5 ms-5"/>
+            <Calendar reservations={reservations} reservable={false}/>
+
+            <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
+            <hr className="me-5 ms-5"/>
+
+            <ReservationCardGrid reservations={reservations}/>
+
+            <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)}
+                aria-controls="reservationsTable"
+                aria-expanded={open}
+                style = {{cursor: "pointer"}}
+            >Istorija rezervacija</h2>
+
+            <hr className="me-5 ms-5"/>
+            <Collapse in={open}>
+                <div id="reservationsTable">
+                    <ReservationsTable  reservations={reservations} showResource={false}/>
+                </div>
+            </Collapse>
+
+            <BeginButton/>
         </>
     );
 }

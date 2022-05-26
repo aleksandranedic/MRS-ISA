@@ -10,7 +10,11 @@ import { useParams } from "react-router-dom";
 import Ratings from "../Reviews/Ratings";
 import "react-image-gallery/styles/css/image-gallery.css";
 import Navigation from "../Navigation/Navigation";
-import { Calendar } from "../Calendar/Calendar";
+import {backLink} from "../Consts";
+import {Collapse} from "react-bootstrap";
+import {ReservationsTable} from "../Calendar/ReservationsTable";
+import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
+import {Calendar} from "../Calendar/Calendar";
 
 const HOST = "http://localhost:4444";
 const Gallery = ({house, images}) => {
@@ -51,19 +55,9 @@ const Reservations = ({reservations, name, address}) => {
     }
 }
 
-const CalendarComp = ({reservations, reservable, house, perHour}) => {
-    if (typeof house !== "undefined"){
-        var priceList = {id:"1", price:house.price}
-        return <Calendar reservations={reservations} reservable={reservable} pricelist={priceList} perHour={perHour}/>
-    }
-    else {
-        return <></>
-    }
-}
-
 const ReviewsComp = ({reviews}) => {
     if (typeof reviews !== "undefined"){
-        return <Ratings reviews = {reviews}/>
+        return <Ratings reviews = {reviews} type={"vacationHouse"}/>
     }
     else {
         return <></>
@@ -73,13 +67,28 @@ const ReviewsComp = ({reviews}) => {
 export function VacationHousePage() {
     const [house, setHouse] = useState({});
     const [houseReviews, setHouseReviews] = useState([])
-    const [reservations, setReservations] = useState([])
     const [show, setShow] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [reservations, setReservations] = useState([]);
+
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const {id} = useParams();
     var [imgs, setImgs] = useState([{thumbnail: '', original: ''}]);
-    
+
+    const [busyPeriod, setBusyPeriod] = useState([]);
+    const fetchBusyPeriod = () => {
+        axios.get(backLink+ "/house/reservation/busyPeriod/vacationHouse/" + id).then(res => {
+            setBusyPeriod(res.data);
+        })
+    }
+
+    const fetchReservations = () => {
+        axios.get(backLink+ "/house/reservation/vacationHouse/" + id).then(res => {
+            setReservations(res.data);
+        })
+    }
+
     const fetchHouse = () => {
         axios
         .get("http://localhost:4444/house/houseprof/" + id)
@@ -95,19 +104,11 @@ export function VacationHousePage() {
             setHouseReviews(res.data);
         });
     };
-
-    const fetchReservations = () => {
-        axios
-         .get("http://localhost:4444/house/getReservations/" + id)
-         .then(res => {        
-            setReservations(res.data);
-         })
-    };
-
     useEffect(() => {
         fetchHouse();
         fetchReviews();
         fetchReservations();
+        fetchBusyPeriod();
     }, []);
     
     return (
@@ -128,10 +129,36 @@ export function VacationHousePage() {
             <hr/>
             <Reservations reservations={house.quickReservations} name={house.name} address={house.address}/>
             <footer className="blockquote-footer">Svi izlasci iz vikendice obavljaju se do 10:00h.</footer>
-            <hr/>
-            <CalendarComp reservations={reservations} reservable={true} house={house} perHour={false}/>    
             <ReviewsComp reviews = {houseReviews}/>
         </div>
+
+        <hr className="me-5 ms-5"/>
+        <Calendar reservations={reservations} reservable={true} pricelist={{price: house.price}} resourceId={house.id} type={"vacationHouse"} busyPeriods={busyPeriod}/>
+
+        <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
+        <hr className="me-5 ms-5"/>
+
+        <ReservationCardGrid reservations={reservations}/>
+
+        <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)}
+            aria-controls="reservationsTable"
+            aria-expanded={open}
+            style = {{cursor: "pointer"}}
+        >Istorija rezervacija</h2>
+
+        <hr className="me-5 ms-5"/>
+        <Collapse in={open}>
+            <div id="reservationsTable">
+                <ReservationsTable  reservations={reservations} showResource={false}/>
+            </div>
+        </Collapse>
+
+
+
+
+
+
+
         <BeginButton/>
     </>
 

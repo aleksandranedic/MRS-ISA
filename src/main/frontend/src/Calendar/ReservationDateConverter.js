@@ -16,5 +16,5 @@ export function getEndTime(reservation) {
 }
 
 export function convertToDate(dateArray) {
-    return new Date(dateArray.at(0), dateArray.at(1) - 1, dateArray.at(2), dateArray.at(3) + 2, dateArray.at(4));
+    return new Date(dateArray.at(0), dateArray.at(1) - 1, dateArray.at(2), dateArray.at(3), dateArray.at(4));
 }

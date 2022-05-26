@@ -1,6 +1,8 @@
 package com.project.team9.controller;
 
 import com.project.team9.dto.*;
+import com.project.team9.exceptions.ReservationNotAvailableException;
+import com.project.team9.dto.*;
 import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
@@ -14,16 +16,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path="house")
+@RequestMapping(path = "house")
 @CrossOrigin("*")
 public class VacationHouseController {
 
@@ -40,18 +36,52 @@ public class VacationHouseController {
         return service.getVacationHouses();
     }
 
+
+    @GetMapping("/reservation/vacationHouseOwner/{id}")
+    public List<ReservationDTO> getReservationsForOwner(@PathVariable Long id) {
+        return service.getReservationsForOwner(id);
+    }
+
+    @GetMapping("/reservation/vacationHouse/{id}")
+    public List<ReservationDTO> getReservationsForVacationHouse(@PathVariable Long id) {
+        return service.getReservationsForVacationHouse(id);
+    }
+
+    @GetMapping("/reservation/client/{id}")
+    public List<ReservationDTO> getReservationsForClient(@PathVariable Long id) {
+        return service.getReservationsForClient(id);
+    }
+
+    @PostMapping("/reservation/add")
+    public Long addReservation(@RequestBody NewReservationDTO dto) throws ReservationNotAvailableException {
+        return service.createReservation(dto);
+    }
+
+    @PostMapping("/reservation/busyPeriod/add")
+    public Long addBusyPeriod(@RequestBody NewBusyPeriodDTO dto) throws ReservationNotAvailableException {
+        return service.createBusyPeriod(dto);
+    }
+
+    @GetMapping("/reservation/busyPeriod/vacationHouse/{id}")
+    public List<ReservationDTO> getBusyPeriodForVacationHouse(@PathVariable Long id) {
+        return  service.getBusyPeriodForVacationHouse(id);
+    }
+
+
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public VacationHouse getVacationHouse(@PathVariable String id) {
         Long houseId = Long.parseLong(id);
         return service.getVacationHouse(houseId);
     }
+
     @GetMapping(value = "getRating/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public double getRating(@PathVariable String id) {
         return service.getRatingForHouse(Long.parseLong(id));
     }
 
+
     @GetMapping(value = "getReservations/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<HouseReservationDTO> getReservations(@PathVariable String id) {
+    public List<ReservationDTO> getReservations(@PathVariable String id) {
         return service.getReservations(Long.parseLong(id));
     }
 
@@ -101,5 +131,10 @@ public class VacationHouseController {
     public ResponseEntity deleteVacationHouse(@PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/clientCanReview/{resourceId}/{clientId}")
+    public Boolean clientCanReview(@PathVariable Long resourceId, @PathVariable Long clientId){
+        return service.clientCanReview(resourceId, clientId);
     }
 }

@@ -1,23 +1,21 @@
 import "../Home/HomePage.css"
-import {Button, Card, Form, Nav} from "react-bootstrap";
-import React, {useState} from "react";
+import {Button, Card, Form} from "react-bootstrap";
+import React, {useEffect, useState} from "react";
 import {GetAllVacationHouses} from "../VacationHousePage/AllVacationHouses";
 import {GetAllAdventures} from "../Adventure/AllAdventures";
 import {GetAllBoats} from "../BoatPage/AllBoats";
-import {backLink, frontLink, responsive} from "../Consts";
+import {backLink, frontLink, isLoggedIn, logOut} from "../Consts";
 import StarRatings from 'react-star-ratings';
 import {GetAllVacationHouseOwners} from "../VacationHouseOwnerPage/AllVacationHouseOwners";
 import {GetAllFishingInstructors} from "../FishingInstructor/AllFishingInstructors";
 import {GetAllBoatOwners} from "../BoatOwnerPage/AllBoatOwners";
 import {BsPerson, BsSearch} from "react-icons/bs";
+import axios from "axios";
 
 export function HomePage() {
 
-    function isLoggedIn() {
-        return localStorage.getItem('token') !== "";
-    }
-
     const [searchTerm, setSearchTerm] = useState("searchTerm");
+    const [id,setID]=useState("")
 
     let vacationHouses = GetAllVacationHouses();
     if (vacationHouses.length > 6) {
@@ -25,6 +23,7 @@ export function HomePage() {
     }
 
     let vacationHouseOwners = GetAllVacationHouseOwners();
+
     if (vacationHouseOwners.length > 4) {
         vacationHouseOwners = vacationHouseOwners.subarray(0, 4);
     }
@@ -47,21 +46,37 @@ export function HomePage() {
     if (boatOwners.length > 4) {
         boatOwners = boatOwners.subarray(0, 4);
     }
+    const getLoggedUser=()=>{
+        axios.get(backLink+"/getLoggedUser").then(
+            response=>{
+                setID(response.data.id)
+            }
+        )
+    }
+
+
+
+    useEffect(() => {
+        if(isLoggedIn()){
+            getLoggedUser()
+        }
+    },[])
 
     return (<div className="page">
         <div id="hero">
 
             <div className="w-100 d-flex justify-content-end align-items-center">
 
-                {(!isLoggedIn()) &&
-                    <a href={"http://localhost:3000/client"} className="m-3">
+                {(isLoggedIn()) &&
+
+                    <a href={"http://localhost:3000/client/"+id} className="m-3">
                         <BsPerson className="icon"/>
                     </a>
                 }
 
-                {(isLoggedIn()) ?
+                {(!isLoggedIn()) ?
                     <Button href={frontLink + "login"} className="m-3" variant="outline-secondary">Prijavi se</Button> :
-                    <Button className="m-3" variant="outline-secondary">Odjavi se</Button>
+                    <Button className="m-3" variant="outline-secondary" onClick={()=> logOut()}>Odjavi se</Button>
                 }
 
             </div>
@@ -152,7 +167,7 @@ export function HomePage() {
                     {vacationHouseOwners.map(owner => {
                         return <HomePageVendorCard type={"houseOwner"} key={owner.id} id={owner.id}
                                                    fullName={owner.firstName + " " + owner.lastName} rate={5}
-                                                   profileImage={"../images/people/pexels-alan-cabello-4437916.jpg"}/>
+                                                   profileImage={owner.profileImg}/>
                     })}
                 </div>
             </div>
@@ -174,7 +189,7 @@ export function HomePage() {
                     {boatOwners.map(owner => {
                         return <HomePageVendorCard type={"boatOwner"} key={owner.id} id={owner.id}
                                                    fullName={owner.firstName + " " + owner.lastName} rate={5}
-                                                   profileImage={"../images/Home1.jpg"}/>
+                                                   profileImage={owner.profileImg}/>
                     })}
                 </div>
 
@@ -197,7 +212,7 @@ export function HomePage() {
                     {fishingInstructors.map(owner => {
                         return <HomePageVendorCard type={"fishingInstructor"} key={owner.id} id={owner.id}
                                                    fullName={owner.firstName + " " + owner.lastName} rate={5}
-                                                   profileImage={"../images/Home1.jpg"}/>
+                                                   profileImage={owner.profileImg}/>
                     })}
                 </div>
             </div>
@@ -221,11 +236,25 @@ function HomePageResourceCard({id, title, rate, images, type}) {
 }
 
 function HomePageVendorCard({id, fullName, rate, profileImage, type}) {
+    let path;
+    if (profileImage) {
+        path = backLink + profileImage.path;
+    }
+
     return <Card className="vendor-card m-5 reveal">
         <Card.Body className="d-flex h-100">
             <div>
                 <a href={frontLink + type + "/" + id}>
-                    <img src={require("../images/people/pexels-alan-cabello-4437916.jpg")} alt="profileImage" className="vendor-profile-image"/>
+
+                    {profileImage ?
+                        <img src={path} alt="profileImage" className="vendor-profile-image"/>
+                        :
+                        <div className="d-flex justify-content-center align-items-center vendor-profile-image-placeholder">
+                            <BsPerson style={{color: "rgba(0,0,0,0.3)"}}/>
+
+                        </div>
+                    }
+
                 </a>
             </div>
             <div className="ms-3 mt-auto mb-auto flex-column h-100">

@@ -2,6 +2,7 @@ package com.project.team9.service;
 
 import com.project.team9.dto.ClientReviewDTO;
 import com.project.team9.dto.ReviewScoresDTO;
+import com.project.team9.model.request.ReviewRequest;
 import com.project.team9.model.review.ClientReview;
 import com.project.team9.model.user.Client;
 import com.project.team9.repo.ClientRepository;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,11 +18,13 @@ import java.util.List;
 public class ReviewService {
     private final ReviewRepository repository;
     private final ClientRepository clientRepository;
+    private final ReviewRequestService reviewRequestService;
 
     @Autowired
-    public ReviewService(ReviewRepository repository, ClientRepository clientRepository) {
+    public ReviewService(ReviewRepository repository, ClientRepository clientRepository, ReviewRequestService reviewRequestService) {
         this.repository = repository;
         this.clientRepository = clientRepository;
+        this.reviewRequestService = reviewRequestService;
     }
 
     public List<ClientReviewDTO> getReviews(Long resource_id) {
@@ -78,5 +80,13 @@ public class ReviewService {
         double ones = (double)scores.get("one") / num * 100;
         ones = Math.round(ones * scale) / scale;
         return new ReviewScoresDTO(fives, fours, threes, twos, ones);
+    }
+
+    public boolean clientHasReview(Long resourceId, Long clientId) {
+        return repository.findReviewForClientAndResource(resourceId, clientId).size() > 0;
+    }
+
+    public Long sendReviewRequest(ClientReview review) {
+        return reviewRequestService.addRequest(new ReviewRequest(review));
     }
 }

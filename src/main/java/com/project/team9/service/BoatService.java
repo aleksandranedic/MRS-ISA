@@ -1,17 +1,15 @@
 package com.project.team9.service;
 
 import com.project.team9.dto.*;
+import com.project.team9.exceptions.ReservationNotAvailableException;
 import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
-import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
-import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.resource.Boat;
-import com.project.team9.model.resource.VacationHouse;
-import com.project.team9.repo.AppointmentRepository;
+import com.project.team9.model.user.Client;
 import com.project.team9.repo.BoatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,52 +19,60 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class BoatService {
+    final String STATIC_PATH = "src/main/resources/static/";
+    final String STATIC_PATH_TARGET = "target/classes/static/";
+    final String IMAGES_PATH = "/images/boats/";
 
     private final BoatRepository repository;
     private final AddressService addressService;
     private final PricelistService pricelistService;
     private final TagService tagService;
     private final ImageService imageService;
-    private final BoatReservationService reservationService;
-    private final AppointmentRepository appointmentRepository;
+    private final BoatReservationService boatReservationService;
+    private final AppointmentService appointmentService;
+    private final ClientService clientService;
+    private final ReservationService reservationService;
+    private final ReviewService reviewService;
+    private final ReviewRequestService reviewRequestService;
 
-
-    final String STATIC_PATH = "src/main/resources/static/";
-    final String STATIC_PATH_TARGET = "target/classes/static/";
-    final String IMAGES_PATH = "/images/boats/";
 
     @Autowired
-    public BoatService(BoatRepository repository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, BoatReservationService reservationService, AppointmentRepository appointmentRepository) {
+    public BoatService(BoatRepository repository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, BoatReservationService boatReservationService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService, ReviewService reviewService, ReviewRequestService reviewRequestService) {
         this.repository = repository;
         this.addressService = addressService;
         this.pricelistService = pricelistService;
         this.tagService = tagService;
         this.imageService = imageService;
+        this.boatReservationService = boatReservationService;
+        this.appointmentService = appointmentService;
+        this.clientService = clientService;
         this.reservationService = reservationService;
-        this.appointmentRepository = appointmentRepository;
+        this.reviewService = reviewService;
+        this.reviewRequestService = reviewRequestService;
     }
 
     public List<Boat> getBoats() {
         return repository.findAll();
     }
 
-    public BoatCardDTO getBoatCard(Long id){
+    public BoatCardDTO getBoatCard(Long id) {
         Boat boat = getBoat(id);
         String address = boat.getAddress().getStreet() + " " + boat.getAddress().getNumber() + ", " + boat.getAddress().getPlace() + ", " + boat.getAddress().getCountry();
         return new BoatCardDTO(boat.getId(), boat.getImages().get(0).getPath(), boat.getTitle(), boat.getDescription(), address);
     }
 
-    public Boolean addQuickReservation(Long id, BoatQuickReservationDTO quickReservationDTO){
+    public Boolean addQuickReservation(Long id, BoatQuickReservationDTO quickReservationDTO) {
         Boat boat = this.getBoat(id);
         BoatReservation reservation = getReservationFromDTO(quickReservationDTO, true);
         reservation.setResource(boat);
-        reservationService.addReservation(reservation);
+        boatReservationService.addReservation(reservation);
         boat.addReservation(reservation);
         this.addBoat(boat);
         return true;
@@ -78,17 +84,17 @@ public class BoatService {
         String[] splitTime = splitDate[3].split(":");
         Appointment startDateAppointment = Appointment.getBoatAppointment(Integer.parseInt(splitDate[2]), Integer.parseInt(splitDate[1]), Integer.parseInt(splitDate[0]), Integer.parseInt(splitTime[0]), Integer.parseInt(splitTime[1]));
         appointments.add(startDateAppointment);
-        appointmentRepository.save(startDateAppointment);
+        appointmentService.save(startDateAppointment);
         Appointment currApp = startDateAppointment;
-        for (int i=0; i < dto.getDuration() - 1; i++){
+        for (int i = 0; i < dto.getDuration() - 1; i++) {
             LocalDateTime startDate = currApp.getEndTime();
             LocalDateTime endDate = startDate.plusDays(1);
             currApp = new Appointment(startDate, endDate);
-            appointmentRepository.save(currApp);
+            appointmentService.save(currApp);
             appointments.add(currApp);
         }
         List<Tag> tags = new ArrayList<Tag>();
-        for (String tagText : dto.getTagsText()){
+        for (String tagText : dto.getTagsText()) {
             Tag tag = new Tag(tagText);
             tagService.addTag(tag);
             tags.add(tag);
@@ -101,24 +107,26 @@ public class BoatService {
         return reservation;
     }
 
-    public Boolean updateQuickReservation(Long id, BoatQuickReservationDTO quickReservationDTO){
+    public Boolean updateQuickReservation(Long id, BoatQuickReservationDTO quickReservationDTO) {
         Boat boat = this.getBoat(id);
         BoatReservation newReservation = getReservationFromDTO(quickReservationDTO, true);
-        BoatReservation originalReservation = reservationService.getBoatReservation(quickReservationDTO.getReservationID());
+        BoatReservation originalReservation = boatReservationService.getBoatReservation(quickReservationDTO.getReservationID());
         updateQuickReservation(originalReservation, newReservation);
-        reservationService.addReservation(originalReservation);
+        boatReservationService.addReservation(originalReservation);
         this.addBoat(boat);
         return true;
     }
-    private void updateQuickReservation(BoatReservation originalReservation, BoatReservation newReservation){
+
+    private void updateQuickReservation(BoatReservation originalReservation, BoatReservation newReservation) {
         originalReservation.setAppointments(newReservation.getAppointments());
         originalReservation.setAdditionalServices(newReservation.getAdditionalServices());
         originalReservation.setNumberOfClients(newReservation.getNumberOfClients());
         originalReservation.setPrice(newReservation.getPrice());
     }
-    public List<BoatReservationDTO> getReservations(Long id){
+
+    public List<ReservationDTO> getReservations(Long id){
         Boat boat = this.getBoat(id);
-        List<BoatReservationDTO> reservations = new ArrayList<BoatReservationDTO>();
+        List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
 
         for (BoatReservation boatReservation : boat.getReservations()) {
             if (!boatReservation.isQuickReservation() && !boatReservation.isBusyPeriod()) {
@@ -127,23 +135,21 @@ public class BoatService {
         }
         return reservations;
     }
-    private BoatReservationDTO createDTOFromReservation(BoatReservation reservation){
-        return new BoatReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation());
-    }
-    public Boolean deleteQuickReservation(Long id, BoatQuickReservationDTO quickReservationDTO){
+    public Boolean deleteQuickReservation(Long id, BoatQuickReservationDTO quickReservationDTO) {
         Boat boat = this.getBoat(id);
-        reservationService.deleteById(quickReservationDTO.getReservationID());
+        boatReservationService.deleteById(quickReservationDTO.getReservationID());
         //izbaci se reservation iz house
         this.addBoat(boat);
         return true;
     }
+
     public List<BoatCardDTO> getOwnerBoats(Long owner_id) {
         List<Boat> boats = repository.findByOwnerId(owner_id);
         List<BoatCardDTO> boatCards = new ArrayList<BoatCardDTO>();
-        for(Boat boat : boats){
+        for (Boat boat : boats) {
             String address = boat.getAddress().getStreet() + " " + boat.getAddress().getNumber() + ", " + boat.getAddress().getPlace() + ", " + boat.getAddress().getCountry();
             String thumbnail = "./images/housenotext.png";
-            if (boat.getImages().size() > 0){
+            if (boat.getImages().size() > 0) {
                 thumbnail = boat.getImages().get(0).getPath();
             }
             boatCards.add(new BoatCardDTO(boat.getId(), thumbnail, boat.getTitle(), boat.getDescription(), address));
@@ -157,7 +163,7 @@ public class BoatService {
 
     public BoatDTO getBoatDTO(Long id) {
         Boat bt = repository.getById(id);
-        String address = bt.getAddress().getStreet() + " " + bt.getAddress().getNumber() + ", " + bt.getAddress().getPlace()  + ", " + bt.getAddress().getCountry();
+        String address = bt.getAddress().getStreet() + " " + bt.getAddress().getNumber() + ", " + bt.getAddress().getPlace() + ", " + bt.getAddress().getCountry();
         List<String> images = new ArrayList<String>();
         for (Image img : bt.getImages()) {
             images.add(img.getPath());
@@ -166,7 +172,7 @@ public class BoatService {
         return new BoatDTO(bt.getId(), bt.getTitle(), address, bt.getAddress().getNumber(), bt.getAddress().getStreet(), bt.getAddress().getPlace(), bt.getAddress().getCountry(), bt.getDescription(), bt.getType(), images, bt.getRulesAndRegulations(), bt.getEngineNumber(), bt.getEngineStrength(), bt.getTopSpeed(), bt.getLength(), bt.getNavigationEquipment(), bt.getFishingEquipment(), bt.getAdditionalServices(), bt.getPricelist().getPrice(), bt.getCancellationFee(), bt.getCapacity(), quickReservations);
     }
 
-    private List<BoatQuickReservationDTO> getQuickReservations(Boat bt){
+    private List<BoatQuickReservationDTO> getQuickReservations(Boat bt) {
         List<BoatQuickReservationDTO> quickReservations = new ArrayList<BoatQuickReservationDTO>();
         for (BoatReservation reservation :  bt.getReservations()){
             if (reservation.getPrice() < bt.getPricelist().getPrice() && reservation.getClient() == null)
@@ -175,7 +181,7 @@ public class BoatService {
         return quickReservations;
     }
 
-    private BoatQuickReservationDTO createBoatReservationDTO(int boatPrice, BoatReservation reservation){
+    private BoatQuickReservationDTO createBoatReservationDTO(int boatPrice, BoatReservation reservation) {
         Appointment firstAppointment = getFirstAppointment(reservation.getAppointments());
         LocalDateTime startDate = firstAppointment.getStartTime();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm'h'");
@@ -184,10 +190,11 @@ public class BoatService {
         List<Tag> additionalServices = reservation.getAdditionalServices();
         int duration = reservation.getAppointments().size();
         int price = reservation.getPrice();
-        int discount = 100 - ( 100 * price / boatPrice);
+        int discount = 100 - (100 * price / boatPrice);
         return new BoatQuickReservationDTO(reservation.getId(), strDate, numberOfPeople, additionalServices, duration, price, discount);
     }
-    private Appointment getFirstAppointment(List<Appointment> appointments){
+
+    private Appointment getFirstAppointment(List<Appointment> appointments) {
         List<Appointment> sortedAppointments = getSortedAppointments(appointments);
         return sortedAppointments.get(0);
     }
@@ -273,7 +280,7 @@ public class BoatService {
         Path path_target = Paths.get(STATIC_PATH_TARGET + IMAGES_PATH + boat.getId());
         savePicturesOnPath(boat, multipartFiles, paths, path);
         savePicturesOnPath(boat, multipartFiles, paths, path_target);
-        if (boat.getImages() != null && boat.getImages().size() > 0){
+        if (boat.getImages() != null && boat.getImages().size() > 0) {
             for (Image image : boat.getImages()) {
                 paths.add(image.getPath());
             }
@@ -305,10 +312,10 @@ public class BoatService {
         pricelistService.addPriceList(pl);
         Address adr = new Address(boatDTO.getCity(), boatDTO.getNumber(), boatDTO.getStreet(), boatDTO.getCountry());
         addressService.addAddress(adr);
-        Boat boat = new Boat(boatDTO.getName(), adr, boatDTO.getDescription(),  boatDTO.getRulesAndRegulations(), pl, boatDTO.getCancellationFee(), null, boatDTO.getType(), boatDTO.getLength(), boatDTO.getEngineNumber(), boatDTO.getEngineStrength() ,boatDTO.getTopSpeed(),boatDTO.getCapacity());
+        Boat boat = new Boat(boatDTO.getName(), adr, boatDTO.getDescription(), boatDTO.getRulesAndRegulations(), pl, boatDTO.getCancellationFee(), null, boatDTO.getType(), boatDTO.getLength(), boatDTO.getEngineNumber(), boatDTO.getEngineStrength(), boatDTO.getTopSpeed(), boatDTO.getCapacity());
 
         List<Tag> tags = new ArrayList<Tag>();
-        for (String tagText : boatDTO.getTagsText()){
+        for (String tagText : boatDTO.getTagsText()) {
             Tag tag = new Tag(tagText);
             tagService.addTag(tag);
             tags.add(tag);
@@ -316,7 +323,7 @@ public class BoatService {
         boat.setNavigationEquipment(tags);
 
         List<Tag> tagsFishingEquip = new ArrayList<Tag>();
-        for (String tagText : boatDTO.getTagsFishingEquipText()){
+        for (String tagText : boatDTO.getTagsFishingEquipText()) {
             Tag tag = new Tag(tagText);
             tagService.addTag(tag);
             tagsFishingEquip.add(tag);
@@ -324,7 +331,7 @@ public class BoatService {
         boat.setFishingEquipment(tagsFishingEquip);
 
         List<Tag> tagsAdditionalServices = new ArrayList<Tag>();
-        for (String tagText : boatDTO.getTagsAdditionalServicesText()){
+        for (String tagText : boatDTO.getTagsAdditionalServicesText()) {
             Tag tag = new Tag(tagText);
             tagService.addTag(tag);
             tagsAdditionalServices.add(tag);
@@ -332,7 +339,7 @@ public class BoatService {
         boat.setAdditionalServices(tagsAdditionalServices);
 
         List<Image> images = new ArrayList<Image>();
-        if (boatDTO.getImagePaths() != null){
+        if (boatDTO.getImagePaths() != null) {
             for (String path : boatDTO.getImagePaths()) {
                 Optional<Image> optImage = imageService.getImageByPath(path);
                 optImage.ifPresent(images::add);
@@ -340,5 +347,204 @@ public class BoatService {
         }
         boat.setImages(images);
         return boat;
+    }
+
+    public List<ReservationDTO> getReservationsForClient(Long id) {
+        List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
+
+        for (BoatReservation br : boatReservationService.getStandardReservations()) {
+            if (Objects.equals(br.getClient().getId(), id) && !br.isBusyPeriod()) {
+                reservations.add(new ReservationDTO(
+                        br.getAppointments(),
+                        br.getNumberOfClients(),
+                        br.getAdditionalServices(),
+                        br.getPrice(),
+                        br.getClient(),
+                        br.getResource().getTitle(),
+                        br.isBusyPeriod(),
+                        br.isQuickReservation()
+                ));
+            }
+        }
+        return reservations;
+
+    }
+
+    public List<ReservationDTO> getReservationsForBoat(Long id) {
+        List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
+
+        for (BoatReservation br : boatReservationService.getAll()) {
+            if (Objects.equals(br.getResource().getId(), id) && !br.isQuickReservation() && !br.isBusyPeriod()) {
+                reservations.add(new ReservationDTO(
+                        br.getAppointments(),
+                        br.getNumberOfClients(),
+                        br.getAdditionalServices(),
+                        br.getPrice(),
+                        br.getClient(),
+                        br.getResource().getTitle(),
+                        br.isBusyPeriod(),
+                        br.isQuickReservation()
+                ));
+            }
+        }
+        return reservations;
+
+    }
+
+    public List<ReservationDTO> getReservationsForOwner(Long id) {
+        List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
+
+        for (BoatReservation br : boatReservationService.getAll()) {
+            if (Objects.equals(br.getResource().getOwner().getId(), id) && !br.isQuickReservation() && !br.isBusyPeriod()) {
+                reservations.add(new ReservationDTO(
+                        br.getAppointments(),
+                        br.getNumberOfClients(),
+                        br.getAdditionalServices(),
+                        br.getPrice(),
+                        br.getClient(),
+                        br.getResource().getTitle(),
+                        br.isBusyPeriod(),
+                        br.isQuickReservation()
+                ));
+            }
+        }
+        return reservations;
+
+    }
+
+    public Long createReservation(NewReservationDTO dto) throws ReservationNotAvailableException {
+        BoatReservation reservation = createFromDTO(dto);
+
+        List<BoatReservation> reservations = boatReservationService.getPossibleCollisionReservations(reservation.getResource().getId());
+        for (BoatReservation r : reservations) {
+            for (Appointment a : r.getAppointments()) {
+                for (Appointment newAppointment : reservation.getAppointments()) {
+                    reservationService.checkAppointmentCollision(a, newAppointment);
+                }
+            }
+        }
+
+        boatReservationService.save(reservation);
+        return reservation.getId();
+    }
+
+
+    private BoatReservation createFromDTO(NewReservationDTO dto) {
+
+        List<Appointment> appointments = new ArrayList<Appointment>();
+
+        LocalDateTime startTime = LocalDateTime.of(dto.getStartYear(), Month.of(dto.getStartMonth()), dto.getStartDay(), dto.getStartHour(), dto.getStartMinute());
+        LocalDateTime endTime = startTime.plusHours(1);
+
+        while (startTime.isBefore(LocalDateTime.of(dto.getEndYear(), Month.of(dto.getEndMonth()), dto.getEndDay(), dto.getEndHour(), dto.getEndMinute()))) {
+            appointments.add(new Appointment(startTime, endTime));
+            startTime = endTime;
+            endTime = startTime.plusHours(1);
+        }
+        appointmentService.saveAll(appointments);
+
+        Client client = clientService.getById(dto.getClientId().toString());
+        Long id = dto.getResourceId();
+        Boat boat = this.getBoat(id);
+
+        int price = boat.getPricelist().getPrice() * appointments.size();
+
+        List<Tag> tags = new ArrayList<Tag>();
+        for (String text : dto.getAdditionalServicesStrings()) {
+            Tag tag = new Tag(text);
+            tags.add(tag);
+        }
+
+        tagService.saveAll(tags);
+
+        return new BoatReservation(
+                appointments,
+                dto.getNumberOfClients(),
+                tags,
+                price,
+                client,
+                boat,
+                dto.isBusyPeriod(), dto.isQuickReservation());
+    }
+
+    public Long createBusyPeriod(NewBusyPeriodDTO dto) {
+        BoatReservation reservation = createBusyPeriodReservationFromDTO(dto);
+
+        List<BoatReservation> reservations = boatReservationService.getPossibleCollisionReservations(reservation.getResource().getId());
+        for (BoatReservation r : reservations) {
+            for (Appointment a : r.getAppointments()) {
+                for (Appointment newAppointment : reservation.getAppointments()) {
+                    reservationService.checkAppointmentCollision(a, newAppointment);
+                    reservationService.checkAppointmentCollision(newAppointment, a);
+                }
+            }
+        }
+        boatReservationService.save(reservation);
+        return reservation.getId();
+    }
+
+    private ReservationDTO createDTOFromReservation(BoatReservation r) {
+        return new ReservationDTO(
+                r.getAppointments(),
+                r.getNumberOfClients(),
+                r.getAdditionalServices(),
+                r.getPrice(),
+                r.getClient(),
+                r.getResource().getTitle(),
+                r.isBusyPeriod(),
+                r.isQuickReservation()
+        );
+    }
+
+    private BoatReservation createBusyPeriodReservationFromDTO(NewBusyPeriodDTO dto) {
+
+        List<Appointment> appointments = new ArrayList<Appointment>();
+
+        LocalDateTime startTime = LocalDateTime.of(dto.getStartYear(), Month.of(dto.getStartMonth()), dto.getStartDay(), 0, 0);
+        LocalDateTime endTime = startTime.plusDays(1);
+
+        while (startTime.isBefore(LocalDateTime.of(dto.getEndYear(), Month.of(dto.getEndMonth()), dto.getEndDay(), 23, 59))) {
+            appointments.add(new Appointment(startTime, endTime));
+            startTime = endTime;
+            endTime = startTime.plusHours(1);
+        }
+        appointmentService.saveAll(appointments);
+
+        Long id = dto.getResourceId();
+        Boat boat = this.getBoat(id);
+
+        return new BoatReservation(
+                appointments,
+                0,
+                null,
+                0,
+                null,
+                boat,
+                true,
+                false
+
+        );
+    }
+
+    public List<ReservationDTO> getBusyPeriodForBoat(Long id) {
+        List<ReservationDTO> periods = new ArrayList<ReservationDTO>();
+
+        for (BoatReservation ar : boatReservationService.getBusyPeriodForBoat(id)) {
+            periods.add(createDTOFromReservation(ar));
+        }
+
+        return periods;
+    }
+
+    public boolean clientCanReview(Long resourceId, Long clientId) {
+
+        return hasReservations(resourceId, clientId) &&
+                !reviewService.clientHasReview(resourceId, clientId) &&
+                !reviewRequestService.hasReviewRequests(resourceId, clientId);
+
+    }
+
+    private boolean hasReservations(Long resourceId, Long clientId) {
+        return boatReservationService.hasReservations(resourceId, clientId);
     }
 }

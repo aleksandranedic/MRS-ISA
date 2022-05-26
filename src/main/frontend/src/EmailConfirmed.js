@@ -13,7 +13,7 @@ export default function EmailConfirmed(){
     const [pageData, setData] = useState([])
 
     useEffect(() => {
-        axios.get(backLink+"registration/confirm/" + token.token).then(res => {
+        axios.get(backLink+"/registration/confirm/" + token.token).then(res => {
             console.log(res.data)
             setData(res.data)
         })
