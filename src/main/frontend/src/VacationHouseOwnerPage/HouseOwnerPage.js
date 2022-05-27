@@ -14,7 +14,6 @@ import {Calendar} from "../Calendar/Calendar";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {Collapse} from "react-bootstrap";
 import {ReservationsTable} from "../Calendar/ReservationsTable";
-import { profilePicturePlaceholder, backLink } from '../Consts';
 
 
 const  UpdateOwner = ({show, setShow, owner}) => {

@@ -9,7 +9,6 @@ import OwnerBoats from './OwnerBoats';
 import AddBoat from './AddBoat';
 import { useParams } from "react-router-dom";
 import Navigation from "../Navigation/Navigation";
-import { profilePicturePlaceholder, backLink } from '../Consts';
 import {backLink, profilePicturePlaceholder} from '../Consts';
 import {Calendar} from "../Calendar/Calendar";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";

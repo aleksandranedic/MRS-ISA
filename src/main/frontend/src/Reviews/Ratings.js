@@ -7,16 +7,12 @@ function Ratings({reviews, type}) {
     return (
         <div className='mt-5' id="reviews">
             <ReviewScores/>
-            {   reviews.length > 1 ?
-        <div id="reviews">
-            <div className="d-flex">
-                <ReviewScores/>
-                <AddReview type={type}/>
-            </div>
+            <AddReview type={type}/>
             {reviews.length > 1 ?
-                <Reviews reviews={reviews}/>
+                <Reviews reviews={reviews}/>              
                 : <></>
             }
+            
         </div>
     );
 }
