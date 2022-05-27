@@ -109,11 +109,23 @@ public class VacationHouseService {
 
     private List<VacationHouseQuickReservationDTO> getQuickReservations(VacationHouse vh) {
         List<VacationHouseQuickReservationDTO> quickReservations = new ArrayList<VacationHouseQuickReservationDTO>();
-        for (VacationHouseReservation reservation : vh.getQuickReservations()) {
+        for (VacationHouseReservation reservation :  vh.getReservations()){
             if (reservation.getPrice() < vh.getPricelist().getPrice() && reservation.getClient() == null)
                 quickReservations.add(createVacationHouseQuickReservationDTO(vh.getPricelist().getPrice(), reservation));
         }
         return quickReservations;
+    }
+
+    public List<ReservationDTO> getReservations(Long id){
+        VacationHouse house = this.getVacationHouse(id);
+        List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
+
+        for (VacationHouseReservation houseReservation : house.getReservations()) {
+            if (!houseReservation.isQuickReservation() && !houseReservation.isBusyPeriod()) {
+                reservations.add(createDTOFromReservation(houseReservation));
+            }
+        }
+        return reservations;
     }
 
     private VacationHouseQuickReservationDTO createVacationHouseQuickReservationDTO(int vacationHousePrice, VacationHouseReservation reservation) {
@@ -146,17 +158,17 @@ public class VacationHouseService {
 
     public Boolean addQuickReservation(Long id, VacationHouseQuickReservationDTO quickReservationDTO) {
         VacationHouse house = this.getVacationHouse(id);
-        VacationHouseReservation reservation = getReservationFromDTO(quickReservationDTO);
+        VacationHouseReservation reservation = getReservationFromDTO(quickReservationDTO, true);
         reservation.setResource(house);
         vacationHouseReservationService.addReservation(reservation);
-        house.addQuickReservations(reservation);
+        house.addReservation(reservation);
         this.save(house);
         return true;
     }
 
     public Boolean updateQuickReservation(Long id, VacationHouseQuickReservationDTO quickReservationDTO) {
         VacationHouse house = this.getVacationHouse(id);
-        VacationHouseReservation newReservation = getReservationFromDTO(quickReservationDTO);
+        VacationHouseReservation newReservation = getReservationFromDTO(quickReservationDTO, true);
         VacationHouseReservation originalReservation = vacationHouseReservationService.getVacationHouseReservation(quickReservationDTO.getReservationID());
         updateQuickReservation(originalReservation, newReservation);
         vacationHouseReservationService.addReservation(originalReservation);
@@ -171,8 +183,7 @@ public class VacationHouseService {
         this.save(house);
         return true;
     }
-
-    private VacationHouseReservation getReservationFromDTO(VacationHouseQuickReservationDTO dto) {
+    private VacationHouseReservation getReservationFromDTO(VacationHouseQuickReservationDTO dto, Boolean isQuick){
         List<Appointment> appointments = new ArrayList<Appointment>();
         String[] splitDate = dto.getStartDate().split(" ");
         Appointment startDateAppointment = Appointment.getVacationHouseAppointment(Integer.parseInt(splitDate[2]), Integer.parseInt(splitDate[1]), Integer.parseInt(splitDate[0]));
@@ -196,6 +207,7 @@ public class VacationHouseService {
         reservation.setClient(null);
         reservation.setAdditionalServices(tags);
         reservation.setAppointments(appointments);
+        reservation.setQuickReservation(isQuick);
         return reservation;
     }
 

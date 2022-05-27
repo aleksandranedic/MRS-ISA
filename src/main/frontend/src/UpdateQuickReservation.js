@@ -17,10 +17,42 @@ function UpdateQuickReservation({state, setState, closeModal, showModal, entity,
 
     useEffect(() => {
         if (state.additionalServices.length === 0)
-            state.additionalServices = [{id:'', text:''}]
+            state.additionalServices = [{id:'', text:''}]          
         setOriginalState(state);
+        var dateInt = (getStartDateInt());
+        console.log(dateInt)
+        setStartDateInt(dateInt);
       }, []);
 
+    const getStartDateInt = () => {
+        var day =  state.startDate.split(" ")[0];
+        var monthStr = state.startDate.split(" ")[1];
+        var year =  state.startDate.split(" ")[2];
+        var time =  state.startDate.split(" ")[3];
+        if (monthStr === "Jan")
+            return day +  " 01 " + year  + " " + time.substring(0, time.length-1);
+        if (monthStr === "Feb")
+            return day +  " 02 " + year  + " " + time.substring(0, time.length-1);
+        if (monthStr === "Mar")
+            return day +  " 03 " + year  + " " + time.substring(0, time.length-1);
+        if (monthStr === "Apr")
+            return day +  " 04 " + year  + " " + time.substring(0, time.length-1);
+        if (monthStr === "May")
+            return day +  " 05 " + year  + " " + time.substring(0, time.length-1);
+        if (monthStr === "Jun")
+            return day +  " 06 " + year  + " " + time.substring(0, time.length-1);
+        if (monthStr === "Jul")
+            return day +  " 07 " + year  + " " + time.substring(0, time.length-1);
+        if (monthStr === "Avg")
+            return day +  " 08 " + year  + " " + time.substring(0, time.length-1);
+        if (monthStr === "Sep")
+            return day +  " 09 " + year  + " " + time.substring(0, time.length-1);
+        if (monthStr === "Oct")
+            return day +  " 10 " + year  + " " + time.substring(0, time.length-1);
+        if (monthStr === "Nov")
+            return day +  " 11 " + year  + " " + time.substring(0, time.length-1);
+        return day +  " 12 " + year  + " " + time.substring(0, time.length-1);
+    }
     const submit = e => {
         e.preventDefault()
     
@@ -39,7 +71,7 @@ function UpdateQuickReservation({state, setState, closeModal, showModal, entity,
             data.append("tagsText", state.tagsText);
             data.append("reservationID", state.reservationID);
             data.append("startDate", startDateInt);
-   
+            console.log(startDateInt)
             axios
             .post("http://localhost:4444/" + entity + "/updateQuickReservation/" + id, data)
             .then(res => {
@@ -73,6 +105,7 @@ function UpdateQuickReservation({state, setState, closeModal, showModal, entity,
         var month = val.getMonth() + 1;
         var monthInt = (month<10?'0':'') + month;
         var newStartDateInt =  days + " " + monthInt + " " + val.getFullYear() + " " + hours + ":" + minutes
+        console.log(newStartDateInt)
         setStartDateInt(newStartDateInt);
         setState( prevState => {
             return {...prevState, startDate:newStartDate}

@@ -15,9 +15,16 @@ import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {Collapse} from "react-bootstrap";
 import {ReservationsTable} from "../Calendar/ReservationsTable";
 
+
 const  UpdateOwner = ({show, setShow, owner}) => {
     if (typeof owner.firstName !== "undefined"){
-        return <HouseOwnerForm show={show} setShow={setShow} owner={owner} />
+        if (owner.profileImg !== null) {
+            var profileImg = backLink + owner.profileImg.path;
+        }
+        else {
+            var profileImg = profilePicturePlaceholder;
+        }
+        return <HouseOwnerForm show={show} setShow={setShow} owner={owner} profileImg={profileImg} />
     }
     else {
         return <></>
@@ -69,7 +76,6 @@ function HouseOwnerPage() {
         fetchReservations();
 
     }, [ownerHouses]);
-    console.log(houseOwner)
     return (
         <>
             <Banner caption={houseOwner.firstName + " " + houseOwner.lastName}/>
@@ -106,6 +112,7 @@ function HouseOwnerPage() {
                 }
                 <hr/>
                 <OwnerHouses houses={ownerHouses}/>
+                <hr/>
 
             </div>
 

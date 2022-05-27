@@ -2,6 +2,11 @@ package com.project.team9.controller;
 
 import com.project.team9.dto.*;
 import com.project.team9.exceptions.ReservationNotAvailableException;
+import com.project.team9.dto.*;
+import com.project.team9.model.Address;
+import com.project.team9.model.Image;
+import com.project.team9.model.Tag;
+import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +77,12 @@ public class VacationHouseController {
     @GetMapping(value = "getRating/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public double getRating(@PathVariable String id) {
         return service.getRatingForHouse(Long.parseLong(id));
+    }
+
+
+    @GetMapping(value = "getReservations/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ReservationDTO> getReservations(@PathVariable String id) {
+        return service.getReservations(Long.parseLong(id));
     }
 
     @PostMapping(value = "createHouse")

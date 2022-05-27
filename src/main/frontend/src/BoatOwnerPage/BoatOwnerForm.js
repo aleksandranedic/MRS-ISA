@@ -4,7 +4,7 @@ import React, {useState, useRef} from "react";
 import { useParams } from "react-router-dom";
 
 
-export function BoatOwnerForm({show, setShow, owner}) {
+export function BoatOwnerForm({show, setShow, owner, profileImg}) {
     const {id} = useParams();
     const form = useRef();
     const [showPassword, setShowPassword] = useState(false);
@@ -56,6 +56,16 @@ export function BoatOwnerForm({show, setShow, owner}) {
             return {...prevState, address:newaddress}
         })
     }
+
+    const opetFileExplorer = () => {
+        document.getElementById("fileImage").click();
+    }
+
+    const setProfileImageView = () => {
+        var file = document.getElementById("fileImage").files[0]
+        document.getElementById("profPic").src = URL.createObjectURL(file);
+    }
+
     const handleSubmit = e => {
         e.preventDefault()
         if (form.current.checkValidity() === false) {
@@ -63,6 +73,22 @@ export function BoatOwnerForm({show, setShow, owner}) {
             setValidatedInfo(true);
         }
         else {
+            var file = document.getElementById("fileImage").files[0];
+            if (typeof file !== "undefined"){
+                var files = document.getElementById("fileImage").files;
+                var data = new FormData();
+                var images = []
+                for (let i=0; i < files.length; i++){
+                    images.push(files[i])
+                }
+                data.append("fileImage",file);
+                axios
+                .post("http://localhost:4444/boatowner/changeProfilePicture/" + id, data)
+                .then(res => {
+                       console.log(res.data)
+                });
+            }
+
             var data = new FormData(form.current);
             data.append("street", boatOwner.address.street)
             data.append("number", boatOwner.address.number)
@@ -83,17 +109,26 @@ export function BoatOwnerForm({show, setShow, owner}) {
 
             <Modal.Body>
 
-                <Form.Group className="mb-3 m-2" controlId="firstName">
-                    <Form.Label>Ime</Form.Label>
-                    <Form.Control required type="text" name="firstName" defaultValue={boatOwner.firstName} onChange={e => setFirstName(e.target.value)}/>
-                    <Form.Control.Feedback type="invalid">Molimo Vas unesite ime.</Form.Control.Feedback>               
-                </Form.Group>
+                <div className="d-flex mb-3">
+                    <div className="d-flex justify-content-center" style={{width:"28%"}}>
+                        <img id="profPic" className="rounded-circle" style={{objectFit: "cover", maxWidth: "25vh", minWidth: "25vh", maxHeight: "25vh", minHeight: "25vh"}} src={profileImg}/>
+                        <Form.Control id="fileImage" onChange={e => setProfileImageView()} className="d-none" type="file" name="fileImage" style={{position:"absolute", width:"25vh", top:"12vh"}}/>  {/*ref={imagesRef} */}
+                        <p id="setNewProfileImage" className="d-flex justify-content-center align-items-center" onClick={e => opetFileExplorer()}><u>Postavite profilnu</u></p>
+                    </div>
+                    <div style={{width:"72%"}}>
+                        <Form.Group className="mb-3 m-2" controlId="firstName">
+                            <Form.Label>Ime</Form.Label>
+                            <Form.Control required type="text" name="firstName" defaultValue={boatOwner.firstName} onChange={e => setFirstName(e.target.value)}/>
+                            <Form.Control.Feedback type="invalid">Molimo Vas unesite ime.</Form.Control.Feedback>               
+                        </Form.Group>
 
-                <Form.Group className="mb-3 m-2" controlId="lastName">
-                    <Form.Label>Prezime</Form.Label>
-                    <Form.Control required type="text" name="lastName" defaultValue={boatOwner.lastName} onChange={e => setLastName(e.target.value)}/>
-                    <Form.Control.Feedback type="invalid">Molimo Vas unesite prezime.</Form.Control.Feedback>               
-                </Form.Group>
+                        <Form.Group className="mb-3 m-2" controlId="lastName">
+                            <Form.Label>Prezime</Form.Label>
+                            <Form.Control required type="text" name="lastName" defaultValue={boatOwner.lastName} onChange={e => setLastName(e.target.value)}/>
+                            <Form.Control.Feedback type="invalid">Molimo Vas unesite prezime.</Form.Control.Feedback>               
+                        </Form.Group>
+                    </div>
+                </div>
 
                 <Form.Group className="mb-3 m-2" controlId="phoneNumber">
                     <Form.Label>Broj telefona</Form.Label>

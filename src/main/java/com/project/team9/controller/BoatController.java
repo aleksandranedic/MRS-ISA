@@ -66,6 +66,11 @@ public class BoatController {
         return service.getBoatDTO(boatId);
     }
 
+    @GetMapping(value = "getReservations/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ReservationDTO> getReservations(@PathVariable String id) {
+        return service.getReservations(Long.parseLong(id));
+    }
+
     @GetMapping(value = "getownerboats/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<BoatCardDTO> getOwnerHouses(@PathVariable String id) {
         Long owner_id = Long.parseLong(id);
