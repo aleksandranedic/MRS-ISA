@@ -1,3 +1,5 @@
+import {toast} from "react-toastify";
+
 export const missingDataErrors = {
     firstName: "Morate uneti ime.",
     lastName: "Morate uneti prezime.",
@@ -42,6 +44,39 @@ export const responsive = {
         items: 1
     }
 };
+export const notifySuccess = (message) => {
+    toast.success(message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+    });
+}
+export const notifyError = (message) => {
+    toast.error(message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+    });
+}
+export const loadingToast = () => {
+    let id=toast.loading("Podaci se obrađuju...");
+    return id;
+}
+export const updateForFetchedDataSuccess = (message, id) => {
+    toast.update(id, {render: message, type: "success", isLoading: false, autoClose: 5000});
+}
+
+export const updateForFetchedDataError = (message, id) => {
+    toast.update(id, {render: message, type: "error", isLoading: false, autoClose: 5000});
+}
 
 export function isLoggedIn() {
     return localStorage.getItem('token') !== null && localStorage.getItem('token') !== "";

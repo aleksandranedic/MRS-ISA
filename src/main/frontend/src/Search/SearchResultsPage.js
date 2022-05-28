@@ -1,259 +1,92 @@
 import React, {useEffect, useState} from "react";
 import Banner from "../Banner";
 import Navigation from "../Navigation/Navigation";
-import {SearchResultCard} from "./SearchResultCard";
 import axios from "axios";
-import {useLocation, useParams} from "react-router-dom";
-import {backLink, frontLink} from "../Consts";
-import VacationHouseOwnerCard from "../VacationHouseOwnerPage/VacationHouseOwnerCard";
+import {useParams} from "react-router-dom";
+import {backLink} from "../Consts";
+import SearchResultsResources from "./SearchResultsItems";
 
 
-const Adventures = ({term}) => {
+export function SearchResultsPage() {
+
+    const [boats, setBoats] = useState([]);
+    const fetchBoats = () => {
+        axios.get(backLink + "/boat",).then(res => {
+            // let boats = []
+            //
+            // for (let i = 0; i < res.data.length; i++) {
+            //     let a = res.data[i];
+            //     if (a.title.includes(term)) {
+            //         boats.push(a);
+            //     }
+            // }
+            // setBoats(boats)
+            setBoats(res.data)
+
+        });
+    };
+    const [vacationHouses, setVacationHouses] = useState([]);
+    const fetchVacationHouses = () => {
+        axios.get(backLink + "/house",).then(res => {
+            // let houses = []
+            // for (let i = 0; i < res.data.length; i++) {
+            //     let a = res.data[i];
+            //     if (a.title.includes(term)) {
+            //         houses.push(a);
+            //     }
+            // }
+            setVacationHouses(res.data);
+        });
+    }
     const [adventures, setAdventures] = useState([]);
-
     const fetchAdventures = () => {
         axios.get(backLink + "/adventure",).then(res => {
 
 
-            let adventures = []
+            // let adventures = []
+            //
+            // for (let i = 0; i < res.data.length; i++) {
+            //     let a = res.data[i];
+            //     if (a.title.includes(term)) {
+            //         adventures.push(a);
+            //     }
+            // }
 
-            for (let i = 0; i < res.data.length; i++) {
-                let a = res.data[i];
-                if (a.title.includes(term)) {
-                    adventures.push(a);
-                }
-            }
-
-            setAdventures(adventures);
+            // setAdventures(adventures);
+            setAdventures(res.data);
         });
     };
 
-    useEffect(() => {
-        fetchAdventures();
-    }, []);
-
-    let html;
-    if (adventures.length !== 0) {
-
-        html = (adventures.map((adventure) => {
-                return <SearchResultCard key={adventure.id} title={adventure.title} description={adventure.description}
-                                         link={frontLink + "adventure/" + adventure.id}/>
-            }
-        ))
-    }
-    return html;
-}
-
-const FishingInstructors = ({term}) => {
-    const [fishingInstructors, setFishingInstructors] = useState([]);
-
-    const fetchFishingInstructors = () => {
-        axios.get(backLink + "/fishinginstructor").then(res => {
-
-            let instructors = []
-
-            for (let i = 0; i < res.data.length; i++) {
-                let a = res.data[i];
-                if (a.firstName.includes(term)) {
-                    instructors.push(a);
-                }
-
-            }
-
-            setFishingInstructors(instructors);
-        });
-    };
 
     useEffect(() => {
-        fetchFishingInstructors();
+        fetchVacationHouses()
+        fetchBoats()
+        fetchAdventures()
     }, []);
-
-    let html;
-    if (fishingInstructors.length !== 0) {
-
-        html = (fishingInstructors.map((fishingInstructor) => {
-                return <SearchResultCard key={fishingInstructor.id} title={fishingInstructor.firstName + " " + fishingInstructor.lastName}
-                                         description={fishingInstructor.biography}
-                                         link={frontLink + "fishingInstructor/" + fishingInstructor.id}/>
-            }
-        ))
-    }
-    return html;
-}
-
-const VacationHouses = ({term}) => {
-    const [vacationHouses, setVacationHouses] = useState([]);
-
-    const fetchVacationHouses = () => {
-        axios.get(backLink + "/house",).then(res => {
-
-            let houses = []
-
-            for (let i = 0; i < res.data.length; i++) {
-                let a = res.data[i];
-                if (a.title.includes(term)) {
-                    houses.push(a);
-                }
-            }
-
-            setVacationHouses(houses);
-        });
-    };
-
-    useEffect(() => {
-        fetchVacationHouses();
-    }, []);
-
-    let html;
-    if (vacationHouses.length !== 0) {
-
-        html = (vacationHouses.map((vacationHouse) => {
-                return <SearchResultCard key={vacationHouse.id} title={vacationHouse.title} description={vacationHouse.description}
-                                                link={frontLink + "house/" + vacationHouse.id}/>
-            }
-        ))
-    }
-    return html;
-}
-
-const VacationHouseOwners = ({term}) => {
-    const [vacationHouseOwners, setVacationHouseOwners] = useState([]);
-
-    const fetchVacationHouseOwners = () => {
-        axios.get(backLink + "/houseowner",).then(res => {
-            let vacationHouseOwners = []
-
-            for (let i = 0; i < res.data.length; i++) {
-                let a = res.data[i];
-                if (a.firstName.includes(term)) {
-                    vacationHouseOwners.push(a);
-                }
-            }
-
-            setVacationHouseOwners(vacationHouseOwners);
-        });
-    };
-
-    useEffect(() => {
-        fetchVacationHouseOwners();
-    }, []);
-
-    let html;
-    if (vacationHouseOwners.length !== 0) {
-
-        html = (vacationHouseOwners.map((vacationHouseOwner) => {
-                return <SearchResultCard key={vacationHouseOwner.id}
-                                         title={vacationHouseOwner.firstName + " " + vacationHouseOwner.lastName}
-                                         description={vacationHouseOwner.biography}
-                                         link={frontLink + "houseOwner/" + vacationHouseOwner.id}/>
-            }
-        ))
-    }
-    return html;
-}
-
-const Boats = ({term}) => {
-    const [boats, setBoats] = useState([]);
-
-    const fetchBoats = () => {
-        axios.get(backLink + "/boat",).then(res => {
-            let boats = []
-
-            for (let i = 0; i < res.data.length; i++) {
-                let a = res.data[i];
-                if (a.title.includes(term)) {
-                    boats.push(a);
-                }
-            }
-            setBoats(boats)
-
-        });
-    };
-
-    useEffect(() => {
-        fetchBoats();
-    }, []);
-
-    let html;
-    if (boats.length !== 0) {
-
-        html = (boats.map((boat) => {
-                return <SearchResultCard key={boat.id} title={boat.title} description={boat.description}
-                                         link={frontLink + "boat/" + boat.id}/>
-            }
-        ))
-    }
-    return html;
-}
-
-const BoatOwners = ({term}) => {
-    const [boatOwners, setBoatOwners] = useState([]);
-
-    const fetchBoatOwners = () => {
-        axios.get(backLink + "/boatowner",).then(res => {
-            let boatOwners = []
-
-            for (let i = 0; i < res.data.length; i++) {
-                let a = res.data[i];
-                if (a.firstName.includes(term)) {
-                    boatOwners.push(a);
-                }
-            }
-
-            setBoatOwners(boatOwners);
-        });
-    };
-
-    useEffect(() => {
-        fetchBoatOwners();
-    }, []);
-
-    let html;
-    if (boatOwners.length !== 0) {
-
-        html = (boatOwners.map((boatOwner) => {
-                return <SearchResultCard key={boatOwner.id}
-                                         title={boatOwner.firstName + " " + boatOwner.lastName}
-                                         link={frontLink + "boatOwner/" + boatOwner.id}/>
-            }
-        ))
-    }
-    return html;
-}
-
-export function SearchResultsPage() {
 
     const {searchTerm} = useParams();
+
+    const updateResults = (formValues) => {
+        //TODO kako ovo uz paginaciju
+
+        //SOLUTION mozda da napravis poseban za svaku sekciju i svima stavis index koliko moze da stane i tako pozivas
+    }
 
     return (
         <>
             <Banner caption={"Rezultati pretrage"}/>
-            <Navigation buttons={[]} editable={false} searchable={true}/>
+            <Navigation updateResults={updateResults} buttons={[]} editable={false} searchable={true}/>
             <div style={{marginLeft: "5%", marginRight: "10%"}}>
                 <h4 className="fw-light m-3">Vikendice</h4>
                 <hr/>
-                <VacationHouses term={searchTerm}/>
-                <h4 className="fw-light m-3">Vlasnici vikendica</h4>
-                <hr/>
-                <VacationHouseOwners term={searchTerm}/>
+                <SearchResultsResources list={vacationHouses} name={"house"}/>
                 <h4 className="fw-light m-3">Brodovi</h4>
                 <hr/>
-                <Boats term={searchTerm}/>
-                <h4 className="fw-light m-3">Vlasnici brodova</h4>
-                <hr/>
-                <BoatOwners term={searchTerm}/>
+                <SearchResultsResources list={boats} name={"boat"}/>
                 <h4 className="fw-light m-3">Avanture</h4>
                 <hr/>
-                <Adventures
-                    term={searchTerm}
-                />
-                <h4 className="fw-light m-3">Instruktori pecanja</h4>
-                <hr/>
-                <FishingInstructors
-                    term={searchTerm}
-                />
+                <SearchResultsResources list={adventures} name={"adventure"}/>
             </div>
-
         </>
 
 

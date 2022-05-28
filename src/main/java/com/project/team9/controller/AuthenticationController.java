@@ -53,8 +53,7 @@ public class AuthenticationController {
 //        User user=clientRepository.findByEmail(loginDTO.getUsername());
         // Ukoliko kredencijali nisu ispravni, logovanje nece biti uspesno, desice se
         // AuthenticationException
-
-        System.out.println(loginDTO.getUsername() + " -- " + loginDTO.getPassword());
+        try{
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDTO.getUsername(), loginDTO.getPassword()));
 
@@ -71,10 +70,12 @@ public class AuthenticationController {
             return ResponseEntity.ok("Korisnik je obrisan");
         }
         String jwt = tokenUtils.generateToken(user.getUsername());
-//        int expiresIn = tokenUtils.getExpiredIn();
 
         // Vrati token kao odgovor na uspesnu autentifikaciju
-        return ResponseEntity.ok(jwt);
+        return ResponseEntity.ok(jwt);}
+        catch (Exception e){
+            return ResponseEntity.badRequest().body("Uneli ste porgrešne podatke");
+        }
     }
 
     @PostMapping("/changePassword")
@@ -116,5 +117,6 @@ public class AuthenticationController {
 
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
+
 
 }

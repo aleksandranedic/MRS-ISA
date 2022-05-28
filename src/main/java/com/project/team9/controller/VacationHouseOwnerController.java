@@ -42,6 +42,9 @@ public class VacationHouseOwnerController {
         return service.getOwner(ownerId);
     }
 
+    @GetMapping("names")
+    public ResponseEntity<List<String>> getVHONames(){return ResponseEntity.ok(service.getVHONames());}
+
     @PostMapping(value = "changeProfilePicture/{id}")
     public Boolean changeProfilePicture(@PathVariable String id, @RequestParam("fileImage") MultipartFile multipartFile) throws IOException {
         return service.changeProfilePicture(Long.parseLong(id), multipartFile);

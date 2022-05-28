@@ -8,17 +8,24 @@ import Button from "react-bootstrap/Button";
 import {backLink, frontLink} from "./Consts";
 
 
-export default function EmailConfirmed(){
+export default function EmailConfirmed() {
     const token = useParams()
-    const [pageData, setData] = useState([])
+    const [pageData, setData] = useState({
+        confirmed: true,
+        messageTitle: "Vaša verifikacija je uspešna",
+        message: "Vaš nalog je verifikovan. Možete se ulogavati na naš sajt"
+    })
 
-    useEffect(() => {
-        axios.get(backLink+"/registration/confirm/" + token.token).then(res => {
+    const getData = () => {
+        axios.get(backLink + "/registration/confirm/" + token.token).then(res => {
             console.log(res.data)
-            setData(res.data)
+            if (!res.data.message.startsWith("Vaš"))
+                setData(res.data)
         })
+    }
+    useEffect(() => {
+        getData()
     }, [])
-
     return (
         <div className="m-0 p-0 min-vw-90 min-vh-100"
              style={{backgroundImage: `url(${background})`, backgroundSize: "cover",}}
@@ -28,7 +35,7 @@ export default function EmailConfirmed(){
                     className="d-flex flex-column align-items-center border border-white  mt-lg-5 p-3 gap-2 rounded border-3">
                     {pageData.confirmed ? <BsFillCheckCircleFill size="5rem" color="green"/> :
                         <IoCloseCircleSharp size="5rem" color="red"/>
-                        }
+                    }
                     <h1 className="text-center text-white">{pageData.messageTitle}</h1>
                     <label className="text-center text-white">{pageData.message}</label>
                     <div className="d-flex flex-row gap-3">
