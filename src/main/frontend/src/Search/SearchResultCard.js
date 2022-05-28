@@ -4,7 +4,7 @@ import fishing3 from "../images/fishing3.jpg"
 
 export function SearchResultCard({title, description, link, image}) {
     return (<Card className="m-3" style={{width: '100%', height: '10%'}}>
-        <div className="d-flex">
+        <div className="d-flex" >
             <Card.Img src={fishing3} style={{width: '20%', objectFit: 'cover'}}/>
             <Card.Body className="d-flex align-items-end">
                 <div style={{width: '90%', height: '100%'}}>

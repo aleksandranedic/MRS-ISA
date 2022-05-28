@@ -152,4 +152,16 @@ public class BoatOwnerService {
         }
         return filtered;
     }
+
+    public List<String> getBONames() {
+        List<String> names=new ArrayList<>();
+        String fullName="";
+        for (BoatOwner boatOwner :
+                repository.findAll()) {
+            fullName=boatOwner.getFirstName()+" "+boatOwner.getLastName();
+            if(!names.contains(fullName))
+                names.add(fullName);
+        }
+        return names;
+    }
 }

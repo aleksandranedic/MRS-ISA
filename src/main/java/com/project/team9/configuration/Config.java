@@ -337,7 +337,17 @@ public class Config {
         addressRepository.save(boatOwnerAddress);
         Image boatProfileImg = new Image("/images/boatOwners/4/boatOwner.jpg");
         imageRepository.save(boatProfileImg);
-        BoatOwner boatOwner = new BoatOwner(null, "1", "Lena", "Leric", "lericlena@gmail.com", "0651525", boatOwnerAddress, false, "registrationRationale", new ArrayList<>(), roleBoatOwner);
+        BoatOwner boatOwner = new BoatOwner(
+                null,
+                "$2a$10$btgxT6xNRyIqn8wf3Lo48OWmcwegTOlzKk9UL38nq/SUXA/v0WTL6", //1
+                "Lena",
+                "Leric",
+                "lericlena@gmail.com",
+                "0651525",
+                boatOwnerAddress,
+                false,
+                "registrationRationale",
+                new ArrayList<>(), roleBoatOwner);
         boatOwnerRepository.save(boatOwner);
         return boatOwner;
     }
@@ -368,13 +378,13 @@ public class Config {
         return vacationHouse;
     }
 
-        private VacationHouseReservation getVacationHouseQuickReservation (VacationHouse vacationHouse){
-            List<Appointment> appointments = new ArrayList<Appointment>();
-            appointments.add(Appointment.getVacationHouseAppointment(2022, 4, 9));
-            appointments.add(Appointment.getVacationHouseAppointment(2022, 4, 10));
-            appointments.add(Appointment.getVacationHouseAppointment(2022, 4, 11));
-            appointments.add(Appointment.getVacationHouseAppointment(2022, 4, 12));
-            appointmentRepository.saveAll(appointments);
+    private VacationHouseReservation getVacationHouseQuickReservation(VacationHouse vacationHouse) {
+        List<Appointment> appointments = new ArrayList<Appointment>();
+        appointments.add(Appointment.getVacationHouseAppointment(2022, 4, 9));
+        appointments.add(Appointment.getVacationHouseAppointment(2022, 4, 10));
+        appointments.add(Appointment.getVacationHouseAppointment(2022, 4, 11));
+        appointments.add(Appointment.getVacationHouseAppointment(2022, 4, 12));
+        appointmentRepository.saveAll(appointments);
 
         ArrayList<Tag> additionalServices = new ArrayList<Tag>();
         additionalServices.add(new Tag("Bazen"));
@@ -391,7 +401,7 @@ public class Config {
         return vr;
     }
 
-    private VacationHouseReservation getVacationHouseReservation (VacationHouse vacationHouse, Client client){
+    private VacationHouseReservation getVacationHouseReservation(VacationHouse vacationHouse, Client client) {
         List<Appointment> appointments = new ArrayList<Appointment>();
         appointments.add(Appointment.getVacationHouseAppointment(2022, 5, 19));
         appointments.add(Appointment.getVacationHouseAppointment(2022, 5, 20));
@@ -416,11 +426,11 @@ public class Config {
         return vr;
     }
 
-        private AdventureReservation getAdventureQuickReservation(Adventure adventure){
-            List<Appointment> appointments = new ArrayList<Appointment>();
-            appointments.add(Appointment.getAdventureAppointment(2022,6,6,15,15));
-            appointments.add(Appointment.getAdventureAppointment(2022,6,6,16,15));
-            appointmentRepository.saveAll(appointments);
+    private AdventureReservation getAdventureQuickReservation(Adventure adventure) {
+        List<Appointment> appointments = new ArrayList<Appointment>();
+        appointments.add(Appointment.getAdventureAppointment(2022, 6, 6, 15, 15));
+        appointments.add(Appointment.getAdventureAppointment(2022, 6, 6, 16, 15));
+        appointmentRepository.saveAll(appointments);
 
         ArrayList<Tag> additionalServices = new ArrayList<Tag>();
         additionalServices.add(new Tag("Minibar"));
@@ -436,12 +446,12 @@ public class Config {
         return adv;
     }
 
-        private BoatReservation getBoatQuickReservation (Boat boat){
-            List<Appointment> appointments = new ArrayList<Appointment>();
-            appointments.add(Appointment.getBoatAppointment(2022, 9, 9, 15, 15));
-            appointments.add(Appointment.getBoatAppointment(2022, 9, 9, 15, 45));
-            appointments.add(Appointment.getBoatAppointment(2022, 9, 9, 16, 15));
-            appointmentRepository.saveAll(appointments);
+    private BoatReservation getBoatQuickReservation(Boat boat) {
+        List<Appointment> appointments = new ArrayList<Appointment>();
+        appointments.add(Appointment.getBoatAppointment(2022, 9, 9, 15, 15));
+        appointments.add(Appointment.getBoatAppointment(2022, 9, 9, 15, 45));
+        appointments.add(Appointment.getBoatAppointment(2022, 9, 9, 16, 15));
+        appointmentRepository.saveAll(appointments);
 
         ArrayList<Tag> additionalServices = new ArrayList<Tag>();
         additionalServices.add(new Tag("Minibar"));
@@ -450,14 +460,14 @@ public class Config {
         BoatReservation br = new BoatReservation(3, 60);
         br.setQuickReservation(true);
 
-            br.setAdditionalServices(additionalServices);
-            br.setAppointments(appointments);
-            br.setResource(boat);
-            br.setClient(null);
-            return br;
-        }
+        br.setAdditionalServices(additionalServices);
+        br.setAppointments(appointments);
+        br.setResource(boat);
+        br.setClient(null);
+        return br;
+    }
 
-    private BoatReservation getBoatReservation (Boat boat, Client client){
+    private BoatReservation getBoatReservation(Boat boat, Client client) {
         List<Appointment> appointments = new ArrayList<Appointment>();
         appointments.add(Appointment.getBoatAppointment(2022, 10, 22, 8, 15));
         appointments.add(Appointment.getBoatAppointment(2022, 10, 9, 9, 45));
@@ -489,7 +499,7 @@ public class Config {
         imageRepository.save(houseProfileImg);
         return new VacationHouseOwner(
                 houseProfileImg,
-                "11",
+                "$2a$10$41FbB.1FsCwJZ5O8ex.hiODT6SQNVORd4usEqMGZ2mNYxjFP/HErG",//11
                 "Pera",
                 "Peric",
                 "pericpera@gmail.com",
@@ -510,7 +520,7 @@ public class Config {
         imageRepository.save(instructorProfileImg);
         FishingInstructor fishingInstructor = new FishingInstructor(
                 instructorProfileImg,
-                "peraribar",
+                "$2a$10$GApodrEZn/6BZEgOMsKV8uiCWsoGgFbERoLs1w.VsPFij9YZsQJKa",//""peraribar",
                 "Petar",
                 "Jovanovic",
                 "petar.jovanovic@email.com",
