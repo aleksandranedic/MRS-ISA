@@ -80,6 +80,7 @@ public class AuthenticationController {
 
     @PostMapping("/changePassword")
     public ResponseEntity<String> changePassword(@RequestBody PasswordsDTO passwordsDTO) {
+        try{
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof AnonymousAuthenticationToken)
             return new ResponseEntity<>("Neuspešno. Ne postoji ulogovani korisnik",HttpStatus.NOT_FOUND);
@@ -103,19 +104,27 @@ public class AuthenticationController {
         }
         String jwt = tokenUtils.generateToken(user.getUsername());
         return new ResponseEntity<>(jwt, HttpStatus.OK);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body("Korisnik nije pronadjen");
+        }
+
     }
 
     @GetMapping("/getLoggedUser")
     public ResponseEntity<User> getLoggedInUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication instanceof AnonymousAuthenticationToken)
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication instanceof AnonymousAuthenticationToken)
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-        User user = (User) authentication.getPrincipal();
-        if (user == null)
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            User user = (User) authentication.getPrincipal();
+            if (user == null)
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-        return new ResponseEntity<>(user, HttpStatus.OK);
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        }catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
     }
 
 
