@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AdventureService {
@@ -60,16 +61,16 @@ public class AdventureService {
         return getQuickReservations(adv);
     }
 
-    private List<AdventureQuickReservationDTO> getQuickReservations(Adventure adv){
+    private List<AdventureQuickReservationDTO> getQuickReservations(Adventure adv) {
         List<AdventureQuickReservationDTO> quickReservations = new ArrayList<AdventureQuickReservationDTO>();
-        for (AdventureReservation reservation :  adv.getQuickReservations()){
+        for (AdventureReservation reservation : adv.getQuickReservations()) {
             if (reservation.isQuickReservation())
                 quickReservations.add(createAdventureReservationDTO(adv.getPricelist().getPrice(), reservation));
         }
         return quickReservations;
     }
 
-    public Boolean addQuickReservation(String id, AdventureQuickReservationDTO quickReservationDTO){
+    public Boolean addQuickReservation(String id, AdventureQuickReservationDTO quickReservationDTO) {
         Adventure adventure = this.getById(id);
         AdventureReservation reservation = getReservationFromDTO(quickReservationDTO);
         reservation.setResource(adventure);
@@ -79,7 +80,7 @@ public class AdventureService {
         return true;
     }
 
-    private AdventureReservation getReservationFromDTO(AdventureQuickReservationDTO dto){
+    private AdventureReservation getReservationFromDTO(AdventureQuickReservationDTO dto) {
         List<Appointment> appointments = new ArrayList<Appointment>();
         String[] splitDate = dto.getStartDate().split(" ");
         String[] splitTime = splitDate[3].split(":");
@@ -87,7 +88,7 @@ public class AdventureService {
         appointments.add(startDateAppointment);
         appointmentService.save(startDateAppointment);
         Appointment currApp = startDateAppointment;
-        for (int i=0; i < dto.getDuration() - 1; i++){
+        for (int i = 0; i < dto.getDuration() - 1; i++) {
             LocalDateTime startDate = currApp.getEndTime();
             LocalDateTime endDate = startDate.plusDays(1);
             currApp = new Appointment(startDate, endDate);
@@ -95,7 +96,7 @@ public class AdventureService {
             appointments.add(currApp);
         }
         List<Tag> tags = new ArrayList<Tag>();
-        for (String tagText : dto.getTagsText()){
+        for (String tagText : dto.getTagsText()) {
             Tag tag = new Tag(tagText);
             tagService.addTag(tag);
             tags.add(tag);
@@ -108,7 +109,7 @@ public class AdventureService {
         return reservation;
     }
 
-    public Boolean updateQuickReservation(String id, AdventureQuickReservationDTO quickReservationDTO){
+    public Boolean updateQuickReservation(String id, AdventureQuickReservationDTO quickReservationDTO) {
         Adventure adventure = this.getById(id);
         AdventureReservation newReservation = getReservationFromDTO(quickReservationDTO);
         AdventureReservation originalReservation = adventureReservationService.getById(quickReservationDTO.getReservationID());
@@ -117,14 +118,15 @@ public class AdventureService {
         this.addAdventure(adventure);
         return true;
     }
-    private void updateQuickReservation(AdventureReservation originalReservation, AdventureReservation newReservation){
+
+    private void updateQuickReservation(AdventureReservation originalReservation, AdventureReservation newReservation) {
         originalReservation.setAppointments(newReservation.getAppointments());
         originalReservation.setAdditionalServices(newReservation.getAdditionalServices());
         originalReservation.setNumberOfClients(newReservation.getNumberOfClients());
         originalReservation.setPrice(newReservation.getPrice());
     }
 
-    private AdventureQuickReservationDTO createAdventureReservationDTO(int boatPrice, AdventureReservation reservation){
+    private AdventureQuickReservationDTO createAdventureReservationDTO(int boatPrice, AdventureReservation reservation) {
         Appointment firstAppointment = getFirstAppointment(reservation.getAppointments());
         LocalDateTime startDate = firstAppointment.getStartTime();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm'h'");
@@ -133,10 +135,11 @@ public class AdventureService {
         List<Tag> additionalServices = reservation.getAdditionalServices();
         int duration = reservation.getAppointments().size();
         int price = reservation.getPrice();
-        int discount = 100 - ( 100 * price / boatPrice);
+        int discount = 100 - (100 * price / boatPrice);
         return new AdventureQuickReservationDTO(reservation.getId(), strDate, numberOfPeople, additionalServices, duration, price, discount);
     }
-    private Appointment getFirstAppointment(List<Appointment> appointments){
+
+    private Appointment getFirstAppointment(List<Appointment> appointments) {
         List<Appointment> sortedAppointments = getSortedAppointments(appointments);
         return sortedAppointments.get(0);
     }
@@ -150,8 +153,6 @@ public class AdventureService {
         });
         return appointments;
     }
-
-
 
 
     public List<Adventure> getAdventures() {
@@ -189,7 +190,7 @@ public class AdventureService {
         return oldAdventure;
     }
 
-    public List<Adventure> findAdventuresWithOwner(String ownerId){
+    public List<Adventure> findAdventuresWithOwner(String ownerId) {
         return repository.findAdventuresWithOwner(Long.parseLong(ownerId));
     }
 
@@ -205,7 +206,7 @@ public class AdventureService {
         Pricelist pricelist = new Pricelist(dto.getPrice(), new Date());
         pricelistService.addPriceList(pricelist);
 
-        Address address = new Address(dto.getPlace(), dto.getNumber(),dto.getStreet() , dto.getCountry());
+        Address address = new Address(dto.getPlace(), dto.getNumber(), dto.getStreet(), dto.getCountry());
         addressService.addAddress(address);
 
         FishingInstructor owner = fishingInstructorService.getById(dto.getOwnerId().toString());
@@ -221,13 +222,13 @@ public class AdventureService {
                 dto.getNumberOfClients()
         );
 
-        for (String text: dto.getAdditionalServicesText()) {
+        for (String text : dto.getAdditionalServicesText()) {
             Tag tag = new Tag(text);
             tagService.addTag(tag);
             adventure.addAdditionalService(tag);
         }
 
-        for (String text: dto.getFishingEquipmentText()) {
+        for (String text : dto.getFishingEquipmentText()) {
             Tag tag = new Tag(text);
             tagService.addTag(tag);
             adventure.addFishingEquipment(tag);
@@ -241,7 +242,7 @@ public class AdventureService {
 
     private List<Image> getExistingImages(AdventureDTO dto) {
         List<Image> images = new ArrayList<Image>();
-        if (dto.getImagePaths() != null){
+        if (dto.getImagePaths() != null) {
             for (String path : dto.getImagePaths()) {
                 Optional<Image> optImage = imageService.getImageByPath(path);
                 optImage.ifPresent(images::add);
@@ -278,9 +279,10 @@ public class AdventureService {
         return reservations;
     }
 
-    private ReservationDTO createDTOFromReservation(AdventureReservation reservation){
+    private ReservationDTO createDTOFromReservation(AdventureReservation reservation) {
         return new ReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation());
     }
+
     public List<ReservationDTO> getReservationsForFishingInstructor(Long id) {
         List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
 
@@ -312,9 +314,9 @@ public class AdventureService {
         AdventureReservation reservation = createFromDTO(dto);
 
         List<AdventureReservation> reservations = adventureReservationService.getPossibleCollisionReservations(reservation.getResource().getId(), reservation.getResource().getOwner().getId());
-        for (AdventureReservation r: reservations) {
-            for (Appointment a: r.getAppointments()) {
-                for (Appointment newAppointment: reservation.getAppointments()) {
+        for (AdventureReservation r : reservations) {
+            for (Appointment a : r.getAppointments()) {
+                for (Appointment newAppointment : reservation.getAppointments()) {
                     reservationService.checkAppointmentCollision(a, newAppointment);
                 }
             }
@@ -345,7 +347,7 @@ public class AdventureService {
         int price = adventure.getPricelist().getPrice() * appointments.size();
 
         List<Tag> tags = new ArrayList<Tag>();
-        for (String text: dto.getAdditionalServicesStrings()) {
+        for (String text : dto.getAdditionalServicesStrings()) {
             Tag tag = new Tag(text);
             tags.add(tag);
         }
@@ -367,7 +369,7 @@ public class AdventureService {
 
         Adventure adventure = getById(id.toString());
 
-        for (AdventureReservation ar: adventureReservationService.getBusyPeriodsForAdventure(id, adventure.getOwner().getId())) {
+        for (AdventureReservation ar : adventureReservationService.getBusyPeriodsForAdventure(id, adventure.getOwner().getId())) {
             periods.add(createDTOFromReservation(ar));
         }
 
@@ -377,7 +379,7 @@ public class AdventureService {
     public List<ReservationDTO> getBusyPeriodsForFishingInstructor(Long id) {
         List<ReservationDTO> periods = new ArrayList<ReservationDTO>();
 
-        for (AdventureReservation ar: adventureReservationService.getBusyPeriodsForFishingInstructor(id)) {
+        for (AdventureReservation ar : adventureReservationService.getBusyPeriodsForFishingInstructor(id)) {
             periods.add(createDTOFromReservation(ar));
         }
 
@@ -389,9 +391,9 @@ public class AdventureService {
         AdventureReservation reservation = createBusyPeriodReservationFromDTO(dto);
 
         List<AdventureReservation> reservations = adventureReservationService.getPossibleCollisionReservations(reservation.getResource().getId(), reservation.getResource().getOwner().getId());
-        for (AdventureReservation r: reservations) {
-            for (Appointment a: r.getAppointments()) {
-                for (Appointment newAppointment: reservation.getAppointments()) {
+        for (AdventureReservation r : reservations) {
+            for (Appointment a : r.getAppointments()) {
+                for (Appointment newAppointment : reservation.getAppointments()) {
                     reservationService.checkAppointmentCollision(a, newAppointment);
                     reservationService.checkAppointmentCollision(newAppointment, a);
                 }
@@ -439,5 +441,16 @@ public class AdventureService {
 
     public boolean hasReservations(Long resourceId, Long clientId) {
         return adventureReservationService.clientHasReservations(resourceId, clientId);
+    }
+
+    public List<Adventure> getFilteredAdventures(AdventureFilterDTO filterDTO) {
+//        if (filterDTO.isAdventuresChecked())
+//            return repository.findAll().stream().filter(adventure ->
+//                    ((adventure.getOwner().getFirstName() + " " + adventure.getOwner().getLastName()).equals(filterDTO.getFishingInstructorName()) || filterDTO.getFishingInstructorName().isEmpty()) &&
+//                            (filterDTO.getNumberOfClients().isEmpty() || Integer.parseInt(filterDTO.getNumberOfClients()) == adventure.getNumberOfClients()) &&
+//                            (filterDTO.getPriceRange().isEmpty() || filterDTO.getPriceRange().get(0)< <filterDTO.getPriceRange().get(1))
+//            ).collect(Collectors.toCollection(ArrayList::new));
+//        else
+            return new ArrayList<>();
     }
 }

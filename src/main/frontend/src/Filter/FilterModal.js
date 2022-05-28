@@ -25,7 +25,7 @@ export function FilterModal({updateResults, showFilters, setShowFilters}) {
     ]
 
     const [formValuesInput, setFormValuesInput] = useState({
-        numberOfClients: "0",
+        numberOfClients: "",
         fishingInstructorName: "",
         numOfVacationHouseRooms: "",
         numOfVacationHouseBeds: "",

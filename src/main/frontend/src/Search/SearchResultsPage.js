@@ -11,49 +11,35 @@ export function SearchResultsPage() {
 
     const [boats, setBoats] = useState([]);
     const fetchBoats = () => {
+        let array;
         axios.get(backLink + "/boat",).then(res => {
-            // let boats = []
-            //
-            // for (let i = 0; i < res.data.length; i++) {
-            //     let a = res.data[i];
-            //     if (a.title.includes(term)) {
-            //         boats.push(a);
-            //     }
-            // }
-            // setBoats(boats)
-            setBoats(res.data)
-
+            array = res.data;
+            if (searchTerm !== "" && searchTerm !== "searchTerm" && searchTerm !== undefined) {
+                array = array.filter(boat => boat.title.toString().toLowerCase().includes(searchTerm.toLowerCase()))
+            }
+            setBoats(array);
         });
     };
     const [vacationHouses, setVacationHouses] = useState([]);
     const fetchVacationHouses = () => {
+        let array;
         axios.get(backLink + "/house",).then(res => {
-            // let houses = []
-            // for (let i = 0; i < res.data.length; i++) {
-            //     let a = res.data[i];
-            //     if (a.title.includes(term)) {
-            //         houses.push(a);
-            //     }
-            // }
-            setVacationHouses(res.data);
+            array = res.data;
+            if (searchTerm !== "" && searchTerm !== "searchTerm" && searchTerm !== undefined) {
+                array = array.filter(boat => boat.title.toString().toLowerCase().includes(searchTerm.toLowerCase()))
+            }
+            setVacationHouses(array);
         });
     }
     const [adventures, setAdventures] = useState([]);
     const fetchAdventures = () => {
+        let array;
         axios.get(backLink + "/adventure",).then(res => {
-
-
-            // let adventures = []
-            //
-            // for (let i = 0; i < res.data.length; i++) {
-            //     let a = res.data[i];
-            //     if (a.title.includes(term)) {
-            //         adventures.push(a);
-            //     }
-            // }
-
-            // setAdventures(adventures);
-            setAdventures(res.data);
+            array = res.data;
+            if (searchTerm !== "" && searchTerm !== "searchTerm" && searchTerm !== undefined) {
+                array = array.filter(boat => boat.title.toString().toLowerCase().includes(searchTerm.toLowerCase()))
+            }
+            setAdventures(array);
         });
     };
 
@@ -67,9 +53,43 @@ export function SearchResultsPage() {
     const {searchTerm} = useParams();
 
     const updateResults = (formValues) => {
-        //TODO kako ovo uz paginaciju
-
-        //SOLUTION mozda da napravis poseban za svaku sekciju i svima stavis index koliko moze da stane i tako pozivas
+        const adventureFilter={
+            adventuresChecked:formValues.adventuresChecked,
+            numberOfClients:formValues.numberOfClients,
+            fishingInstructorName:formValues.fishingInstructorName,
+            priceRange:formValues.sort
+        }
+        axios.post("/adventure/filter",adventureFilter).then(
+            response=>{
+                setAdventures(response.data)
+            }
+        )
+        const houseFilter={
+            vacationHousesChecked:formValues.vacationHousesChecked,
+            numOfVacationHouseRooms:formValues.numOfVacationHouseRooms,
+            numOfVacationHouseBeds:formValues.numOfVacationHouseBeds,
+            vacationHouseOwnerName:formValues.vacationHouseOwnerName,
+            priceRange:formValues.sort
+        }
+        axios.post("/house/filter",houseFilter).then(
+            response=>{
+                setVacationHouses(response.data)
+            }
+        )
+        const boatFilter={
+            boatType:formValues.boatType,
+            boatEnginePower:formValues.boatEnginePower,
+            boatEngineNum:formValues.boatEngineNum,
+            boatMaxSpeed:formValues.boatMaxSpeed,
+            boatCapacity:formValues.boatCapacity,
+            boatOwnerName:formValues.boatOwnerName,
+            priceRange:formValues.sort
+        }
+        axios.post("/boat/filter",boatFilter).then(
+            response=>{
+                setBoats(response.data)
+            }
+        )
     }
 
     return (
