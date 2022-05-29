@@ -121,4 +121,7 @@ public class AdventureController {
     void deleteById(@PathVariable String id) {
         service.deleteById(id);
     }
+
+    @GetMapping("/address")
+    public ResponseEntity<List<String>> getAdventureAddress(){return ResponseEntity.ok(service.getAdventureAddress());}
 }

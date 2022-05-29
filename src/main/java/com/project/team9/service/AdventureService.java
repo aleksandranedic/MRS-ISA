@@ -451,6 +451,19 @@ public class AdventureService {
 //                            (filterDTO.getPriceRange().isEmpty() || filterDTO.getPriceRange().get(0)< <filterDTO.getPriceRange().get(1))
 //            ).collect(Collectors.toCollection(ArrayList::new));
 //        else
-            return new ArrayList<>();
+        return new ArrayList<>();
+    }
+
+    public List<String> getAdventureAddress() {
+        List<String> address = new ArrayList<>();
+        String fullAddress = "";
+        for (Adventure adventure :
+                repository.findAll()) {
+            fullAddress = adventure.getAddress().getFullAddressName();
+            if (!address.contains(fullAddress)) {
+                address.add(fullAddress);
+            }
+        }
+        return address;
     }
 }

@@ -52,12 +52,35 @@ export function SearchResultsPage() {
 
     const {searchTerm} = useParams();
 
+    // numberOfClients: "",
+    //     fishingInstructorName: "",
+    //     numOfVacationHouseRooms: "",
+    //     numOfVacationHouseBeds: "",
+    //     vacationHouseOwnerName: "",
+    //     boatType: "",
+    //     boatEnginePower: "",
+    //     boatEngineNum: "",
+    //     boatMaxSpeed: "",
+    //     boatCapacity: "",
+    //     boatOwnerName: "",
+    //     startDate: "",
+    //     endDate: "",
+    //     startTime: "",
+    //     endTime: "",
+    //     location: "",
+    //     reviewRating: 0,
+    //     sort: []
     const updateResults = (formValues) => {
         const adventureFilter={
             adventuresChecked:formValues.adventuresChecked,
             numberOfClients:formValues.numberOfClients,
             fishingInstructorName:formValues.fishingInstructorName,
-            priceRange:formValues.sort
+            priceRange:formValues.sort,
+            startDate: formValues.startDate,
+            endDate: formValues.endDate,
+            startTime: formValues.startTime,
+            endTime: formValues.endTime,
+            location: formValues.location,
         }
         axios.post("/adventure/filter",adventureFilter).then(
             response=>{
@@ -69,7 +92,13 @@ export function SearchResultsPage() {
             numOfVacationHouseRooms:formValues.numOfVacationHouseRooms,
             numOfVacationHouseBeds:formValues.numOfVacationHouseBeds,
             vacationHouseOwnerName:formValues.vacationHouseOwnerName,
-            priceRange:formValues.sort
+            priceRange:formValues.sort,
+            startDate: formValues.startDate,
+            endDate: formValues.endDate,
+            startTime: formValues.startTime,
+            endTime: formValues.endTime,
+            location: formValues.location,
+
         }
         axios.post("/house/filter",houseFilter).then(
             response=>{
@@ -83,7 +112,13 @@ export function SearchResultsPage() {
             boatMaxSpeed:formValues.boatMaxSpeed,
             boatCapacity:formValues.boatCapacity,
             boatOwnerName:formValues.boatOwnerName,
-            priceRange:formValues.sort
+            priceRange:formValues.sort,
+            startDate: formValues.startDate,
+            endDate: formValues.endDate,
+            startTime: formValues.startTime,
+            endTime: formValues.endTime,
+            location: formValues.location,
+
         }
         axios.post("/boat/filter",boatFilter).then(
             response=>{

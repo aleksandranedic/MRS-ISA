@@ -80,5 +80,9 @@ public class Address {
                 '}';
     }
 
+    public String getFullAddressName() {
+        return this.street+" "+this.number+","+this.place+","+this.country;
+    }
+
 
 }

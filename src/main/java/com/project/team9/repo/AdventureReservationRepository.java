@@ -29,4 +29,7 @@ public interface AdventureReservationRepository extends JpaRepository<AdventureR
 
     @Query("FROM AdventureReservation WHERE resource.id=?1 AND client.id = ?2")
     List<AdventureReservation> findReservationsForClient(Long resourceId, Long clientId);
+
+    @Query("FROM AdventureReservation WHERE resource.id=?1 ")
+    List<AdventureReservation> findReservationsByResourceId(Long resourceId);
 }

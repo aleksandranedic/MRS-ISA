@@ -8,6 +8,7 @@ import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.VacationHouseReservation;
+import com.project.team9.model.resource.Boat;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
 import com.project.team9.repo.VacationHouseRepository;
@@ -527,5 +528,18 @@ public class VacationHouseService {
 
     public boolean hasReservations(Long resourceId, Long clientId) {
         return vacationHouseReservationService.clientHasReservations(resourceId, clientId);
+    }
+
+    public List<String> getVacationHouseAddress() {
+        List<String> address = new ArrayList<>();
+        String fullAddress = "";
+        for (VacationHouse vacationHouse :
+                repository.findAll()) {
+            fullAddress = vacationHouse.getAddress().getFullAddressName();
+            if (!address.contains(fullAddress)) {
+                address.add(fullAddress);
+            }
+        }
+        return address;
     }
 }

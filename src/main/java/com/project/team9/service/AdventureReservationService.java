@@ -12,6 +12,7 @@ public class AdventureReservationService {
 
     private final AdventureReservationRepository repository;
 
+
     @Autowired
     public AdventureReservationService(AdventureReservationRepository repository) {
         this.repository = repository;
@@ -20,6 +21,12 @@ public class AdventureReservationService {
     public List<AdventureReservation> getStandardReservations() {
         return repository.findStandardReservations();
     }
+
+
+    public List<AdventureReservation> getReservationsByAdventureId(Long resourceId) {
+        return repository.findReservationsByResourceId(resourceId);
+    }
+
 
     public List<AdventureReservation> getPossibleCollisionReservations(Long resourceId, Long ownerId) {
         return repository.findPossibleCollisionReservations(resourceId, ownerId);

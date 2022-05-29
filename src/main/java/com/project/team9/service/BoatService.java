@@ -8,6 +8,7 @@ import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
+import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.user.Client;
 import com.project.team9.repo.BoatRepository;
@@ -557,5 +558,18 @@ public class BoatService {
                 types.add(boat.getType());
         }
         return types;
+    }
+
+    public List<String> getBoatAddress() {
+        List<String> address = new ArrayList<>();
+        String fullAddress = "";
+        for (Boat boat :
+                repository.findAll()) {
+            fullAddress = boat.getAddress().getFullAddressName();
+            if (!address.contains(fullAddress)) {
+                address.add(fullAddress);
+            }
+        }
+        return address;
     }
 }

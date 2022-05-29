@@ -125,4 +125,9 @@ public class BoatController {
     public Boolean clientCanReview(@PathVariable Long resourceId, @PathVariable Long clientId){
         return service.clientCanReview(resourceId, clientId);
     }
+
+    @GetMapping("address")
+    public ResponseEntity<List<String>> getBoatAddress(){
+        return ResponseEntity.ok(service.getBoatAddress());
+    }
 }
