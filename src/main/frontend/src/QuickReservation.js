@@ -1,37 +1,85 @@
-import React, { useState, useEffect } from 'react'
+import React, {useState, useEffect} from 'react'
 import {} from 'bootstrap'
 import {Button, Card} from 'react-bootstrap'
 import {TagInfo} from "./Info";
 import {BsPencilSquare, BsPeople} from "react-icons/bs";
 import {AiOutlineCalendar, AiOutlineClockCircle} from "react-icons/ai";
 import UpdateQuickReservation from './UpdateQuickReservation';
+import axios from "axios";
+import {backLink} from "./Consts";
 
-function QuickReservation({reservation, name, address, image, entity, priceText, durationText}) {
-    const [state, setState] = useState({startDate:'', price:'', numberOfPeople:'', duration:'', discount:'', additionalServices:[{id:'', text:''}]});
+function QuickReservation({reservation, name, address, image, entity, priceText, durationText, type}) {
+    const [state, setState] = useState({
+        startDate: '',
+        price: '',
+        numberOfPeople: '',
+        duration: '',
+        discount: '',
+        additionalServices: [{id: '', text: ''}]
+    });
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-   
+    const [loggedUser, setLoggedUser] = useState(null);
+
+
+    const getLoggedUser = () => {
+        axios.get(backLink + "/getLoggedUser").then(
+            res => {
+                console.log(res.data);
+                setLoggedUser(res.data);
+            }
+        )
+    }
+
     useEffect(() => {
         setState(reservation);
-      }, []);
+        getLoggedUser();
+    }, []);
 
-    return ( 
-            <Card className="houseQuickReservationCard m-3 mt-4 me-5" style={{ borderRadius: "15PX", minWidth:"45vh"}}>
-                <Card.Img variant="top" src={image} style={{ borderRadius: "15px 15px 0px 0px", maxHeight:"28vh", minHeight:"28vh"}}/>
-                <Card.ImgOverlay className="p-2">
-                    <div className='w-100 d-flex justify-content-end m-0 p-0'>
-                        <div className='rounded m-0 p-0 d-flex justify-content-center align-items-center' style={{width:"25%", backgroundColor:"#ED7301"}}>
-                            <p className='fw-bold text-lead text-light m-1 me-0 p-0'>{state.discount}</p>
-                            <p className='fw-bold text-lead text-light m-0 p-0'>% off</p>
-                        </div>
+    const addReservation = () => {
+        let dto = {
+            reservationID: reservation.reservationID,
+            startDate: reservation.startDate,
+            numberOfPeople: reservation.numberOfPeople,
+            additionalServices: reservation.additionalServices,
+            duration: reservation.duration,
+            price: reservation.price,
+            discount: reservation.discount,
+            tagsText: reservation.tagsText,
+            clientID : loggedUser.id
+
+        }
+        if (type === "adventure") {
+            axios.post(backLink + "/adventure/quickReservations/reserve", dto).then(res =>{
+                console.log(res.data);
+                window.location.reload();
+            }).catch(error => {
+                console.log(error.message);
+            })
+        }
+
+    }
+
+    return (
+        <Card className="houseQuickReservationCard m-3 mt-4 me-5" style={{borderRadius: "15PX", minWidth: "45vh"}}>
+            <Card.Img variant="top" src={image}
+                      style={{borderRadius: "15px 15px 0px 0px", maxHeight: "28vh", minHeight: "28vh"}}/>
+            <Card.ImgOverlay className="p-2">
+                <div className='w-100 d-flex justify-content-end m-0 p-0'>
+                    <div className='rounded m-0 p-0 d-flex justify-content-center align-items-center'
+                         style={{width: "25%", backgroundColor: "#ED7301"}}>
+                        <p className='fw-bold text-lead text-light m-1 me-0 p-0'>{state.discount}</p>
+                        <p className='fw-bold text-lead text-light m-0 p-0'>% off</p>
                     </div>
-                </Card.ImgOverlay>
-                <Card.Body>
-                    <div className='d-flex justify-content-between'>
-                        <Card.Title className='mb-1'>{name}</Card.Title>
-                        <button onClick={handleShow} style={{zIndex:"3", border:"0", background:"transparent"}}><BsPencilSquare/></button>    
-                    </div>
+                </div>
+            </Card.ImgOverlay>
+            <Card.Body>
+                <div className='d-flex justify-content-between'>
+                    <Card.Title className='mb-1'>{name}</Card.Title>
+                    <button onClick={handleShow} style={{zIndex: "3", border: "0", background: "transparent"}}>
+                        <BsPencilSquare/></button>
+                </div>
                 <div>
                     <div className="d-flex flex-column">
                         <small className='text-secondary'>{address}</small>
@@ -52,30 +100,38 @@ function QuickReservation({reservation, name, address, image, entity, priceText,
                             </span>
                         </div>
                         <div>
-                            <div className="mt-3 mb-3 d-flex justify-content-center" style={{minHeight:"6vh"}}>
+                            <div className="mt-3 mb-3 d-flex justify-content-center" style={{minHeight: "6vh"}}>
                                 <TagInfo tagList={state.additionalServices} edit={false}/>
                             </div>
                         </div>
                         <div className='d-flex justify-content-between'>
                             <div className="d-flex">
-                                <span className='d-flex' style={{height:"auto"}}>
-                                    <p className="text-lead fw-bold m-0 d-flex align-items-end" style={{fontSize:"30px", color:"#ED7301"}}>€</p>
-                                    <p className="text-lead m-0" style={{fontSize:"30px", color:"#ED7301"}}>{state.price}</p>
+                                <span className='d-flex' style={{height: "auto"}}>
+                                    <p className="text-lead fw-bold m-0 d-flex align-items-end"
+                                       style={{fontSize: "30px", color: "#ED7301"}}>€</p>
+                                    <p className="text-lead m-0"
+                                       style={{fontSize: "30px", color: "#ED7301"}}>{state.price}</p>
                                 </span>
                                 <span className='align-self-end pb-2'>
                                     <small className="text-secondary">/</small>
                                     <small className="text-secondary">{priceText}</small>
                                 </span>
                             </div>
-                            <Button className="btn btn-primary align-self-center h-75" style={{zIndex:"3"}}>Rezerviši</Button>
+
+                            {loggedUser !== null &&
+                                <Button onClick={() => addReservation()}
+                                        className="btn btn-primary align-self-center h-75"
+                                        style={{zIndex: "3"}}>Rezerviši</Button>
+                            }
                         </div>
                     </div>
                 </div>
-                </Card.Body>
-                {state.discount !== '' ?
-                   (<UpdateQuickReservation state={state} setState={setState} closeModal={handleClose} showModal={show} entity={entity} durationText={durationText}/> ) : <></>
-                }
-            </Card>
+            </Card.Body>
+            {state.discount !== '' ?
+                (<UpdateQuickReservation state={state} setState={setState} closeModal={handleClose} showModal={show}
+                                         entity={entity} durationText={durationText}/>) : <></>
+            }
+        </Card>
     )
 }
 

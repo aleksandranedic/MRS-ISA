@@ -10,10 +10,10 @@ export function ReservationModal({show, setShow, type, resourceId}) {
 
     const [clients, setClients] = useState([]);
 
+
     const [selectedClient, setSelectedClient] = useState([]);
 
     const [additionalServicesText, setAdditionalServicesText] = useState('');
-
 
     let options = [];
 
@@ -32,6 +32,13 @@ export function ReservationModal({show, setShow, type, resourceId}) {
         });
     };
 
+    const [formErrors, setFormErrors] = useState({});
+
+    const validateForm = () => {
+        let errors = {}
+
+        return errors;
+    }
 
     const [formValues, setFormValues] = useState({
         startDate: "",
@@ -55,6 +62,7 @@ export function ReservationModal({show, setShow, type, resourceId}) {
     }, [])
 
     function extractTime() {
+
         let startYear = 0;
         let startMonth = 0;
         let startDay = 0;
@@ -77,10 +85,17 @@ export function ReservationModal({show, setShow, type, resourceId}) {
         let endMonth = 0;
         let endDay = 0;
 
-        if (formValues.endDate) {
-            endYear = parseInt(formValues.endDate.substring(0, 4));
-            endMonth = parseInt(formValues.endDate.substring(5, 7));
-            endDay = parseInt(formValues.endDate.substring(8, 10));
+        if (type === "vacationHouse") {
+            if (formValues.endDate) {
+                endYear = parseInt(formValues.endDate.substring(0, 4));
+                endMonth = parseInt(formValues.endDate.substring(5, 7));
+                endDay = parseInt(formValues.endDate.substring(8, 10));
+            }
+        }
+        else {
+            endYear = startYear;
+            endDay = startDay;
+            endMonth = startMonth;
         }
 
         let endHour = 0;
@@ -95,99 +110,107 @@ export function ReservationModal({show, setShow, type, resourceId}) {
 
     const [showAlert, setShowAlert] = useState(false);
 
-    function addReservation() {
+    const addReservation = e => {
 
-        let additionalServicesStrings = [];
-        for (let index in formValues.additionalServices) {
-            additionalServicesStrings.push(formValues.additionalServices.at(index).text);
-        }
-
-        let {
-            startYear,
-            startMonth,
-            startDay,
-            startHour,
-            startMinute,
-            endYear,
-            endMonth,
-            endDay,
-            endHour,
-            endMinute
-        } = extractTime();
+        e.preventDefault()
+        let errors = validateForm()
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+        } else {
 
 
-        let clientId = -1;
-        if (selectedClient.at(0)) {
-            let clientArray = selectedClient.at(0).split(' ');
-            let firstName = clientArray.at(0);
-            let lastName = clientArray.at(1);
-
-            for (let index in clients) {
-                if (clients.at(index).firstName === firstName && clients.at(index).lastName === lastName) {
-                    clientId = clients.at(index).id;
-                }
+            let additionalServicesStrings = [];
+            for (let index in formValues.additionalServices) {
+                additionalServicesStrings.push(formValues.additionalServices.at(index).text);
             }
 
-        }
+            let {
+                startYear,
+                startMonth,
+                startDay,
+                startHour,
+                startMinute,
+                endYear,
+                endMonth,
+                endDay,
+                endHour,
+                endMinute
+            } = extractTime();
 
-        let dto = {
-            clientId: clientId,
-            resourceId: resourceId,
-            numberOfClients: formValues.numberOfClients,
-            additionalServicesStrings: additionalServicesStrings,
-            price: -1,
-            type: type,
-            startYear: startYear,
-            startMonth: startMonth,
-            startDay: startDay,
-            startHour: startHour,
-            startMinute: startMinute,
-            endYear: endYear,
-            endMonth: endMonth,
-            endDay: endDay,
-            endHour: endHour,
-            endMinute: endMinute,
-            isBusyPeriod: false,
-            isQuickReservation: false
 
-        }
+            let clientId = -1;
+            if (selectedClient.at(0)) {
+                let clientArray = selectedClient.at(0).split(' ');
+                let firstName = clientArray.at(0);
+                let lastName = clientArray.at(1);
 
-        if (type === "adventure") {
-            axios
-                .post(backLink + "/adventure/reservation/add", dto)
-                .then(response => {
-                    console.log(response);
-                    window.location.reload();
-                })
-                .catch(error => {
-                    console.log(error);
-                    setShowAlert(true);
+                for (let index in clients) {
+                    if (clients.at(index).firstName === firstName && clients.at(index).lastName === lastName) {
+                        clientId = clients.at(index).id;
+                    }
+                }
 
-                })
-        } else if (type === "boat") {
-            axios
-                .post(backLink + "/boat/reservation/add", dto)
-                .then(response => {
-                    console.log(response);
-                    window.location.reload();
-                })
-                .catch(error => {
-                    console.log(error);
-                    setShowAlert(true);
+            }
 
-                })
-        } else if (type === "vacationHouse") {
-            axios
-                .post(backLink + "/house/reservation/add", dto)
-                .then(response => {
-                    console.log(response);
-                    window.location.reload();
-                })
-                .catch(error => {
-                    console.log(error);
-                    setShowAlert(true);
+            let dto = {
+                clientId: clientId,
+                resourceId: resourceId,
+                numberOfClients: formValues.numberOfClients,
+                additionalServicesStrings: additionalServicesStrings,
+                price: -1,
+                type: type,
+                startYear: startYear,
+                startMonth: startMonth,
+                startDay: startDay,
+                startHour: startHour,
+                startMinute: startMinute,
+                endYear: endYear,
+                endMonth: endMonth,
+                endDay: endDay,
+                endHour: endHour,
+                endMinute: endMinute,
+                isBusyPeriod: false,
+                isQuickReservation: false
 
-                })
+            }
+
+            console.log(dto);
+
+            if (type === "adventure") {
+                axios
+                    .post(backLink + "/adventure/reservation/add", dto)
+                    .then(response => {
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        setShowAlert(true);
+
+                    })
+            } else if (type === "boat") {
+                axios
+                    .post(backLink + "/boat/reservation/add", dto)
+                    .then(response => {
+                        console.log(response);
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        setShowAlert(true);
+
+                    })
+            } else if (type === "vacationHouse") {
+                axios
+                    .post(backLink + "/house/reservation/add", dto)
+                    .then(response => {
+                        console.log(response);
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        setShowAlert(true);
+
+                    })
+            }
         }
     }
 
@@ -208,6 +231,8 @@ export function ReservationModal({show, setShow, type, resourceId}) {
     let html;
     fillOptions();
 
+
+
     if (options.length > 0) {
         html = <><Modal show={show} onHide={() => setShow(false)}>
             <Modal.Header closeButton>
@@ -216,6 +241,7 @@ export function ReservationModal({show, setShow, type, resourceId}) {
             <Modal.Body>
                 <Form>
 
+                    {type === "vacationHouse" ?
                     <div className="d-flex w-100 m-2">
                         <Form.Group className="me-2 w-50 mt-2">
                             <Form.Label>Početni datum</Form.Label>
@@ -233,7 +259,19 @@ export function ReservationModal({show, setShow, type, resourceId}) {
                             />
                         </Form.Group>
                     </div>
+                        :
+                        <div className="d-flex w-100 m-2">
+                            <Form.Group className="me-2 mt-2 w-100">
+                                <Form.Label>Datum</Form.Label>
+                                <Form.Control type="date" value={formValues.startDate}
+                                              onChange={(e) =>
+                                              {setField("endDate", e.target.value);
+                                                  setField("startDate", e.target.value);}}
 
+                                />
+                            </Form.Group>
+                        </div>
+                    }
                     { type !== "vacationHouse" &&
                     <div className="d-flex w-100 m-2">
                         <Form.Group className="me-2 w-50 mt-2">

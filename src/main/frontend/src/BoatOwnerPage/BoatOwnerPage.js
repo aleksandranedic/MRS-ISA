@@ -14,6 +14,8 @@ import {Calendar} from "../Calendar/Calendar";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {Collapse} from "react-bootstrap";
 import {ReservationsTable} from "../Calendar/ReservationsTable";
+import {ReservationsToReview} from "../Calendar/ReservationsToReview";
+import {processReservationsForUsers} from "../ProcessToEvent";
 
 const  UpdateOwner = ({show, setShow, owner}) => {
     if (typeof owner.firstName !== "undefined"){
@@ -34,24 +36,24 @@ function BoatOwnerPage() {
     const handleShow = () => setShow(true);
 
     const [reservations, setReservations] = useState([]);
+    const [events, setEvents] = useState(null);
     const [open, setOpen] = useState(false);
 
     const fetchReservations = () => {
         axios.get(backLink+ "/boat/reservation/boatOwner/" + id).then(res => {
             setReservations(res.data);
+            setEvents(processReservationsForUsers(res.data));
         })
     }
 
-
-    const HOST = "http://localhost:4444";  
     const fetchOwnerBoats = () => {
       axios
-      .get("http://localhost:4444/boat/getownerboats/" + id)
+      .get(backLink + "/boat/getownerboats/" + id)
       .then(res => {
           var boats = res.data;
           for (let boat of boats){
-              if (!boat.thumbnailPath.includes(HOST)){
-                boat.thumbnailPath = HOST + boat.thumbnailPath;
+              if (!boat.thumbnailPath.includes(backLink)){
+                boat.thumbnailPath = backLink + boat.thumbnailPath;
               }
           }
           setOwnerBoats(res.data);
@@ -59,9 +61,8 @@ function BoatOwnerPage() {
     };
     const fetchboatOwner = () => {
         axios
-        .get("http://localhost:4444/boatowner/" + id)
+        .get(backLink+"/boatowner/" + id)
         .then(res => {
-            console.log(res.data)
             setboatOwner(res.data);
         });
     };
@@ -93,7 +94,7 @@ function BoatOwnerPage() {
                                 email={boatOwner.email}
                                 phoneNum={boatOwner.phoneNumber}
                                 address={boatOwner.address}
-                                profileImg = {HOST + boatOwner.profileImg.path}
+                                profileImg = {backLink + boatOwner.profileImg.path}
                                 />
                         :
                     
@@ -114,12 +115,14 @@ function BoatOwnerPage() {
             </div>
 
             <hr className="me-5 ms-5"/>
-            <Calendar reservations={reservations} reservable={false}/>
+            <Calendar events={events} reservable={false}/>
 
             <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
             <hr className="me-5 ms-5"/>
 
             <ReservationCardGrid reservations={reservations}/>
+
+            <ReservationsToReview type={"boat"}/>
 
             <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)}
                 aria-controls="reservationsTable"

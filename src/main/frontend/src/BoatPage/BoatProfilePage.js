@@ -15,6 +15,7 @@ import {Calendar} from "../Calendar/Calendar";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {Collapse} from "react-bootstrap";
 import {ReservationsTable} from "../Calendar/ReservationsTable";
+import {processReservationsForResources} from "../ProcessToEvent";
 
 const HOST = "http://localhost:4444";
 
@@ -55,7 +56,7 @@ const Update = ({boat, showModal, closeModal}) => {
 
 const Reservations = ({reservations, name, address}) => {
     if (typeof reservations !== "undefined"){
-        return <QuickReservations reservations={reservations} name={name} address={address} entity="boat" priceText="po vožnji" durationText="h"/>
+        return <QuickReservations type={"boat"} reservations={reservations} name={name} address={address} entity="boat" priceText="po vožnji" durationText="h"/>
     }
     else {
         return <></>
@@ -79,6 +80,7 @@ export function BoatProfilePage() {
     const {id} = useParams();
     const [boat, setBoat] = useState({});
     const [boatReviews, setBoatReviews] = useState([])
+    const [events, setEvents] = useState(null);
     var [imgs, setImgs] = useState([{thumbnail: '', original: ''}]);
 
 
@@ -88,13 +90,7 @@ export function BoatProfilePage() {
     const fetchReservations = () => {
         axios.get(backLink+ "/boat/reservation/boat/" + id).then(res => {
             setReservations(res.data);
-        })
-    }
-
-    const [busyPeriod, setBusyPeriod] = useState([]);
-    const fetchBusyPeriod = () => {
-        axios.get(backLink+ "/boat/reservation/busyPeriod/boat/" + id).then(res => {
-            setBusyPeriod(res.data);
+            setEvents(processReservationsForResources(res.data));
         })
     }
 
@@ -120,7 +116,6 @@ export function BoatProfilePage() {
         fetchBoat();
         fetchReviews();
         fetchReservations();
-        fetchBusyPeriod();
     }, []);
     return (
     <>
@@ -144,7 +139,7 @@ export function BoatProfilePage() {
         </div>
 
         <hr className="me-5 ms-5"/>
-        <Calendar reservations={reservations} reservable={true} pricelist={{price: boat.price}} type="boat" resourceId={id} busyPeriods={busyPeriod}/>
+        <Calendar reservable={true} pricelist={{price: boat.price}} type="boat" resourceId={id} events={events}/>
 
         <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
         <hr className="me-5 ms-5"/>

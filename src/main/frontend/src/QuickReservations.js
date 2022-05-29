@@ -29,7 +29,7 @@ const responsive = {
     }
 };
 
-function QuickReservations({reservations, name, address, entity, priceText, durationText}) {
+function QuickReservations({reservations, name, address, entity, priceText, durationText, type}) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -41,7 +41,7 @@ function QuickReservations({reservations, name, address, entity, priceText, dura
         <Container className='d-flex p-0'>          
             <Carousel className="w-100 h-100 quick-reservation-carousel" responsive={responsive}  interval="250000" autoPlay={false} autoPlaySpeed={9000000}>
             {reservations.map( (reservation) => (
-                <QuickReservation key={reservation.reservationID}  reservation={reservation} name={name} address={address} image={"http://localhost:3000/images/vikendica1.jpeg"} entity={entity} priceText={priceText} durationText={durationText}/>  
+                <QuickReservation key={reservation.reservationID} type={type} reservation={reservation} name={name} address={address} image={"http://localhost:3000/images/vikendica1.jpeg"} entity={entity} priceText={priceText} durationText={durationText}/>
             ))}
             </Carousel>
 

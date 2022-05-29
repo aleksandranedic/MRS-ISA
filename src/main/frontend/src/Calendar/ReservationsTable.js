@@ -1,11 +1,25 @@
 import {Table} from "react-bootstrap";
 import Tag from "../Tag";
 import React from "react";
-import {getEndTime, getStartTime} from "./ReservationDateConverter";
+import {convertToDate, getEndTime, getStartTime} from "./ReservationDateConverter";
 
 
 export function ReservationsTable(props) {
     let reservations = props.reservations;
+
+    let indexesToPop = []
+    for (let index in reservations) {
+        let reservation = reservations.at(index);
+
+        if (reservation.busyPeriod === true) {
+            indexesToPop.push(index);
+        }
+    }
+
+    for (let index in indexesToPop) {
+        reservations.pop(index);
+    }
+
     return (
         <div className="m-5">
             <Table striped bordered hover size="sm">
