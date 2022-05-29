@@ -3,10 +3,13 @@ package com.project.team9.service;
 import com.project.team9.dto.ClientReviewDTO;
 import com.project.team9.dto.ReviewScoresDTO;
 import com.project.team9.model.request.ReviewRequest;
+import com.project.team9.model.request.VendorReviewRequest;
 import com.project.team9.model.review.ClientReview;
+import com.project.team9.model.review.VendorReview;
 import com.project.team9.model.user.Client;
 import com.project.team9.repo.ClientRepository;
 import com.project.team9.repo.ReviewRepository;
+import com.project.team9.repo.VendorReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,12 +22,17 @@ public class ReviewService {
     private final ReviewRepository repository;
     private final ClientRepository clientRepository;
     private final ReviewRequestService reviewRequestService;
+    private final VendorReviewRequestService vendorReviewRequestService;
+    private final VendorReviewRepository vendorReviewRepository;
+
 
     @Autowired
-    public ReviewService(ReviewRepository repository, ClientRepository clientRepository, ReviewRequestService reviewRequestService) {
+    public ReviewService(ReviewRepository repository, ClientRepository clientRepository, ReviewRequestService reviewRequestService, VendorReviewRequestService vendorReviewRequestService, VendorReviewRepository vendorReviewRepository) {
         this.repository = repository;
         this.clientRepository = clientRepository;
         this.reviewRequestService = reviewRequestService;
+        this.vendorReviewRequestService = vendorReviewRequestService;
+        this.vendorReviewRepository = vendorReviewRepository;
     }
 
     public List<ClientReviewDTO> getReviews(Long resource_id) {
@@ -89,4 +97,18 @@ public class ReviewService {
     public Long sendReviewRequest(ClientReview review) {
         return reviewRequestService.addRequest(new ReviewRequest(review));
     }
+
+    public Long sendVendorReviewRequest(VendorReview vendorReview) {
+        return vendorReviewRequestService.addVendorReviewRequest(new VendorReviewRequest(vendorReview));
+    }
+
+    public boolean reservationHasReview(Long id) {
+        return vendorReviewRequestService.reservationHasReviewRequest(id) || hasReview(id);
+    }
+
+    private boolean hasReview(Long id) {
+        return vendorReviewRepository.findReviewForReservation(id).size() > 0;
+    }
+
+
 }

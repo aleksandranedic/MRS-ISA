@@ -90,7 +90,14 @@ public class BoatController {
 
     @GetMapping("/reservation/boat/{id}")
     public List<ReservationDTO> getReservationsForBoat(@PathVariable Long id) {
-        return  service.getReservationsForBoat(id);
+        List<ReservationDTO> reservations = service.getReservationsForBoat(id);
+        reservations.addAll(service.getBusyPeriodForBoat(id));
+        return reservations;
+    }
+
+    @PostMapping("/quickReservations/reserve")
+    public Long reserveQuickReservation(@RequestBody BoatQuickReservationDTO dto) {
+        return service.reserveQuickReservation(dto);
     }
 
     @GetMapping("/reservation/client/{id}")
@@ -108,13 +115,15 @@ public class BoatController {
         return service.createBusyPeriod(dto);
     }
 
-    @GetMapping("/reservation/busyPeriod/boat/{id}")
-    public List<ReservationDTO> getBusyPeriodForVacationHouse(@PathVariable Long id) {
-        return  service.getBusyPeriodForBoat(id);
-    }
-
     @GetMapping("/clientCanReview/{resourceId}/{clientId}")
     public Boolean clientCanReview(@PathVariable Long resourceId, @PathVariable Long clientId){
         return service.clientCanReview(resourceId, clientId);
     }
+
+    @GetMapping("/reservation/forReview/{id}")
+    public List<ReservationDTO> getReservationsForReview(@PathVariable Long id) {
+        return  service.getReservationsForReview(id);
+    }
+
+
 }

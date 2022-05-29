@@ -152,4 +152,8 @@ public class Boat extends Resource{
     public void setCapacity(int capacity) {
         this.capacity = capacity;
     }
+
+    public void removeQuickReservation(BoatReservation reservation) {
+        this.quickReservations.remove(reservation);
+    }
 }

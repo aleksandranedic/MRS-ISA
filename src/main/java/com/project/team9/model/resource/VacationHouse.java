@@ -77,4 +77,8 @@ public class VacationHouse extends Resource{
                 ", quickReservations=" + quickReservations +
                 '}';
     }
+
+    public void removeQuickReservation(VacationHouseReservation quickReservation) {
+        this.quickReservations.remove(quickReservation);
+    }
 }
