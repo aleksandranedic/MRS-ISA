@@ -147,4 +147,16 @@ public class VacationHouseOwnerService {
         }
         return filtered;
     }
+
+    public List<String> getVHONames() {
+        List<String> names=new ArrayList<>();
+        String fullName="";
+        for (VacationHouseOwner vacationHouseOwner :
+                repository.findAll()) {
+            fullName=vacationHouseOwner.getFirstName()+" "+vacationHouseOwner.getLastName();
+            if(!names.contains(fullName))
+                names.add(fullName);
+        }
+        return names;
+    }
 }

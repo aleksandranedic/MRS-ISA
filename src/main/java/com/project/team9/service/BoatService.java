@@ -79,7 +79,7 @@ public class BoatService {
         return true;
     }
 
-    private BoatReservation getReservationFromDTO(BoatQuickReservationDTO dto, Boolean isQuick){
+    private BoatReservation getReservationFromDTO(BoatQuickReservationDTO dto, Boolean isQuick) {
         List<Appointment> appointments = new ArrayList<Appointment>();
         String[] splitDate = dto.getStartDate().split(" ");
         String[] splitTime = splitDate[3].split(":");
@@ -125,7 +125,7 @@ public class BoatService {
         originalReservation.setPrice(newReservation.getPrice());
     }
 
-    public List<ReservationDTO> getReservations(Long id){
+    public List<ReservationDTO> getReservations(Long id) {
         Boat boat = this.getBoat(id);
         List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
 
@@ -136,6 +136,7 @@ public class BoatService {
         }
         return reservations;
     }
+
     public Boolean deleteQuickReservation(Long id, BoatQuickReservationDTO quickReservationDTO) {
         Boat boat = this.getBoat(id);
         boatReservationService.deleteById(quickReservationDTO.getReservationID());
@@ -181,7 +182,7 @@ public class BoatService {
 
     private List<BoatQuickReservationDTO> getQuickReservations(Boat bt) {
         List<BoatQuickReservationDTO> quickReservations = new ArrayList<BoatQuickReservationDTO>();
-        for (BoatReservation reservation :  bt.getReservations()){
+        for (BoatReservation reservation : bt.getReservations()) {
             if (reservation.getPrice() < bt.getPricelist().getPrice() && reservation.getClient() == null)
                 quickReservations.add(createBoatReservationDTO(bt.getPricelist().getPrice(), reservation));
         }
@@ -553,5 +554,15 @@ public class BoatService {
 
     private boolean hasReservations(Long resourceId, Long clientId) {
         return boatReservationService.hasReservations(resourceId, clientId);
+    }
+
+    public List<String> getBoatTypes() {
+        List<String> types = new ArrayList<>();
+        for (Boat boat :
+                repository.findAll()) {
+            if (!types.contains(boat.getType()))
+                types.add(boat.getType());
+        }
+        return types;
     }
 }

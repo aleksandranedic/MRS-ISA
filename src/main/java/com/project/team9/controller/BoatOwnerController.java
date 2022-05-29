@@ -33,6 +33,8 @@ public class BoatOwnerController {
         return service.getAll();
     }
 
+    @GetMapping("names")
+    public ResponseEntity<List<String>> getBONames(){return ResponseEntity.ok(service.getBONames());}
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public BoatOwner getOwner(@PathVariable String id) {
         return service.getOwner(Long.parseLong(id));

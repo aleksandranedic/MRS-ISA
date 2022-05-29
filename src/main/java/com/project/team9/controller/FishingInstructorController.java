@@ -5,6 +5,7 @@ import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.service.FishingInstructorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +32,9 @@ public class FishingInstructorController {
     public Boolean changeProfilePicture(@PathVariable String id, @RequestParam("fileImage") MultipartFile multipartFile) throws IOException {
         return service.changeProfilePicture(id, multipartFile);
     }
+
+    @GetMapping("names")
+    public ResponseEntity<List<String>> getFishingInstructorNames(){return ResponseEntity.ok(service.getFINames());}
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public FishingInstructor getById(@PathVariable String id) {

@@ -3,8 +3,9 @@ import {Button, Form, Modal} from "react-bootstrap";
 import background from "./images/boatsnotext.png"
 import axios from "axios";
 import Collapse from "react-bootstrap/Collapse";
-import {frontLink} from "./Consts";
+import {backLink, frontLink, loadingToast, updateForFetchedDataError, updateForFetchedDataSuccess} from "./Consts";
 import PopUp from "./PopUp";
+import {ToastContainer} from "react-toastify";
 
 export default function Registration() {
     const [form, setForm] = useState({})
@@ -63,11 +64,8 @@ export default function Registration() {
 
     const handleSubmit = e => {
         e.preventDefault()
-        // get our new errors
         const newErrors = findFormErrors()
-        // Conditional logic:
         if (Object.keys(newErrors).length > 0) {
-            // We got errors!
             setErrors(newErrors)
         } else {
             const userDTO = {
@@ -84,16 +82,18 @@ export default function Registration() {
                 place: form.place,
                 country: form.country
             }
-            console.log(userDTO)
             registerUser(userDTO)
         }
     }
 
     function registerUser(userDTO) {
-        axios.post("http://localhost:4444/registration", userDTO).then(res => {
+        let id=loadingToast()
+        axios.post(backLink+"/registration", userDTO).then(res => {
             console.log(res.data)
-            setText(res.data)
-            setShow(true)
+            if(!res.data.startsWith("Korisnik"))
+                updateForFetchedDataSuccess(res.data,id)
+            else
+                updateForFetchedDataError(res.data,id)
         })
     }
 
@@ -201,7 +201,7 @@ export default function Registration() {
                                     <Form.Label>Vrsta korisnika</Form.Label>
                                     <Form.Select onChange={e => setField('role', e.target.value)}
                                                  isInvalid={!!errors.role}>
-                                        <option></option>
+                                        <option/>
                                         <option value="CLIENT">Obican korisnik</option>
                                         <option value="FISHING_INSTRUCTOR">Instruktor pecanja</option>
                                         <option value="VACATION_HOUSE_OWNER">Vlasnik vikendice</option>
@@ -228,15 +228,6 @@ export default function Registration() {
                             </Collapse>
                         </Form>
                         <Form className="d-flex gap-4">
-                            <Form.Group className="mb-3 m-2" controlId="formNumOfAddress">
-                                <Form.Label>Broj</Form.Label>
-                                <Form.Control type="text"
-                                              onChange={e => setField('number', e.target.value)}
-                                              isInvalid={!!errors.number}/>
-                                <Form.Control.Feedback type='invalid'>
-                                    {errors.number}
-                                </Form.Control.Feedback>
-                            </Form.Group>
                             <Form.Group className="mb-3 m-2" controlId="formStreet">
                                 <Form.Label>Adresa</Form.Label>
                                 <Form.Control type="text"
@@ -246,7 +237,15 @@ export default function Registration() {
                                     {errors.street}
                                 </Form.Control.Feedback>
                             </Form.Group>
-
+                            <Form.Group className="mb-3 m-2" controlId="formNumOfAddress">
+                                <Form.Label>Broj</Form.Label>
+                                <Form.Control type="text"
+                                              onChange={e => setField('number', e.target.value)}
+                                              isInvalid={!!errors.number}/>
+                                <Form.Control.Feedback type='invalid'>
+                                    {errors.number}
+                                </Form.Control.Feedback>
+                            </Form.Group>
                             <Form.Group className="mb-3 m-2 " controlId="formCity">
                                 <Form.Label>Grad</Form.Label>
                                 <Form.Control type="text"
@@ -279,6 +278,30 @@ export default function Registration() {
                 </Modal.Dialog>
             </div>
             <PopUp text={text} handleClose={handleClose} show={show}/>
+            <ToastContainer
+                position="top-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme={"colored"}
+            />
+            <ToastContainer
+                position="top-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme={"colored"}
+            />
         </div>
     );
 }

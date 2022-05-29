@@ -16,6 +16,7 @@ import {RegistrationRequests} from "./Admin/RegistrationRequests";
 import {DeletionRequests} from "./Admin/DeletionRequests";
 
 import {HomePage} from "./Home/HomePage";
+import SuccessPopUp from "./SuccessPopUp";
 
 
 
@@ -39,6 +40,7 @@ function App() {
                 <Route path='/registration' element={<Registration/>}/>
                 <Route path='/confirmedEmail/:token' element={<EmailConfirmed/>}/>
                 <Route path='/' element={<HomePage/>}/>
+                <Route path='popup' element={<SuccessPopUp/>}/>
             </Routes>
         </Router>
     );

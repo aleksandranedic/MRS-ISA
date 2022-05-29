@@ -36,6 +36,7 @@ public class FishingInstructorService {
         return repository.findAll();
 
     }
+
     public FishingInstructor getById(String id) {
         return repository.getById(Long.parseLong(id));
     }
@@ -100,7 +101,7 @@ public class FishingInstructorService {
             fishingInstructor.setPhoneNumber(newFishingInstructor.getPhoneNumber());
 
             return repository.save(fishingInstructor);
-        }).orElseThrow(()->  new UserNotFoundException(id));
+        }).orElseThrow(() -> new UserNotFoundException(id));
     }
 
     public FishingInstructor editFishingInstructorPassword(String newPassword, String id) throws UserNotFoundException {
@@ -108,23 +109,36 @@ public class FishingInstructorService {
         return repository.findById(Long.parseLong(id)).map(fishingInstructor -> {
             fishingInstructor.setPassword(newPassword);
             return repository.save(fishingInstructor);
-        }).orElseThrow(()->  new UserNotFoundException(id));
+        }).orElseThrow(() -> new UserNotFoundException(id));
     }
 
     public FishingInstructor getFishingInstructorByEmail(String username) {
         return repository.findByEmail(username);
     }
-    public FishingInstructor addFishingInstructor(FishingInstructor fishingInstructor){
+
+    public FishingInstructor addFishingInstructor(FishingInstructor fishingInstructor) {
         return repository.save(fishingInstructor);
     }
 
-    public List<FishingInstructor> getUnregisteredFishingInstructors(){
-        List<FishingInstructor> instructors=this.getFishingInstructors();
-        List<FishingInstructor> filtered=new ArrayList<>();
-        for (FishingInstructor instructor: instructors) {
-            if(!instructor.isEnabled() && !instructor.getDeleted())
+    public List<FishingInstructor> getUnregisteredFishingInstructors() {
+        List<FishingInstructor> instructors = this.getFishingInstructors();
+        List<FishingInstructor> filtered = new ArrayList<>();
+        for (FishingInstructor instructor : instructors) {
+            if (!instructor.isEnabled() && !instructor.getDeleted())
                 filtered.add(instructor);
         }
         return filtered;
+    }
+
+    public List<String> getFINames() {
+        List<String> names = new ArrayList<>();
+        String fullName = "";
+        for (FishingInstructor fishingInstructor :
+                repository.findAll()) {
+            fullName = fishingInstructor.getFirstName() + " " + fishingInstructor.getLastName();
+            if (!names.contains(fullName))
+                names.add(fullName);
+        }
+        return names;
     }
 }

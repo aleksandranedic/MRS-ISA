@@ -4,23 +4,54 @@ import React, {useState} from "react";
 import {ResourceFilterForm} from "./ResourceFilterForm";
 import {VacationHouseFilterForm} from "./VacationHouseFilterForm";
 import {BoatFilterForm} from "./BoatFilterForm";
-import {Typeahead} from "react-bootstrap-typeahead";
+import {FishingInstructorFilterForm} from "./FishingInstructorFilterForm";
+import DropdownMultiselect from "react-multiselect-dropdown-bootstrap";
+import {backLink} from "../Consts";
+import axios from "axios";
 
-
-export function FilterModal({showFilters, setShowFilters}) {
+export function FilterModal({updateResults, showFilters, setShowFilters}) {
     const handleClose = () => setShowFilters(false);
     const [adventuresChecked, setAdventuresChecked] = useState(true);
     const [vacationHousesChecked, setVacationHousesChecked] = useState(true);
     const [boatsChecked, setBoatsChecked] = useState(true);
 
-    const [formValues, setFormValues] = useState({});
+    const sortingOptions = [
+        'po imenu vikendice opadajuće',
+        'po imenu vikendice rastuće',
+        'po imenu avanture opadajuće',
+        'po imenu avanture rastuće',
+        'po imenu broda opadajuće',
+        'po imenu broda rastuće'
+    ]
+
+    const [formValuesInput, setFormValuesInput] = useState({
+        numberOfClients: "0",
+        fishingInstructorName: "",
+        numOfVacationHouseRooms: "",
+        numOfVacationHouseBeds: "",
+        vacationHouseOwnerName: "",
+        boatType: "",
+        boatEnginePower: "",
+        boatEngineNum: "",
+        boatMaxSpeed: "",
+        boatCapacity: "",
+        boatOwnerName: "",
+        sort: []
+    });
+
+    function filterData() {
+        formValuesInput.adventuresChecked = adventuresChecked
+        formValuesInput.vacationHousesChecked = vacationHousesChecked
+        formValuesInput.boatsChecked = boatsChecked
+        updateResults(formValuesInput)
+    }
 
     const setField = (fieldName, value) => {
-        setFormValues({
-            ...formValues,
+        setFormValuesInput({
+            ...formValuesInput,
             [fieldName]: value
         })
-        console.log(formValues);
+        console.log(formValuesInput);
     }
 
     return (
@@ -30,9 +61,7 @@ export function FilterModal({showFilters, setShowFilters}) {
             </Modal.Header>
             <Modal.Body>
                 <Form>
-
-                    <ResourceFilterForm minimumValue={50} maximumValue={3000}/>
-
+                    <ResourceFilterForm minimumValue={50} maximumValue={3000} setField={setField}/>
                     <Accordion>
                         <Accordion.Item eventKey="0">
                             <Accordion.Header>
@@ -41,32 +70,11 @@ export function FilterModal({showFilters, setShowFilters}) {
                                     id="adventure-switch"
                                     label="Avanture"
                                     defaultChecked={adventuresChecked}
-                                    onChange={()=> setAdventuresChecked(!adventuresChecked)}
+                                    onChange={() => setAdventuresChecked(!adventuresChecked)}
                                 />
                             </Accordion.Header>
                             <Accordion.Body>
-                                <Form>
-                                    <Form.Group>
-                                        <Form.Label>Broj klijenata</Form.Label>
-                                        <Form.Control
-                                            type="number"
-                                            value={formValues.numberOfClients}
-                                            onChange={(e) => setField("numberOfClients", e.target.value)}
-
-                                        />
-                                    </Form.Group>
-
-                                    <Form.Group>
-                                        <Form.Label>Instruktor</Form.Label>
-                                        <Typeahead
-                                            id="basic-typeahead-single"
-                                            labelKey="name"
-                                            options={['Petar Jovanovic', 'Mile']}
-                                            selected={formValues.fishingInstructor}
-                                            onChange={(e) => setField("fishingInstruktor", e.target.selected)}
-                                        />
-                                    </Form.Group>
-                                </Form>
+                                <FishingInstructorFilterForm setField={setField}/>
                             </Accordion.Body>
                         </Accordion.Item>
                         <Accordion.Item eventKey="1">
@@ -76,11 +84,11 @@ export function FilterModal({showFilters, setShowFilters}) {
                                     id="vacationHouse-switch"
                                     label="Vikendice"
                                     defaultChecked={vacationHousesChecked}
-                                    onChange={()=>setVacationHousesChecked(!vacationHousesChecked)}
+                                    onChange={() => setVacationHousesChecked(!vacationHousesChecked)}
                                 />
                             </Accordion.Header>
                             <Accordion.Body>
-                                <VacationHouseFilterForm/>
+                                <VacationHouseFilterForm setField={setField}/>
                             </Accordion.Body>
                         </Accordion.Item>
                         <Accordion.Item eventKey="2">
@@ -90,18 +98,21 @@ export function FilterModal({showFilters, setShowFilters}) {
                                     id="boatSwitch"
                                     label="Brodovi"
                                     defaultChecked={boatsChecked}
-                                    onChange={() => setBoatsChecked(!boatsChecked)}
-                                />
+                                    onChange={() => setBoatsChecked(!boatsChecked)}/>
                             </Accordion.Header>
                             <Accordion.Body>
-                                <BoatFilterForm/>
+                                <BoatFilterForm setField={setField}/>
                             </Accordion.Body>
                         </Accordion.Item>
                     </Accordion>
-
-
-
-
+                    <Form.Label>Način sortiranja</Form.Label>
+                    <DropdownMultiselect options={sortingOptions} name={"sortingOptions"}
+                                         placeholder={"Ništa nije izabrano"}
+                                         handleOnChange={(selected) => {
+                                             setField('sortingOptions', selected)
+                                         }}
+                        // onChange={} //filter
+                    />
                 </Form>
             </Modal.Body>
             <Modal.Footer>

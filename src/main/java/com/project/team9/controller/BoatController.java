@@ -25,6 +25,9 @@ public class BoatController {
         this.service = service;
     }
 
+    @GetMapping("types")
+    public ResponseEntity<List<String>> getBoatTypes(){return ResponseEntity.ok(service.getBoatTypes());}
+
     @GetMapping
     public List<Boat> getBoats() {
         return service.getBoats();
