@@ -49,15 +49,15 @@ function BoatOwnerPage() {
     }
 
 
-    const HOST = "http://localhost:4444";
+    
     const fetchOwnerBoats = () => {
       axios
       .get("http://localhost:4444/boat/getownerboats/" + id)
       .then(res => {
           var boats = res.data;
           for (let boat of boats){
-              if (!boat.thumbnailPath.includes(HOST)){
-                boat.thumbnailPath = HOST + boat.thumbnailPath;
+              if (!boat.thumbnailPath.includes(backLink)){
+                boat.thumbnailPath = backLink + boat.thumbnailPath;
               }
           }
           setOwnerBoats(res.data);
@@ -91,34 +91,22 @@ function BoatOwnerPage() {
             
 
                 <div className='p-5 pt-0'>
-                    { boatOwner.profileImg !== null ?
-                            <OwnerInfo bio = {boatOwner.registrationRationale}
-                                name={boatOwner.firstName + " " + boatOwner.lastName}
-                                rate = {4.5}
-                                email={boatOwner.email}
-                                phoneNum={boatOwner.phoneNumber}
-                                address={boatOwner.address}
-                                profileImg = {HOST + boatOwner.profileImg.path}
-                                />
-                        :
-                    
-                            <OwnerInfo bio = {boatOwner.registrationRationale}
-                                name={boatOwner.firstName + " " + boatOwner.lastName}
-                                rate = {4.5}
-                                email={boatOwner.email}
-                                phoneNum={boatOwner.phoneNumber}
-                                address={boatOwner.address}
-                                profileImg = {profilePicturePlaceholder}
-                                />
-                    }
-
+                 
+                    <OwnerInfo 
+                        name={boatOwner.firstName + " " + boatOwner.lastName}
+                        rate = {4.5}
+                        email={boatOwner.email}
+                        phoneNum={boatOwner.phoneNumber}
+                        address={boatOwner.address}
+                        profileImg = {boatOwner.profileImg !== null ? backLink + boatOwner.profileImg.path : profilePicturePlaceholder}
+                        />
                 <hr/>
                 <OwnerBoats boats={ownerBoats}/>
                 <hr/>
                
             </div>
 
-            <hr className="me-5 ms-5"/>
+            
             <Calendar reservations={reservations} reservable={false}/>
 
             <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>

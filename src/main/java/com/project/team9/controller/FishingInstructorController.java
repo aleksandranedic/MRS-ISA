@@ -6,7 +6,9 @@ import com.project.team9.service.FishingInstructorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -23,6 +25,11 @@ public class FishingInstructorController {
     @GetMapping
     public List<FishingInstructor> getFishingInstructors() {
         return service.getFishingInstructors();
+    }
+
+    @PostMapping(value = "changeProfilePicture/{id}")
+    public Boolean changeProfilePicture(@PathVariable String id, @RequestParam("fileImage") MultipartFile multipartFile) throws IOException {
+        return service.changeProfilePicture(id, multipartFile);
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -64,7 +64,9 @@ public class User implements UserDetails {
         this.role = role;
         this.address = new Address(place, number, street, country);
     }
-
+    public String getName(){
+        return firstName + " " + lastName;
+    }
     public void setPassword(String password) {
         Timestamp now = new Timestamp(new Date().getTime());
         this.setLastPasswordResetDate(now);

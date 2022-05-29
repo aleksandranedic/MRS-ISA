@@ -10,6 +10,7 @@ import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.user.Client;
+import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.repo.BoatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -155,6 +156,12 @@ public class BoatService {
             boatCards.add(new BoatCardDTO(boat.getId(), thumbnail, boat.getTitle(), boat.getDescription(), address));
         }
         return boatCards;
+    }
+
+    public ResourceOwnerDTO getOwner(Long id) {
+        Boat boat = this.getBoat(id);
+        BoatOwner owner = boat.getOwner();
+        return new ResourceOwnerDTO(owner.getId(), owner.getName(), owner.getProfileImg());
     }
 
     public Boat getBoat(Long id) {

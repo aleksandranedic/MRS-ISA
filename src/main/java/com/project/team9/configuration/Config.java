@@ -337,7 +337,7 @@ public class Config {
         addressRepository.save(boatOwnerAddress);
         Image boatProfileImg = new Image("/images/boatOwners/4/boatOwner.jpg");
         imageRepository.save(boatProfileImg);
-        BoatOwner boatOwner = new BoatOwner(null, "1", "Lena", "Leric", "lericlena@gmail.com", "0651525", boatOwnerAddress, false, "registrationRationale", new ArrayList<>(), roleBoatOwner);
+        BoatOwner boatOwner = new BoatOwner(boatProfileImg, "1", "Lena", "Leric", "lericlena@gmail.com", "0651525", boatOwnerAddress, false, "registrationRationale", new ArrayList<>(), roleBoatOwner);
         boatOwnerRepository.save(boatOwner);
         return boatOwner;
     }

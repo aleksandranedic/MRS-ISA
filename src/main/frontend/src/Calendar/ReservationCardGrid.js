@@ -22,8 +22,8 @@ export function ReservationCardGrid({reservations}) {
     return( <div className="ms-5 me-5"
                  style={{
                      maxHeight: "60vh",
-                     overflowY: "scroll"}}>
-        <Row xs={1} md={2} lg={3} className="g-4">
+                     overflow: "auto"}}>
+        <Row xs={1} md={2} lg={3} className="g-4 mb-4 w-100">
             {reservations.map((reservation, index) => (
                 <Col key={index + "col"}>
                     <Card key={index} style={{
@@ -47,7 +47,7 @@ export function ReservationCardGrid({reservations}) {
                                     })}</div>
 
                                 </div>
-                                <div className="ms-auto fs-4" style={{color: "#019191"}}>
+                                <div className="ms-auto fs-4" style={{color: "#ED7301"}}>
                                     {reservation.price}€
                                 </div>
                             </div>
@@ -94,40 +94,52 @@ function TimeFooter ({reservation}) {
 
 
     let html =
-        <div className="d-flex align-items-center">
-            <p className="p-0 m-0">
-                <AiOutlineCalendar className="ms-1 me-1"/>
-                {startDate}
-                <AiOutlineClockCircle className="ms-1 me-1"/>
-                {startTime}
+        <div className="p-0 m-0 d-flex justify-content-between ">
+        
+                <div className="d-flex align-items-center">
+                    <AiOutlineCalendar className="ms-1 me-1"/>
+                    {startDate}
+                    <AiOutlineClockCircle className="ms-2 me-1"/>
+                    {startTime}
+                </div>
                 -
-                <AiOutlineCalendar className="ms-1 me-1"/>
-                {endDate}
-                <AiOutlineClockCircle className="ms-1 me-1"/>
-                {endTime}
-            </p>
+                <div className="d-flex align-items-center">
+                    <AiOutlineCalendar className="ms-1 me-1"/>
+                    {endDate}
+                    <AiOutlineClockCircle className="ms-2 me-1"/>
+                    {endTime}
+                </div>
+            
         </div>;
 
     if (startDate === endDate) {
         html =
-            <div className="d-flex align-items-center">
-                <AiOutlineCalendar className="ms-1 me-1"/>
-                <p className="p-0 m-0">
-                    {startDate}
-                </p>
-                <AiOutlineClockCircle className="ms-1 me-1"/>
-                {startTime}-{endTime}
+            <div className="p-0 m-0 d-flex justify-content-between">
+                <div className="d-flex align-items-center">
+                    <AiOutlineCalendar className="ms-1 me-1"/>
+                    <p className="p-0 m-0">
+                        {startDate}
+                    </p>
+                </div>
+                <div className="d-flex align-items-center">
+                    <AiOutlineClockCircle className="ms-1 me-1"/>
+                    {startTime}-{endTime}
+                </div>
             </div>
     }
 
     if (startTime === endTime) {
-        html = <div className="d-flex align-items-center">
-            <AiOutlineCalendar className="ms-1 me-1"/>
-            <p className="p-0 m-0">
-                {startDate}-{endDate}
-            </p>
-            <AiOutlineClockCircle className="ms-1 me-1"/>
-            {startTime}
+        html = <div className="p-0 m-0 d-flex justify-content-between">
+            <div className="d-flex align-items-center">
+                <AiOutlineCalendar className="ms-1 me-1"/>
+                <p className="p-0 m-0">
+                    {startDate}-{endDate}
+                </p>
+            </div>
+            <div className="d-flex align-items-center">
+                <AiOutlineClockCircle className="ms-1 me-1"/>
+                {startTime}
+            </div>
         </div>
     }
 

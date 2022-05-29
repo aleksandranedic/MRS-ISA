@@ -1,6 +1,7 @@
 import React from "react";
 import 'bootstrap/dist/css/bootstrap.css'
 import Tag from "./Tag";
+import { IoKeyOutline } from "react-icons/io5";
 
 export function Info({title, text}) {
     return (
@@ -13,11 +14,14 @@ export function Info({title, text}) {
     )
 }
 
-export function LinkInfo({title, text, link}) {
+export function LinkInfo({title, text, link, profileImg}) {
     return (
-        <div className="m-3">
-            <p className="lead fw-normal m-0 p-0">{title}</p>
-            <a href={link} style={{textDecoration: "None", color: "#212529", cursor: "pointer"}}><p className="fw-light">{text}</p></a>
+        <div className="d-flex justify-content-end">
+            {/* <p className="lead fw-normal m-0 p-0 me-2"><IoKeyOutline/></p> */}
+            <a href={link} className="d-flex align-items-center" style={{textDecoration: "None", color: "#212529", cursor: "pointer"}}>
+                <img className="rounded-circle" src={profileImg} style={{objectFit:"cover",minWidth:"7vh", maxWidth:"7vh", minHeight:"7vh", maxHeight:"7vh"}}/>
+                <p className="fw-light m-0 p-0 lead ms-2">{text}</p>
+            </a>
         </div>
 
 

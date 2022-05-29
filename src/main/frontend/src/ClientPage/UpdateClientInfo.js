@@ -1,16 +1,19 @@
 import {Button, Form, Modal} from "react-bootstrap";
-import React, {useState} from "react";
+import React, {useState, useRef} from "react";
 import DeleteClientPopUp from "./DeleteClientPopUp";
 import axios from "axios";
 import {ChangeClientPassword} from "./ChangeClientPassword";
 import {backLink} from "../Consts";
+import { useParams } from "react-router-dom";
 
 axios.interceptors.request.use(config => {
         config.headers.authorization = "Bearer " + localStorage.getItem('token')
         return config
     }
 )
-function UpdateClientInfo({client, handleClose, showPopUp,setClient}) {
+function UpdateClientInfo({client, handleClose, showPopUp,setClient, profileImg}) {
+    const {id} = useParams();
+    const formRef = useRef();
     const [showDeleteClient, setShow] = useState(false);
 
     const [showPassword, setShowPassword] = useState(false);
@@ -21,7 +24,17 @@ function UpdateClientInfo({client, handleClose, showPopUp,setClient}) {
         axios.put(backLink+"/client/update/" + client.id, userDTO).then(res => {
             console.log(res);
             setClient(res.data)
+            window.location.reload();
         });
+    }
+
+    const opetFileExplorer = () => {
+        document.getElementById("fileImage").click();
+    }
+
+    const setProfileImageView = () => {
+        var file = document.getElementById("fileImage").files[0]
+        document.getElementById("profPic").src = URL.createObjectURL(file);
     }
 
     const handleCloseDeleteClient = () => setShow(false);
@@ -77,6 +90,22 @@ function UpdateClientInfo({client, handleClose, showPopUp,setClient}) {
             // We got errors!
             setErrors(newErrors)
         } else {
+            var file = document.getElementById("fileImage").files[0];
+            if (typeof file !== "undefined"){
+                var files = document.getElementById("fileImage").files;
+                var data = new FormData();
+                var images = []
+                for (let i=0; i < files.length; i++){
+                    images.push(files[i])
+                }
+                data.append("fileImage",file);
+                axios
+                .post("http://localhost:4444/client/changeProfilePicture/" + id, data)
+                .then(res => {
+                        console.log(res.data)
+                });
+            }
+
             const userDTO = {
                 firstName: form.firstName,
                 lastName: form.lastName,
@@ -110,26 +139,27 @@ function UpdateClientInfo({client, handleClose, showPopUp,setClient}) {
                     <Modal.Title>Ažuriranje podataka</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form className="d-flex">
+                    <Form ref={formRef} className="d-flex">
                         <div className="m-2 w-100">
-                            <Form.Group className="mb-3" controlId="formName">
-                                <Form.Label>Ime</Form.Label>
-                                <Form.Control type="text" defaultValue={client.firstName}
-                                              onChange={e => setField('firstName', e.target.value)}
-                                              isInvalid={!!errors.firstName}/>
-                                <Form.Control.Feedback type='invalid'>
-                                    {errors.firstName}
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group className="mb-3" controlId="formSurname">
-                                <Form.Label>Prezime</Form.Label>
-                                <Form.Control type="text" defaultValue={client.lastName}
-                                              onChange={e => setField('lastName', e.target.value)}
-                                              isInvalid={!!errors.lastName}/>
-                                <Form.Control.Feedback type='invalid'>
-                                    {errors.lastName}
-                                </Form.Control.Feedback>
-                            </Form.Group>
+                            <div className="d-flex">
+                                <div className="d-flex justify-content-center" style={{width:"28%"}}>
+                                    <img id="profPic" className="rounded-circle" style={{objectFit: "cover", maxWidth: "25vh", minWidth: "25vh", maxHeight: "25vh", minHeight: "25vh"}} src={profileImg}/>
+                                    <Form.Control id="fileImage" onChange={e => setProfileImageView()} className="d-none" type="file" name="fileImage" style={{position:"absolute", width:"25vh", top:"12vh"}}/>
+                                    <p id="setNewProfileImage" className="d-flex justify-content-center align-items-center" onClick={e => opetFileExplorer()}><u>Postavite profilnu</u></p>
+                                </div>
+                                <div style={{width:"72%"}}>
+                                    <Form.Group className="mb-3" controlId="formName">
+                                        <Form.Label>Ime</Form.Label>
+                                        <Form.Control type="text" defaultValue={client.firstName} onChange={e => setField('firstName', e.target.value)} isInvalid={!!errors.firstName}/>
+                                        <Form.Control.Feedback type='invalid'> {errors.firstName} </Form.Control.Feedback>
+                                    </Form.Group>
+                                    <Form.Group className="mb-3" controlId="formSurname">
+                                        <Form.Label>Prezime</Form.Label>
+                                        <Form.Control type="text" defaultValue={client.lastName}  onChange={e => setField('lastName', e.target.value)} isInvalid={!!errors.lastName}/>
+                                        <Form.Control.Feedback type='invalid'> {errors.lastName} </Form.Control.Feedback>
+                                    </Form.Group>
+                                </div>
+                            </div>
                             <Form.Group className="mb-3" controlId="formPhoneNumber">
                                 <Form.Label>Broj telefona</Form.Label>
                                 <Form.Control type="text" defaultValue={client.phoneNumber}

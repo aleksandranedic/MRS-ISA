@@ -6,12 +6,31 @@ import ClientLoyalty from "./ClientLoyalty";
 import UpdateClientInfo from "./UpdateClientInfo"
 import Navigation from "../Navigation/Navigation";
 import {useParams} from "react-router-dom";
-import {backLink} from "../Consts";
+import {backLink, profilePicturePlaceholder} from "../Consts";
 import {Calendar} from "../Calendar/Calendar";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {Collapse} from "react-bootstrap";
 import {ReservationsTable} from "../Calendar/ReservationsTable";
+import BeginButton from "../BeginButton.js"
+import OwnerInfo from "../OwnerInfo";
 
+
+const UpdateClientInfoComp = ({client, handleClose,showPopUp,setClient}) => {
+    if (typeof client.firstName !== "undefined"){
+        if (client.profileImg !== null) {
+            
+            var profileImg = backLink + client.profileImg.path;
+        }
+        else {
+            var profileImg = profilePicturePlaceholder;
+        }
+  
+        return <UpdateClientInfo client={client} handleClose={handleClose} showPopUp={showPopUp} setClient={setClient} profileImg ={profileImg} />
+    }
+    else {
+        return <></>
+    }
+}
 
 const Client = () => {
     const [client, setClient] = useState([]);
@@ -69,21 +88,24 @@ const Client = () => {
     if (client.length !== 0) {
         html = (<div>
             <Banner caption={client.firstName + " " + client.lastName}/>
-            <UpdateClientInfo client={client} handleClose={handleClose}
-                              showPopUp={show} setClient={setClient}/>
+            <UpdateClientInfoComp client={client} handleClose={handleClose} showPopUp={show} setClient={setClient}/>
             <Navigation buttons={
                 [
                     {text: "Osnovne informacije", path: "#"}
                 ]}
                         editable={true} editFunction={handleShow}
             />
-            <ClientInfo
-                firstName={client.firstName}
-                lastName={client.lastName}
-                address={client.address}
-                email={client.email}
-                phoneNumber={client.phoneNumber}
-            />
+           
+
+                <OwnerInfo 
+                    bio = {client.biography}
+                    name={client.firstName + " " + client.lastName}
+                    rate = {4.5}
+                    email={client.email}
+                    phoneNum={client.phoneNumber}
+                    address={client.address}
+                    profileImg = {client.profileImg !== null ? backLink + client.profileImg.path : profilePicturePlaceholder}
+                    />            
             <ClientLoyalty/>
 
 
@@ -107,7 +129,7 @@ const Client = () => {
                     <ReservationsTable  reservations={reservations} showResource={false}/>
                 </div>
             </Collapse>
-
+            <BeginButton/>
         </div>)
     }
     return (html)

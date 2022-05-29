@@ -14,6 +14,7 @@ import {Collapse} from "react-bootstrap";
 import OwnerInfo from "../OwnerInfo"
 import {ReservationsTable} from "../Calendar/ReservationsTable";
 import { profilePicturePlaceholder } from "../Consts";
+import BeginButton from "../BeginButton.js"
 
 const FishingInstructors = ({id}) => {
     const [fishingInstructor, setFishingInstructor] = useState({address:'', profileImg:{path:""}});
@@ -48,7 +49,7 @@ const FishingInstructors = ({id}) => {
 
     const [show, setShow] = useState(false);
     const handleShow = () => setShow(true);
-    const HOST = "http://localhost:4444";  
+      
     let html;
   
     if (fishingInstructor.length !== 0) {
@@ -67,35 +68,23 @@ const FishingInstructors = ({id}) => {
 
             
             {/* <FishingInstructorInfo fishingInstructor={fishingInstructor}/> */}
-            {   fishingInstructor.profileImg !== null  ?
+       
 
-                <div className="pe-5 pt-0">
-                    <OwnerInfo bio = {fishingInstructor.biography}
-                            name={fishingInstructor.firstName + " " + fishingInstructor.lastName}
-                            rate = {4.5}
-                            email={fishingInstructor.email}
-                            phoneNum={fishingInstructor.phoneNumber}
-                            address={fishingInstructor.address}
-                            profileImg = {HOST + fishingInstructor.profileImg.path}
-                            />
-                </div>
-                :
-                <div className="pe-5 pt-0">
-                    <OwnerInfo bio = {fishingInstructor.biography}
-                            name={fishingInstructor.firstName + " " + fishingInstructor.lastName}
-                            rate = {4.5}
-                            email={fishingInstructor.email}
-                            phoneNum={fishingInstructor.phoneNumber}
-                            address={fishingInstructor.address}
-                            profileImg = {profilePicturePlaceholder}
-                            />
-                </div>
-            }
+            <div className="pe-5 pt-0">
+                <OwnerInfo bio = {fishingInstructor.biography}
+                        name={fishingInstructor.firstName + " " + fishingInstructor.lastName}
+                        rate = {4.5}
+                        email={fishingInstructor.email}
+                        phoneNum={fishingInstructor.phoneNumber}
+                        address={fishingInstructor.address}
+                        profileImg = {fishingInstructor.profileImg !== null ? backLink + fishingInstructor.profileImg.path : profilePicturePlaceholder}
+                        />
+            </div>             
             <hr className="me-5 ms-5"/>
 
             <AdventureCarousel adventures={adventures} add={true} ownerId={fishingInstructor.id}/>
             <hr className="me-5 ms-5"/>
-            <FishingInstructorForm show={show} setShow={setShow} fishingInstructor={fishingInstructor}/>
+            <FishingInstructorForm show={show} setShow={setShow} fishingInstructor={fishingInstructor} profileImg= {fishingInstructor.profileImg !== null ? backLink + fishingInstructor.profileImg.path : profilePicturePlaceholder}/>
             <Calendar reservations={reservations} reservable={false}/>
 
 
@@ -117,6 +106,8 @@ const FishingInstructors = ({id}) => {
                     <ReservationsTable  reservations={reservations} showResource={false}/>
                 </div>
             </Collapse>
+
+            <BeginButton/>
         </div>)
     }
 
