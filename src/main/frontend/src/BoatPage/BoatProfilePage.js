@@ -131,7 +131,6 @@ export function BoatProfilePage() {
         <BoatInfo boat={boat}/>
         <Update closeModal={handleClose} showModal={show} boat = {boat}/>
         <div className='p-5 pt-0'>
-            <hr/>
             <Gallery boat={boat} images={imgs}/>
             <hr/>
             <Reservations reservations={boat.quickReservations} name={boat.name} address={boat.address}/>

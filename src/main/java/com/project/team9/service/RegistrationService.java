@@ -68,6 +68,7 @@ public class RegistrationService {
                         LocalDateTime.now().plusMinutes(15),
                         user
                 );
+                confirmationTokenService.saveConfirmationToken(confirmationToken);
                 response = "Uspesno ste izvrsili registraciju.\nProverite email kako biste verifikovali svoj nalog";
                 break;
             case "FISHING_INSTRUCTOR":
@@ -83,7 +84,7 @@ public class RegistrationService {
 
     public String confirmToken(String token) {
         ConfirmationToken confirmationToken = confirmationTokenService.getToken(token).orElse(null);
-        if(confirmationToken==null)
+        if (confirmationToken == null)
             return "Token ne postoji";
         if (confirmationToken.getConfirmedAt() != null) {
             return "Vas email je vec verifikovan";

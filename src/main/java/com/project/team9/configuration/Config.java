@@ -89,7 +89,6 @@ public class Config {
         this.vacationHouseReservationRepository = vacationHouseReservationRepository;
         this.boatReservationRepository = boatReservationRepository;
         this.reviewRepository = reviewRepository;
-
         this.registrationRequestRepository = registrationRequestRepository;
         this.deleteRequestRepository = deleteRequestRepository;
         return args -> {
@@ -117,9 +116,15 @@ public class Config {
         vacationHouseOwnerRepository.save(owner);
         VacationHouse vacationHouse = getVacationHouse(owner);
         vacationHouseRepository.save(vacationHouse);
-        VacationHouseReservation vacationHouseReservation = VacationHouseReservation(vacationHouse);
+
+        VacationHouseReservation vacationHouseQuickReservation = getVacationHouseQuickReservation(vacationHouse);
+        vacationHouseReservationRepository.save(vacationHouseQuickReservation);
+        vacationHouse.addReservation(vacationHouseQuickReservation);
+        vacationHouseRepository.save(vacationHouse);
+
+        VacationHouseReservation vacationHouseReservation = getVacationHouseReservation(vacationHouse, client);
         vacationHouseReservationRepository.save(vacationHouseReservation);
-        vacationHouse.addQuickReservations(vacationHouseReservation);
+        vacationHouse.addReservation(vacationHouseReservation);
         vacationHouseRepository.save(vacationHouse);
 
         addVacationHouseReservation(client, vacationHouse);
@@ -130,9 +135,14 @@ public class Config {
         boatOwner.addBoat(boat);
         boatRepository.save(boat);
         boatOwnerRepository.save(boatOwner);
-        BoatReservation boatReservationReservation = getBoatReservation(boat);
-        boatReservationRepository.save(boatReservationReservation);
-        boat.addQuickReservations(boatReservationReservation);
+        BoatReservation boatQuickReservation = getBoatQuickReservation(boat);
+        boatReservationRepository.save(boatQuickReservation);
+        boat.addReservation(boatQuickReservation);
+        boatRepository.save(boat);
+
+        BoatReservation boatReservation = getBoatReservation(boat, client);
+        boatReservationRepository.save(boatReservation);
+        boat.addReservation(boatReservation);
         boatRepository.save(boat);
 
         addBoatReservation(client, boat);
@@ -327,7 +337,17 @@ public class Config {
         addressRepository.save(boatOwnerAddress);
         Image boatProfileImg = new Image("/images/boatOwners/4/boatOwner.jpg");
         imageRepository.save(boatProfileImg);
-        BoatOwner boatOwner = new BoatOwner(null, "1", "Lena", "Leric", "lericlena@gmail.com", "0651525", boatOwnerAddress, false, "registrationRationale", new ArrayList<>(), roleBoatOwner);
+        BoatOwner boatOwner = new BoatOwner(
+                null,
+                "$2a$10$btgxT6xNRyIqn8wf3Lo48OWmcwegTOlzKk9UL38nq/SUXA/v0WTL6", //1
+                "Lena",
+                "Leric",
+                "lericlena@gmail.com",
+                "0651525",
+                boatOwnerAddress,
+                false,
+                "registrationRationale",
+                new ArrayList<>(), roleBoatOwner);
         boatOwnerRepository.save(boatOwner);
         return boatOwner;
     }
@@ -358,7 +378,7 @@ public class Config {
         return vacationHouse;
     }
 
-    private VacationHouseReservation VacationHouseReservation(VacationHouse vacationHouse) {
+    private VacationHouseReservation getVacationHouseQuickReservation(VacationHouse vacationHouse) {
         List<Appointment> appointments = new ArrayList<Appointment>();
         appointments.add(Appointment.getVacationHouseAppointment(2022, 4, 9));
         appointments.add(Appointment.getVacationHouseAppointment(2022, 4, 10));
@@ -378,6 +398,31 @@ public class Config {
         vr.setResource(vacationHouse);
         vr.setClient(null);
         vr.setQuickReservation(true);
+        return vr;
+    }
+
+    private VacationHouseReservation getVacationHouseReservation(VacationHouse vacationHouse, Client client) {
+        List<Appointment> appointments = new ArrayList<Appointment>();
+        appointments.add(Appointment.getVacationHouseAppointment(2022, 5, 19));
+        appointments.add(Appointment.getVacationHouseAppointment(2022, 5, 20));
+        appointments.add(Appointment.getVacationHouseAppointment(2022, 5, 21));
+        appointments.add(Appointment.getVacationHouseAppointment(2022, 5, 22));
+        appointments.add(Appointment.getVacationHouseAppointment(2022, 5, 23));
+        appointments.add(Appointment.getVacationHouseAppointment(2022, 5, 24));
+        appointmentRepository.saveAll(appointments);
+
+        ArrayList<Tag> additionalServices = new ArrayList<Tag>();
+        additionalServices.add(new Tag("Plazma TV"));
+        additionalServices.add(new Tag("WiFi"));
+        tagRepository.saveAll(additionalServices);
+
+        VacationHouseReservation vr = new VacationHouseReservation(7, 30);
+        vr.setAdditionalServices(additionalServices);
+        vr.setAppointments(appointments);
+        vr.setResource(vacationHouse);
+        vr.setClient(client);
+        vr.setQuickReservation(false);
+        vr.setBusyPeriod(false);
         return vr;
     }
 
@@ -401,11 +446,11 @@ public class Config {
         return adv;
     }
 
-    private BoatReservation getBoatReservation(Boat boat) {
+    private BoatReservation getBoatQuickReservation(Boat boat) {
         List<Appointment> appointments = new ArrayList<Appointment>();
-        appointments.add(Appointment.getVacationHouseAppointment(2022, 9, 9));
-        appointments.add(Appointment.getVacationHouseAppointment(2022, 9, 10));
-        appointments.add(Appointment.getVacationHouseAppointment(2022, 9, 11));
+        appointments.add(Appointment.getBoatAppointment(2022, 9, 9, 15, 15));
+        appointments.add(Appointment.getBoatAppointment(2022, 9, 9, 15, 45));
+        appointments.add(Appointment.getBoatAppointment(2022, 9, 9, 16, 15));
         appointmentRepository.saveAll(appointments);
 
         ArrayList<Tag> additionalServices = new ArrayList<Tag>();
@@ -422,6 +467,27 @@ public class Config {
         return br;
     }
 
+    private BoatReservation getBoatReservation(Boat boat, Client client) {
+        List<Appointment> appointments = new ArrayList<Appointment>();
+        appointments.add(Appointment.getBoatAppointment(2022, 10, 22, 8, 15));
+        appointments.add(Appointment.getBoatAppointment(2022, 10, 9, 9, 45));
+        appointmentRepository.saveAll(appointments);
+
+        ArrayList<Tag> additionalServices = new ArrayList<Tag>();
+        additionalServices.add(new Tag("Bilijar"));
+        tagRepository.saveAll(additionalServices);
+
+        BoatReservation br = new BoatReservation(3, 60);
+        br.setQuickReservation(false);
+        br.setBusyPeriod(false);
+
+        br.setAdditionalServices(additionalServices);
+        br.setAppointments(appointments);
+        br.setResource(boat);
+        br.setClient(client);
+        return br;
+    }
+
     private VacationHouseOwner getVacationHouseOwner() {
 
         Role roleVacationHouseOwner = new Role("VACATION_HOUSE_OWNER");
@@ -433,7 +499,7 @@ public class Config {
         imageRepository.save(houseProfileImg);
         return new VacationHouseOwner(
                 houseProfileImg,
-                "11",
+                "$2a$10$41FbB.1FsCwJZ5O8ex.hiODT6SQNVORd4usEqMGZ2mNYxjFP/HErG",//11
                 "Pera",
                 "Peric",
                 "pericpera@gmail.com",
@@ -454,7 +520,7 @@ public class Config {
         imageRepository.save(instructorProfileImg);
         FishingInstructor fishingInstructor = new FishingInstructor(
                 instructorProfileImg,
-                "peraribar",
+                "$2a$10$GApodrEZn/6BZEgOMsKV8uiCWsoGgFbERoLs1w.VsPFij9YZsQJKa",//""peraribar",
                 "Petar",
                 "Jovanovic",
                 "petar.jovanovic@email.com",

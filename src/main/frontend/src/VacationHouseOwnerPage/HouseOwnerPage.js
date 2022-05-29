@@ -17,10 +17,18 @@ import {ReservationsTable} from "../Calendar/ReservationsTable";
 import {ReservationsToReview} from "../Calendar/ReservationsToReview";
 import {processReservationsForUsers} from "../ProcessToEvent";
 
-const UpdateOwner = ({show, setShow, owner}) => {
-    if (typeof owner.firstName !== "undefined") {
-        return <HouseOwnerForm show={show} setShow={setShow} owner={owner}/>
-    } else {
+
+const  UpdateOwner = ({show, setShow, owner}) => {
+    if (typeof owner.firstName !== "undefined"){
+        if (owner.profileImg !== null) {
+            let profileImg = backLink + owner.profileImg.path;
+        }
+        else {
+            let profileImg = profilePicturePlaceholder;
+        }
+        return <HouseOwnerForm show={show} setShow={setShow} owner={owner} profileImg={profileImg} />
+    }
+    else {
         return <></>
     }
 }

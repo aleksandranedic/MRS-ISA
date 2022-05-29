@@ -56,7 +56,8 @@ const Client = () => {
 
     useEffect(() => {
         fetchClient();
-        fetchReservations();
+        if(localStorage.getItem("token")!==null && localStorage.getItem("token")!=="") //dodao sam jer neko kad gleda njegov profil ne moze tako da ostavi
+            fetchReservations();
     }, []);
 
     const [show, setShow] = useState(false);

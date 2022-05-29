@@ -5,15 +5,14 @@ import {AddReview} from "./AddReview";
 
 function Ratings({reviews, type}) {
     return (
-        <div id="reviews">
-            <div className="d-flex">
-                <ReviewScores/>
-                <AddReview type={type}/>
-            </div>
+        <div className='mt-5' id="reviews">
+            <ReviewScores/>
+            <AddReview type={type}/>
             {reviews.length > 1 ?
-                <Reviews reviews={reviews}/>
+                <Reviews reviews={reviews}/>              
                 : <></>
             }
+            
         </div>
     );
 }

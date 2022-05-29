@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -31,6 +33,8 @@ public class BoatOwnerController {
         return service.getAll();
     }
 
+    @GetMapping("names")
+    public ResponseEntity<List<String>> getBONames(){return ResponseEntity.ok(service.getBONames());}
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public BoatOwner getOwner(@PathVariable String id) {
         return service.getOwner(Long.parseLong(id));
@@ -48,6 +52,11 @@ public class BoatOwnerController {
     @PostMapping(value = "updatePassword/{id}",consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void updatePassword(@PathVariable String id, @RequestBody String newPassword) {
         service.updatePassword(Long.parseLong(id), newPassword);
+    }
+
+    @PostMapping(value = "changeProfilePicture/{id}")
+    public Boolean changeProfilePicture(@PathVariable String id, @RequestParam("fileImage") MultipartFile multipartFile) throws IOException {
+        return service.changeProfilePicture(Long.parseLong(id), multipartFile);
     }
     @PostMapping("addBoat/{id}")
     public void addBoatForOwner(@PathVariable String id, @RequestBody String boatId){

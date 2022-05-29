@@ -9,6 +9,7 @@ export default function PopUp({show, handleClose, text}) {
                 <Modal.Title>Obavestenje</Modal.Title>
             </Modal.Header>
             <Modal.Body>
+
                 <Info text={text}/>
             </Modal.Body>
             <Modal.Footer>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import axios from "axios";    
+import React, {useState, useEffect} from 'react';
+import axios from "axios";
 import Banner from '../Banner';
 import BeginButton from '../BeginButton';
 
@@ -7,7 +7,7 @@ import BoatOwnerForm from './BoatOwnerForm'
 import OwnerInfo from '../OwnerInfo';
 import OwnerBoats from './OwnerBoats';
 import AddBoat from './AddBoat';
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import Navigation from "../Navigation/Navigation";
 import {backLink, profilePicturePlaceholder} from '../Consts';
 import {Calendar} from "../Calendar/Calendar";
@@ -17,11 +17,15 @@ import {ReservationsTable} from "../Calendar/ReservationsTable";
 import {ReservationsToReview} from "../Calendar/ReservationsToReview";
 import {processReservationsForUsers} from "../ProcessToEvent";
 
-const  UpdateOwner = ({show, setShow, owner}) => {
-    if (typeof owner.firstName !== "undefined"){
-        return <BoatOwnerForm show={show} setShow={setShow} owner={owner} />
-    }
-    else {
+const UpdateOwner = ({show, setShow, owner}) => {
+    if (typeof owner.firstName !== "undefined") {
+        if (owner.profileImg !== null) {
+            let profileImg = backLink + owner.profileImg.path;
+        } else {
+            let profileImg = profilePicturePlaceholder;
+        }
+        return <BoatOwnerForm show={show} setShow={setShow} owner={owner} profileImg={profileImg}/>
+    } else {
         return <></>
     }
 }
@@ -29,7 +33,7 @@ const  UpdateOwner = ({show, setShow, owner}) => {
 function BoatOwnerPage() {
     const {id} = useParams();
 
-    const [boatOwner, setboatOwner] = useState({address:'', profileImg:{path:""}});
+    const [boatOwner, setboatOwner] = useState({address: '', profileImg: {path: ""}});
     let [ownerBoats, setOwnerBoats] = useState([]);
 
     const [show, setShow] = useState(false);
@@ -40,31 +44,32 @@ function BoatOwnerPage() {
     const [open, setOpen] = useState(false);
 
     const fetchReservations = () => {
-        axios.get(backLink+ "/boat/reservation/boatOwner/" + id).then(res => {
+        axios.get(backLink + "/boat/reservation/boatOwner/" + id).then(res => {
             setReservations(res.data);
             setEvents(processReservationsForUsers(res.data));
         })
     }
 
+
     const fetchOwnerBoats = () => {
-      axios
-      .get(backLink + "/boat/getownerboats/" + id)
-      .then(res => {
-          var boats = res.data;
-          for (let boat of boats){
-              if (!boat.thumbnailPath.includes(backLink)){
-                boat.thumbnailPath = backLink + boat.thumbnailPath;
-              }
-          }
-          setOwnerBoats(res.data);
-        });
+        axios
+            .get(backLink + "/boat/getownerboats/" + id)
+            .then(res => {
+                var boats = res.data;
+                for (let boat of boats) {
+                    if (!boat.thumbnailPath.includes(backLink)) {
+                        boat.thumbnailPath = backLink + boat.thumbnailPath;
+                    }
+                }
+                setOwnerBoats(res.data);
+            });
     };
     const fetchboatOwner = () => {
         axios
-        .get(backLink+"/boatowner/" + id)
-        .then(res => {
-            setboatOwner(res.data);
-        });
+            .get(backLink + "/boatowner/" + id)
+            .then(res => {
+                setboatOwner(res.data);
+            });
     };
     useEffect(() => {
         fetchboatOwner();
@@ -84,34 +89,33 @@ function BoatOwnerPage() {
                         editable={true} editFunction={handleShow} searchable={true} showProfile={true}/>
             <AddBoat/>
             <UpdateOwner show={show} setShow={setShow} owner={boatOwner}/>
-            
 
-                <div className='p-5 pt-0'>
-                    { boatOwner.profileImg !== null ?
-                            <OwnerInfo bio = {boatOwner.registrationRationale}
-                                name={boatOwner.firstName + " " + boatOwner.lastName}
-                                rate = {4.5}
-                                email={boatOwner.email}
-                                phoneNum={boatOwner.phoneNumber}
-                                address={boatOwner.address}
-                                profileImg = {backLink + boatOwner.profileImg.path}
-                                />
-                        :
-                    
-                            <OwnerInfo bio = {boatOwner.registrationRationale}
-                                name={boatOwner.firstName + " " + boatOwner.lastName}
-                                rate = {4.5}
-                                email={boatOwner.email}
-                                phoneNum={boatOwner.phoneNumber}
-                                address={boatOwner.address}
-                                profileImg = {profilePicturePlaceholder}
-                                />
-                    }
+
+            <div className='p-5 pt-0'>
+                {boatOwner.profileImg !== null ?
+                    <OwnerInfo bio={boatOwner.registrationRationale}
+                               name={boatOwner.firstName + " " + boatOwner.lastName}
+                               rate={4.5}
+                               email={boatOwner.email}
+                               phoneNum={boatOwner.phoneNumber}
+                               address={boatOwner.address}
+                               profileImg={backLink + boatOwner.profileImg.path}
+                    />
+                    :
+
+                    <OwnerInfo bio={boatOwner.registrationRationale}
+                               name={boatOwner.firstName + " " + boatOwner.lastName}
+                               rate={4.5}
+                               email={boatOwner.email}
+                               phoneNum={boatOwner.phoneNumber}
+                               address={boatOwner.address}
+                               profileImg={profilePicturePlaceholder}
+                    />
+                }
 
                 <hr/>
                 <OwnerBoats boats={ownerBoats}/>
 
-               
             </div>
 
             <hr className="me-5 ms-5"/>
@@ -127,17 +131,17 @@ function BoatOwnerPage() {
             <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)}
                 aria-controls="reservationsTable"
                 aria-expanded={open}
-                style = {{cursor: "pointer"}}
+                style={{cursor: "pointer"}}
             >Istorija rezervacija</h2>
 
             <hr className="me-5 ms-5"/>
             <Collapse in={open}>
                 <div id="reservationsTable">
-                    <ReservationsTable  reservations={reservations} showResource={false}/>
+                    <ReservationsTable reservations={reservations} showResource={false}/>
                 </div>
             </Collapse>
 
-        <BeginButton/>
+            <BeginButton/>
         </>
     );
 }

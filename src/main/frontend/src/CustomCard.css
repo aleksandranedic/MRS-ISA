@@ -53,3 +53,20 @@
         rgba(255, 255, 255, 1) 100%
     );
 } 
+
+#setNewProfileImage {
+    cursor: pointer;
+    position:absolute; 
+    min-width: 25vh; 
+    min-height:8vh; 
+    top:11vh; 
+    background:rgba(255, 255, 255, 0.4);
+}
+
+#setNewProfileImage:hover {
+    position:absolute; 
+    min-width: 25vh; 
+    min-height:8vh; 
+    top:11vh; 
+    background:rgba(255, 255, 255, 0.8);
+}

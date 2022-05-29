@@ -25,6 +25,9 @@ public class BoatController {
         this.service = service;
     }
 
+    @GetMapping("types")
+    public ResponseEntity<List<String>> getBoatTypes(){return ResponseEntity.ok(service.getBoatTypes());}
+
     @GetMapping
     public List<Boat> getBoats() {
         return service.getBoats();
@@ -64,6 +67,11 @@ public class BoatController {
     public BoatDTO getBoatDTO(@PathVariable String id) {
         Long boatId = Long.parseLong(id);
         return service.getBoatDTO(boatId);
+    }
+
+    @GetMapping(value = "getReservations/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ReservationDTO> getReservations(@PathVariable String id) {
+        return service.getReservations(Long.parseLong(id));
     }
 
     @GetMapping(value = "getownerboats/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

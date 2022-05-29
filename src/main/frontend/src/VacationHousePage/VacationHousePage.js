@@ -66,6 +66,7 @@ const ReviewsComp = ({reviews}) => {
 }
 
 export function VacationHousePage() {
+    const [house, setHouse] = useState({});
     const [houseReviews, setHouseReviews] = useState([])
     const [show, setShow] = useState(false);
     const [open, setOpen] = useState(false);
@@ -75,7 +76,6 @@ export function VacationHousePage() {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const {id} = useParams();
-    const [house, setHouse] = useState({});
     var [imgs, setImgs] = useState([{thumbnail: '', original: ''}]);
 
     const fetchReservations = () => {
@@ -84,7 +84,7 @@ export function VacationHousePage() {
             setEvents(processReservationsForResources(res.data));
         })
     }
-    
+
     const fetchHouse = () => {
         axios
         .get("http://localhost:4444/house/houseprof/" + id)
@@ -120,13 +120,11 @@ export function VacationHousePage() {
         <HouseInfo house={house}/>
         <Update closeModal={handleClose} showModal={show} vacationHouse = {house}/>
         <div className='p-5 pt-0'>
-            <hr/>
             <Gallery house={house} images={imgs}/>
             <hr/>
             <Reservations reservations={house.quickReservations} name={house.name} address={house.address}/>
             <footer className="blockquote-footer">Svi izlasci iz vikendice obavljaju se do 10:00h.</footer>
             <ReviewsComp reviews = {houseReviews}/>
-
         </div>
 
         <hr className="me-5 ms-5"/>
