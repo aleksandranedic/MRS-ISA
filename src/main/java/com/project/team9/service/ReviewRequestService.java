@@ -1,6 +1,7 @@
 package com.project.team9.service;
 
 import com.project.team9.model.request.ReviewRequest;
+import com.project.team9.model.request.VendorReviewRequest;
 import com.project.team9.repo.ReviewRequestRepository;
 import org.springframework.stereotype.Service;
 
@@ -19,4 +20,5 @@ public class ReviewRequestService {
     public boolean hasReviewRequests(Long resourceId, Long clientId) {
         return repository.findReviewRequests(resourceId, clientId).size() > 0;
     }
+
 }

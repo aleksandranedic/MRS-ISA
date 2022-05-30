@@ -242,9 +242,9 @@ public class Config {
 
     private void addAdventureReservations(Client client, Adventure adventure) {
         List<Appointment> appointments1 = new ArrayList<Appointment>();
-        appointments1.add(Appointment.getAdventureAppointment(2022, 6, 1, 6, 0));
-        appointments1.add(Appointment.getAdventureAppointment(2022, 6, 1, 7, 0));
-        appointments1.add(Appointment.getAdventureAppointment(2022, 6, 1, 8, 0));
+        appointments1.add(Appointment.getAdventureAppointment(2022, 5, 1, 6, 0));
+        appointments1.add(Appointment.getAdventureAppointment(2022, 5, 1, 7, 0));
+        appointments1.add(Appointment.getAdventureAppointment(2022, 5, 1, 8, 0));
         appointmentRepository.saveAll(appointments1);
 
         List<Tag> additionalServices1 = new ArrayList<Tag>();

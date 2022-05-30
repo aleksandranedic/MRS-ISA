@@ -15,6 +15,8 @@ import {Collapse} from "react-bootstrap";
 import {ReservationsTable} from "../Calendar/ReservationsTable";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {Calendar} from "../Calendar/Calendar";
+import {processReservationsForResources} from "../ProcessToEvent";
+import {AddReview} from "../Reviews/AddReview";
 
 const HOST = "http://localhost:4444";
 const Gallery = ({house, images}) => {
@@ -48,7 +50,7 @@ const Update = ({vacationHouse, showModal, closeModal}) => {
 
 const Reservations = ({reservations, name, address}) => {
     if (typeof reservations !== "undefined"){
-        return <QuickReservations reservations={reservations} name={name} address={address} entity="house" priceText="po noćenju" durationText="dana"/>
+        return <QuickReservations type={"vacationHouse"} reservations={reservations} name={name} address={address} entity="house" priceText="po noćenju" durationText="dana"/>
     }
     else {
         return <></>
@@ -70,22 +72,17 @@ export function VacationHousePage() {
     const [show, setShow] = useState(false);
     const [open, setOpen] = useState(false);
     const [reservations, setReservations] = useState([]);
+    const [events, setEvents] = useState(null);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const {id} = useParams();
     var [imgs, setImgs] = useState([{thumbnail: '', original: ''}]);
 
-    const [busyPeriod, setBusyPeriod] = useState([]);
-    const fetchBusyPeriod = () => {
-        axios.get(backLink+ "/house/reservation/busyPeriod/vacationHouse/" + id).then(res => {
-            setBusyPeriod(res.data);
-        })
-    }
-
     const fetchReservations = () => {
         axios.get(backLink+ "/house/reservation/vacationHouse/" + id).then(res => {
             setReservations(res.data);
+            setEvents(processReservationsForResources(res.data));
         })
     }
 
@@ -108,7 +105,6 @@ export function VacationHousePage() {
         fetchHouse();
         fetchReviews();
         fetchReservations();
-        fetchBusyPeriod();
     }, []);
     
     return (
@@ -133,7 +129,7 @@ export function VacationHousePage() {
         </div>
 
         <hr className="me-5 ms-5"/>
-        <Calendar reservations={reservations} reservable={true} pricelist={{price: house.price}} resourceId={house.id} type={"vacationHouse"} busyPeriods={busyPeriod}/>
+        <Calendar reservable={true} pricelist={{price: house.price}} resourceId={house.id} type={"vacationHouse"} events={events}/>
 
         <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
         <hr className="me-5 ms-5"/>
@@ -152,12 +148,6 @@ export function VacationHousePage() {
                 <ReservationsTable  reservations={reservations} showResource={false}/>
             </div>
         </Collapse>
-
-
-
-
-
-
 
         <BeginButton/>
     </>

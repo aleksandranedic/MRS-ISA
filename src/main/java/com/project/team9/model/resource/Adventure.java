@@ -90,4 +90,8 @@ public class Adventure extends Resource {
     public void addQuickReservation(AdventureReservation adventureReservation) {
         quickReservations.add(adventureReservation);
     }
+
+    public void removeQuickReservation(AdventureReservation quickReservation) {
+        quickReservations.remove(quickReservation);
+    }
 }

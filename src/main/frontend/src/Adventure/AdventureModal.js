@@ -97,7 +97,6 @@ export function AdventureModal({adventure, show, setShow, ownerId}) {
             .catch(error => {
                 console.log(error);
             })
-        // window.location.reload();
     }
 
     const handleSubmit = e => {

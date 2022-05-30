@@ -1,30 +1,34 @@
 import axios from "axios";
 import React, {useEffect, useState} from "react";
 import Banner from "../Banner";
-import {FishingInstructorInfo} from "./FishingInstructorInfo";
 
 import {FishingInstructorForm} from "./FishingInstructorForm";
 import AdventureCarousel from "../Adventure/AdventureCarousel";
 import Navigation from "../Navigation/Navigation";
 import {useParams} from "react-router-dom";
 import {Calendar} from "../Calendar/Calendar";
-import {backLink} from "../Consts";
+import {backLink, profilePicturePlaceholder} from "../Consts";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {Collapse} from "react-bootstrap";
 import OwnerInfo from "../OwnerInfo"
 import {ReservationsTable} from "../Calendar/ReservationsTable";
-import { profilePicturePlaceholder } from "../Consts";
+import {ReservationsToReview} from "../Calendar/ReservationsToReview";
+import {processReservationsForResources, processReservationsForUsers} from "../ProcessToEvent";
+import {AddReview} from "../Reviews/AddReview";
 
 const FishingInstructors = ({id}) => {
     const [fishingInstructor, setFishingInstructor] = useState({address:'', profileImg:{path:""}});
     const [adventures, setAdventures] = useState([]);
     const [reservations, setReservations] = useState([]);
     const [open, setOpen] = useState(false);
+    const [events, setEvents] = useState(null);
 
 
     const fetchReservations = () => {
         axios.get(backLink+ "/adventure/reservation/fishingInstructor/" + id).then(res => {
+            console.log(res.data);
             setReservations(res.data);
+            setEvents(processReservationsForUsers(res.data));
         })
     }
 
@@ -48,7 +52,6 @@ const FishingInstructors = ({id}) => {
 
     const [show, setShow] = useState(false);
     const handleShow = () => setShow(true);
-    const HOST = "http://localhost:4444";  
     let html;
   
     if (fishingInstructor.length !== 0) {
@@ -66,7 +69,6 @@ const FishingInstructors = ({id}) => {
             />
 
             
-            {/* <FishingInstructorInfo fishingInstructor={fishingInstructor}/> */}
             {   fishingInstructor.profileImg !== null  ?
 
                 <div className="pe-5 pt-0">
@@ -76,7 +78,7 @@ const FishingInstructors = ({id}) => {
                             email={fishingInstructor.email}
                             phoneNum={fishingInstructor.phoneNumber}
                             address={fishingInstructor.address}
-                            profileImg = {HOST + fishingInstructor.profileImg.path}
+                            profileImg = {backLink + fishingInstructor.profileImg.path}
                             />
                 </div>
                 :
@@ -94,15 +96,25 @@ const FishingInstructors = ({id}) => {
             <hr className="me-5 ms-5"/>
 
             <AdventureCarousel adventures={adventures} add={true} ownerId={fishingInstructor.id}/>
-            <hr className="me-5 ms-5"/>
+
             <FishingInstructorForm show={show} setShow={setShow} fishingInstructor={fishingInstructor}/>
-            <Calendar reservations={reservations} reservable={false}/>
+
+            <hr className="me-5 ms-5"/>
+            <div className="d-flex justify-content-center">
+                <AddReview type={"vacationHouseOwner"}/>
+            </div>
+
+
+            <hr className="me-5 ms-5"/>
+            <Calendar events={events} reservable={false}/>
 
 
             <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
             <hr className="me-5 ms-5"/>
 
             <ReservationCardGrid reservations={reservations}/>
+
+            <ReservationsToReview type={"adventure"}/>
 
             <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)}
                 aria-controls="reservationsTable"

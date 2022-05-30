@@ -13,9 +13,19 @@ export function AddReview({type}) {
     const {id} = useParams();
 
     const addReview = () => {
+        let vendorId = -1;
+        let resourceId = -1;
+
+        if (type === "adventure" || type === "vacationHouse" || type === "boat") {
+            resourceId = id;
+        }
+        else {
+            vendorId = id;
+        }
+
         let review = {
-            resourceId: id,
-            vendorId: -1,
+            resourceId: resourceId,
+            vendorId: vendorId,
             rating: rating,
             text: text,
             clientId: user.id
@@ -31,11 +41,11 @@ export function AddReview({type}) {
 
     const fetchUser = () => {
 
-        axios.get(backLink+ "/getLoggedUser").then(
+        axios.get(backLink + "/getLoggedUser").then(
             res => {
                 setUser(res.data);
             }
-        ).catch(err=> {
+        ).catch(err => {
         })
     }
 
@@ -47,17 +57,33 @@ export function AddReview({type}) {
                 .then(res => {
                     setShow(res.data);
                 });
-        }
-        else if (type === "boat") {
+        } else if (type === "boat") {
             axios
                 .get(backLink + "/boat/clientCanReview/" + id + "/" + user.id)
                 .then(res => {
                     setShow(res.data);
                 });
-        }
-        else if (type === "vacationHouse") {
+        } else if (type === "vacationHouse") {
             axios
                 .get(backLink + "/house/clientCanReview/" + id + "/" + user.id)
+                .then(res => {
+                    setShow(res.data);
+                });
+        } else if (type === "fishingInstructor") {
+            axios
+                .get(backLink + "/adventure/clientCanReviewVendor/" + id + "/" + user.id)
+                .then(res => {
+                    setShow(res.data);
+                });
+        } else if (type === "boatOwner") {
+            axios
+                .get(backLink + "/boat/clientCanReviewVendor/" + id + "/" + user.id)
+                .then(res => {
+                    setShow(res.data);
+                });
+        } else if (type === "vacationHouseOwner") {
+            axios
+                .get(backLink + "/house/clientCanReviewVendor/" + id + "/" + user.id)
                 .then(res => {
                     setShow(res.data);
                 });
@@ -92,9 +118,9 @@ export function AddReview({type}) {
                                   border: "1px solid rgba(0, 0, 0, 0.125)", borderRadius: "15px",
                                   width: "80%", height: "8.5rem"
                               }}
-                onChange={(e) => setText(e.target.value)}/>
+                              onChange={(e) => setText(e.target.value)}/>
 
-                <Button className="mt-2" onClick={()=> addReview()}>Ostavi recenziju</Button>
+                <Button className="mt-2" onClick={() => addReview()}>Ostavi recenziju</Button>
             </div>
 
         </div>;

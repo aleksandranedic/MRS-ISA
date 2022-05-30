@@ -1,8 +1,7 @@
-import {Button, Col, Form, InputGroup, Modal} from "react-bootstrap";
+import {Button, Col, Dropdown, Form, InputGroup, Modal} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {backLink} from "../Consts";
-import {Typeahead} from "react-bootstrap-typeahead";
+import {backLink, missingDataErrors} from "../Consts";
 import {TagInfo} from "../Info";
 import {MessagePopupModal} from "../MessagePopupModal";
 
@@ -15,23 +14,46 @@ export function ReservationModal({show, setShow, type, resourceId}) {
     const [additionalServicesText, setAdditionalServicesText] = useState('');
 
 
-    let options = [];
-
-    function fillOptions() {
-        options = [];
-        for (let index in clients) {
-            options.push(clients.at(index).firstName + " " + clients.at(index).lastName);
-        }
-    }
-
     const fetchClients = () => {
         axios.get(backLink + "/client").then(res => {
             setClients(res.data);
-
-
         });
     };
 
+    const [formErrors, setFormErrors] = useState({});
+
+    const validateForm = () => {
+        let errors = {}
+
+        if (!selectedClient.firstName) {
+            errors.client = missingDataErrors.client;
+        }
+
+        if (formValues.startDate === "") {
+            errors.startDate = missingDataErrors.date;
+        }
+        if (type === "vacationHouse") {
+            if (formValues.endDate === "") {
+                errors.endDate = missingDataErrors.date;
+            }
+        }
+
+        if (type !== "vacationHouse") {
+            if (formValues.startTime === "") {
+                errors.startTime = missingDataErrors.time;
+            }
+
+            if (formValues.endTime === "") {
+                errors.endTime = missingDataErrors.time;
+            }
+        }
+
+        if (formValues.numberOfClients === "") {
+            errors.numberOfClients = missingDataErrors.numberOfClients
+        }
+
+        return errors;
+    }
 
     const [formValues, setFormValues] = useState({
         startDate: "",
@@ -55,6 +77,7 @@ export function ReservationModal({show, setShow, type, resourceId}) {
     }, [])
 
     function extractTime() {
+
         let startYear = 0;
         let startMonth = 0;
         let startDay = 0;
@@ -77,10 +100,16 @@ export function ReservationModal({show, setShow, type, resourceId}) {
         let endMonth = 0;
         let endDay = 0;
 
-        if (formValues.endDate) {
-            endYear = parseInt(formValues.endDate.substring(0, 4));
-            endMonth = parseInt(formValues.endDate.substring(5, 7));
-            endDay = parseInt(formValues.endDate.substring(8, 10));
+        if (type === "vacationHouse") {
+            if (formValues.endDate) {
+                endYear = parseInt(formValues.endDate.substring(0, 4));
+                endMonth = parseInt(formValues.endDate.substring(5, 7));
+                endDay = parseInt(formValues.endDate.substring(8, 10));
+            }
+        } else {
+            endYear = startYear;
+            endDay = startDay;
+            endMonth = startMonth;
         }
 
         let endHour = 0;
@@ -95,13 +124,22 @@ export function ReservationModal({show, setShow, type, resourceId}) {
 
     const [showAlert, setShowAlert] = useState(false);
 
-    function addReservation() {
 
+    const handleSubmit = e => {
+        e.preventDefault()
+        let errors = validateForm()
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+        } else {
+            addReservation(e);
+        }
+    }
+
+    const addReservation = e => {
         let additionalServicesStrings = [];
         for (let index in formValues.additionalServices) {
             additionalServicesStrings.push(formValues.additionalServices.at(index).text);
         }
-
         let {
             startYear,
             startMonth,
@@ -116,22 +154,8 @@ export function ReservationModal({show, setShow, type, resourceId}) {
         } = extractTime();
 
 
-        let clientId = -1;
-        if (selectedClient.at(0)) {
-            let clientArray = selectedClient.at(0).split(' ');
-            let firstName = clientArray.at(0);
-            let lastName = clientArray.at(1);
-
-            for (let index in clients) {
-                if (clients.at(index).firstName === firstName && clients.at(index).lastName === lastName) {
-                    clientId = clients.at(index).id;
-                }
-            }
-
-        }
-
         let dto = {
-            clientId: clientId,
+            clientId: selectedClient.id,
             resourceId: resourceId,
             numberOfClients: formValues.numberOfClients,
             additionalServicesStrings: additionalServicesStrings,
@@ -149,20 +173,18 @@ export function ReservationModal({show, setShow, type, resourceId}) {
             endMinute: endMinute,
             isBusyPeriod: false,
             isQuickReservation: false
-
         }
+
+        console.log(dto);
 
         if (type === "adventure") {
             axios
                 .post(backLink + "/adventure/reservation/add", dto)
                 .then(response => {
-                    console.log(response);
                     window.location.reload();
                 })
                 .catch(error => {
-                    console.log(error);
                     setShowAlert(true);
-
                 })
         } else if (type === "boat") {
             axios
@@ -189,6 +211,7 @@ export function ReservationModal({show, setShow, type, resourceId}) {
 
                 })
         }
+
     }
 
     function addAdditionalServicesTag() {
@@ -205,10 +228,9 @@ export function ReservationModal({show, setShow, type, resourceId}) {
     }
 
 
-    let html;
-    fillOptions();
+    let html = "";
 
-    if (options.length > 0) {
+    if (clients.length > 0) {
         html = <><Modal show={show} onHide={() => setShow(false)}>
             <Modal.Header closeButton>
                 <Modal.Title>Rezervacija</Modal.Title>
@@ -216,54 +238,98 @@ export function ReservationModal({show, setShow, type, resourceId}) {
             <Modal.Body>
                 <Form>
 
-                    <div className="d-flex w-100 m-2">
-                        <Form.Group className="me-2 w-50 mt-2">
-                            <Form.Label>Početni datum</Form.Label>
-                            <Form.Control type="date" value={formValues.startDate}
-                                          onChange={(e) => setField("startDate", e.target.value)}
+                    {type === "vacationHouse" ?
+                        <div className="d-flex w-100 m-2">
+                            <Form.Group className="me-2 w-50 mt-2">
+                                <Form.Label>Početni datum</Form.Label>
+                                <Form.Control type="date" value={formValues.startDate}
+                                              onChange={(e) => setField("startDate", e.target.value)}
+                                              isInvalid={!!formErrors.startDate}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {formErrors.startDate}
+                                </Form.Control.Feedback>
+                            </Form.Group>
 
-                            />
-                        </Form.Group>
+                            <Form.Group className="ms-2 w-50 mt-2">
+                                <Form.Label>Završni datum</Form.Label>
+                                <Form.Control type="date" value={formValues.endDate}
+                                              onChange={(e) => setField("endDate", e.target.value)}
+                                              isInvalid={!!formErrors.endDate}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {formErrors.endDate}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </div>
+                        :
+                        <div className="d-flex w-100 m-2">
+                            <Form.Group className="me-2 mt-2 w-100">
+                                <Form.Label>Datum</Form.Label>
+                                <Form.Control type="date" value={formValues.startDate}
+                                              onChange={(e) => {
+                                                  setField("endDate", e.target.value);
+                                                  setField("startDate", e.target.value);
+                                              }}
+                                              isInvalid={!!formErrors.startDate}
 
-                        <Form.Group className="ms-2 w-50 mt-2">
-                            <Form.Label>Završni datum</Form.Label>
-                            <Form.Control type="date" value={formValues.endDate}
-                                          onChange={(e) => setField("endDate", e.target.value)}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {formErrors.startDate}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </div>
+                    }
+                    {type !== "vacationHouse" &&
+                        <div className="d-flex w-100 m-2">
+                            <Form.Group className="me-2 w-50 mt-2">
+                                <Form.Label>Vreme početka</Form.Label>
+                                <Form.Control type="time" min="05:00" max="20:00" value={formValues.startTime}
+                                              onChange={(e) => setField("startTime", e.target.value)}
+                                              isInvalid={!!formErrors.startTime}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {formErrors.startTime}
+                                </Form.Control.Feedback>
+                            </Form.Group>
 
-                            />
-                        </Form.Group>
-                    </div>
-
-                    { type !== "vacationHouse" &&
-                    <div className="d-flex w-100 m-2">
-                        <Form.Group className="me-2 w-50 mt-2">
-                            <Form.Label>Vreme početka</Form.Label>
-                            <Form.Control type="time" min="05:00" max="20:00" value={formValues.startTime}
-                                          onChange={(e) => setField("startTime", e.target.value)}
-
-                            />
-                        </Form.Group>
-
-                        <Form.Group className="ms-2 w-50 mt-2">
-                            <Form.Label>Vreme zavrsetka</Form.Label>
-                            <Form.Control type="time" min="05:00" max="20:00"
-                                          value={formValues.endTime}
-                                          onChange={(e) => setField("endTime", e.target.value)}
-
-                            />
-                        </Form.Group>
-                    </div> }
+                            <Form.Group className="ms-2 w-50 mt-2">
+                                <Form.Label>Vreme zavrsetka</Form.Label>
+                                <Form.Control type="time" min="05:00" max="20:00"
+                                              value={formValues.endTime}
+                                              onChange={(e) => setField("endTime", e.target.value)}
+                                              isInvalid={!!formErrors.endTime}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {formErrors.endTime}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </div>}
 
                     <Form.Group className="m-2">
                         <Form.Label>Klijent</Form.Label>
-                        <Typeahead
-                            id="basic-typeahead-single"
-                            labelKey="name"
-                            options={options}
-                            selected={selectedClient}
-                            onChange={setSelectedClient}
+                        <Dropdown>
+                            <Dropdown.Toggle variant="light">
+                                {selectedClient.firstName ?
+                                    selectedClient.firstName + " " + selectedClient.lastName
+                                    :
+                                    "Izaberi klijenta"
+                                }
+                            </Dropdown.Toggle>
 
-                        />
+                            <Dropdown.Menu>
+                                {clients.map((client, index) => {
+                                    return <Dropdown.Item key={index}
+                                                          onClick={() => setSelectedClient(client)}>
+                                        {client.firstName + " " + client.lastName}
+                                    </Dropdown.Item>;
+                                })}
+                            </Dropdown.Menu>
+                        </Dropdown>
+                        <Form.Control isInvalid={!!formErrors.client} style={{display: "none"}}/>
+                        <Form.Control.Feedback type="invalid">
+                            {formErrors.client}
+                        </Form.Control.Feedback>
                     </Form.Group>
 
                     <Form.Group className="m-2">
@@ -271,7 +337,12 @@ export function ReservationModal({show, setShow, type, resourceId}) {
                         <Form.Control type="number"
                                       value={formValues.numberOfClients}
                                       onChange={(e) => setField("numberOfClients", e.target.value)}
+                                      isInvalid={!!formErrors.numberOfClients}
+
                         />
+                        <Form.Control.Feedback type="invalid">
+                            {formErrors.numberOfClients}
+                        </Form.Control.Feedback>
 
                     </Form.Group>
 
@@ -298,7 +369,7 @@ export function ReservationModal({show, setShow, type, resourceId}) {
                 <Button variant="secondary" onClick={() => setShow(false)}>
                     Otkaži
                 </Button>
-                <Button variant="primary" onClick={addReservation}>
+                <Button variant="primary" onClick={e => handleSubmit(e)}>
                     Rezerviši
                 </Button>
             </Modal.Footer>
