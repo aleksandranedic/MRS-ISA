@@ -62,13 +62,17 @@ export default function Login() {
     }
     return (
         <>
-            <div className="mt-4 d-flex justify-content-center ">
-                <img className="border rounded-start border-end-0 border-2 border-dark"
-                     src={require("./images/login.jpg")}
-                     alt="login"/>
-                <div className="py-5 px-4 border rounded-end border-2 border-start-0 border-dark d-flex flex-column"
-                     style={{width: "335px"}}>
-                    <h1 className="mb-5">Login</h1>
+            <div className="d-flex justify-content-center w-100"
+            style={{height: "100vh" ,background: "linear-gradient(175deg, rgba(248,248,248,0.9) 50%, rgba(201, 201, 201, 0.6) 100%)"}}
+            >
+                <img
+                     src={require("./images/pexels-te-lensfix-1371360.jpg")}
+                     alt="login"
+                     style={{width: "60%"}}
+                />
+                <div className="p-5 d-flex flex-column"
+                     style={{width: "40%", backgroundColor: "rgba(255,255,255, 0.8)"}}>
+                    <h1 className="mb-5">Prijava</h1>
                     <Form.Group className="mb-3" controlId="formEmail">
                         <Form.Label>Email</Form.Label>
                         <Form.Control type="text"
@@ -79,7 +83,7 @@ export default function Login() {
                         </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formPassword">
-                        <Form.Label>Password</Form.Label>
+                        <Form.Label>Lozinka</Form.Label>
                         <Form.Control type="password"
                                       onChange={e => setField('password', e.target.value)}
                                       isInvalid={!!errors.password}/>
@@ -87,7 +91,8 @@ export default function Login() {
                             {errors.password}
                         </Form.Control.Feedback>
                     </Form.Group>
-                    <button onClick={handleSubmit} type="submit" className="btn btn-primary btn-block mt-2">Uloguj se
+                    <button onClick={handleSubmit} type="submit" className="btn btn-primary btn-block mt-2">
+                        Prijavi se
                     </button>
                     <div className="d-flex flex-column mt-5 pt-lg-5">
                         <label>Želite da se registrujete?</label>

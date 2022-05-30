@@ -15,6 +15,8 @@ import {Collapse} from "react-bootstrap";
 import {ReservationsTable} from "../Calendar/ReservationsTable";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {Calendar} from "../Calendar/Calendar";
+import {processReservationsForResources} from "../ProcessToEvent";
+import {AddReview} from "../Reviews/AddReview";
 
 const HOST = "http://localhost:4444";
 const Gallery = ({house, images}) => {
@@ -48,7 +50,8 @@ const Update = ({vacationHouse, showModal, closeModal}) => {
 
 const Reservations = ({reservations, name, address}) => {
     if (typeof reservations !== "undefined"){
-        return <QuickReservations reservations={reservations} name={name} address={address} entity="house" priceText="po noćenju" durationText="dana"/>
+        return <QuickReservations type={"vacationHouse"} reservations={reservations} name={name} address={address} entity="house" priceText="po noćenju" durationText="dana"
+        addable={true}/>
     }
     else {
         return <></>
@@ -70,22 +73,17 @@ export function VacationHousePage() {
     const [show, setShow] = useState(false);
     const [open, setOpen] = useState(false);
     const [reservations, setReservations] = useState([]);
+    const [events, setEvents] = useState(null);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const {id} = useParams();
     var [imgs, setImgs] = useState([{thumbnail: '', original: ''}]);
 
-    const [busyPeriod, setBusyPeriod] = useState([]);
-    const fetchBusyPeriod = () => {
-        axios.get(backLink+ "/house/reservation/busyPeriod/vacationHouse/" + id).then(res => {
-            setBusyPeriod(res.data);
-        })
-    }
-
     const fetchReservations = () => {
         axios.get(backLink+ "/house/reservation/vacationHouse/" + id).then(res => {
             setReservations(res.data);
+            setEvents(processReservationsForResources(res.data));
         })
     }
 
@@ -108,7 +106,6 @@ export function VacationHousePage() {
         fetchHouse();
         fetchReviews();
         fetchReservations();
-        fetchBusyPeriod();
     }, []);
     
     return (
@@ -126,38 +123,33 @@ export function VacationHousePage() {
         <Update closeModal={handleClose} showModal={show} vacationHouse = {house}/>
         <div className='p-5 pt-0'>
             <Gallery house={house} images={imgs}/>
-            <hr/>
+
             <Reservations reservations={house.quickReservations} name={house.name} address={house.address}/>
             <footer className="blockquote-footer">Svi izlasci iz vikendice obavljaju se do 10:00h.</footer>
-            <ReviewsComp reviews = {houseReviews}/>
+            
         </div>
 
-        <hr className="me-5 ms-5"/>
-        <Calendar reservations={reservations} reservable={true} pricelist={{price: house.price}} resourceId={house.id} type={"vacationHouse"} busyPeriods={busyPeriod}/>
+       
 
-        <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
-        <hr className="me-5 ms-5"/>
+            <hr className="me-5 ms-5"/>
+                  <Calendar reservable={true} pricelist={{price: house.price}} resourceId={house.id} type={"vacationHouse"} events={events} myPage={true}/>
+            <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
+            <hr className="me-5 ms-5"/>
+            <ReservationCardGrid reservations={reservations}/>
 
-        <ReservationCardGrid reservations={reservations}/>
+            <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)} aria-controls="reservationsTable" aria-expanded={open} style = {{cursor: "pointer"}}>
+                Istorija rezervacija
+            </h2>
+            <hr className="me-5 ms-5"/>
+            <Collapse in={open}>
+                <div id="reservationsTable">
+                    <ReservationsTable  reservations={reservations} showResource={false}/>
+                </div>
+            </Collapse>
 
-        <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)}
-            aria-controls="reservationsTable"
-            aria-expanded={open}
-            style = {{cursor: "pointer"}}
-        >Istorija rezervacija</h2>
-
-        <hr className="me-5 ms-5"/>
-        <Collapse in={open}>
-            <div id="reservationsTable">
-                <ReservationsTable  reservations={reservations} showResource={false}/>
+            <div className="ms-5">
+                <ReviewsComp reviews = {houseReviews}/>
             </div>
-        </Collapse>
-
-
-
-
-
-
 
         <BeginButton/>
     </>

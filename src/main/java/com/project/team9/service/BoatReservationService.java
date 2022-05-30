@@ -1,15 +1,11 @@
 package com.project.team9.service;
 
 import com.project.team9.model.reservation.BoatReservation;
-import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.repo.BoatReservationRepository;
-import com.project.team9.repo.VacationHouseReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class BoatReservationService {
@@ -42,8 +38,9 @@ public class BoatReservationService {
         return repository.findPossibleCollisionReservations(id);
     }
 
-    public void save(BoatReservation reservation) {
+    public Long save(BoatReservation reservation) {
         repository.save(reservation);
+        return null;
     }
 
     public List<BoatReservation> getBusyPeriodForBoat(Long id) {
@@ -52,6 +49,11 @@ public class BoatReservationService {
 
     public boolean hasReservations(Long resourceId, Long clientId) {
         return repository.findReservationsForClient(resourceId, clientId).size() > 0;
+    }
+
+
+    public boolean clientCanReviewVendor(Long vendorId, Long clientId) {
+        return repository.findReservationsForClientAndVendor(vendorId, clientId).size()>0;
     }
 
     public List<BoatReservation> getReservationsByBoatId(Long id) {

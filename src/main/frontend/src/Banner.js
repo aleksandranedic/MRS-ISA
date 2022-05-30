@@ -9,7 +9,6 @@ import './Banner.css';
 export default function Banner({caption}) {
     return (<div>
             <Carousel slide>
-
                 <Carousel.Item>
                     <img className="carousel-image d-block w-100" height="500vh" src={boatnotext}
                         alt="First"/>

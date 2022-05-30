@@ -3,6 +3,7 @@ package com.project.team9.controller;
 import com.project.team9.dto.ClientReviewDTO;
 import com.project.team9.dto.ReviewScoresDTO;
 import com.project.team9.model.review.ClientReview;
+import com.project.team9.model.review.VendorReview;
 import com.project.team9.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -35,5 +36,10 @@ public class ReviewController {
     public Long addReview(@RequestBody ClientReview review){
         return reviewService.sendReviewRequest(review);
 
+    }
+
+    @PostMapping("/vendor/add")
+    public Long addVendorReview(@RequestBody VendorReview vendorReview) {
+        return reviewService.sendVendorReviewRequest(vendorReview);
     }
 }

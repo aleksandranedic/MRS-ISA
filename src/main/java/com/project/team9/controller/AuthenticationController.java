@@ -2,6 +2,7 @@ package com.project.team9.controller;
 
 import com.project.team9.dto.LoginDTO;
 import com.project.team9.dto.PasswordsDTO;
+import com.project.team9.dto.UserDTO;
 import com.project.team9.model.user.Administrator;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.User;
@@ -111,20 +112,16 @@ public class AuthenticationController {
     }
 
     @GetMapping("/getLoggedUser")
-    public ResponseEntity<User> getLoggedInUser() {
-        try{
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication instanceof AnonymousAuthenticationToken)
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<UserDTO> getLoggedInUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof AnonymousAuthenticationToken)
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-            User user = (User) authentication.getPrincipal();
-            if (user == null)
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        User user = (User) authentication.getPrincipal();
+        if (user == null)
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        }catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(new UserDTO(user), HttpStatus.OK);
     }
 
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 import AdventurePage from "./Adventure/AdventurePage";
 import VacationHousePage from "./VacationHousePage/VacationHousePage";
@@ -17,11 +17,31 @@ import {DeletionRequests} from "./Admin/DeletionRequests";
 
 import {HomePage} from "./Home/HomePage";
 import SuccessPopUp from "./SuccessPopUp";
+import axios from "axios";
+import {backLink} from "./Consts";
+import {isLoggedIn} from "./Autentification";
 
 
 
 
 function App() {
+
+    useEffect(()=> {
+        if (isLoggedIn()) {
+            getLoggedUser();
+        }
+    })
+
+    const getLoggedUser = () => {
+        axios.get(backLink + "/getLoggedUser").then(
+            response => {
+                localStorage.setItem("userRoleName", response.data.role);
+                localStorage.setItem("userId", response.data.id);
+            }
+        )
+    }
+
+
     return (
         <Router>
             <Routes>

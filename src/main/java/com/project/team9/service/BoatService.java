@@ -12,6 +12,7 @@ import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.user.Client;
+import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.repo.BoatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -147,6 +148,16 @@ public class BoatService {
         return true;
     }
 
+    public Long reserveQuickReservation(BoatQuickReservationDTO dto) {
+        BoatReservation quickReservation = boatReservationService.getBoatReservation(dto.getReservationID());
+        Client client = clientService.getById(dto.getClientID().toString());
+
+        quickReservation.getResource().removeQuickReservation(quickReservation);
+        quickReservation.setClient(client);
+        quickReservation.setQuickReservation(false);
+        return boatReservationService.save(quickReservation);
+    }
+
     public List<BoatCardDTO> getOwnerBoats(Long owner_id) {
         List<Boat> boats = repository.findByOwnerId(owner_id);
         List<BoatCardDTO> boatCards = new ArrayList<BoatCardDTO>();
@@ -159,6 +170,12 @@ public class BoatService {
             boatCards.add(new BoatCardDTO(boat.getId(), thumbnail, boat.getTitle(), boat.getDescription(), address));
         }
         return boatCards;
+    }
+
+    public ResourceOwnerDTO getOwner(Long id) {
+        Boat boat = this.getBoat(id);
+        BoatOwner owner = boat.getOwner();
+        return new ResourceOwnerDTO(owner.getId(), owner.getName(), owner.getProfileImg());
     }
 
     public Boat getBoat(Long id) {
@@ -358,16 +375,7 @@ public class BoatService {
 
         for (BoatReservation br : boatReservationService.getStandardReservations()) {
             if (Objects.equals(br.getClient().getId(), id) && !br.isBusyPeriod()) {
-                reservations.add(new ReservationDTO(
-                        br.getAppointments(),
-                        br.getNumberOfClients(),
-                        br.getAdditionalServices(),
-                        br.getPrice(),
-                        br.getClient(),
-                        br.getResource().getTitle(),
-                        br.isBusyPeriod(),
-                        br.isQuickReservation()
-                ));
+                reservations.add(createDTOFromReservation(br));
             }
         }
         return reservations;
@@ -379,16 +387,7 @@ public class BoatService {
 
         for (BoatReservation br : boatReservationService.getAll()) {
             if (Objects.equals(br.getResource().getId(), id) && !br.isQuickReservation() && !br.isBusyPeriod()) {
-                reservations.add(new ReservationDTO(
-                        br.getAppointments(),
-                        br.getNumberOfClients(),
-                        br.getAdditionalServices(),
-                        br.getPrice(),
-                        br.getClient(),
-                        br.getResource().getTitle(),
-                        br.isBusyPeriod(),
-                        br.isQuickReservation()
-                ));
+                reservations.add(createDTOFromReservation(br));
             }
         }
         return reservations;
@@ -400,16 +399,7 @@ public class BoatService {
 
         for (BoatReservation br : boatReservationService.getAll()) {
             if (Objects.equals(br.getResource().getOwner().getId(), id) && !br.isQuickReservation() && !br.isBusyPeriod()) {
-                reservations.add(new ReservationDTO(
-                        br.getAppointments(),
-                        br.getNumberOfClients(),
-                        br.getAdditionalServices(),
-                        br.getPrice(),
-                        br.getClient(),
-                        br.getResource().getTitle(),
-                        br.isBusyPeriod(),
-                        br.isQuickReservation()
-                ));
+                reservations.add(createDTOFromReservation(br));
             }
         }
         return reservations;
@@ -479,7 +469,6 @@ public class BoatService {
             for (Appointment a : r.getAppointments()) {
                 for (Appointment newAppointment : reservation.getAppointments()) {
                     reservationService.checkAppointmentCollision(a, newAppointment);
-                    reservationService.checkAppointmentCollision(newAppointment, a);
                 }
             }
         }
@@ -496,7 +485,9 @@ public class BoatService {
                 r.getClient(),
                 r.getResource().getTitle(),
                 r.isBusyPeriod(),
-                r.isQuickReservation()
+                r.isQuickReservation(),
+                r.getResource().getId(),
+                r.getId()
         );
     }
 
@@ -507,10 +498,11 @@ public class BoatService {
         LocalDateTime startTime = LocalDateTime.of(dto.getStartYear(), Month.of(dto.getStartMonth()), dto.getStartDay(), 0, 0);
         LocalDateTime endTime = startTime.plusDays(1);
 
+
         while (startTime.isBefore(LocalDateTime.of(dto.getEndYear(), Month.of(dto.getEndMonth()), dto.getEndDay(), 23, 59))) {
             appointments.add(new Appointment(startTime, endTime));
             startTime = endTime;
-            endTime = startTime.plusHours(1);
+            endTime = startTime.plusDays(1);
         }
         appointmentService.saveAll(appointments);
 
@@ -542,14 +534,29 @@ public class BoatService {
 
     public boolean clientCanReview(Long resourceId, Long clientId) {
 
-        return hasReservations(resourceId, clientId) &&
-                !reviewService.clientHasReview(resourceId, clientId) &&
-                !reviewRequestService.hasReviewRequests(resourceId, clientId);
+        return hasReservations(resourceId, clientId);
 
     }
 
     private boolean hasReservations(Long resourceId, Long clientId) {
         return boatReservationService.hasReservations(resourceId, clientId);
+    }
+
+    public List<ReservationDTO> getReservationsForReview(Long id) {
+        List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
+        for (BoatReservation r : boatReservationService.getStandardReservations()) {
+            if (!reviewService.reservationHasReview(r.getId())) {
+                if (Objects.equals(r.getResource().getOwner().getId(), id)) {
+                    int index = r.getAppointments().size() - 1;
+                    LocalDateTime time = r.getAppointments().get(index).getEndTime();
+                    if (time.isBefore(LocalDateTime.now())) {
+                        reservations.add(createDTOFromReservation(r));
+                    }
+
+                }
+            }
+        }
+        return reservations;
     }
 
     public List<String> getBoatTypes() {
@@ -560,6 +567,10 @@ public class BoatService {
                 types.add(boat.getType());
         }
         return types;
+    }
+
+    public boolean clientCanReviewVendor(Long vendorId, Long clientId) {
+        return boatReservationService.clientCanReviewVendor(vendorId, clientId);
     }
 
     public List<String> getBoatAddress() {

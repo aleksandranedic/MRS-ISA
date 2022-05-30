@@ -2,8 +2,6 @@ package com.project.team9.controller;
 
 import com.project.team9.dto.*;
 import com.project.team9.exceptions.ReservationNotAvailableException;
-import com.project.team9.model.Address;
-import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.service.AdventureService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,24 +39,23 @@ public class AdventureController {
         return service.createBusyPeriod(dto);
     }
 
-    @GetMapping("/reservation/busyPeriod/fishingInstructor/{id}")
-    public List<ReservationDTO> getBusyPeriodForInstructor(@PathVariable Long id) {
-        return service.getBusyPeriodsForFishingInstructor(id);
-    }
-
-    @GetMapping("/reservation/busyPeriod/adventure/{id}")
-    public List<ReservationDTO> getBusyPeriodForAdventure(@PathVariable Long id) {
-        return service.getBusyPeriodsForAdventure(id);
-    }
-
     @GetMapping("/reservation/fishingInstructor/{id}")
     public List<ReservationDTO> getReservationsForInstructor(@PathVariable Long id) {
-        return service.getReservationsForFishingInstructor(id);
+        List<ReservationDTO> reservationsForFishingInstructor = service.getReservationsForFishingInstructor(id);
+        reservationsForFishingInstructor.addAll(service.getBusyPeriodsForFishingInstructor(id));
+        return reservationsForFishingInstructor;
+    }
+
+    @GetMapping("/reservation/forReview/{id}")
+    public List<ReservationDTO> getReservationsForReview(@PathVariable Long id) {
+        return service.getReservationsForReview(id);
     }
 
     @GetMapping("/reservation/adventure/{id}")
     public List<ReservationDTO> getReservationsForAdventure(@PathVariable Long id) {
-        return service.getReservationsForAdventure(id);
+        List<ReservationDTO> reservationsForAdventure = service.getReservationsForAdventure(id);
+        reservationsForAdventure.addAll(service.getBusyPeriodsForAdventure(id));
+        return reservationsForAdventure;
     }
 
     @GetMapping("/reservation/client/{id}")
@@ -74,6 +71,11 @@ public class AdventureController {
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Adventure getById(@PathVariable String id) {
         return service.getById(id);
+    }
+
+    @PostMapping("/quickReservations/reserve")
+    public Long reserveQuickReservation(@RequestBody AdventureQuickReservationDTO dto) {
+        return service.reserveQuickReservation(dto);
     }
 
     @GetMapping(value = "quickReservations/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -104,8 +106,13 @@ public class AdventureController {
     }
 
     @GetMapping("/clientCanReview/{resourceId}/{clientId}")
-    public Boolean clientCanReview(@PathVariable Long resourceId, @PathVariable Long clientId) {
+    public boolean clientCanReview(@PathVariable Long resourceId, @PathVariable Long clientId) {
         return service.clientCanReview(resourceId, clientId);
+    }
+
+    @GetMapping("/clientCanReviewVendor/{vendorId}/{clientId}")
+    public boolean clientCanReviewVendor(@PathVariable Long vendorId, @PathVariable Long clientId) {
+        return service.clientCanReviewVendor(vendorId, clientId);
     }
 
     @PostMapping("/add")
@@ -124,5 +131,7 @@ public class AdventureController {
     }
 
     @GetMapping("/address")
-    public ResponseEntity<List<String>> getAdventureAddress(){return ResponseEntity.ok(service.getAdventureAddress());}
+    public ResponseEntity<List<String>> getAdventureAddress() {
+        return ResponseEntity.ok(service.getAdventureAddress());
+    }
 }

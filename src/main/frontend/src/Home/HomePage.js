@@ -1,21 +1,20 @@
 import "../Home/HomePage.css"
 import {Button, Card, Form} from "react-bootstrap";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {GetAllVacationHouses} from "../VacationHousePage/AllVacationHouses";
 import {GetAllAdventures} from "../Adventure/AllAdventures";
 import {GetAllBoats} from "../BoatPage/AllBoats";
-import {backLink, frontLink, isLoggedIn, logOut} from "../Consts";
+import {backLink, frontLink, logOut} from "../Consts";
 import StarRatings from 'react-star-ratings';
 import {GetAllVacationHouseOwners} from "../VacationHouseOwnerPage/AllVacationHouseOwners";
 import {GetAllFishingInstructors} from "../FishingInstructor/AllFishingInstructors";
 import {GetAllBoatOwners} from "../BoatOwnerPage/AllBoatOwners";
 import {BsPerson, BsSearch} from "react-icons/bs";
-import axios from "axios";
+import {isBoatOwner, isClient, isFishingInstructor, isLoggedIn, isVacationHouseOwner} from "../Autentification";
 
 export function HomePage() {
 
     const [searchTerm, setSearchTerm] = useState("searchTerm");
-    const [id, setID] = useState("")
 
     let vacationHouses = GetAllVacationHouses();
     if (vacationHouses.length > 6) {
@@ -46,20 +45,24 @@ export function HomePage() {
     if (boatOwners.length > 4) {
         boatOwners = boatOwners.subarray(0, 4);
     }
-    const getLoggedUser = () => {
-        axios.get(backLink + "/getLoggedUser").then(
-            response => {
-                setID(response.data.id)
-            }
-        )
-    }
 
+    let profileLink;
 
-    useEffect(() => {
-        if (isLoggedIn()) {
-            getLoggedUser()
+    if (isLoggedIn()) {
+        if (isClient()){
+            profileLink = frontLink + "client/" + localStorage.getItem("userId");
         }
-    }, [])
+        else if (isVacationHouseOwner()){
+            profileLink = frontLink + "houseOwner/" + localStorage.getItem("userId");
+        }
+        else if (isBoatOwner()){
+            profileLink = frontLink + "boatOwner/" + localStorage.getItem("userId");
+        }
+        else if (isFishingInstructor()){
+            profileLink = frontLink + "fishingInstructor/" + localStorage.getItem("userId");
+        }
+
+    }
 
     return (<div className="page">
         <div id="hero">
@@ -68,9 +71,9 @@ export function HomePage() {
 
                 {(isLoggedIn()) &&
 
-                <a href={"http://localhost:3000/client/" + id} className="m-3">
-                    <BsPerson className="icon"/>
-                </a>
+                    <a href={profileLink} className="m-3">
+                        <BsPerson className="icon"/>
+                    </a>
                 }
 
                 {(!isLoggedIn()) ?

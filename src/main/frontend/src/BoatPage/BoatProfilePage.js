@@ -15,15 +15,15 @@ import {Calendar} from "../Calendar/Calendar";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {Collapse} from "react-bootstrap";
 import {ReservationsTable} from "../Calendar/ReservationsTable";
+import {processReservationsForResources} from "../ProcessToEvent";
 
-const HOST = "http://localhost:4444";
 
 const Gallery = ({boat, images}) => {
     if (typeof boat.imagePaths !== "undefined"){
         let empty = images.length === 0;
         for (let i=0; i<boat.imagePaths.length;i++){
-            if (!boat.imagePaths[i].includes(HOST)){
-                boat.imagePaths[i] = HOST + boat.imagePaths[i];
+            if (!boat.imagePaths[i].includes(backLink)){
+                boat.imagePaths[i] = backLink + boat.imagePaths[i];
                 images.push({original:boat.imagePaths[i], thumbnail:boat.imagePaths[i]})
             } else if (empty){
                 images.push({original:boat.imagePaths[i], thumbnail:boat.imagePaths[i]})   
@@ -55,7 +55,9 @@ const Update = ({boat, showModal, closeModal}) => {
 
 const Reservations = ({reservations, name, address}) => {
     if (typeof reservations !== "undefined"){
-        return <QuickReservations reservations={reservations} name={name} address={address} entity="boat" priceText="po vožnji" durationText="h"/>
+        return <QuickReservations type={"boat"} reservations={reservations} name={name} address={address} entity="boat" priceText="po vožnji" durationText="h"
+            addable={true}
+        />
     }
     else {
         return <></>
@@ -79,6 +81,7 @@ export function BoatProfilePage() {
     const {id} = useParams();
     const [boat, setBoat] = useState({});
     const [boatReviews, setBoatReviews] = useState([])
+    const [events, setEvents] = useState(null);
     var [imgs, setImgs] = useState([{thumbnail: '', original: ''}]);
 
 
@@ -88,13 +91,7 @@ export function BoatProfilePage() {
     const fetchReservations = () => {
         axios.get(backLink+ "/boat/reservation/boat/" + id).then(res => {
             setReservations(res.data);
-        })
-    }
-
-    const [busyPeriod, setBusyPeriod] = useState([]);
-    const fetchBusyPeriod = () => {
-        axios.get(backLink+ "/boat/reservation/busyPeriod/boat/" + id).then(res => {
-            setBusyPeriod(res.data);
+            setEvents(processReservationsForResources(res.data));
         })
     }
 
@@ -120,8 +117,8 @@ export function BoatProfilePage() {
         fetchBoat();
         fetchReviews();
         fetchReservations();
-        fetchBusyPeriod();
     }, []);
+
     return (
     <>
         <Banner caption={boat.name}/>
@@ -137,32 +134,30 @@ export function BoatProfilePage() {
         <Update closeModal={handleClose} showModal={show} boat = {boat}/>
         <div className='p-5 pt-0'>
             <Gallery boat={boat} images={imgs}/>
-            <hr/>
+
             <Reservations reservations={boat.quickReservations} name={boat.name} address={boat.address}/>
+            <hr className="me-5 ms-5"/>
+            <Calendar reservable={true} pricelist={{price: boat.price}} type="boat" resourceId={id} events={events}/>
+
+
+            <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
+            <hr className="me-5 ms-5"/>
+            <ReservationCardGrid reservations={reservations}/>
+
+            <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)} aria-controls="reservationsTable" aria-expanded={open} style = {{cursor: "pointer"}}>
+                Istorija rezervacija
+            </h2>
+
+            <hr className="me-5 ms-5"/>
+            <Collapse in={open}>
+                <div id="reservationsTable">
+                    <ReservationsTable  reservations={reservations} showResource={false}/>
+                </div>
+            </Collapse>
+
             <ReviewsComp reviews = {boatReviews}/>
+
         </div>
-
-        <hr className="me-5 ms-5"/>
-        <Calendar reservations={reservations} reservable={true} pricelist={{price: boat.price}} type="boat" resourceId={id} busyPeriods={busyPeriod}/>
-
-        <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
-        <hr className="me-5 ms-5"/>
-
-        <ReservationCardGrid reservations={reservations}/>
-
-        <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)}
-            aria-controls="reservationsTable"
-            aria-expanded={open}
-            style = {{cursor: "pointer"}}
-        >Istorija rezervacija</h2>
-
-        <hr className="me-5 ms-5"/>
-        <Collapse in={open}>
-            <div id="reservationsTable">
-                <ReservationsTable  reservations={reservations} showResource={false}/>
-            </div>
-        </Collapse>
-
         <BeginButton/>
     </>
 

@@ -1,16 +1,31 @@
 import {Button, Form, Modal} from "react-bootstrap";
-import React, {useState} from "react";
+import React, {useState, useRef} from "react";
 import {backLink, missingDataErrors} from "../Consts";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 
 
-export function FishingInstructorForm({show, setShow, fishingInstructor}) {
+export function FishingInstructorForm({show, setShow, fishingInstructor, profileImg}) {
+    
     const [showPassword, setShowPassword] = useState(false);
     const handleShowPassword = () => setShowPassword(true);
+
+    const {id} = useParams();
+    const formRef = useRef();
 
     const [formValues, setFormValues] = useState(fishingInstructor);
     const [formErrors, setFormErrors] = useState({});
     const [isSubmit, setIsSubmit] = useState(false);
+
+
+    const opetFileExplorer = () => {
+        document.getElementById("fileImage").click();
+    }
+
+    const setProfileImageView = () => {
+        var file = document.getElementById("fileImage").files[0]
+        document.getElementById("profPic").src = URL.createObjectURL(file);
+    }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -23,6 +38,21 @@ export function FishingInstructorForm({show, setShow, fishingInstructor}) {
         if (Object.keys(errors).length > 0) {
             setFormErrors(errors);
         } else {
+            var file = document.getElementById("fileImage").files[0];
+            if (typeof file !== "undefined"){
+                var files = document.getElementById("fileImage").files;
+                var data = new FormData();
+                var images = []
+                for (let i=0; i < files.length; i++){
+                    images.push(files[i])
+                }
+                data.append("fileImage",file);
+                axios
+                .post("http://localhost:4444/fishinginstructor/changeProfilePicture/" + id, data)
+                .then(res => {
+                        console.log(res.data)
+                });
+            }
             axios
                 .post(backLink + "/fishinginstructor/" + fishingInstructor.id + "/edit", formValues)
                 .then(response => {
@@ -74,18 +104,25 @@ export function FishingInstructorForm({show, setShow, fishingInstructor}) {
 
             <Modal.Body>
 
-                <Form.Group className="mb-3 m-2" controlId="firstName">
-                    <Form.Label>Ime</Form.Label>
-                    <Form.Control type="text" defaultValue={formValues.firstName}/>
-                    <Form.Control.Feedback>
-                        {formErrors.firstName}
-                    </Form.Control.Feedback>
-                </Form.Group>
+                <div className="d-flex">
+                    <div className="d-flex justify-content-center" style={{width:"28%"}}>
+                        <img id="profPic" className="rounded-circle" style={{objectFit: "cover", maxWidth: "25vh", minWidth: "25vh", maxHeight: "25vh", minHeight: "25vh"}} src={profileImg}/>
+                        <Form.Control id="fileImage" onChange={e => setProfileImageView()} className="d-none" type="file" name="fileImage" style={{position:"absolute", width:"25vh", top:"12vh"}}/>
+                        <p id="setNewProfileImage" className="d-flex justify-content-center align-items-center" onClick={e => opetFileExplorer()}><u>Postavite profilnu</u></p>
+                    </div>
+                    <div style={{width:"72%"}}>
+                        <Form.Group className="mb-3 m-2" controlId="firstName" ref={formRef}>
+                            <Form.Label>Ime</Form.Label>
+                            <Form.Control type="text" defaultValue={formValues.firstName}/>
+                            <Form.Control.Feedback> {formErrors.firstName} </Form.Control.Feedback>
+                        </Form.Group>
 
-                <Form.Group className="mb-3 m-2" controlId="lastName">
-                    <Form.Label>Prezime</Form.Label>
-                    <Form.Control type="text" defaultValue={formValues.lastName}/>
-                </Form.Group>
+                        <Form.Group className="mb-3 m-2" controlId="lastName">
+                            <Form.Label>Prezime</Form.Label>
+                            <Form.Control type="text" defaultValue={formValues.lastName}/>
+                        </Form.Group>
+                    </div>
+                </div>
 
                 <Form.Group className="mb-3 m-2" controlId="phoneNumber">
                     <Form.Label>Broj telefona</Form.Label>

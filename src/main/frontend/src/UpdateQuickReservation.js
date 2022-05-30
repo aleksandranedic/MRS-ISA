@@ -20,7 +20,6 @@ function UpdateQuickReservation({state, setState, closeModal, showModal, entity,
             state.additionalServices = [{id:'', text:''}]          
         setOriginalState(state);
         var dateInt = (getStartDateInt());
-        console.log(dateInt)
         setStartDateInt(dateInt);
       }, []);
 
@@ -71,7 +70,6 @@ function UpdateQuickReservation({state, setState, closeModal, showModal, entity,
             data.append("tagsText", state.tagsText);
             data.append("reservationID", state.reservationID);
             data.append("startDate", startDateInt);
-            console.log(startDateInt)
             axios
             .post("http://localhost:4444/" + entity + "/updateQuickReservation/" + id, data)
             .then(res => {
@@ -105,7 +103,6 @@ function UpdateQuickReservation({state, setState, closeModal, showModal, entity,
         var month = val.getMonth() + 1;
         var monthInt = (month<10?'0':'') + month;
         var newStartDateInt =  days + " " + monthInt + " " + val.getFullYear() + " " + hours + ":" + minutes
-        console.log(newStartDateInt)
         setStartDateInt(newStartDateInt);
         setState( prevState => {
             return {...prevState, startDate:newStartDate}

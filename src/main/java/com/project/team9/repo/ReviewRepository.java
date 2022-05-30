@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -13,4 +14,6 @@ public interface ReviewRepository extends JpaRepository<ClientReview, Long> {
 
     @Query("FROM ClientReview WHERE clientId = ?2 AND resourceId = ?1")
     List<ClientReview> findReviewForClientAndResource(Long resourceId, Long clientId);
+
+
 }

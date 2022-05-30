@@ -7,7 +7,6 @@ export function GetAllVacationHouseOwners() {
 
     const fetch = () => {
         axios.get(backLink + "/houseowner").then(res => {
-            console.log(res.data);
             setVacationHouseOwners(res.data);
         });
     };

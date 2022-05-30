@@ -7,7 +7,6 @@ export function GetAllFishingInstructors() {
 
     const fetchFishingInstructors = () => {
         axios.get(backLink + "/fishinginstructor").then(res => {
-            console.log(res.data);
             setFishingInstructors(res.data);
         });
     };

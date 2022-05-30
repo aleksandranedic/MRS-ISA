@@ -37,8 +37,8 @@ public class AdventureReservationService {
     }
 
 
-    public void save(AdventureReservation reservation) {
-        repository.save(reservation);
+    public Long save(AdventureReservation reservation) {
+        return repository.save(reservation).getId();
     }
 
     public AdventureReservation getById(Long reservationID) {
@@ -55,5 +55,9 @@ public class AdventureReservationService {
 
     public boolean clientHasReservations(Long resourceId, Long clientId) {
         return repository.findReservationsForClient(resourceId, clientId).size() > 0;
+    }
+
+    public boolean clientHasReservationsWithVendor(Long vendorId, Long clientId) {
+        return repository.findReservationsForVendorAndClient(vendorId, clientId).size() > 0;
     }
 }

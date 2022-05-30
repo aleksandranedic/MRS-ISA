@@ -242,9 +242,9 @@ public class Config {
 
     private void addAdventureReservations(Client client, Adventure adventure) {
         List<Appointment> appointments1 = new ArrayList<Appointment>();
-        appointments1.add(Appointment.getAdventureAppointment(2022, 6, 1, 6, 0));
-        appointments1.add(Appointment.getAdventureAppointment(2022, 6, 1, 7, 0));
-        appointments1.add(Appointment.getAdventureAppointment(2022, 6, 1, 8, 0));
+        appointments1.add(Appointment.getAdventureAppointment(2022, 5, 1, 6, 0));
+        appointments1.add(Appointment.getAdventureAppointment(2022, 5, 1, 7, 0));
+        appointments1.add(Appointment.getAdventureAppointment(2022, 5, 1, 8, 0));
         appointmentRepository.saveAll(appointments1);
 
         List<Tag> additionalServices1 = new ArrayList<Tag>();
@@ -337,8 +337,9 @@ public class Config {
         addressRepository.save(boatOwnerAddress);
         Image boatProfileImg = new Image("/images/boatOwners/4/boatOwner.jpg");
         imageRepository.save(boatProfileImg);
+        BoatOwner boatOwner1 = new BoatOwner(boatProfileImg, "1", "Lena", "Leric", "lericlena@gmail.com", "0651525", boatOwnerAddress, false, "registrationRationale", new ArrayList<>(), roleBoatOwner);
         BoatOwner boatOwner = new BoatOwner(
-                null,
+                boatProfileImg,
                 "$2a$10$btgxT6xNRyIqn8wf3Lo48OWmcwegTOlzKk9UL38nq/SUXA/v0WTL6", //1
                 "Lena",
                 "Leric",

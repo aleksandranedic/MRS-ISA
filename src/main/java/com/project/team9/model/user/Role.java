@@ -21,7 +21,6 @@ public class Role implements GrantedAuthority {
             generator = "role_sequence"
     )
     Long id;
-
     String name;
 
     public Role() {

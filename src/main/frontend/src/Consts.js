@@ -15,12 +15,17 @@ export const missingDataErrors = {
     numberOfClients: "Morate uneti broj klijenata",
     price: "Morate uneti cenu.",
     cancellationFee: "Morate uneti naknadu za otkazivanje.",
-    rulesAndRegulations: "Morate uneti pravila ponašanja."
+    rulesAndRegulations: "Morate uneti pravila ponašanja.",
+    date: "Morate uneti datum",
+    time: "Morate uneti vreme",
+    client: "Morate izabrati klijenata"
 }
 
 export const frontLink = "http://localhost:3000/"
 export const backLink = "http://localhost:4444"
 export const profilePicturePlaceholder = "http://localhost:3000/images/profilePicturePlaceholder.jpg"
+export const locationPlaceholder = {iconUrl:"http://localhost:3000/images/location.png", iconSize:[38,38]}
+export const NominatimBaseUrl = "https://nominatim.openstreetmap.org/search?"
 
 export const responsive = {
     superLargeDesktop: {
@@ -78,11 +83,11 @@ export const updateForFetchedDataError = (message, id) => {
     toast.update(id, {render: message, type: "error", isLoading: false, autoClose: 5000});
 }
 
-export function isLoggedIn() {
-    return localStorage.getItem('token') !== null && localStorage.getItem('token') !== "";
-}
-
 export const logOut = () => {
     localStorage.setItem('token', "");
     window.location.reload();
 }
+export const client = "CLIENT";
+export const fishingInstructor = "FISHING_INSTRUCTOR";
+export const vacationHouseOwner = "VACATION_HOUSE_OWNER";
+export const boatOwner = "BOAT_OWNER";

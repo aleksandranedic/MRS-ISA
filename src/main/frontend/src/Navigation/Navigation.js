@@ -6,8 +6,9 @@ import NavigationButton from "./NavigationButton";
 import {BsFilter, BsPencilSquare, BsPerson, BsSearch, BsSortAlphaDown, BsSortAlphaUp} from "react-icons/bs";
 import {FilterModal} from "../Filter/FilterModal";
 
-import {frontLink, isLoggedIn, logOut} from "../Consts";
+import {frontLink, logOut} from "../Consts";
 import axios from "axios";
+import {isLoggedIn} from "../Autentification";
 
 axios.interceptors.request.use(config => {
         config.headers.authorization = "Bearer " + localStorage.getItem('token')
