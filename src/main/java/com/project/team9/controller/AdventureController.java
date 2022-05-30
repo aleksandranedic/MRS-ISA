@@ -6,6 +6,7 @@ import com.project.team9.model.resource.Adventure;
 import com.project.team9.service.AdventureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,7 +14,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping(path="adventure")
+@RequestMapping(path = "adventure")
 public class AdventureController {
 
     private final AdventureService service;
@@ -25,7 +26,12 @@ public class AdventureController {
 
     @PostMapping("/reservation/add")
     public Long addReservation(@RequestBody NewReservationDTO dto) throws ReservationNotAvailableException {
-            return service.createReservation(dto);
+        return service.createReservation(dto);
+    }
+
+    @PostMapping("/filterAdventures")
+    public ResponseEntity<List<Adventure>> getFilteredAdventures(@RequestBody AdventureFilterDTO filterDTO) {
+        return ResponseEntity.ok(service.getFilteredAdventures(filterDTO));
     }
 
     @PostMapping("/reservation/busyPeriod/add")
@@ -42,7 +48,7 @@ public class AdventureController {
 
     @GetMapping("/reservation/forReview/{id}")
     public List<ReservationDTO> getReservationsForReview(@PathVariable Long id) {
-        return  service.getReservationsForReview(id);
+        return service.getReservationsForReview(id);
     }
 
     @GetMapping("/reservation/adventure/{id}")
@@ -54,7 +60,7 @@ public class AdventureController {
 
     @GetMapping("/reservation/client/{id}")
     public List<ReservationDTO> getReservationsForClient(@PathVariable Long id) {
-        return  service.getReservationsForClient(id);
+        return service.getReservationsForClient(id);
     }
 
     @GetMapping
@@ -62,7 +68,7 @@ public class AdventureController {
         return service.getAdventures();
     }
 
-    @GetMapping(value="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Adventure getById(@PathVariable String id) {
         return service.getById(id);
     }
@@ -72,10 +78,11 @@ public class AdventureController {
         return service.reserveQuickReservation(dto);
     }
 
-    @GetMapping(value="quickReservations/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "quickReservations/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AdventureQuickReservationDTO> getQuickReservations(@PathVariable String id) {
         return service.getQuickReservations(id);
     }
+
     @PostMapping(value = "addQuickReservation/{id}")
     public Boolean addQuickReservation(@PathVariable String id, AdventureQuickReservationDTO quickReservation) {
         return service.addQuickReservation(id, quickReservation);
@@ -86,7 +93,7 @@ public class AdventureController {
         return service.updateQuickReservation(id, quickReservation);
     }
 
-    @GetMapping(value="/dto/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/dto/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public AdventureDTO getDTOById(@PathVariable String id) {
         return service.getDTOById(id);
     }
@@ -99,12 +106,12 @@ public class AdventureController {
     }
 
     @GetMapping("/clientCanReview/{resourceId}/{clientId}")
-    public boolean clientCanReview(@PathVariable Long resourceId, @PathVariable Long clientId){
+    public boolean clientCanReview(@PathVariable Long resourceId, @PathVariable Long clientId) {
         return service.clientCanReview(resourceId, clientId);
     }
 
     @GetMapping("/clientCanReviewVendor/{vendorId}/{clientId}")
-    public boolean clientCanReviewVendor(@PathVariable Long vendorId, @PathVariable Long clientId){
+    public boolean clientCanReviewVendor(@PathVariable Long vendorId, @PathVariable Long clientId) {
         return service.clientCanReviewVendor(vendorId, clientId);
     }
 
@@ -121,5 +128,10 @@ public class AdventureController {
     @DeleteMapping("/{id}/delete")
     void deleteById(@PathVariable String id) {
         service.deleteById(id);
+    }
+
+    @GetMapping("/address")
+    public ResponseEntity<List<String>> getAdventureAddress() {
+        return ResponseEntity.ok(service.getAdventureAddress());
     }
 }

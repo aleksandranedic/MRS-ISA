@@ -9,6 +9,7 @@ import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
+import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.BoatOwner;
@@ -23,6 +24,7 @@ import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -569,5 +571,140 @@ public class BoatService {
 
     public boolean clientCanReviewVendor(Long vendorId, Long clientId) {
         return boatReservationService.clientCanReviewVendor(vendorId, clientId);
+    }
+
+    public List<String> getBoatAddress() {
+        List<String> address = new ArrayList<>();
+        String fullName = "";
+        for (Boat boat :
+                repository.findAll()) {
+            fullName = boat.getAddress().getFullAddressName();
+            if (!address.contains(fullName)) {
+                address.add(fullName);
+            }
+        }
+        return address;
+    }
+
+    public List<Boat> getFilteredBoats(BoatFilterDTO boatFilterDTO) {
+        if (boatFilterDTO.isBoatsChecked()) {
+            ArrayList<Boat> boats = new ArrayList<>();//treba da prodjes i kroz brze rezervacije
+            for (Boat boat : repository.findAll()) {
+//                private String boatMaxSpeed;
+                if (checkBoatType(boatFilterDTO, boat) &&
+                        checkOwnerName(boatFilterDTO, boat) &&
+                        checkBoatEnginePower(boatFilterDTO, boat) &&
+                        checkEngineNum(boatFilterDTO, boat) &&
+                        checkBoatMaxSpeed(boatFilterDTO, boat) &&
+                        checkBoatCapacity(boatFilterDTO, boat) &&
+                        checkReviewRating(boatFilterDTO, boat) &&
+                        checkLocation(boatFilterDTO, boat) &&
+                        checkCancellationFee(boatFilterDTO, boat)
+                )
+                    boats.add(boat);
+            }
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm");
+            String datetime = boatFilterDTO.getStartDate() + " " + boatFilterDTO.getStartTime();
+            LocalDateTime startDateTime = LocalDateTime.parse(datetime, formatter);//ovde puca
+            datetime = boatFilterDTO.getEndDate() + " " + boatFilterDTO.getEndTime();
+            LocalDateTime endDateTime = LocalDateTime.parse(datetime, formatter);
+
+            int numberOfDays = (int) ChronoUnit.DAYS.between(startDateTime.toLocalDate(), endDateTime.toLocalDate()) == 0 ? 1 : (int) ChronoUnit.DAYS.between(startDateTime.toLocalDate(), endDateTime.toLocalDate());
+            int numberOfHours = (int) ChronoUnit.HOURS.between(startDateTime.toLocalTime(), endDateTime.toLocalTime());
+            if (numberOfHours < 0) {
+                numberOfHours += 24;
+            }
+            HashMap<LocalDateTime, Integer> listOfDatesBusyness = new HashMap<>();
+            boolean remove = true;
+            ArrayList<Boat> boatsToDelete = new ArrayList<>();
+            for (Boat boat : boats) {
+                if (!checkPrice(boatFilterDTO, boat.getPricelist().getPrice() * numberOfHours))  //of days ce da bude za vikendice
+                    boats.remove(boat); //cenu za sve dane sto ostaje
+                for (int i = 0; i < numberOfDays; i++) {
+                    for (int j = 0; j < numberOfHours; j++) {
+                        listOfDatesBusyness.put(startDateTime.plusHours(j).plusDays(i), 0);
+                    }
+                }
+                for (BoatReservation boatReservation : boatReservationService.getReservationsByBoatId(boat.getId())) {
+                    LocalDateTime startAppointment = boatReservation.getAppointments().get(0).getStartTime();
+                    LocalDateTime endAppointment = boatReservation.getAppointments().get(boatReservation.getAppointments().size() - 1).getEndTime();
+                    for (LocalDateTime time : listOfDatesBusyness.keySet()) {
+                        if ((startAppointment.isBefore(time) && endAppointment.isAfter(time)))
+                            listOfDatesBusyness.replace(time, 1);
+                    }
+                }
+                for (int i : listOfDatesBusyness.values()) {
+                    if (i == 0) {
+                        remove = false;
+                        break;
+                    }
+                }
+                if (remove)
+                    boatsToDelete.add(boat);
+                listOfDatesBusyness.clear();
+
+            }
+            for (Boat boat :
+                    boatsToDelete) {
+                boats.remove(boat);
+            }
+            return boats;
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    private boolean checkCancellationFee(BoatFilterDTO boatFilterDTO, Boat boat) {
+        if (boatFilterDTO.isCancellationFee() && boat.getCancellationFee() == 0)
+            return true;
+        else if (!boatFilterDTO.isCancellationFee() && boat.getCancellationFee() != 0)
+            return true;
+        return false;
+    }
+
+    private boolean checkLocation(BoatFilterDTO boatFilterDTO, Boat boat) {
+        if (boatFilterDTO.getLocation().isEmpty())
+            return true;
+        Address location = new Address(boatFilterDTO.getLocation());
+        return boat.getAddress().getStreet().equals(location.getStreet()) &&
+                boat.getAddress().getPlace().equals(location.getPlace()) &&
+                boat.getAddress().getNumber().equals(location.getNumber()) &&
+                boat.getAddress().getCountry().equals(location.getCountry());
+    }
+
+    private boolean checkReviewRating(BoatFilterDTO boatFilterDTO, Boat boat) {
+        List<ClientReviewDTO> list = reviewService.getReviews(boat.getId());
+        if (list.isEmpty() && (boatFilterDTO.getReviewRating().isEmpty() || boatFilterDTO.getReviewRating().equals("0")))
+            return true;
+        double score = list.stream().mapToDouble(ClientReviewDTO::getRating).sum() / list.size();
+        return (boatFilterDTO.getReviewRating().isEmpty() || Double.parseDouble(boatFilterDTO.getReviewRating()) <= score);
+    }
+
+    private boolean checkBoatCapacity(BoatFilterDTO boatFilterDTO, Boat boat) {
+        return boatFilterDTO.getBoatCapacity().isEmpty() || Integer.parseInt(boatFilterDTO.getBoatCapacity()) == boat.getCapacity();
+    }
+
+    private boolean checkBoatMaxSpeed(BoatFilterDTO boatFilterDTO, Boat boat) {
+        return boatFilterDTO.getBoatMaxSpeed().isEmpty() || Double.parseDouble(boatFilterDTO.getBoatMaxSpeed()) == boat.getTopSpeed();
+    }
+
+    private boolean checkEngineNum(BoatFilterDTO boatFilterDTO, Boat boat) {
+        return boatFilterDTO.getBoatEngineNum().isEmpty() || boatFilterDTO.getBoatEngineNum().equals(boat.getEngineNumber());
+    }
+
+    private boolean checkBoatEnginePower(BoatFilterDTO boatFilterDTO, Boat boat) {
+        return (boatFilterDTO.getBoatEnginePower().isEmpty() || Double.parseDouble(boatFilterDTO.getBoatEnginePower()) == boat.getEngineStrength());
+    }
+
+    private boolean checkOwnerName(BoatFilterDTO boatFilterDTO, Boat boat) {
+        return ((boat.getOwner().getFirstName() + " " + boat.getOwner().getLastName()).equals(boatFilterDTO.getBoatOwnerName()) || boatFilterDTO.getBoatOwnerName().isEmpty());
+    }
+
+    private boolean checkBoatType(BoatFilterDTO boatFilterDTO, Boat boat) {
+        return boatFilterDTO.getBoatType().isEmpty() || boatFilterDTO.getBoatType().equals(boat.getType());
+    }
+
+    private boolean checkPrice(BoatFilterDTO boatFilterDTO, int price) {
+        return boatFilterDTO.getPriceRange().isEmpty() || (boatFilterDTO.getPriceRange().get(0) <= price && price <= boatFilterDTO.getPriceRange().get(1));
     }
 }

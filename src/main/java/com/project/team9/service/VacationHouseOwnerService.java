@@ -3,6 +3,8 @@ package com.project.team9.service;
 import com.project.team9.dto.UpdateOwnerDTO;
 import com.project.team9.model.Address;
 import com.project.team9.model.Image;
+import com.project.team9.model.resource.Boat;
+import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.User;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.VacationHouseOwnerRepository;

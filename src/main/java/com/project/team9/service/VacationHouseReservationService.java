@@ -52,6 +52,10 @@ public class VacationHouseReservationService {
         return repository.findReservationsForClient(resourceId, clientId).size() > 0;
     }
 
+    public List<VacationHouseReservation> getReservationsByVacationHouseId(Long id) {
+        return repository.findReservationsByResourceId(id);
+    }
+
     public boolean clientCanReviewVendor(Long vendorId, Long clientId) {
         return repository.findReservationsForClientAndVendor(vendorId, clientId).size() > 0;
     }

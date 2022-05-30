@@ -18,7 +18,10 @@ export const missingDataErrors = {
     rulesAndRegulations: "Morate uneti pravila ponašanja.",
     date: "Morate uneti datum",
     time: "Morate uneti vreme",
-    client: "Morate izabrati klijenata"
+    client: "Morate izabrati klijenata",
+    password: "Morate uneti šifru",
+    email:"Morate uneti email",
+    gmail:"Email mora da sadrži @gmail.com"
 }
 
 export const frontLink = "http://localhost:3000/"

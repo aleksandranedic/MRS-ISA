@@ -47,7 +47,6 @@ public class Adventure extends Resource {
         this.numberOfClients = numberOfClients;
         this.fishingEquipment = new ArrayList<Tag>();
         this.quickReservations = new ArrayList<AdventureReservation>();
-
     }
 
 

@@ -43,7 +43,9 @@ public class VacationHouseOwnerController {
     }
 
     @GetMapping("names")
-    public ResponseEntity<List<String>> getVHONames(){return ResponseEntity.ok(service.getVHONames());}
+    public ResponseEntity<List<String>> getVHONames() {
+        return ResponseEntity.ok(service.getVHONames());
+    }
 
     @PostMapping(value = "changeProfilePicture/{id}")
     public Boolean changeProfilePicture(@PathVariable String id, @RequestParam("fileImage") MultipartFile multipartFile) throws IOException {
@@ -51,7 +53,7 @@ public class VacationHouseOwnerController {
     }
 
     @PostMapping("addHouse/{id}")
-    public void addVacationHouseForOwner(@PathVariable String id, @RequestBody String houseId){
+    public void addVacationHouseForOwner(@PathVariable String id, @RequestBody String houseId) {
         houseId = houseId.substring(0, houseId.length() - 1);
         VacationHouseOwner vho = service.getOwner(Long.parseLong(id));
         VacationHouse vh = vacationHouseService.getVacationHouse(Long.parseLong(houseId));
@@ -60,17 +62,18 @@ public class VacationHouseOwnerController {
         vho.addVacationHouse(vh);
         service.addOwner(vho);
     }
+
     @PostMapping(value = "updateOwner/{id}")
     public void updateOwner(@PathVariable String id, UpdateOwnerDTO owner) {
         service.updateOwner(Long.parseLong(id), owner);
     }
 
     @PostMapping(value = "checkPassword/{id}", consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Boolean checkPassword(@PathVariable String id, @RequestBody  String oldPassword) {
+    public Boolean checkPassword(@PathVariable String id, @RequestBody String oldPassword) {
         return service.checkPassword(Long.parseLong(id), oldPassword);
     }
 
-    @PostMapping(value = "updatePassword/{id}",consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "updatePassword/{id}", consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void updatePassword(@PathVariable String id, @RequestBody String newPassword) {
         service.updatePassword(Long.parseLong(id), newPassword);
     }

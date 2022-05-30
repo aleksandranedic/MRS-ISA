@@ -91,7 +91,7 @@ export function HomePage() {
 
             <div className="search d-flex align-items-center w-100">
 
-                <Form.Control className="search-bar" type="text" onChange={(e) => setSearchTerm(e.target.value)}/>
+                <Form.Control className="search-bar" type="text" onChange={e => setSearchTerm(e.target.value)}/>
 
 
                 <a href={frontLink + "search/" + searchTerm}>
