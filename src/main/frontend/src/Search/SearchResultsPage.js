@@ -59,7 +59,7 @@ export function SearchResultsPage() {
             numberOfClients: formValues.numberOfClients,
             fishingInstructorName: formValues.fishingInstructorName,
             reviewRating: formValues.reviewRating,
-            priceRange: formValues.sort,
+            priceRange: formValues.priceRange,
             startDate: formValues.startDate.toString(),
             endDate: formValues.endDate.toString(),
             startTime: formValues.startTime.toString(),
@@ -80,7 +80,7 @@ export function SearchResultsPage() {
             numOfVacationHouseBeds: formValues.numOfVacationHouseBeds,
             vacationHouseOwnerName: formValues.vacationHouseOwnerName,
             reviewRating: formValues.reviewRating,
-            priceRange: formValues.sort,
+            priceRange: formValues.priceRange,
             startDate: formValues.startDate,
             endDate: formValues.endDate,
             startTime: formValues.startTime,
@@ -89,8 +89,9 @@ export function SearchResultsPage() {
             cancellationFee: formValues.cancellationFee
         }
         console.log(houseFilter)
-        axios.post("/house/filterHouse", houseFilter).then(
+        axios.post(backLink+"/house/filterHouse", houseFilter).then(
             response => {
+                console.log(response.data)
                 setVacationHouses(response.data)
             }
         )
@@ -102,7 +103,7 @@ export function SearchResultsPage() {
             boatCapacity: formValues.boatCapacity,
             boatOwnerName: formValues.boatOwnerName,
             reviewRating: formValues.reviewRating,
-            priceRange: formValues.sort,
+            priceRange: formValues.priceRange,
             startDate: formValues.startDate,
             endDate: formValues.endDate,
             startTime: formValues.startTime,

@@ -6,8 +6,10 @@ import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
+import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.VacationHouseReservation;
+import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
 import com.project.team9.repo.VacationHouseRepository;
@@ -21,6 +23,7 @@ import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -541,5 +544,100 @@ public class VacationHouseService {
             }
         }
         return address;
+    }
+
+    public List<VacationHouse> getFilteredVacationHouses(VacationHouseFilterDTO vacationHouseFilterDTO) {
+        if (vacationHouseFilterDTO.isVacationHousesChecked()) {
+            ArrayList<VacationHouse> vacationHouses = new ArrayList<>();//treba da prodjes i kroz brze rezervacije
+            for (VacationHouse vacationHouse : repository.findAll()) {
+                if (checkNumberOfVacationHouseRooms(vacationHouseFilterDTO, vacationHouse) &&
+                        checkNumberOfVacationHouseBeds(vacationHouseFilterDTO, vacationHouse) &&
+                        checkOwnerName(vacationHouseFilterDTO, vacationHouse) &&
+                        checkReviewRating(vacationHouseFilterDTO, vacationHouse) &&
+                        checkLocation(vacationHouseFilterDTO, vacationHouse) &&
+                        checkCancellationFee(vacationHouseFilterDTO, vacationHouse)
+                )
+                    vacationHouses.add(vacationHouse);
+            }
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm");
+            String datetime = vacationHouseFilterDTO.getStartDate() + " " + vacationHouseFilterDTO.getStartTime();
+            LocalDateTime startDateTime = LocalDateTime.parse(datetime, formatter);//ovde puca
+            datetime = vacationHouseFilterDTO.getEndDate() + " " + vacationHouseFilterDTO.getEndTime();
+            LocalDateTime endDateTime = LocalDateTime.parse(datetime, formatter);
+
+            int numberOfDays = (int) ChronoUnit.DAYS.between(startDateTime.toLocalDate(), endDateTime.toLocalDate()) == 0 ? 1 : (int) ChronoUnit.DAYS.between(startDateTime.toLocalDate(), endDateTime.toLocalDate());
+            HashMap<LocalDateTime, Integer> listOfDatesBusyness = new HashMap<>();
+            boolean remove = true;
+            for (VacationHouse vacationHouse : vacationHouses) {
+                if (!checkPrice(vacationHouseFilterDTO, vacationHouse.getPricelist().getPrice() * numberOfDays))  //of days ce da bude za vikendice
+                    vacationHouses.remove(vacationHouse);
+                for (int i = 0; i < numberOfDays; i++) {
+                    listOfDatesBusyness.put(startDateTime.plusDays(i), 0);
+                }
+                for (VacationHouseReservation vacationHouseReservation : vacationHouseReservationService.getReservationsByVacationHouseId(vacationHouse.getId())) {
+                    LocalDateTime startAppointment = vacationHouseReservation.getAppointments().get(0).getStartTime();
+                    LocalDateTime endAppointment = vacationHouseReservation.getAppointments().get(vacationHouseReservation.getAppointments().size() - 1).getEndTime();
+                    for (LocalDateTime date : listOfDatesBusyness.keySet()) {
+                        if ((startAppointment.isBefore(date) && endAppointment.isAfter(date)) || (startAppointment.isBefore(date.plusHours(1)) && endAppointment.isAfter(date.plusHours(1))))
+                            listOfDatesBusyness.replace(date, 1);
+                    }
+                }
+                for (int i : listOfDatesBusyness.values()) {
+                    if (i == 0) {
+                        remove = false;
+                        break;
+                    }
+                }
+                if (remove)
+                    vacationHouses.remove(vacationHouse);
+                listOfDatesBusyness.clear();
+
+            }
+            return vacationHouses;
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    private boolean checkPrice(VacationHouseFilterDTO vacationHouseFilterDTO, int price) {
+        return vacationHouseFilterDTO.getPriceRange().isEmpty() || (vacationHouseFilterDTO.getPriceRange().get(0) <= price && price <= vacationHouseFilterDTO.getPriceRange().get(1));
+    }
+
+    private boolean checkCancellationFee(VacationHouseFilterDTO vacationHouseFilterDTO, VacationHouse vacationHouse) {
+        if (vacationHouseFilterDTO.isCancellationFee() && vacationHouse.getCancellationFee() == 0)
+            return true;
+        else if (!vacationHouseFilterDTO.isCancellationFee() && vacationHouse.getCancellationFee() != 0)
+            return true;
+        return false;
+    }
+
+    private boolean checkLocation(VacationHouseFilterDTO vacationHouseFilterDTO, VacationHouse vacationHouse) {
+        if (vacationHouseFilterDTO.getLocation().isEmpty())
+            return true;
+        Address location = new Address(vacationHouseFilterDTO.getLocation());
+        return vacationHouse.getAddress().getStreet().equals(location.getStreet()) &&
+                vacationHouse.getAddress().getPlace().equals(location.getPlace()) &&
+                vacationHouse.getAddress().getNumber().equals(location.getNumber()) &&
+                vacationHouse.getAddress().getCountry().equals(location.getCountry());
+    }
+
+    private boolean checkReviewRating(VacationHouseFilterDTO vacationHouseFilterDTO, VacationHouse vacationHouse) {
+        List<ClientReviewDTO> list = reviewService.getReviews(vacationHouse.getId());
+        if (list.isEmpty() && (vacationHouseFilterDTO.getReviewRating().isEmpty() || vacationHouseFilterDTO.getReviewRating().equals("0")))
+            return true;
+        double score = list.stream().mapToDouble(ClientReviewDTO::getRating).sum() / list.size();
+        return (vacationHouseFilterDTO.getReviewRating().isEmpty() || Double.parseDouble(vacationHouseFilterDTO.getReviewRating()) <= score);
+    }
+
+    private boolean checkOwnerName(VacationHouseFilterDTO vacationHouseFilterDTO, VacationHouse vacationHouse) {
+        return vacationHouseFilterDTO.getVacationHouseOwnerName().isEmpty() || (vacationHouse.getOwner().getFirstName() + " " + vacationHouse.getOwner().getFirstName()).equals(vacationHouseFilterDTO.getVacationHouseOwnerName());
+    }
+
+    private boolean checkNumberOfVacationHouseBeds(VacationHouseFilterDTO vacationHouseFilterDTO, VacationHouse vacationHouse) {
+        return vacationHouseFilterDTO.getNumOfVacationHouseBeds().isEmpty() || Integer.parseInt(vacationHouseFilterDTO.getNumOfVacationHouseBeds()) == vacationHouse.getNumberOfBedsPerRoom();
+    }
+
+    private boolean checkNumberOfVacationHouseRooms(VacationHouseFilterDTO vacationHouseFilterDTO, VacationHouse vacationHouse) {
+        return vacationHouseFilterDTO.getNumOfVacationHouseRooms().isEmpty() || Integer.parseInt(vacationHouseFilterDTO.getNumOfVacationHouseRooms()) == vacationHouse.getNumberOfRooms();
     }
 }

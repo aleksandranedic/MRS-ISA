@@ -482,10 +482,10 @@ public class AdventureService {
                 }
                 for (AdventureReservation adventureReservation : adventureReservationService.getReservationsByAdventureId(adventure.getId())) {
                     LocalDateTime startAppointment = adventureReservation.getAppointments().get(0).getStartTime();
-                    LocalDateTime endAppointment = adventureReservation.getAppointments().get(adventureReservation.getAppointments().size()-1).getEndTime();
-                    for (LocalDateTime time:listOfDatesBusyness.keySet()) {
-                        if((startAppointment.isBefore(time) && endAppointment.isAfter(time)) || (startAppointment.isBefore(time.plusHours(1)) && endAppointment.isAfter(time.plusHours(1))))
-                            listOfDatesBusyness.replace(time,1);
+                    LocalDateTime endAppointment = adventureReservation.getAppointments().get(adventureReservation.getAppointments().size() - 1).getEndTime();
+                    for (LocalDateTime time : listOfDatesBusyness.keySet()) {
+                        if ((startAppointment.isBefore(time) && endAppointment.isAfter(time)))
+                            listOfDatesBusyness.replace(time, 1);
                     }
                 }
                 for (int i : listOfDatesBusyness.values()) {
@@ -499,7 +499,6 @@ public class AdventureService {
                 listOfDatesBusyness.clear();
 
             }
-            //TODO filtriraj one koje nisu slobodne
             return adventures;
         } else {
             return new ArrayList<>();

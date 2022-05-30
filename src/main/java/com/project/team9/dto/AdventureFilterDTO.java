@@ -1,7 +1,5 @@
 package com.project.team9.dto;
 
-import com.project.team9.model.Address;
-
 import java.util.ArrayList;
 
 public class AdventureFilterDTO {

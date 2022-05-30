@@ -1,5 +1,6 @@
 package com.project.team9.service;
 
+import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.repo.VacationHouseReservationRepository;
@@ -53,5 +54,9 @@ public class VacationHouseReservationService {
     @Query("FROM VacationHouseReservation WHERE resource.id=?1 AND client.id = ?2")
     public boolean clientHasReservations(Long resourceId, Long clientId) {
         return repository.findReservationsForClient(resourceId, clientId).size() > 0;
+    }
+
+    public List<VacationHouseReservation> getReservationsByVacationHouseId(Long id) {
+        return repository.findReservationsByResourceId(id);
     }
 }

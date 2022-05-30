@@ -141,4 +141,8 @@ public class VacationHouseController {
     public ResponseEntity<List<String>> getVacationHouseAddress() {
         return ResponseEntity.ok(service.getVacationHouseAddress());
     }
+    @PostMapping("/filterHouse")
+    public ResponseEntity<List<VacationHouse>> getFilteredVacationHouse(@RequestBody VacationHouseFilterDTO vacationHouseFilterDTO){
+        return ResponseEntity.ok(service.getFilteredVacationHouses(vacationHouseFilterDTO));
+    }
 }
