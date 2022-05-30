@@ -470,6 +470,7 @@ public class AdventureService {
             if (numberOfHours < 0) {
                 numberOfHours += 24;
             }
+            ArrayList<Adventure> adveturesToDelete=new ArrayList<>();
             HashMap<LocalDateTime, Integer> listOfDatesBusyness = new HashMap<>();
             boolean remove = true;
             for (Adventure adventure : adventures) {
@@ -495,9 +496,13 @@ public class AdventureService {
                     }
                 }
                 if (remove)
-                    adventures.remove(adventure);
+                    adveturesToDelete.add(adventure);
                 listOfDatesBusyness.clear();
 
+            }
+            for (Adventure adventure :
+                    adveturesToDelete) {
+                adventures.remove(adventure);
             }
             return adventures;
         } else {

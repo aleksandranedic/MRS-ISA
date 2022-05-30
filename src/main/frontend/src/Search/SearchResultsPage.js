@@ -68,7 +68,7 @@ export function SearchResultsPage() {
             cancellationFee: formValues.cancellationFee
         }
         console.log(adventureFilter)
-        axios.post(backLink+"/adventure/filterAdventures", adventureFilter).then(
+        axios.post(backLink + "/adventure/filterAdventures", adventureFilter).then(
             response => {
                 console.log(response.data)
                 setAdventures(response.data)
@@ -89,14 +89,14 @@ export function SearchResultsPage() {
             cancellationFee: formValues.cancellationFee
         }
         console.log(houseFilter)
-        axios.post(backLink+"/house/filterHouse", houseFilter).then(
+        axios.post(backLink + "/house/filterHouse", houseFilter).then(
             response => {
                 console.log(response.data)
                 setVacationHouses(response.data)
             }
         )
         const boatFilter = {
-            boatsChecked:formValues.boatsChecked,
+            boatsChecked: formValues.boatsChecked,
             boatType: formValues.boatType,
             boatEnginePower: formValues.boatEnginePower,
             boatEngineNum: formValues.boatEngineNum,
@@ -112,11 +112,12 @@ export function SearchResultsPage() {
             location: formValues.location,
             cancellationFee: formValues.cancellationFee
         }
-        // axios.post("/boat/filter", boatFilter).then(
-        //     response => {
-        //         setBoats(response.data)
-        //     }
-        // )
+        axios.post(backLink + "/boat/filterBoats", boatFilter).then(
+            response => {
+                console.log(response.data)
+                setBoats(response.data)
+            }
+        )
     }
 
     return (

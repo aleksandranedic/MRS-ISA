@@ -565,20 +565,22 @@ public class VacationHouseService {
             datetime = vacationHouseFilterDTO.getEndDate() + " " + vacationHouseFilterDTO.getEndTime();
             LocalDateTime endDateTime = LocalDateTime.parse(datetime, formatter);
 
+            ArrayList<VacationHouse> housesToDelete = new ArrayList<>();
             int numberOfDays = (int) ChronoUnit.DAYS.between(startDateTime.toLocalDate(), endDateTime.toLocalDate()) == 0 ? 1 : (int) ChronoUnit.DAYS.between(startDateTime.toLocalDate(), endDateTime.toLocalDate());
             HashMap<LocalDateTime, Integer> listOfDatesBusyness = new HashMap<>();
             boolean remove = true;
             for (VacationHouse vacationHouse : vacationHouses) {
                 if (!checkPrice(vacationHouseFilterDTO, vacationHouse.getPricelist().getPrice() * numberOfDays))  //of days ce da bude za vikendice
                     vacationHouses.remove(vacationHouse);
-                for (int i = 0; i < numberOfDays; i++) {
+                for (int i = 0; i <= numberOfDays; i++) {
                     listOfDatesBusyness.put(startDateTime.plusDays(i), 0);
                 }
                 for (VacationHouseReservation vacationHouseReservation : vacationHouseReservationService.getReservationsByVacationHouseId(vacationHouse.getId())) {
                     LocalDateTime startAppointment = vacationHouseReservation.getAppointments().get(0).getStartTime();
                     LocalDateTime endAppointment = vacationHouseReservation.getAppointments().get(vacationHouseReservation.getAppointments().size() - 1).getEndTime();
                     for (LocalDateTime date : listOfDatesBusyness.keySet()) {
-                        if ((startAppointment.isBefore(date) && endAppointment.isAfter(date)) || (startAppointment.isBefore(date.plusHours(1)) && endAppointment.isAfter(date.plusHours(1))))
+                        if ((startAppointment.toLocalDate().isBefore(date.toLocalDate()) || startAppointment.toLocalDate().isEqual(date.toLocalDate())) &&
+                                (endAppointment.toLocalDate().isAfter(date.toLocalDate()) || endAppointment.toLocalDate().isEqual(date.toLocalDate())))
                             listOfDatesBusyness.replace(date, 1);
                     }
                 }
@@ -589,9 +591,12 @@ public class VacationHouseService {
                     }
                 }
                 if (remove)
-                    vacationHouses.remove(vacationHouse);
+                    housesToDelete.add(vacationHouse);
                 listOfDatesBusyness.clear();
-
+            }
+            for (VacationHouse vacationHouse :
+                    housesToDelete) {
+                vacationHouses.remove(vacationHouse);
             }
             return vacationHouses;
         } else {

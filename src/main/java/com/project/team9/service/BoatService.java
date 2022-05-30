@@ -605,6 +605,7 @@ public class BoatService {
             }
             HashMap<LocalDateTime, Integer> listOfDatesBusyness = new HashMap<>();
             boolean remove = true;
+            ArrayList<Boat> boatsToDelete = new ArrayList<>();
             for (Boat boat : boats) {
                 if (!checkPrice(boatFilterDTO, boat.getPricelist().getPrice() * numberOfHours))  //of days ce da bude za vikendice
                     boats.remove(boat); //cenu za sve dane sto ostaje
@@ -628,9 +629,13 @@ public class BoatService {
                     }
                 }
                 if (remove)
-                    boats.remove(boat);
+                    boatsToDelete.add(boat);
                 listOfDatesBusyness.clear();
 
+            }
+            for (Boat boat :
+                    boatsToDelete) {
+                boats.remove(boat);
             }
             return boats;
         } else {
