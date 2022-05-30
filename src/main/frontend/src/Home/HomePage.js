@@ -11,11 +11,11 @@ import {GetAllFishingInstructors} from "../FishingInstructor/AllFishingInstructo
 import {GetAllBoatOwners} from "../BoatOwnerPage/AllBoatOwners";
 import {BsPerson, BsSearch} from "react-icons/bs";
 import axios from "axios";
+import {isVacationHouseOwner, isClient, isBoatOwner, isFishingInstructor} from "../Autentification";
 
 export function HomePage() {
 
     const [searchTerm, setSearchTerm] = useState("searchTerm");
-    const [id,setID]=useState("")
 
     let vacationHouses = GetAllVacationHouses();
     if (vacationHouses.length > 6) {
@@ -46,21 +46,24 @@ export function HomePage() {
     if (boatOwners.length > 4) {
         boatOwners = boatOwners.subarray(0, 4);
     }
-    const getLoggedUser=()=>{
-        axios.get(backLink+"/getLoggedUser").then(
-            response=>{
-                setID(response.data.id)
-            }
-        )
-    }
 
+    let profileLink;
 
-
-    useEffect(() => {
-        if(isLoggedIn()){
-            getLoggedUser()
+    if (isLoggedIn()) {
+        if (isClient()){
+            profileLink = frontLink + "client/" + localStorage.getItem("userId");
         }
-    },[])
+        else if (isVacationHouseOwner()){
+            profileLink = frontLink + "houseOwner/" + localStorage.getItem("userId");
+        }
+        else if (isBoatOwner()){
+            profileLink = frontLink + "boatOwner/" + localStorage.getItem("userId");
+        }
+        else if (isFishingInstructor()){
+            profileLink = frontLink + "fishingInstructor/" + localStorage.getItem("userId");
+        }
+
+    }
 
     return (<div className="page">
         <div id="hero">
@@ -69,14 +72,14 @@ export function HomePage() {
 
                 {(isLoggedIn()) &&
 
-                    <a href={"http://localhost:3000/client/"+id} className="m-3">
+                    <a href={profileLink} className="m-3">
                         <BsPerson className="icon"/>
                     </a>
                 }
 
                 {(!isLoggedIn()) ?
                     <Button href={frontLink + "login"} className="m-3" variant="outline-secondary">Prijavi se</Button> :
-                    <Button className="m-3" variant="outline-secondary" onClick={()=> logOut()}>Odjavi se</Button>
+                    <Button className="m-3" variant="outline-secondary" onClick={() => logOut()}>Odjavi se</Button>
                 }
 
             </div>
@@ -93,7 +96,7 @@ export function HomePage() {
 
 
                 <a href={frontLink + "search/" + searchTerm}>
-                    <BsSearch className="icon" />
+                    <BsSearch className="icon"/>
                 </a>
             </div>
 
@@ -111,7 +114,8 @@ export function HomePage() {
 
 
                             <div className="d-flex w-100 justify-content-end">
-                                <Button href="#vacationHomes" variant="outline-secondary" className="me-2">PREGLEDAJ</Button>
+                                <Button href="#vacationHomes" variant="outline-secondary"
+                                        className="me-2">PREGLEDAJ</Button>
                             </div>
 
                         </div>
@@ -136,7 +140,8 @@ export function HomePage() {
                             <p>Želite stručno mišljenje i da vas provede kroz najrazličitije pecaroške destinacije?
                                 Pogledajte avanture koje vam nude baš to iskustvo.</p>
                             <div className="d-flex w-100 justify-content-end">
-                                <Button href="#adventures" variant="outline-secondary" className="me-2">PREGLEDAJ</Button>
+                                <Button href="#adventures" variant="outline-secondary"
+                                        className="me-2">PREGLEDAJ</Button>
                             </div>
 
                         </div>
@@ -249,7 +254,8 @@ function HomePageVendorCard({id, fullName, rate, profileImage, type}) {
                     {profileImage ?
                         <img src={path} alt="profileImage" className="vendor-profile-image"/>
                         :
-                        <div className="d-flex justify-content-center align-items-center vendor-profile-image-placeholder">
+                        <div
+                            className="d-flex justify-content-center align-items-center vendor-profile-image-placeholder">
                             <BsPerson style={{color: "rgba(0,0,0,0.3)"}}/>
 
                         </div>
