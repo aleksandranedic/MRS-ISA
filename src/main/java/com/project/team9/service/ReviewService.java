@@ -4,6 +4,7 @@ import com.project.team9.dto.ClientReviewDTO;
 import com.project.team9.dto.ReviewScoresDTO;
 import com.project.team9.model.request.ReviewRequest;
 import com.project.team9.model.review.ClientReview;
+import com.project.team9.model.review.Review;
 import com.project.team9.model.user.Client;
 import com.project.team9.repo.ClientRepository;
 import com.project.team9.repo.ReviewRepository;

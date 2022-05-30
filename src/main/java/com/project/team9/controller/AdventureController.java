@@ -2,6 +2,7 @@ package com.project.team9.controller;
 
 import com.project.team9.dto.*;
 import com.project.team9.exceptions.ReservationNotAvailableException;
+import com.project.team9.model.Address;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.service.AdventureService;
@@ -30,7 +31,7 @@ public class AdventureController {
         return service.createReservation(dto);
     }
 
-    @PostMapping("/filter")
+    @PostMapping("/filterAdventures")
     public ResponseEntity<List<Adventure>> getFilteredAdventures(@RequestBody AdventureFilterDTO filterDTO) {
         return ResponseEntity.ok(service.getFilteredAdventures(filterDTO));
     }

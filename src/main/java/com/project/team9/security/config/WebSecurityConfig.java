@@ -82,10 +82,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .authorizeRequests().antMatchers("/registration/**").permitAll()// /auth/**
 //                .antMatchers("/api/foo").permitAll()		// /api/foo
 //                .antMatchers("/getLoggedUser").permitAll()
-//                .antMatchers("/adventure/**").permitAll()
+
 //                .antMatchers("/client/**").permitAll()
                 .authorizeRequests().antMatchers("/**").permitAll()
-
                 .antMatchers("/client/update/**").authenticated() //postaviti da mora da bude ulogovan korisnik
 
                 // ukoliko ne zelimo da koristimo @PreAuthorize anotacije nad metodama kontrolera, moze se iskoristiti hasRole() metoda da se ogranici
@@ -115,7 +114,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // Dozvoljena POST metoda na ruti /auth/login, za svaki drugi tip HTTP metode greska je 401 Unauthorized
         web.ignoring().antMatchers(HttpMethod.POST, "/login");
         web.ignoring().antMatchers(HttpMethod.POST, "/registration");
-
         // Ovim smo dozvolili pristup statickim resursima aplikacije
         web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "favicon.ico", "/**/*.html",
                 "/**/*.css", "/**/*.js");

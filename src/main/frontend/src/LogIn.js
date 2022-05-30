@@ -29,13 +29,12 @@ export default function Login() {
     const [errors, setErrors] = useState({})
 
     const emailRegExp = new RegExp("[A-Za-z0-9]+@[a-z]+.(com)")
-    const passwordExp = new RegExp(".[^ ]+")
 
     const findFormErrors = () => {
         const {email, password} = form
         const newErrors = {}
 
-        if (!password || !passwordExp.test(password)) newErrors.password = 'cannot be blank!'
+        if (!password) newErrors.password = 'cannot be blank!'
 
         if (!email || !emailRegExp.test(email)) newErrors.email = 'cannot be blank! must have @ and .com'
 
@@ -100,18 +99,6 @@ export default function Login() {
                     </div>
                 </div>
             </div>
-            <ToastContainer
-                position="top-center"
-                autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme={"colored"}
-            />
             <ToastContainer
                 position="top-center"
                 autoClose={5000}

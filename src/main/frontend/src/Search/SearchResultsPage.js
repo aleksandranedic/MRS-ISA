@@ -45,6 +45,7 @@ export function SearchResultsPage() {
 
 
     useEffect(() => {
+        //TODO resi nesto sto ne znas ti ce refresha kada imas popunjen filter
         fetchVacationHouses()
         fetchBoats()
         fetchAdventures()
@@ -52,79 +53,68 @@ export function SearchResultsPage() {
 
     const {searchTerm} = useParams();
 
-    // numberOfClients: "",
-    //     fishingInstructorName: "",
-    //     numOfVacationHouseRooms: "",
-    //     numOfVacationHouseBeds: "",
-    //     vacationHouseOwnerName: "",
-    //     boatType: "",
-    //     boatEnginePower: "",
-    //     boatEngineNum: "",
-    //     boatMaxSpeed: "",
-    //     boatCapacity: "",
-    //     boatOwnerName: "",
-    //     startDate: "",
-    //     endDate: "",
-    //     startTime: "",
-    //     endTime: "",
-    //     location: "",
-    //     reviewRating: 0,
-    //     sort: []
     const updateResults = (formValues) => {
-        const adventureFilter={
-            adventuresChecked:formValues.adventuresChecked,
-            numberOfClients:formValues.numberOfClients,
-            fishingInstructorName:formValues.fishingInstructorName,
-            priceRange:formValues.sort,
-            startDate: formValues.startDate,
-            endDate: formValues.endDate,
-            startTime: formValues.startTime,
-            endTime: formValues.endTime,
+        const adventureFilter = {
+            adventuresChecked: formValues.adventuresChecked,
+            numberOfClients: formValues.numberOfClients,
+            fishingInstructorName: formValues.fishingInstructorName,
+            reviewRating: formValues.reviewRating,
+            priceRange: formValues.sort,
+            startDate: formValues.startDate.toString(),
+            endDate: formValues.endDate.toString(),
+            startTime: formValues.startTime.toString(),
+            endTime: formValues.endTime.toString(),
             location: formValues.location,
+            cancellationFee: formValues.cancellationFee
         }
-        axios.post("/adventure/filter",adventureFilter).then(
-            response=>{
+        console.log(adventureFilter)
+        axios.post(backLink+"/adventure/filterAdventures", adventureFilter).then(
+            response => {
+                console.log(response.data)
                 setAdventures(response.data)
             }
         )
-        const houseFilter={
-            vacationHousesChecked:formValues.vacationHousesChecked,
-            numOfVacationHouseRooms:formValues.numOfVacationHouseRooms,
-            numOfVacationHouseBeds:formValues.numOfVacationHouseBeds,
-            vacationHouseOwnerName:formValues.vacationHouseOwnerName,
-            priceRange:formValues.sort,
+        const houseFilter = {
+            vacationHousesChecked: formValues.vacationHousesChecked,
+            numOfVacationHouseRooms: formValues.numOfVacationHouseRooms,
+            numOfVacationHouseBeds: formValues.numOfVacationHouseBeds,
+            vacationHouseOwnerName: formValues.vacationHouseOwnerName,
+            reviewRating: formValues.reviewRating,
+            priceRange: formValues.sort,
             startDate: formValues.startDate,
             endDate: formValues.endDate,
             startTime: formValues.startTime,
             endTime: formValues.endTime,
             location: formValues.location,
-
+            cancellationFee: formValues.cancellationFee
         }
-        axios.post("/house/filter",houseFilter).then(
-            response=>{
+        console.log(houseFilter)
+        axios.post("/house/filterHouse", houseFilter).then(
+            response => {
                 setVacationHouses(response.data)
             }
         )
-        const boatFilter={
-            boatType:formValues.boatType,
-            boatEnginePower:formValues.boatEnginePower,
-            boatEngineNum:formValues.boatEngineNum,
-            boatMaxSpeed:formValues.boatMaxSpeed,
-            boatCapacity:formValues.boatCapacity,
-            boatOwnerName:formValues.boatOwnerName,
-            priceRange:formValues.sort,
+        const boatFilter = {
+            boatType: formValues.boatType,
+            boatEnginePower: formValues.boatEnginePower,
+            boatEngineNum: formValues.boatEngineNum,
+            boatMaxSpeed: formValues.boatMaxSpeed,
+            boatCapacity: formValues.boatCapacity,
+            boatOwnerName: formValues.boatOwnerName,
+            reviewRating: formValues.reviewRating,
+            priceRange: formValues.sort,
             startDate: formValues.startDate,
             endDate: formValues.endDate,
             startTime: formValues.startTime,
             endTime: formValues.endTime,
             location: formValues.location,
-
+            cancellationFee: formValues.cancellationFee
         }
-        axios.post("/boat/filter",boatFilter).then(
-            response=>{
-                setBoats(response.data)
-            }
-        )
+        // axios.post("/boat/filter", boatFilter).then(
+        //     response => {
+        //         setBoats(response.data)
+        //     }
+        // )
     }
 
     return (

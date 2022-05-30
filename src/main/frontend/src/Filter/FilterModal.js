@@ -46,6 +46,8 @@ export function FilterModal({updateResults, showFilters, setShowFilters}) {
         endTime: "",
         location: "",
         reviewRating: 0,
+        cancellationFee: false,
+        priceRange:[50,3000],
         sort: []
     });
 
@@ -54,6 +56,7 @@ export function FilterModal({updateResults, showFilters, setShowFilters}) {
         formValuesInput.vacationHousesChecked = vacationHousesChecked
         formValuesInput.boatsChecked = boatsChecked
         updateResults(formValuesInput)
+        handleClose()
     }
 
     const setField = (fieldName, value) => {
@@ -65,41 +68,38 @@ export function FilterModal({updateResults, showFilters, setShowFilters}) {
     }
 
     const fetchLocationNames = () => {
-        let array=[];
+        let array = [];
         axios.get(backLink + "/adventure/address").then(
             response => {
-                for (let i=0;i<response.data.length;i++)
-                {
-                    if(!array.includes(response.data[i]))
+                for (let i = 0; i < response.data.length; i++) {
+                    if (!array.includes(response.data[i]))
                         array.push(response.data[i])
                 }
             }
-
         )
         axios.get(backLink + "/boat/address").then(
             response => {
-                for (let i=0;i<response.data.length;i++)
-                {
-                    if(!array.includes(response.data[i]))
+                for (let i = 0; i < response.data.length; i++) {
+                    if (!array.includes(response.data[i]))
                         array.push(response.data[i])
                 }
             }
         )
         axios.get(backLink + "/house/address").then(
             response => {
-                for (let i=0;i<response.data.length;i++)
-                {
-                    if(!array.includes(response.data[i]))
+                for (let i = 0; i < response.data.length; i++) {
+                    if (!array.includes(response.data[i]))
                         array.push(response.data[i])
                 }
                 setLocations(array)
             }
         )
+
     }
 
     useEffect(() => {
         fetchLocationNames()
-    },[])
+    }, [])
 
     const updateRating = (e, data) => {
         setField('reviewRating', data)
@@ -147,9 +147,9 @@ export function FilterModal({updateResults, showFilters, setShowFilters}) {
                             }}
                         >
                             <option/>
-                            {location.map((name, index) => {
-                                return <option key={index} value={name}>
-                                    {name}
+                            {location.map((address, index) => {
+                                return <option key={index} value={address}>
+                                    {address}
                                 </option>
                             })
                             }
@@ -222,7 +222,7 @@ export function FilterModal({updateResults, showFilters, setShowFilters}) {
                 <Button variant="secondary" onClick={handleClose}>
                     Otkaži
                 </Button>
-                <Button variant="primary" onClick={handleClose}>
+                <Button variant="primary" onClick={filterData}>
                     Pretraži sa filterima
                 </Button>
             </Modal.Footer>

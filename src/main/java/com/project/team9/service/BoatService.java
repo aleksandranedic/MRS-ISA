@@ -562,12 +562,12 @@ public class BoatService {
 
     public List<String> getBoatAddress() {
         List<String> address = new ArrayList<>();
-        String fullAddress = "";
+        String fullName="";
         for (Boat boat :
                 repository.findAll()) {
-            fullAddress = boat.getAddress().getFullAddressName();
-            if (!address.contains(fullAddress)) {
-                address.add(fullAddress);
+            fullName=boat.getAddress().getFullAddressName();
+            if (!address.contains(fullName)) {
+                address.add(fullName);
             }
         }
         return address;

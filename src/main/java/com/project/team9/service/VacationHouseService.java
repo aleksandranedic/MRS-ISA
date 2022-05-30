@@ -8,7 +8,6 @@ import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.VacationHouseReservation;
-import com.project.team9.model.resource.Boat;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
 import com.project.team9.repo.VacationHouseRepository;
@@ -110,14 +109,14 @@ public class VacationHouseService {
 
     private List<VacationHouseQuickReservationDTO> getQuickReservations(VacationHouse vh) {
         List<VacationHouseQuickReservationDTO> quickReservations = new ArrayList<VacationHouseQuickReservationDTO>();
-        for (VacationHouseReservation reservation :  vh.getReservations()){
+        for (VacationHouseReservation reservation : vh.getReservations()) {
             if (reservation.getPrice() < vh.getPricelist().getPrice() && reservation.getClient() == null)
                 quickReservations.add(createVacationHouseQuickReservationDTO(vh.getPricelist().getPrice(), reservation));
         }
         return quickReservations;
     }
 
-    public List<ReservationDTO> getReservations(Long id){
+    public List<ReservationDTO> getReservations(Long id) {
         VacationHouse house = this.getVacationHouse(id);
         List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
 
@@ -184,7 +183,8 @@ public class VacationHouseService {
         this.save(house);
         return true;
     }
-    private VacationHouseReservation getReservationFromDTO(VacationHouseQuickReservationDTO dto, Boolean isQuick){
+
+    private VacationHouseReservation getReservationFromDTO(VacationHouseQuickReservationDTO dto, Boolean isQuick) {
         List<Appointment> appointments = new ArrayList<Appointment>();
         String[] splitDate = dto.getStartDate().split(" ");
         Appointment startDateAppointment = Appointment.getVacationHouseAppointment(Integer.parseInt(splitDate[2]), Integer.parseInt(splitDate[1]), Integer.parseInt(splitDate[0]));
@@ -412,9 +412,9 @@ public class VacationHouseService {
         VacationHouseReservation reservation = createFromDTO(dto);
 
         List<VacationHouseReservation> reservations = vacationHouseReservationService.getPossibleCollisionReservations(reservation.getResource().getId());
-        for (VacationHouseReservation r: reservations) {
-            for (Appointment a: r.getAppointments()) {
-                for (Appointment newAppointment: reservation.getAppointments()) {
+        for (VacationHouseReservation r : reservations) {
+            for (Appointment a : r.getAppointments()) {
+                for (Appointment newAppointment : reservation.getAppointments()) {
                     reservationService.checkAppointmentCollision(a, newAppointment);
                 }
             }
@@ -466,7 +466,7 @@ public class VacationHouseService {
     public List<ReservationDTO> getBusyPeriodForVacationHouse(Long id) {
         List<ReservationDTO> periods = new ArrayList<ReservationDTO>();
 
-        for (VacationHouseReservation ar: vacationHouseReservationService.getBusyPeriodForVacationHouse(id)) {
+        for (VacationHouseReservation ar : vacationHouseReservationService.getBusyPeriodForVacationHouse(id)) {
             periods.add(createDTOFromReservation(ar));
         }
 
@@ -478,9 +478,9 @@ public class VacationHouseService {
         VacationHouseReservation reservation = createBusyPeriodReservationFromDTO(dto);
 
         List<VacationHouseReservation> reservations = vacationHouseReservationService.getPossibleCollisionReservations(reservation.getResource().getId());
-        for (VacationHouseReservation r: reservations) {
-            for (Appointment a: r.getAppointments()) {
-                for (Appointment newAppointment: reservation.getAppointments()) {
+        for (VacationHouseReservation r : reservations) {
+            for (Appointment a : r.getAppointments()) {
+                for (Appointment newAppointment : reservation.getAppointments()) {
                     reservationService.checkAppointmentCollision(a, newAppointment);
                     reservationService.checkAppointmentCollision(newAppointment, a);
                 }
@@ -520,7 +520,7 @@ public class VacationHouseService {
         );
     }
 
-    public boolean clientCanReview(Long resourceId, Long clientId)  {
+    public boolean clientCanReview(Long resourceId, Long clientId) {
         return hasReservations(resourceId, clientId) &&
                 !reviewService.clientHasReview(resourceId, clientId) &&
                 !reviewRequestService.hasReviewRequests(resourceId, clientId);
@@ -532,12 +532,12 @@ public class VacationHouseService {
 
     public List<String> getVacationHouseAddress() {
         List<String> address = new ArrayList<>();
-        String fullAddress = "";
+        String fullName = "";
         for (VacationHouse vacationHouse :
                 repository.findAll()) {
-            fullAddress = vacationHouse.getAddress().getFullAddressName();
-            if (!address.contains(fullAddress)) {
-                address.add(fullAddress);
+            fullName = vacationHouse.getAddress().getFullAddressName();
+            if (!address.contains(fullName)) {
+                address.add(fullName);
             }
         }
         return address;
