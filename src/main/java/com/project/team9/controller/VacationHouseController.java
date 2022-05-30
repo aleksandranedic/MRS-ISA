@@ -42,9 +42,21 @@ public class VacationHouseController {
         return service.getReservationsForOwner(id);
     }
 
+    @GetMapping("/clientCanReviewVendor/{vendorId}/{clientId}")
+    public boolean clientCanReviewVendor(@PathVariable Long vendorId, @PathVariable Long clientId){
+        return service.clientCanReviewVendor(vendorId, clientId);
+    }
+
+    @PostMapping("/quickReservations/reserve")
+    public Long reserveQuickReservation(@RequestBody VacationHouseQuickReservationDTO dto) {
+        return service.reserveQuickReservation(dto);
+    }
+
     @GetMapping("/reservation/vacationHouse/{id}")
     public List<ReservationDTO> getReservationsForVacationHouse(@PathVariable Long id) {
-        return service.getReservationsForVacationHouse(id);
+        List<ReservationDTO> reservations = service.getReservationsForVacationHouse(id);
+        reservations.addAll(service.getBusyPeriodForVacationHouse(id));
+        return reservations;
     }
 
     @GetMapping("/reservation/client/{id}")
@@ -60,11 +72,6 @@ public class VacationHouseController {
     @PostMapping("/reservation/busyPeriod/add")
     public Long addBusyPeriod(@RequestBody NewBusyPeriodDTO dto) throws ReservationNotAvailableException {
         return service.createBusyPeriod(dto);
-    }
-
-    @GetMapping("/reservation/busyPeriod/vacationHouse/{id}")
-    public List<ReservationDTO> getBusyPeriodForVacationHouse(@PathVariable Long id) {
-        return  service.getBusyPeriodForVacationHouse(id);
     }
 
 
@@ -141,5 +148,10 @@ public class VacationHouseController {
     @GetMapping("/clientCanReview/{resourceId}/{clientId}")
     public Boolean clientCanReview(@PathVariable Long resourceId, @PathVariable Long clientId){
         return service.clientCanReview(resourceId, clientId);
+    }
+
+    @GetMapping("/reservation/forReview/{id}")
+    public List<ReservationDTO> getReservationsForReview(@PathVariable Long id) {
+        return  service.getReservationsForReview(id);
     }
 }

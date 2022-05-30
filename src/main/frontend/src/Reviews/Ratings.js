@@ -6,8 +6,11 @@ import {AddReview} from "./AddReview";
 function Ratings({reviews, type}) {
     return (
         <div className='mt-5' id="reviews">
-            <ReviewScores/>
-            <AddReview type={type}/>
+            <div className="d-flex">
+                <ReviewScores/>
+                <AddReview type={type}/>
+            </div>
+
             {reviews.length > 1 ?
                 <Reviews reviews={reviews}/>              
                 : <></>

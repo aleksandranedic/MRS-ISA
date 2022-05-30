@@ -6,7 +6,9 @@ import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
+import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
+import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.resource.VacationHouse;
@@ -354,16 +356,7 @@ public class VacationHouseService {
 
         for (VacationHouseReservation vhr : vacationHouseReservationService.getAll()) {
             if (Objects.equals(vhr.getResource().getOwner().getId(), id) && !vhr.isQuickReservation() && !vhr.isBusyPeriod()) {
-                reservations.add(new ReservationDTO(
-                        vhr.getAppointments(),
-                        vhr.getNumberOfClients(),
-                        vhr.getAdditionalServices(),
-                        vhr.getPrice(),
-                        vhr.getClient(),
-                        vhr.getResource().getTitle(),
-                        vhr.isBusyPeriod(),
-                        vhr.isQuickReservation()
-                ));
+                reservations.add(createDTOFromReservation(vhr));
             }
         }
 
@@ -375,16 +368,7 @@ public class VacationHouseService {
 
         for (VacationHouseReservation vhr : vacationHouseReservationService.getAll()) {
             if (Objects.equals(vhr.getResource().getId(), id) && !vhr.isQuickReservation() && !vhr.isBusyPeriod()) {
-                reservations.add(new ReservationDTO(
-                        vhr.getAppointments(),
-                        vhr.getNumberOfClients(),
-                        vhr.getAdditionalServices(),
-                        vhr.getPrice(),
-                        vhr.getClient(),
-                        vhr.getResource().getTitle(),
-                        vhr.isBusyPeriod(),
-                        vhr.isQuickReservation()
-                ));
+                reservations.add(createDTOFromReservation(vhr));
             }
         }
         return reservations;
@@ -413,7 +397,9 @@ public class VacationHouseService {
                 vhr.getClient(),
                 vhr.getResource().getTitle(),
                 vhr.isBusyPeriod(),
-                vhr.isQuickReservation()
+                vhr.isQuickReservation(),
+                vhr.getResource().getId(),
+                vhr.getId()
         );
     }
 
@@ -421,9 +407,9 @@ public class VacationHouseService {
         VacationHouseReservation reservation = createFromDTO(dto);
 
         List<VacationHouseReservation> reservations = vacationHouseReservationService.getPossibleCollisionReservations(reservation.getResource().getId());
-        for (VacationHouseReservation r: reservations) {
-            for (Appointment a: r.getAppointments()) {
-                for (Appointment newAppointment: reservation.getAppointments()) {
+        for (VacationHouseReservation r : reservations) {
+            for (Appointment a : r.getAppointments()) {
+                for (Appointment newAppointment : reservation.getAppointments()) {
                     reservationService.checkAppointmentCollision(a, newAppointment);
                 }
             }
@@ -475,7 +461,7 @@ public class VacationHouseService {
     public List<ReservationDTO> getBusyPeriodForVacationHouse(Long id) {
         List<ReservationDTO> periods = new ArrayList<ReservationDTO>();
 
-        for (VacationHouseReservation ar: vacationHouseReservationService.getBusyPeriodForVacationHouse(id)) {
+        for (VacationHouseReservation ar : vacationHouseReservationService.getBusyPeriodForVacationHouse(id)) {
             periods.add(createDTOFromReservation(ar));
         }
 
@@ -487,9 +473,9 @@ public class VacationHouseService {
         VacationHouseReservation reservation = createBusyPeriodReservationFromDTO(dto);
 
         List<VacationHouseReservation> reservations = vacationHouseReservationService.getPossibleCollisionReservations(reservation.getResource().getId());
-        for (VacationHouseReservation r: reservations) {
-            for (Appointment a: r.getAppointments()) {
-                for (Appointment newAppointment: reservation.getAppointments()) {
+        for (VacationHouseReservation r : reservations) {
+            for (Appointment a : r.getAppointments()) {
+                for (Appointment newAppointment : reservation.getAppointments()) {
                     reservationService.checkAppointmentCollision(a, newAppointment);
                     reservationService.checkAppointmentCollision(newAppointment, a);
                 }
@@ -529,13 +515,43 @@ public class VacationHouseService {
         );
     }
 
-    public boolean clientCanReview(Long resourceId, Long clientId)  {
-        return hasReservations(resourceId, clientId) &&
-                !reviewService.clientHasReview(resourceId, clientId) &&
-                !reviewRequestService.hasReviewRequests(resourceId, clientId);
+    public boolean clientCanReview(Long resourceId, Long clientId) {
+        return hasReservations(resourceId, clientId);
     }
 
     public boolean hasReservations(Long resourceId, Long clientId) {
         return vacationHouseReservationService.clientHasReservations(resourceId, clientId);
+    }
+
+    public List<ReservationDTO> getReservationsForReview(Long id) {
+        List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
+        for (VacationHouseReservation r : vacationHouseReservationService.getStandardReservations()) {
+            if (!reviewService.reservationHasReview(r.getId())) {
+                if (Objects.equals(r.getResource().getOwner().getId(), id)) {
+                    int index = r.getAppointments().size() - 1;
+                    LocalDateTime time = r.getAppointments().get(index).getEndTime();
+                    if (time.isBefore(LocalDateTime.now())) {
+                        reservations.add(createDTOFromReservation(r));
+                    }
+
+                }
+            }
+
+        }
+        return reservations;
+    }
+
+    public Long reserveQuickReservation(VacationHouseQuickReservationDTO dto) {
+        VacationHouseReservation quickReservation = vacationHouseReservationService.getVacationHouseReservation(dto.getReservationID());
+        Client client = clientService.getById(dto.getClientID().toString());
+
+        quickReservation.getResource().removeQuickReservation(quickReservation);
+        quickReservation.setClient(client);
+        quickReservation.setQuickReservation(false);
+        return vacationHouseReservationService.save(quickReservation);
+    }
+
+    public boolean clientCanReviewVendor(Long vendorId, Long clientId) {
+        return vacationHouseReservationService.clientCanReviewVendor(vendorId, clientId);
     }
 }

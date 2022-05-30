@@ -14,6 +14,7 @@ import {AdventureGallery} from "./AdventureGallery";
 import QuickReservations from "../QuickReservations";
 import BeginButton from "../BeginButton";
 import Ratings from "../Reviews/Ratings";
+import {processReservationsForResources} from "../ProcessToEvent";
 
 export function AdventurePage() {
     const {id} = useParams();
@@ -30,7 +31,7 @@ const Adventures = ({id})  =>{
     const [adventure, setAdventure] = useState([]);
     const [reservations, setReservations] = useState([]);
     const [quickReservations, setQuickReservations] = useState([]);
-    const [busyPeriod, setBusyPeriod] = useState([])
+    const [events, setEvents] = useState(null)
 
     const [images, setImages] = useState([]);
 
@@ -38,7 +39,7 @@ const Adventures = ({id})  =>{
 
     const QuickReservationsComp = ({reservations, name, address}) => {
         if (typeof reservations !== "undefined"){
-            return <QuickReservations reservations={reservations} name={name} address={address.street +" "+ address.number +  ", " + address.place + ", " +  address.country} entity="adventure" priceText="po vožnji" durationText="h"/>
+            return <QuickReservations type={"adventure"} reservations={reservations} name={name} address={address.street +" "+ address.number +  ", " + address.place + ", " +  address.country} entity="adventure" priceText="po vožnji" durationText="h"/>
         }
         else {
             return <></>
@@ -70,15 +71,14 @@ const Adventures = ({id})  =>{
     };
 
     const fetchReservations = () => {
+
         axios.get(backLink+ "/adventure/reservation/adventure/" + id).then(res => {
             setReservations(res.data);
-        })
-    }
+            console.log(res.data);
+            setEvents(processReservationsForResources(res.data))
 
-    const fetchBusyPeriods = () => {
-        axios.get(backLink+ "/adventure/reservation/busyPeriod/adventure/" + id).then(res => {
-            setBusyPeriod(res.data);
         })
+
     }
 
     const fetchQuickReservations = () => {
@@ -97,11 +97,10 @@ const Adventures = ({id})  =>{
     };
 
     useEffect(() => {
-        fetchAdventure();
         fetchReservations();
         fetchReviews();
         fetchQuickReservations();
-        fetchBusyPeriods();
+        fetchAdventure();
     }, []);
 
 
@@ -136,7 +135,7 @@ const Adventures = ({id})  =>{
             <QuickReservationsComp reservations={quickReservations} name={adventure.title} address={adventure.address}/>
 
             <hr className="me-5 ms-5"/>
-            <Calendar reservations={reservations} reservable={true} pricelist={adventure.pricelist} resourceId={adventure.id} type={"adventure"} busyPeriods={busyPeriod}/>
+            <Calendar reservable={true} pricelist={adventure.pricelist} resourceId={adventure.id} type={"adventure"} events={events}/>
 
             <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
             <hr className="me-5 ms-5"/>

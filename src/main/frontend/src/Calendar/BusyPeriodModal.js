@@ -1,7 +1,7 @@
 import {Button, Form, Modal} from "react-bootstrap";
 import React, {useState} from "react";
 import axios from "axios";
-import {backLink} from "../Consts";
+import {backLink, missingDataErrors} from "../Consts";
 import {MessagePopupModal} from "../MessagePopupModal";
 
 
@@ -9,6 +9,22 @@ export function BusyPeriodModal({show, setShow, type, resourceId}) {
 
     const [showAlert, setShowAlert] = useState(false);
     const [formValues, setFormValues] = useState({startDate: null, endDate: null});
+    const [formErrors, setFormErrors] = useState({});
+
+    const validateForm = () => {
+        let errors = {}
+
+        if (formValues.startDate === null) {
+            errors.startDate = missingDataErrors.date;
+        }
+
+        if (formValues.endDate === null) {
+            errors.endDate = missingDataErrors.date;
+        }
+
+        return errors;
+    }
+
 
     const setField = (fieldName, value) => {
         setFormValues({
@@ -39,6 +55,16 @@ export function BusyPeriodModal({show, setShow, type, resourceId}) {
         }
 
         return {startYear, startMonth, startDay, endYear, endMonth, endDay};
+    }
+
+    const handleSubmit = e => {
+        e.preventDefault()
+        let errors = validateForm();
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+        } else {
+            addReservation(e);
+        }
     }
 
     function addReservation() {
@@ -73,8 +99,7 @@ export function BusyPeriodModal({show, setShow, type, resourceId}) {
                     console.log(error);
                     setShowAlert(true);
                 })
-        }
-        else if (type === 'vacationHouse') {
+        } else if (type === 'vacationHouse') {
             axios
                 .post(backLink + "/house/reservation/busyPeriod/add", dto)
                 .then(response => {
@@ -84,8 +109,7 @@ export function BusyPeriodModal({show, setShow, type, resourceId}) {
                     console.log(error);
                     setShowAlert(true);
                 })
-        }
-        else if (type === 'boat') {
+        } else if (type === 'boat') {
             axios
                 .post(backLink + "/boat/reservation/busyPeriod/add", dto)
                 .then(response => {
@@ -108,15 +132,21 @@ export function BusyPeriodModal({show, setShow, type, resourceId}) {
                         <Form.Label>Datum</Form.Label>
                         <Form.Control type="date" name="startDate"
                                       onChange={(e) => setField("startDate", e.target.value)}
-
+                                      isInvalid={!!formErrors.startDate}
                         />
+                        <Form.Control.Feedback type="invalid">
+                            {formErrors.startDate}
+                        </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group>
                         <Form.Label>Datum</Form.Label>
                         <Form.Control type="date" name="endDate"
                                       onChange={(e) => setField("endDate", e.target.value)}
-
+                                      isInvalid={!!formErrors.endDate}
                         />
+                        <Form.Control.Feedback type="invalid">
+                            {formErrors.endDate}
+                        </Form.Control.Feedback>
                     </Form.Group>
 
                 </Form>
@@ -126,7 +156,7 @@ export function BusyPeriodModal({show, setShow, type, resourceId}) {
                 <Button variant="secondary" onClick={() => setShow(false)}>
                     Otkaži
                 </Button>
-                <Button variant="primary" onClick={() => addReservation()}>
+                <Button variant="primary" onClick={e => handleSubmit(e)}>
                     Dodaj
                 </Button>
             </Modal.Footer>

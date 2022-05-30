@@ -2,15 +2,17 @@ import {Card, Col, Row} from "react-bootstrap";
 import {convertToDate} from "./ReservationDateConverter";
 import Tag from "../Tag";
 import React from "react";
-
-import {AiOutlineCalendar, AiOutlineClockCircle} from "react-icons/ai";
+import {TimeFooter} from "./TimeFooter";
 
 export function ReservationCardGrid({reservations}) {
 
     let indexesToPop = []
     for (let index in reservations) {
         let reservation = reservations.at(index);
-        if (convertToDate(reservation.appointments.at(0).startTime)< Date.now()){
+        if (reservation.busyPeriod === true) {
+            indexesToPop.push(index);
+        }
+        else if (convertToDate(reservation.appointments.at(0).startTime)< Date.now()){
             indexesToPop.push(index);
         }
     }
@@ -95,7 +97,7 @@ function TimeFooter ({reservation}) {
 
     let html =
         <div className="p-0 m-0 d-flex justify-content-between ">
-        
+
                 <div className="d-flex align-items-center">
                     <AiOutlineCalendar className="ms-1 me-1"/>
                     {startDate}
@@ -109,7 +111,7 @@ function TimeFooter ({reservation}) {
                     <AiOutlineClockCircle className="ms-2 me-1"/>
                     {endTime}
                 </div>
-            
+
         </div>;
 
     if (startDate === endDate) {
