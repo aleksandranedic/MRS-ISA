@@ -75,9 +75,8 @@ function HouseOwnerPage() {
         fetchOwnerHouses();
         fetchReservations();
         fetchHouseOwner();
-    }, []);
-
     }, [ownerHouses]);
+
     return (
         <>
             <Banner caption={houseOwner.firstName + " " + houseOwner.lastName}/>

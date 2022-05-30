@@ -125,16 +125,10 @@ export function VacationHousePage() {
 
             <Reservations reservations={house.quickReservations} name={house.name} address={house.address}/>
             <footer className="blockquote-footer">Svi izlasci iz vikendice obavljaju se do 10:00h.</footer>
-            <ReviewsComp reviews = {houseReviews}/>
+            
         </div>
 
-        <hr className="me-5 ms-5"/>
-        <Calendar reservable={true} pricelist={{price: house.price}} resourceId={house.id} type={"vacationHouse"} events={events}/>
-
-        <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
-        <hr className="me-5 ms-5"/>
-
-        <ReservationCardGrid reservations={reservations}/>
+       
 
             <hr className="me-5 ms-5"/>
                   <Calendar reservable={true} pricelist={{price: house.price}} resourceId={house.id} type={"vacationHouse"} events={events}/>
@@ -153,7 +147,7 @@ export function VacationHousePage() {
             </Collapse>
 
             <ReviewsComp reviews = {houseReviews}/>
-        </div>
+
 
         <BeginButton/>
     </>

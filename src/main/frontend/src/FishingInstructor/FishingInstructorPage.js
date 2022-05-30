@@ -70,9 +70,6 @@ const FishingInstructors = ({id}) => {
                         editable={true} editFunction={handleShow} searchable={true} showProfile={true}
             />
 
-            
-            {   fishingInstructor.profileImg !== null  ?
-
             <div className="pe-5 pt-0">
                 <OwnerInfo bio = {fishingInstructor.biography}
                         name={fishingInstructor.firstName + " " + fishingInstructor.lastName}
