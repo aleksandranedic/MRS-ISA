@@ -80,6 +80,6 @@ public class VacationHouse extends Resource{
     }
 
     public void removeQuickReservation(VacationHouseReservation quickReservation) {
-        this.quickReservations.remove(quickReservation);
+        this.reservations.remove(quickReservation);
     }
 }

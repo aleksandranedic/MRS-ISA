@@ -10,9 +10,9 @@ import {BsPlusLg} from "react-icons/bs";
 
 export function Calendar({reservable, pricelist, type, resourceId, events}) {
 
-    let perHour = false;
-    if (type === "adventure") {
-        perHour = true;
+    let perHour = true;
+    if (type === "vacationHouse") {
+        perHour = false;
     }
     const [showReservationDialog, setShowReservationDialog] = useState(false);
     const [showBusyPeriodDialog, setShowBusyPeriodDialog] = useState(false);

@@ -52,4 +52,7 @@ public class BoatReservationService {
     }
 
 
+    public boolean clientCanReviewVendor(Long vendorId, Long clientId) {
+        return repository.findReservationsForClientAndVendor(vendorId, clientId).size()>0;
+    }
 }

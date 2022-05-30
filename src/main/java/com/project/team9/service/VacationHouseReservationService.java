@@ -51,4 +51,8 @@ public class VacationHouseReservationService {
     public boolean clientHasReservations(Long resourceId, Long clientId) {
         return repository.findReservationsForClient(resourceId, clientId).size() > 0;
     }
+
+    public boolean clientCanReviewVendor(Long vendorId, Long clientId) {
+        return repository.findReservationsForClientAndVendor(vendorId, clientId).size() > 0;
+    }
 }

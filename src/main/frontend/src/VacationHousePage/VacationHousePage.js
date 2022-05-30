@@ -16,6 +16,7 @@ import {ReservationsTable} from "../Calendar/ReservationsTable";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {Calendar} from "../Calendar/Calendar";
 import {processReservationsForResources} from "../ProcessToEvent";
+import {AddReview} from "../Reviews/AddReview";
 
 const HOST = "http://localhost:4444";
 const Gallery = ({house, images}) => {
@@ -147,12 +148,6 @@ export function VacationHousePage() {
                 <ReservationsTable  reservations={reservations} showResource={false}/>
             </div>
         </Collapse>
-
-
-
-
-
-
 
         <BeginButton/>
     </>

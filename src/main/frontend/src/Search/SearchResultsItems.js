@@ -22,7 +22,7 @@ const SearchResultsResources = ({list,name}) => {
     if (currentVHPost.length !== 0) {
         return <>{currentVHPost.map((item) =>
             (<SearchResultCard key={item.id} title={item.title} description={item.description}
-                               link={frontLink +name+"/" + item.id}/>))}
+                               link={frontLink +name+"/" + item.id} image={backLink + item.images.at(0).path}/>))}
                                {/*+ "adventure/"*/}
             <Pagination key={name} paginate={paginate} postPerPage={postsPerPage}
                         totalPosts={currentVHPost.length} name={name}/></>

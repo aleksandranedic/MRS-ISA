@@ -7,7 +7,6 @@ export function GetAllBoats() {
 
     const fetchAdventures = () => {
         axios.get(backLink + "/boat").then(res => {
-            console.log(res.data);
             setBoats(res.data);
         });
     };

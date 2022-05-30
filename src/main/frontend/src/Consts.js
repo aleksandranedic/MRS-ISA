@@ -15,7 +15,10 @@ export const missingDataErrors = {
     numberOfClients: "Morate uneti broj klijenata",
     price: "Morate uneti cenu.",
     cancellationFee: "Morate uneti naknadu za otkazivanje.",
-    rulesAndRegulations: "Morate uneti pravila ponašanja."
+    rulesAndRegulations: "Morate uneti pravila ponašanja.",
+    date: "Morate uneti datum",
+    time: "Morate uneti vreme",
+    client: "Morate izabrati klijenata"
 }
 
 export const frontLink = "http://localhost:3000/"

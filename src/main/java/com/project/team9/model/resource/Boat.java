@@ -154,6 +154,6 @@ public class Boat extends Resource{
     }
 
     public void removeQuickReservation(BoatReservation reservation) {
-        this.quickReservations.remove(reservation);
+        this.reservations.remove(reservation);
     }
 }

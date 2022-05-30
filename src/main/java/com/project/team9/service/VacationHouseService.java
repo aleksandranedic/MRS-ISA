@@ -540,4 +540,8 @@ public class VacationHouseService {
         quickReservation.setQuickReservation(false);
         return vacationHouseReservationService.save(quickReservation);
     }
+
+    public boolean clientCanReviewVendor(Long vendorId, Long clientId) {
+        return vacationHouseReservationService.clientCanReviewVendor(vendorId, clientId);
+    }
 }

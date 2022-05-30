@@ -449,4 +449,8 @@ public class AdventureService {
         quickReservation.setQuickReservation(false);
         return adventureReservationService.save(quickReservation);
     }
+
+    public boolean clientCanReviewVendor(Long vendorId, Long clientId) {
+        return adventureReservationService.clientHasReservationsWithVendor(vendorId, clientId);
+    }
 }

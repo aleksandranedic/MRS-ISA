@@ -14,6 +14,7 @@ import OwnerInfo from "../OwnerInfo"
 import {ReservationsTable} from "../Calendar/ReservationsTable";
 import {ReservationsToReview} from "../Calendar/ReservationsToReview";
 import {processReservationsForResources, processReservationsForUsers} from "../ProcessToEvent";
+import {AddReview} from "../Reviews/AddReview";
 
 const FishingInstructors = ({id}) => {
     const [fishingInstructor, setFishingInstructor] = useState({address:'', profileImg:{path:""}});
@@ -95,8 +96,16 @@ const FishingInstructors = ({id}) => {
             <hr className="me-5 ms-5"/>
 
             <AdventureCarousel adventures={adventures} add={true} ownerId={fishingInstructor.id}/>
-            <hr className="me-5 ms-5"/>
+
             <FishingInstructorForm show={show} setShow={setShow} fishingInstructor={fishingInstructor}/>
+
+            <hr className="me-5 ms-5"/>
+            <div className="d-flex justify-content-center">
+                <AddReview type={"vacationHouseOwner"}/>
+            </div>
+
+
+            <hr className="me-5 ms-5"/>
             <Calendar events={events} reservable={false}/>
 
 

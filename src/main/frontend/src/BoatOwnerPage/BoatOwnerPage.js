@@ -16,13 +16,14 @@ import {Collapse} from "react-bootstrap";
 import {ReservationsTable} from "../Calendar/ReservationsTable";
 import {ReservationsToReview} from "../Calendar/ReservationsToReview";
 import {processReservationsForUsers} from "../ProcessToEvent";
+import {AddReview} from "../Reviews/AddReview";
 
 const UpdateOwner = ({show, setShow, owner}) => {
     if (typeof owner.firstName !== "undefined") {
         if (owner.profileImg !== null) {
-            let profileImg = backLink + owner.profileImg.path;
+            var profileImg = backLink + owner.profileImg.path;
         } else {
-            let profileImg = profilePicturePlaceholder;
+            var profileImg = profilePicturePlaceholder;
         }
         return <BoatOwnerForm show={show} setShow={setShow} owner={owner} profileImg={profileImg}/>
     } else {
@@ -117,6 +118,11 @@ function BoatOwnerPage() {
                 <OwnerBoats boats={ownerBoats}/>
 
             </div>
+            <hr className="me-5 ms-5"/>
+            <div className="d-flex justify-content-center">
+                <AddReview type={"boatOwner"}/>
+            </div>
+
 
             <hr className="me-5 ms-5"/>
             <Calendar events={events} reservable={false}/>

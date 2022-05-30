@@ -42,6 +42,11 @@ public class VacationHouseController {
         return service.getReservationsForOwner(id);
     }
 
+    @GetMapping("/clientCanReviewVendor/{vendorId}/{clientId}")
+    public boolean clientCanReviewVendor(@PathVariable Long vendorId, @PathVariable Long clientId){
+        return service.clientCanReviewVendor(vendorId, clientId);
+    }
+
     @PostMapping("/quickReservations/reserve")
     public Long reserveQuickReservation(@RequestBody VacationHouseQuickReservationDTO dto) {
         return service.reserveQuickReservation(dto);

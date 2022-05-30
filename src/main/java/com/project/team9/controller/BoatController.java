@@ -96,6 +96,11 @@ public class BoatController {
         return  service.getReservationsForOwner(id);
     }
 
+    @GetMapping("/clientCanReviewVendor/{vendorId}/{clientId}")
+    public boolean clientCanReviewVendor(@PathVariable Long vendorId, @PathVariable Long clientId){
+        return service.clientCanReviewVendor(vendorId, clientId);
+    }
+
     @GetMapping("/reservation/boat/{id}")
     public List<ReservationDTO> getReservationsForBoat(@PathVariable Long id) {
         List<ReservationDTO> reservations = service.getReservationsForBoat(id);

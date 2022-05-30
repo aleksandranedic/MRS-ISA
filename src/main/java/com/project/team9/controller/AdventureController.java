@@ -99,8 +99,13 @@ public class AdventureController {
     }
 
     @GetMapping("/clientCanReview/{resourceId}/{clientId}")
-    public Boolean clientCanReview(@PathVariable Long resourceId, @PathVariable Long clientId){
+    public boolean clientCanReview(@PathVariable Long resourceId, @PathVariable Long clientId){
         return service.clientCanReview(resourceId, clientId);
+    }
+
+    @GetMapping("/clientCanReviewVendor/{vendorId}/{clientId}")
+    public boolean clientCanReviewVendor(@PathVariable Long vendorId, @PathVariable Long clientId){
+        return service.clientCanReviewVendor(vendorId, clientId);
     }
 
     @PostMapping("/add")

@@ -559,4 +559,8 @@ public class BoatService {
         }
         return types;
     }
+
+    public boolean clientCanReviewVendor(Long vendorId, Long clientId) {
+        return boatReservationService.clientCanReviewVendor(vendorId, clientId);
+    }
 }

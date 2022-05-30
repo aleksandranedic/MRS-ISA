@@ -1,8 +1,6 @@
 package com.project.team9.repo;
 
-import com.project.team9.dto.AdventureDTO;
 import com.project.team9.model.reservation.AdventureReservation;
-import com.project.team9.model.resource.Adventure;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -29,4 +27,7 @@ public interface AdventureReservationRepository extends JpaRepository<AdventureR
 
     @Query("FROM AdventureReservation WHERE resource.id=?1 AND client.id = ?2")
     List<AdventureReservation> findReservationsForClient(Long resourceId, Long clientId);
+
+    @Query("FROM AdventureReservation WHERE resource.owner.id=?1 AND client.id = ?2")
+    List<AdventureReservation> findReservationsForVendorAndClient(Long vendorId, Long clientId);
 }
