@@ -53,4 +53,8 @@ public class BoatReservationService {
     public boolean hasReservations(Long resourceId, Long clientId) {
         return repository.findReservationsForClient(resourceId, clientId).size() > 0;
     }
+
+    public List<BoatReservation> getReservationsByBoatId(Long id) {
+        return repository.findReservationsByResourceId(id);
+    }
 }

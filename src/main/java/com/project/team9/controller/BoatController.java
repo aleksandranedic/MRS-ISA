@@ -3,6 +3,7 @@ package com.project.team9.controller;
 import com.project.team9.dto.*;
 import com.project.team9.exceptions.ReservationNotAvailableException;
 import com.project.team9.model.Address;
+import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,4 +132,9 @@ public class BoatController {
     public ResponseEntity<List<String>> getBoatAddress(){
         return ResponseEntity.ok(service.getBoatAddress());
     }
+    @PostMapping("/filterBoats")
+    public ResponseEntity<List<Boat>> getFilteredAdventures(@RequestBody BoatFilterDTO boatFilterDTO) {
+        return ResponseEntity.ok(service.getFilteredBoats(boatFilterDTO));
+    }
+
 }

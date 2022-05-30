@@ -96,6 +96,7 @@ export function SearchResultsPage() {
             }
         )
         const boatFilter = {
+            boatsChecked:formValues.boatsChecked,
             boatType: formValues.boatType,
             boatEnginePower: formValues.boatEnginePower,
             boatEngineNum: formValues.boatEngineNum,
