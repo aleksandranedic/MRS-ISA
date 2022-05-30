@@ -10,8 +10,11 @@ import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.reservation.VacationHouseReservation;
+import com.project.team9.model.resource.Boat;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
+import com.project.team9.model.user.vendor.BoatOwner;
+import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.VacationHouseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -185,6 +188,13 @@ public class VacationHouseService {
         this.save(house);
         return true;
     }
+
+    public ResourceOwnerDTO getOwner(Long id) {
+        VacationHouse house = this.getVacationHouse(id);
+        VacationHouseOwner owner = house.getOwner();
+        return new ResourceOwnerDTO(owner.getId(), owner.getName(), owner.getProfileImg());
+    }
+
     private VacationHouseReservation getReservationFromDTO(VacationHouseQuickReservationDTO dto, Boolean isQuick){
         List<Appointment> appointments = new ArrayList<Appointment>();
         String[] splitDate = dto.getStartDate().split(" ");

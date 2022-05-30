@@ -39,6 +39,8 @@ function HouseOwnerPage() {
     const [events, setEvents] = useState(null);
     const [show, setShow] = useState(false);
     const handleShow = () => setShow(true);
+    
+
     const [reservations, setReservations] = useState([]);
     const [open, setOpen] = useState(false);
 
@@ -50,17 +52,17 @@ function HouseOwnerPage() {
     }
 
     const fetchOwnerHouses = () => {
-        axios
-            .get("http://localhost:4444/house/getownerhouses/" + id)
-            .then(res => {
-                var houses = res.data;
-                for (let house of houses) {
-                    if (!house.thumbnailPath.includes(backLink)) {
-                        house.thumbnailPath = backLink + house.thumbnailPath;
-                    }
-                }
-                setOwnerHouses(res.data);
-            });
+      axios
+      .get("http://localhost:4444/house/getownerhouses/" + id)
+      .then(res => {
+          var houses = res.data;
+          for (let house of houses){
+              if (!house.thumbnailPath.includes(backLink)){
+                  house.thumbnailPath = backLink + house.thumbnailPath;
+              }
+          }
+          setOwnerHouses(res.data);
+        });
     };
     const fetchHouseOwner = () => {
         axios
@@ -73,84 +75,68 @@ function HouseOwnerPage() {
         fetchOwnerHouses();
         fetchReservations();
         fetchHouseOwner();
-    }, []);
+    }, [ownerHouses]);
 
-    let html = "";
+    return (
+        <>
+            <Banner caption={houseOwner.firstName + " " + houseOwner.lastName}/>
+            <Navigation buttons={
+                [
+                    {text: "Osnovne informacije", path: "#info"},
+                    {text: "Vikendice", path: "#houses"},
+                    {text: "Rezervacije", path: "#sales"},
+                    {text: "Izveštaji", path: "#reports"}
+                ]}
+                        editable={true} editFunction={handleShow} searchable={true} showProfile={true}/>
+            <AddVacationHouse/>
+            <UpdateOwner show={show} setShow={setShow} owner={houseOwner}/>
+            <div className='p-5 pt-0'>
 
-    html = <div><>
-        <Banner caption={houseOwner.firstName + " " + houseOwner.lastName}/>
-        <Navigation buttons={
-            [
-                {text: "Osnovne informacije", path: "#info"},
-                {text: "Vikendice", path: "#houses"},
-                {text: "Rezervacije", path: "#sales"},
-                {text: "Izveštaji", path: "#reports"}
-            ]}
-                    editable={true} editFunction={handleShow} searchable={true} showProfile={true}/>
-        <AddVacationHouse/>
-        <UpdateOwner show={show} setShow={setShow} owner={houseOwner}/>
-        <div className='p-5 pt-0'>
-            {houseOwner.profileImg !== null ?
 
                 <OwnerInfo
                     name={houseOwner.firstName + " " + houseOwner.lastName}
-                    rate={4.5}
+                    rate = {4.5}
                     email={houseOwner.email}
                     phoneNum={houseOwner.phoneNumber}
                     address={houseOwner.address}
-                    profileImg={backLink + houseOwner.profileImg.path}
-                />
-                :
-                <OwnerInfo
-                    name={houseOwner.firstName + " " + houseOwner.lastName}
-                    rate={4.5}
-                    email={houseOwner.email}
-                    phoneNum={houseOwner.phoneNumber}
-                    address={houseOwner.address}
-                    profileImg={profilePicturePlaceholder}
-                />
-            }
-            <hr/>
-            <OwnerHouses houses={ownerHouses}/>
+                    profileImg = {houseOwner.profileImg !== null ? backLink + houseOwner.profileImg.path : profilePicturePlaceholder}
+                    />
+                <hr/>
+                <OwnerHouses houses={ownerHouses}/>
+                <hr/>
 
-        </div>
-
-        <hr className="me-5 ms-5"/>
-
-        <div className="d-flex justify-content-center">
-            <AddReview type={"vacationHouseOwner"}/>
-        </div>
-
-
-
-        <hr className="me-5 ms-5"/>
-        <Calendar events={events} reservable={false}/>
-
-        <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
-        <hr className="me-5 ms-5"/>
-
-        <ReservationCardGrid reservations={reservations}/>
-
-        <ReservationsToReview type={"vacationHouse"}/>
-
-        <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)}
-            aria-controls="reservationsTable"
-            aria-expanded={open}
-            style={{cursor: "pointer"}}
-        >Istorija rezervacija</h2>
-
-        <hr className="me-5 ms-5"/>
-        <Collapse in={open}>
-            <div id="reservationsTable">
-                <ReservationsTable reservations={reservations} showResource={false}/>
             </div>
-        </Collapse>
 
-        <BeginButton/>
-    </>
-    </div>;
+            <hr className="me-5 ms-5"/>
 
-    return html;
+            <div className="d-flex justify-content-center">
+                <AddReview type={"vacationHouseOwner"}/>
+            </div>
+
+
+            <Calendar events={events} reservable={false}/>
+
+            <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
+            <hr className="me-5 ms-5"/>
+
+            <ReservationCardGrid reservations={reservations}/>
+
+            <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)}
+                aria-controls="reservationsTable"
+                aria-expanded={open}
+                style = {{cursor: "pointer"}}
+            >Istorija rezervacija</h2>
+
+            <hr className="me-5 ms-5"/>
+            <Collapse in={open}>
+                <div id="reservationsTable">
+                    <ReservationsTable  reservations={reservations} showResource={false}/>
+                </div>
+            </Collapse>
+
+            <BeginButton/>
+        </>
+    );
 }
 
 export default HouseOwnerPage;

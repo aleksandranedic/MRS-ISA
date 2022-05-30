@@ -55,6 +55,14 @@ const Adventures = ({id})  =>{
         }
     }
 
+    const AdventureInfoComponent = ({adventure}) => {
+        if (typeof adventure !== "undefined"){
+            return <AdventureInfo adventure={adventure}/>
+        }
+        else {
+            return <></>
+        }
+    }
     const fetchAdventure = () => {
         axios.get(backLink+"/adventure/"+ id).then(res => {
             setAdventure(res.data);
@@ -117,7 +125,7 @@ const Adventures = ({id})  =>{
                         editable={true} editFunction={handleShow} searchable={true}
             />
             <AdventureModal show={show} setShow={setShow} adventure={adventure}/>
-            <AdventureInfo adventure={adventure}/>
+            <AdventureInfoComponent adventure={adventure}/>
 
 
             <div id="photos">
@@ -129,10 +137,6 @@ const Adventures = ({id})  =>{
             <hr className="me-5 ms-5"/>
             <Calendar reservable={true} pricelist={adventure.pricelist} resourceId={adventure.id} type={"adventure"} events={events}/>
 
-            <div className="m-5 mb-0 me-0">
-                <ReviewsComp reviews = {adventureReviews}/>
-            </div>
-            
             <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
             <hr className="me-5 ms-5"/>
 
@@ -150,6 +154,10 @@ const Adventures = ({id})  =>{
                     <ReservationsTable  reservations={reservations} showResource={false}/>
                 </div>
             </Collapse>
+            <div className="m-5 mb-0 me-0">
+                <ReviewsComp reviews = {adventureReviews}/>
+            </div>
+            
 
             <BeginButton/>
         </div>)

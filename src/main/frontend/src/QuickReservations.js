@@ -37,6 +37,7 @@ function QuickReservations({reservations, name, address, entity, priceText, dura
     <div className="m-5" id="actions">
         <div className='w-100 d-flex flex-column align-items-center mb-3'>
             <h1 className="m-0 text-lead" style={{color: "#313041", fontSize: "46px", lineHeight: "60px", letterSpacing: "-.02em"}}> Specijalne ponude i popusti</h1>
+            <hr className='w-100'/>
         </div>
         <Container className='d-flex p-0'>          
             <Carousel className="w-100 h-100 quick-reservation-carousel" responsive={responsive}  interval="250000" autoPlay={false} autoPlaySpeed={9000000}>

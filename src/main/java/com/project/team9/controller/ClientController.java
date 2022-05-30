@@ -10,7 +10,9 @@ import com.project.team9.service.DeleteRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -27,6 +29,11 @@ public class ClientController {
         this.clientService = clientService;
         this.addressService = addressService;
         this.deleteRequestService = deleteRequestService;
+    }
+
+    @PostMapping(value = "changeProfilePicture/{id}")
+    public Boolean changeProfilePicture(@PathVariable String id, @RequestParam("fileImage") MultipartFile multipartFile) throws IOException {
+        return clientService.changeProfilePicture(id, multipartFile);
     }
 
     @GetMapping("/{id}")
