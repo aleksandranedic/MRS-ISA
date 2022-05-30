@@ -8,7 +8,10 @@ import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
+import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.resource.Adventure;
+import com.project.team9.model.resource.Boat;
+import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.repo.AdventureRepository;
@@ -457,5 +460,119 @@ public class AdventureService {
 
     public boolean clientCanReviewVendor(Long vendorId, Long clientId) {
         return adventureReservationService.clientHasReservationsWithVendor(vendorId, clientId);
+    }
+
+    public List<String> getAdventureAddress() {
+        List<String> address = new ArrayList<>();
+        String fullName = "";
+        for (Adventure adventure :
+                repository.findAll()) {
+            fullName = adventure.getAddress().getFullAddressName();
+            if (!address.contains(fullName)) {
+                address.add(fullName);
+            }
+        }
+        return address;
+    }
+
+    public List<Adventure> getFilteredAdventures(AdventureFilterDTO filterDTO) {
+        if (filterDTO.isAdventuresChecked()) {
+            ArrayList<Adventure> adventures = new ArrayList<>();
+            for (Adventure adventure : repository.findAll()) {
+                if (checkNumberOfClients(filterDTO, adventure) &&
+                        checkInstructorName(filterDTO, adventure) &&
+                        checkReviewRating(filterDTO, adventure) &&
+                        checkLocation(filterDTO, adventure) &&
+                        checkCancellationFee(filterDTO, adventure)
+                )
+                    adventures.add(adventure);
+            }
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm");
+            String datetime = filterDTO.getStartDate() + " " + filterDTO.getStartTime();
+            LocalDateTime startDateTime = LocalDateTime.parse(datetime, formatter);//ovde puca
+            datetime = filterDTO.getEndDate() + " " + filterDTO.getEndTime();
+            LocalDateTime endDateTime = LocalDateTime.parse(datetime, formatter);
+
+            int numberOfDays = (int) ChronoUnit.DAYS.between(startDateTime.toLocalDate(), endDateTime.toLocalDate()) == 0 ? 1 : (int) ChronoUnit.DAYS.between(startDateTime.toLocalDate(), endDateTime.toLocalDate());
+            int numberOfHours = (int) ChronoUnit.HOURS.between(startDateTime.toLocalTime(), endDateTime.toLocalTime());
+            if (numberOfHours < 0) {
+                numberOfHours += 24;
+            }
+            HashMap<LocalDateTime, Integer> listOfDatesBusyness = new HashMap<>();
+            boolean remove = true;
+            ArrayList<Adventure> adventuresToDelete = new ArrayList<>();
+            for (Adventure adventure : adventures) {
+                if (!checkPrice(filterDTO, adventure.getPricelist().getPrice() * numberOfHours))  //of days ce da bude za vikendice
+                    adventures.remove(adventure); //cenu za sve dane sto ostaje
+                for (int i = 0; i < numberOfDays; i++) {
+                    for (int j = 0; j < numberOfHours; j++) {
+                        listOfDatesBusyness.put(startDateTime.plusHours(j).plusDays(i), 0);
+                    }
+                }
+                for (AdventureReservation adventureReservation : adventureReservationService.getReservationsByAdventureId(adventure.getId())) {
+                    LocalDateTime startAppointment = adventureReservation.getAppointments().get(0).getStartTime();
+                    LocalDateTime endAppointment = adventureReservation.getAppointments().get(adventureReservation.getAppointments().size() - 1).getEndTime();
+                    for (LocalDateTime time : listOfDatesBusyness.keySet()) {
+                        if ((startAppointment.isBefore(time) && endAppointment.isAfter(time)))
+                            listOfDatesBusyness.replace(time, 1);
+                    }
+                }
+                for (int i : listOfDatesBusyness.values()) {
+                    if (i == 0) {
+                        remove = false;
+                        break;
+                    }
+                }
+                if (remove)
+                    adventuresToDelete.add(adventure);
+                listOfDatesBusyness.clear();
+
+            }
+            for (Adventure adventure :
+                    adventuresToDelete) {
+                adventures.remove(adventure);
+            }
+            return adventures;
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    private boolean checkNumberOfClients(AdventureFilterDTO filterDTO, Adventure adventure) {
+        return filterDTO.getNumberOfClients().isEmpty() || Integer.parseInt(filterDTO.getNumberOfClients())==adventure.getNumberOfClients();
+    }
+
+    private boolean checkInstructorName(AdventureFilterDTO filterDTO, Adventure adventure) {
+        return (adventure.getOwner().getFirstName() + " " + adventure.getOwner().getLastName()).equals(filterDTO.getFishingInstructorName()) || filterDTO.getFishingInstructorName().isEmpty();
+    }
+
+    private boolean checkPrice(AdventureFilterDTO filterDTO, int price) {
+        return filterDTO.getPriceRange().isEmpty() || (filterDTO.getPriceRange().get(0) <= price && price <= filterDTO.getPriceRange().get(1));
+    }
+
+    private boolean checkCancellationFee(AdventureFilterDTO filterDTO, Adventure adventure) {
+        if (filterDTO.isCancellationFee() && adventure.getCancellationFee() == 0)
+            return true;
+        else if (!filterDTO.isCancellationFee() && adventure.getCancellationFee() != 0)
+            return true;
+        return false;
+    }
+
+    private boolean checkLocation(AdventureFilterDTO filterDTO, Adventure adventure) {
+        if (filterDTO.getLocation().isEmpty())
+            return true;
+        Address location = new Address(filterDTO.getLocation());
+        return adventure.getAddress().getStreet().equals(location.getStreet()) &&
+                adventure.getAddress().getPlace().equals(location.getPlace()) &&
+                adventure.getAddress().getNumber().equals(location.getNumber()) &&
+                adventure.getAddress().getCountry().equals(location.getCountry());
+    }
+
+    private boolean checkReviewRating(AdventureFilterDTO filterDTO, Adventure adventure) {
+        List<ClientReviewDTO> list = reviewService.getReviews(adventure.getId());
+        if (list.isEmpty() && (filterDTO.getReviewRating().isEmpty() || filterDTO.getReviewRating().equals("0")))
+            return true;
+        double score = list.stream().mapToDouble(ClientReviewDTO::getRating).sum() / list.size();
+        return (filterDTO.getReviewRating().isEmpty() || Double.parseDouble(filterDTO.getReviewRating()) <= score);
     }
 }

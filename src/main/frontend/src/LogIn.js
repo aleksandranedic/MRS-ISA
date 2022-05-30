@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import {Form} from "react-bootstrap";
 import axios from "axios";
 import Button from "react-bootstrap/Button";
-import {backLink, frontLink, notifyError, notifySuccess} from "./Consts";
+import {backLink, frontLink, missingDataErrors, notifyError, notifySuccess} from "./Consts";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -17,9 +17,9 @@ export default function Login() {
         axios.post(backLink + "/login", loginDto).then(res => {
             notifySuccess("Uspešno ste se ulogovali")
             localStorage.setItem("token", res.data)
-            setTimeout(function (){
+            setTimeout(function () {
                 window.location.href = frontLink
-            },5000)
+            }, 5000)
         }).catch(error => {
             notifyError(error.response.data)
         })
@@ -34,9 +34,10 @@ export default function Login() {
         const {email, password} = form
         const newErrors = {}
 
-        if (!password) newErrors.password = 'cannot be blank!'
+        if (!password) newErrors.password = missingDataErrors.password
 
-        if (!email || !emailRegExp.test(email)) newErrors.email = 'cannot be blank! must have @ and .com'
+        if (!email) newErrors.email = missingDataErrors.email
+        else if (!emailRegExp.test(email)) newErrors.email = missingDataErrors.gmail
 
         return newErrors
     }
@@ -63,12 +64,15 @@ export default function Login() {
     return (
         <>
             <div className="d-flex justify-content-center w-100"
-            style={{height: "100vh" ,background: "linear-gradient(175deg, rgba(248,248,248,0.9) 50%, rgba(201, 201, 201, 0.6) 100%)"}}
+                 style={{
+                     height: "100vh",
+                     background: "linear-gradient(175deg, rgba(248,248,248,0.9) 50%, rgba(201, 201, 201, 0.6) 100%)"
+                 }}
             >
                 <img
-                     src={require("./images/pexels-te-lensfix-1371360.jpg")}
-                     alt="login"
-                     style={{width: "60%"}}
+                    src={require("./images/pexels-te-lensfix-1371360.jpg")}
+                    alt="login"
+                    style={{width: "60%"}}
                 />
                 <div className="p-5 d-flex flex-column"
                      style={{width: "40%", backgroundColor: "rgba(255,255,255, 0.8)"}}>

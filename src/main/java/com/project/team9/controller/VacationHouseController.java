@@ -2,13 +2,8 @@ package com.project.team9.controller;
 
 import com.project.team9.dto.*;
 import com.project.team9.exceptions.ReservationNotAvailableException;
-import com.project.team9.dto.*;
-import com.project.team9.model.Address;
-import com.project.team9.model.Image;
-import com.project.team9.model.Tag;
-import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.resource.VacationHouse;
-import com.project.team9.service.*;
+import com.project.team9.service.VacationHouseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +38,7 @@ public class VacationHouseController {
     }
 
     @GetMapping("/clientCanReviewVendor/{vendorId}/{clientId}")
-    public boolean clientCanReviewVendor(@PathVariable Long vendorId, @PathVariable Long clientId){
+    public boolean clientCanReviewVendor(@PathVariable Long vendorId, @PathVariable Long clientId) {
         return service.clientCanReviewVendor(vendorId, clientId);
     }
 
@@ -146,20 +141,22 @@ public class VacationHouseController {
     }
 
     @GetMapping("/clientCanReview/{resourceId}/{clientId}")
-    public Boolean clientCanReview(@PathVariable Long resourceId, @PathVariable Long clientId){
+    public Boolean clientCanReview(@PathVariable Long resourceId, @PathVariable Long clientId) {
         return service.clientCanReview(resourceId, clientId);
     }
 
     @GetMapping("/reservation/forReview/{id}")
     public List<ReservationDTO> getReservationsForReview(@PathVariable Long id) {
-        return  service.getReservationsForReview(id);
+        return service.getReservationsForReview(id);
     }
+
     @GetMapping("address")
     public ResponseEntity<List<String>> getVacationHouseAddress() {
         return ResponseEntity.ok(service.getVacationHouseAddress());
     }
+
     @PostMapping("/filterHouse")
-    public ResponseEntity<List<VacationHouse>> getFilteredVacationHouse(@RequestBody VacationHouseFilterDTO vacationHouseFilterDTO){
+    public ResponseEntity<List<VacationHouse>> getFilteredVacationHouse(@RequestBody VacationHouseFilterDTO vacationHouseFilterDTO) {
         return ResponseEntity.ok(service.getFilteredVacationHouses(vacationHouseFilterDTO));
     }
 }
