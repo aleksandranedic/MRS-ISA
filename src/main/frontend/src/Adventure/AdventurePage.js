@@ -15,42 +15,42 @@ import QuickReservations from "../QuickReservations";
 import BeginButton from "../BeginButton";
 import Ratings from "../Reviews/Ratings";
 import {processReservationsForResources} from "../ProcessToEvent";
+import {isLoggedIn, isMyPage} from "../Autentification";
 
 export function AdventurePage() {
     const {id} = useParams();
     return (
         <>
-            <Adventures id={id}/>
+            <Adventure id={id}/>
         </>
     )
 }
 
-
-const Adventures = ({id})  =>{
-
-    const [adventure, setAdventure] = useState([]);
-    const [reservations, setReservations] = useState([]);
+const Adventure = ({id}) => {
+    const [myPage, setMyPage] = useState(null);
+    const [adventure, setAdventure] = useState(null);
+    const [reservations, setReservations] = useState(null);
     const [quickReservations, setQuickReservations] = useState([]);
     const [events, setEvents] = useState(null)
-
     const [images, setImages] = useState([]);
 
     let html;
 
     const QuickReservationsComp = ({reservations, name, address}) => {
-        if (typeof reservations !== "undefined"){
-            return <QuickReservations type={"adventure"} reservations={reservations} name={name} address={address.street +" "+ address.number +  ", " + address.place + ", " +  address.country} entity="adventure" priceText="po vožnji" durationText="h"/>
-        }
-        else {
+        if (typeof reservations !== "undefined") {
+            return <QuickReservations type={"adventure"} reservations={reservations} name={name}
+                                      address={address.street + " " + address.number + ", " + address.place + ", " + address.country}
+                                      entity="adventure" priceText="po vožnji" durationText="h"
+                                      addable={myPage} myPage={myPage}/>
+        } else {
             return <></>
         }
     }
-    
+
     const ReviewsComp = ({reviews}) => {
-        if (typeof reviews !== "undefined"){
-            return <Ratings reviews = {reviews} type={"adventure"}/>
-        }
-        else {
+        if (typeof reviews !== "undefined") {
+            return <Ratings reviews={reviews} type={"adventure"}/>
+        } else {
             return <></>
         }
     }
@@ -64,36 +64,37 @@ const Adventures = ({id})  =>{
         }
     }
     const fetchAdventure = () => {
-        axios.get(backLink+"/adventure/"+ id).then(res => {
+        axios.get(backLink + "/adventure/" + id).then(res => {
             setAdventure(res.data);
             setImages([]);
+            setMyPage(isMyPage(res.data.owner.roleName, res.data.owner.id));
         });
     };
 
-    const fetchReservations = () => {
 
-        axios.get(backLink+ "/adventure/reservation/adventure/" + id).then(res => {
-            setReservations(res.data);
-            console.log(res.data);
-            setEvents(processReservationsForResources(res.data))
+    const fetchReservations = () => {
+        axios.get(backLink + "/adventure/reservation/adventure/" + id).then(res => {
+            if (reservations === null) {
+                setReservations(res.data);
+                console.log(res.data);
+            }
+            setEvents(processReservationsForResources(res.data));
 
         })
-
     }
 
     const fetchQuickReservations = () => {
-        axios.get(backLink+ "/adventure/quickReservations/" + id).then(res => {
-           
+        axios.get(backLink + "/adventure/quickReservations/" + id).then(res => {
             setQuickReservations(res.data);
         })
     }
 
     const fetchReviews = () => {
         axios
-        .get("http://localhost:4444/review/getReviews/" + id)
-        .then(res => {
-            setAdventureReviews(res.data);
-        });
+            .get("http://localhost:4444/review/getReviews/" + id)
+            .then(res => {
+                setAdventureReviews(res.data);
+            });
     };
 
     useEffect(() => {
@@ -110,8 +111,7 @@ const Adventures = ({id})  =>{
 
     const [open, setOpen] = useState(false);
 
-    if (adventure.length !== 0) {
-
+    if (adventure !== null && reservations !== null) {
         html = (<div>
             <Banner caption={adventure.title}/>
             <Navigation buttons={
@@ -122,7 +122,7 @@ const Adventures = ({id})  =>{
                     {text: "Rezervacije", path: "#reservations"},
 
                 ]}
-                        editable={true} editFunction={handleShow} searchable={true}
+                        editable={myPage} editFunction={handleShow} searchable={true}
             />
             <AdventureModal show={show} setShow={setShow} adventure={adventure}/>
             <AdventureInfoComponent adventure={adventure}/>
@@ -135,29 +135,37 @@ const Adventures = ({id})  =>{
             <QuickReservationsComp reservations={quickReservations} name={adventure.title} address={adventure.address}/>
 
             <hr className="me-5 ms-5"/>
-            <Calendar reservable={true} pricelist={adventure.pricelist} resourceId={adventure.id} type={"adventure"} events={events}/>
+            <Calendar reservable={isLoggedIn()} pricelist={adventure.pricelist} resourceId={adventure.id}
+                      type={"adventure"}
+                      events={events} myPage={myPage}/>
 
-            <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
-            <hr className="me-5 ms-5"/>
 
-            <ReservationCardGrid reservations={reservations}/>
 
-            <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)}
-                    aria-controls="reservationsTable"
-                    aria-expanded={open}
-                    style = {{cursor: "pointer"}}
-            >Istorija rezervacija</h2>
+            {myPage &&
+                <>
+                    <hr className="me-5 ms-5"/>
 
-            <hr className="me-5 ms-5"/>
-            <Collapse in={open}>
-                <div id="reservationsTable">
-                    <ReservationsTable  reservations={reservations} showResource={false}/>
-                </div>
-            </Collapse>
+                    <ReservationCardGrid reservations={reservations}/>
+
+                    <h4 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)}
+                        aria-controls="reservationsTable"
+                        aria-expanded={open}
+                        style={{cursor: "pointer"}}
+                    >Istorija rezervacija</h4>
+
+                    <hr className="me-5 ms-5"/>
+                    <Collapse in={open}>
+                        <div id="reservationsTable">
+                            <ReservationsTable reservations={reservations} showResource={false}/>
+                        </div>
+                    </Collapse>
+                </>
+            }
+
             <div className="m-5 mb-0 me-0">
                 <ReviewsComp reviews = {adventureReviews}/>
             </div>
-            
+
 
             <BeginButton/>
         </div>)

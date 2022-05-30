@@ -4,12 +4,15 @@ import axios from "axios";
 import {backLink, missingDataErrors} from "../Consts";
 import {TagInfo} from "../Info";
 import {MessagePopupModal} from "../MessagePopupModal";
+import {isLoggedIn} from "../Autentification";
 
-export function ReservationModal({show, setShow, type, resourceId}) {
+export function ReservationModal({show, setShow, type, resourceId, myPage}) {
 
     const [clients, setClients] = useState([]);
 
     const [selectedClient, setSelectedClient] = useState([]);
+
+    const [loggedClient, setLoggedClient] = useState([]);
 
     const [additionalServicesText, setAdditionalServicesText] = useState('');
 
@@ -20,13 +23,25 @@ export function ReservationModal({show, setShow, type, resourceId}) {
         });
     };
 
+    const fetchLoggedClient = () => {
+        if (isLoggedIn()) {
+            axios.get(backLink + "/getLoggedUser").then(
+                response => {
+                    setLoggedClient(response.data);
+                }
+            )
+        }
+    }
+
     const [formErrors, setFormErrors] = useState({});
 
     const validateForm = () => {
         let errors = {}
 
-        if (!selectedClient.firstName) {
-            errors.client = missingDataErrors.client;
+        if (myPage) {
+            if (!selectedClient.firstName) {
+                errors.client = missingDataErrors.client;
+            }
         }
 
         if (formValues.startDate === "") {
@@ -74,6 +89,7 @@ export function ReservationModal({show, setShow, type, resourceId}) {
 
     useEffect(() => {
         fetchClients();
+        fetchLoggedClient();
     }, [])
 
     function extractTime() {
@@ -124,7 +140,6 @@ export function ReservationModal({show, setShow, type, resourceId}) {
 
     const [showAlert, setShowAlert] = useState(false);
 
-
     const handleSubmit = e => {
         e.preventDefault()
         let errors = validateForm()
@@ -153,9 +168,18 @@ export function ReservationModal({show, setShow, type, resourceId}) {
             endMinute
         } = extractTime();
 
+        let clientId;
+
+        if (myPage) {
+            clientId = selectedClient.id;
+        }
+        else {
+            clientId = loggedClient.id;
+        }
+
 
         let dto = {
-            clientId: selectedClient.id,
+            clientId: clientId,
             resourceId: resourceId,
             numberOfClients: formValues.numberOfClients,
             additionalServicesStrings: additionalServicesStrings,
@@ -306,31 +330,35 @@ export function ReservationModal({show, setShow, type, resourceId}) {
                             </Form.Group>
                         </div>}
 
-                    <Form.Group className="m-2">
-                        <Form.Label>Klijent</Form.Label>
-                        <Dropdown>
-                            <Dropdown.Toggle variant="light">
-                                {selectedClient.firstName ?
-                                    selectedClient.firstName + " " + selectedClient.lastName
-                                    :
-                                    "Izaberi klijenta"
-                                }
-                            </Dropdown.Toggle>
+                    {myPage &&
 
-                            <Dropdown.Menu>
-                                {clients.map((client, index) => {
-                                    return <Dropdown.Item key={index}
-                                                          onClick={() => setSelectedClient(client)}>
-                                        {client.firstName + " " + client.lastName}
-                                    </Dropdown.Item>;
-                                })}
-                            </Dropdown.Menu>
-                        </Dropdown>
-                        <Form.Control isInvalid={!!formErrors.client} style={{display: "none"}}/>
-                        <Form.Control.Feedback type="invalid">
-                            {formErrors.client}
-                        </Form.Control.Feedback>
-                    </Form.Group>
+                        <Form.Group className="m-2">
+                            <Form.Label>Klijent</Form.Label>
+                            <Dropdown>
+                                <Dropdown.Toggle variant="light">
+                                    {selectedClient.firstName ?
+                                        selectedClient.firstName + " " + selectedClient.lastName
+                                        :
+                                        "Izaberi klijenta"
+                                    }
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu>
+                                    {clients.map((client, index) => {
+                                        return <Dropdown.Item key={index}
+                                                              onClick={() => setSelectedClient(client)}>
+                                            {client.firstName + " " + client.lastName}
+                                        </Dropdown.Item>;
+                                    })}
+                                </Dropdown.Menu>
+                            </Dropdown>
+                            <Form.Control isInvalid={!!formErrors.client} style={{display: "none"}}/>
+                            <Form.Control.Feedback type="invalid">
+                                {formErrors.client}
+                            </Form.Control.Feedback>
+                        </Form.Group>
+                    }
+
 
                     <Form.Group className="m-2">
                         <Form.Label>Broj klijenata</Form.Label>
@@ -383,5 +411,5 @@ export function ReservationModal({show, setShow, type, resourceId}) {
             />
         </>;
     }
-    return html
+    return html;
 }

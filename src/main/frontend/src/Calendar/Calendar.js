@@ -8,7 +8,7 @@ import {ReservationModal} from "./ReservationModal";
 import {BusyPeriodModal} from "./BusyPeriodModal";
 import {BsPlusLg} from "react-icons/bs";
 
-export function Calendar({reservable, pricelist, type, resourceId, events}) {
+export function Calendar({reservable, pricelist, type, resourceId, events, myPage}) {
 
     let perHour = true;
     if (type === "vacationHouse") {
@@ -90,17 +90,21 @@ export function Calendar({reservable, pricelist, type, resourceId, events}) {
                             </Card>
                         </div>
                         <Button className="m-2" style={{width: "12rem"}} onClick={reservationClick}>Rezervisi</Button>
-                        <Button className="m-2 d-flex align-items-center" style={{width: "12rem"}}
-                                onClick={() => setShowBusyPeriodDialog(true)}>
-                            <BsPlusLg className="ms-1 me-1" style={{height: "0.8rem", paddingTop: "0.1rem"}}/>
-                            Period zauzetosti
-                        </Button>
+
+                        {myPage &&
+                            <Button className="m-2 d-flex align-items-center" style={{width: "12rem"}}
+                                    onClick={() => setShowBusyPeriodDialog(true)}>
+                                <BsPlusLg className="ms-1 me-1" style={{height: "0.8rem", paddingTop: "0.1rem"}}/>
+                                Period zauzetosti
+                            </Button>
+                        }
+
                     </div>
                 }
 
 
                 <ReservationModal show={showReservationDialog} setShow={setShowReservationDialog} type={type}
-                                  resourceId={resourceId}/>
+                                  resourceId={resourceId} myPage={myPage}/>
                 <BusyPeriodModal show={showBusyPeriodDialog} setShow={setShowBusyPeriodDialog} type={type}
                                  resourceId={resourceId}/>
             </div>

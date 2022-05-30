@@ -7,8 +7,9 @@ import {AiOutlineCalendar, AiOutlineClockCircle} from "react-icons/ai";
 import UpdateQuickReservation from './UpdateQuickReservation';
 import axios from "axios";
 import {backLink} from "./Consts";
+import {isLoggedIn} from "./Autentification";
 
-function QuickReservation({reservation, name, address, image, entity, priceText, durationText, type}) {
+function QuickReservation({reservation, name, address, image, entity, priceText, durationText, type, myPage}) {
     const [state, setState] = useState({
         startDate: '',
         price: '',
@@ -24,12 +25,14 @@ function QuickReservation({reservation, name, address, image, entity, priceText,
 
 
     const getLoggedUser = () => {
-        axios.get(backLink + "/getLoggedUser").then(
-            res => {
-                console.log(res.data);
-                setLoggedUser(res.data);
-            }
-        )
+        if (isLoggedIn()) {
+            axios.get(backLink + "/getLoggedUser").then(
+                res => {
+                    setLoggedUser(res.data);
+                }
+            )
+        }
+
     }
 
     useEffect(() => {
@@ -63,7 +66,7 @@ function QuickReservation({reservation, name, address, image, entity, priceText,
 
     return (
         <Card className="houseQuickReservationCard m-3 mt-4 me-5" style={{borderRadius: "15PX", minWidth: "45vh"}}>
-            <Card.Img variant="top" src={image}
+            <Card.Img variant="top" src={require("./images/loginBackground.jpg")}
                       style={{borderRadius: "15px 15px 0px 0px", maxHeight: "28vh", minHeight: "28vh"}}/>
             <Card.ImgOverlay className="p-2">
                 <div className='w-100 d-flex justify-content-end m-0 p-0'>
@@ -118,7 +121,7 @@ function QuickReservation({reservation, name, address, image, entity, priceText,
                                 </span>
                             </div>
 
-                            {loggedUser !== null &&
+                            {isLoggedIn() && localStorage.getItem("userRoleName") === "CLIENT" &&
                                 <Button onClick={() => addReservation()}
                                         className="btn btn-primary align-self-center h-75"
                                         style={{zIndex: "3"}}>Rezerviši</Button>

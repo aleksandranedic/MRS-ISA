@@ -1,17 +1,16 @@
 import "../Home/HomePage.css"
 import {Button, Card, Form} from "react-bootstrap";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {GetAllVacationHouses} from "../VacationHousePage/AllVacationHouses";
 import {GetAllAdventures} from "../Adventure/AllAdventures";
 import {GetAllBoats} from "../BoatPage/AllBoats";
-import {backLink, frontLink, isLoggedIn, logOut} from "../Consts";
+import {backLink, frontLink, logOut} from "../Consts";
 import StarRatings from 'react-star-ratings';
 import {GetAllVacationHouseOwners} from "../VacationHouseOwnerPage/AllVacationHouseOwners";
 import {GetAllFishingInstructors} from "../FishingInstructor/AllFishingInstructors";
 import {GetAllBoatOwners} from "../BoatOwnerPage/AllBoatOwners";
 import {BsPerson, BsSearch} from "react-icons/bs";
-import axios from "axios";
-import {isVacationHouseOwner, isClient, isBoatOwner, isFishingInstructor} from "../Autentification";
+import {isBoatOwner, isClient, isFishingInstructor, isLoggedIn, isVacationHouseOwner} from "../Autentification";
 
 export function HomePage() {
 

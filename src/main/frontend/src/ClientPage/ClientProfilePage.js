@@ -40,7 +40,6 @@ const Client = () => {
     let html;
     const fetchClient = () => {
         axios.get(backLink+"/client/"+id).then(res => {
-            console.log(res);
             setClient(res.data)
         });
     };

@@ -4,6 +4,7 @@ import {Button, Form} from "react-bootstrap";
 import axios from "axios";
 import {backLink} from "../Consts";
 import {useParams} from "react-router-dom";
+import {isLoggedIn} from "../Autentification";
 
 export function AddReview({type}) {
 
@@ -40,13 +41,15 @@ export function AddReview({type}) {
 
 
     const fetchUser = () => {
+        if (isLoggedIn()) {
+            axios.get(backLink + "/getLoggedUser").then(
+                res => {
+                    setUser(res.data);
+                }
+            ).catch(err => {
+            })
+        }
 
-        axios.get(backLink + "/getLoggedUser").then(
-            res => {
-                setUser(res.data);
-            }
-        ).catch(err => {
-        })
     }
 
     const fetchShow = () => {

@@ -4,6 +4,8 @@ import {convertToDate} from "./Calendar/ReservationDateConverter";
 export function processReservationsForResources(reservations) {
     let newEvents = [];
 
+    console.log(reservations);
+
     for (let index in reservations) {
         let r = reservations.at(index);
 

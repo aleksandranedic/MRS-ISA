@@ -50,7 +50,8 @@ const Update = ({vacationHouse, showModal, closeModal}) => {
 
 const Reservations = ({reservations, name, address}) => {
     if (typeof reservations !== "undefined"){
-        return <QuickReservations type={"vacationHouse"} reservations={reservations} name={name} address={address} entity="house" priceText="po noćenju" durationText="dana"/>
+        return <QuickReservations type={"vacationHouse"} reservations={reservations} name={name} address={address} entity="house" priceText="po noćenju" durationText="dana"
+        addable={true}/>
     }
     else {
         return <></>
@@ -131,7 +132,7 @@ export function VacationHousePage() {
        
 
             <hr className="me-5 ms-5"/>
-                  <Calendar reservable={true} pricelist={{price: house.price}} resourceId={house.id} type={"vacationHouse"} events={events}/>
+                  <Calendar reservable={true} pricelist={{price: house.price}} resourceId={house.id} type={"vacationHouse"} events={events} myPage={true}/>
             <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
             <hr className="me-5 ms-5"/>
             <ReservationCardGrid reservations={reservations}/>
@@ -146,8 +147,9 @@ export function VacationHousePage() {
                 </div>
             </Collapse>
 
-            <ReviewsComp reviews = {houseReviews}/>
-
+            <div className="ms-5">
+                <ReviewsComp reviews = {houseReviews}/>
+            </div>
 
         <BeginButton/>
     </>

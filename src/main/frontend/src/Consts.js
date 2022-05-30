@@ -83,11 +83,11 @@ export const updateForFetchedDataError = (message, id) => {
     toast.update(id, {render: message, type: "error", isLoading: false, autoClose: 5000});
 }
 
-export function isLoggedIn() {
-    return localStorage.getItem('token') !== null && localStorage.getItem('token') !== "";
-}
-
 export const logOut = () => {
     localStorage.setItem('token', "");
     window.location.reload();
 }
+export const client = "CLIENT";
+export const fishingInstructor = "FISHING_INSTRUCTOR";
+export const vacationHouseOwner = "VACATION_HOUSE_OWNER";
+export const boatOwner = "BOAT_OWNER";

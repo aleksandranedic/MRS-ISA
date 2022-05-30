@@ -1,6 +1,6 @@
 package com.project.team9.controller;
 
-import com.project.team9.dto.UserDTO;
+import com.project.team9.dto.ClientDTO;
 import com.project.team9.model.Address;
 import com.project.team9.model.request.DeleteRequest;
 import com.project.team9.model.user.Client;
@@ -49,18 +49,18 @@ public class ClientController {
 
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Client> updateClient(@PathVariable String id, @RequestBody UserDTO userDTO) {
+    public ResponseEntity<Client> updateClient(@PathVariable String id, @RequestBody ClientDTO clientDTO) {
         Client currentClient = clientService.getById(id);
-        currentClient.setFirstName(userDTO.getFirstName());
-        currentClient.setLastName(userDTO.getLastName());
-        currentClient.setPhoneNumber(userDTO.getPhoneNumber());
-        Address address = addressService.getByAttributes(userDTO.getAddress());
+        currentClient.setFirstName(clientDTO.getFirstName());
+        currentClient.setLastName(clientDTO.getLastName());
+        currentClient.setPhoneNumber(clientDTO.getPhoneNumber());
+        Address address = addressService.getByAttributes(clientDTO.getAddress());
         if (address == null) {
             address = new Address();
-            address.setStreet(userDTO.getAddress().getStreet());
-            address.setNumber(userDTO.getAddress().getNumber());
-            address.setCountry(userDTO.getAddress().getCountry());
-            address.setPlace(userDTO.getAddress().getPlace());
+            address.setStreet(clientDTO.getAddress().getStreet());
+            address.setNumber(clientDTO.getAddress().getNumber());
+            address.setCountry(clientDTO.getAddress().getCountry());
+            address.setPlace(clientDTO.getAddress().getPlace());
             addressService.addAddress(address);
         }
         currentClient.setAddress(address);

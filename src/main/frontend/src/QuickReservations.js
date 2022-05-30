@@ -5,31 +5,10 @@ import {BsFillPlusCircleFill} from 'react-icons/bs'
 import "react-multi-carousel/lib/styles.css";
 import AddQuickReservation from './AddQuickReservation'
 import QuickReservation from "./QuickReservation";
+import {responsive} from "./Consts";
 
-const responsive = {
-    superLargeDesktop: {
-        breakpoint: {max: 4000, min: 3000},
-        items: 5
-    },
-    desktop: {
-        breakpoint: {max: 3000, min: 1400},
-        items: 4
-    },
-    desktop2: {
-        breakpoint: {max: 1400, min: 1024},
-        items: 3
-    },
-    tablet: {
-        breakpoint: {max: 1024, min: 700},
-        items: 2
-    },
-    mobile: {
-        breakpoint: {max: 700, min: 0},
-        items: 1
-    }
-};
 
-function QuickReservations({reservations, name, address, entity, priceText, durationText, type}) {
+function QuickReservations({reservations, name, address, entity, priceText, durationText, type, addable, myPage}) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -42,14 +21,22 @@ function QuickReservations({reservations, name, address, entity, priceText, dura
         <Container className='d-flex p-0'>          
             <Carousel className="w-100 h-100 quick-reservation-carousel" responsive={responsive}  interval="250000" autoPlay={false} autoPlaySpeed={9000000}>
             {reservations.map( (reservation) => (
-                <QuickReservation key={reservation.reservationID} type={type} reservation={reservation} name={name} address={address} image={"http://localhost:3000/images/vikendica1.jpeg"} entity={entity} priceText={priceText} durationText={durationText}/>
+                <QuickReservation key={reservation.reservationID} type={type} reservation={reservation} name={name} address={address} image={"./images/loginBackground.jpg"} entity={entity} priceText={priceText} durationText={durationText} myPage={myPage}/>
             ))}
             </Carousel>
 
-            <Button className="btn btn-light add border-radius-lg align-self-center" onClick={handleShow}>
-                <BsFillPlusCircleFill viewBox='0 0 16 16' size={25} fill="#7d7d7d"/>          
-            </Button>
-            <AddQuickReservation closeModal={handleClose} showModal={show} entity={entity} priceText={priceText} durationText={durationText}/>
+
+            { addable &&
+                <>
+                    <Button className="btn btn-light add border-radius-lg align-self-center" onClick={handleShow}>
+                        <BsFillPlusCircleFill viewBox='0 0 16 16' size={25} fill="#7d7d7d"/>
+                    </Button>
+                    <AddQuickReservation closeModal={handleClose} showModal={show} entity={entity} priceText={priceText}
+                                         durationText={durationText}/>
+                </>
+
+            }
+
         </Container>
     </div>
 

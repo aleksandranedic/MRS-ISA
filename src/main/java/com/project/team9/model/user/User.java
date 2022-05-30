@@ -193,6 +193,6 @@ public class User implements UserDetails {
     }
 
     public String getRoleName() {
-        return role.toString();
+        return role.getName();
     }
 }

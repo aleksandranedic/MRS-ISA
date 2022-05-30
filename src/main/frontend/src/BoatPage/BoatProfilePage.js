@@ -55,7 +55,9 @@ const Update = ({boat, showModal, closeModal}) => {
 
 const Reservations = ({reservations, name, address}) => {
     if (typeof reservations !== "undefined"){
-        return <QuickReservations type={"boat"} reservations={reservations} name={name} address={address} entity="boat" priceText="po vožnji" durationText="h"/>
+        return <QuickReservations type={"boat"} reservations={reservations} name={name} address={address} entity="boat" priceText="po vožnji" durationText="h"
+            addable={true}
+        />
     }
     else {
         return <></>
