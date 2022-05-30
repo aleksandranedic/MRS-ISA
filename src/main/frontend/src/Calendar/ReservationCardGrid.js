@@ -24,8 +24,8 @@ export function ReservationCardGrid({reservations}) {
     return( <div className="ms-5 me-5"
                  style={{
                      maxHeight: "60vh",
-                     overflowY: "scroll"}}>
-        <Row xs={1} md={2} lg={3} className="g-4">
+                     overflow: "auto"}}>
+        <Row xs={1} md={2} lg={3} className="g-4 mb-4 w-100">
             {reservations.map((reservation, index) => (
                 <Col key={index + "col"}>
                     <Card key={index} style={{
@@ -49,7 +49,7 @@ export function ReservationCardGrid({reservations}) {
                                     })}</div>
 
                                 </div>
-                                <div className="ms-auto fs-4" style={{color: "#019191"}}>
+                                <div className="ms-auto fs-4" style={{color: "#ED7301"}}>
                                     {reservation.price}€
                                 </div>
                             </div>
@@ -67,4 +67,3 @@ export function ReservationCardGrid({reservations}) {
 
     </div>)
 }
-

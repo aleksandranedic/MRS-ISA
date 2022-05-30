@@ -122,32 +122,32 @@ export function VacationHousePage() {
         <Update closeModal={handleClose} showModal={show} vacationHouse = {house}/>
         <div className='p-5 pt-0'>
             <Gallery house={house} images={imgs}/>
-            <hr/>
+
             <Reservations reservations={house.quickReservations} name={house.name} address={house.address}/>
             <footer className="blockquote-footer">Svi izlasci iz vikendice obavljaju se do 10:00h.</footer>
-            <ReviewsComp reviews = {houseReviews}/>
+            
         </div>
 
-        <hr className="me-5 ms-5"/>
-        <Calendar reservable={true} pricelist={{price: house.price}} resourceId={house.id} type={"vacationHouse"} events={events}/>
+       
 
-        <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
-        <hr className="me-5 ms-5"/>
+            <hr className="me-5 ms-5"/>
+                  <Calendar reservable={true} pricelist={{price: house.price}} resourceId={house.id} type={"vacationHouse"} events={events}/>
+            <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
+            <hr className="me-5 ms-5"/>
+            <ReservationCardGrid reservations={reservations}/>
 
-        <ReservationCardGrid reservations={reservations}/>
+            <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)} aria-controls="reservationsTable" aria-expanded={open} style = {{cursor: "pointer"}}>
+                Istorija rezervacija
+            </h2>
+            <hr className="me-5 ms-5"/>
+            <Collapse in={open}>
+                <div id="reservationsTable">
+                    <ReservationsTable  reservations={reservations} showResource={false}/>
+                </div>
+            </Collapse>
 
-        <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)}
-            aria-controls="reservationsTable"
-            aria-expanded={open}
-            style = {{cursor: "pointer"}}
-        >Istorija rezervacija</h2>
+            <ReviewsComp reviews = {houseReviews}/>
 
-        <hr className="me-5 ms-5"/>
-        <Collapse in={open}>
-            <div id="reservationsTable">
-                <ReservationsTable  reservations={reservations} showResource={false}/>
-            </div>
-        </Collapse>
 
         <BeginButton/>
     </>
