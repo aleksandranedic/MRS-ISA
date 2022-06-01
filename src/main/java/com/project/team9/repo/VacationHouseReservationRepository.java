@@ -27,4 +27,10 @@ public interface VacationHouseReservationRepository extends JpaRepository<Vacati
 
     @Query("FROM VacationHouseReservation WHERE resource.id=?1 ")
     List<VacationHouseReservation> findReservationsByResourceId(Long id);
+
+    @Query("FROM VacationHouseReservation WHERE resource.owner.id=?1 ")
+    List<VacationHouseReservation> findVacationHouseReservationForVendorId(Long id);
+
+    @Query("FROM VacationHouseReservation WHERE client.id=?1 ")
+    List<VacationHouseReservation> findVacationHouseReservationForClientId(Long id);
 }

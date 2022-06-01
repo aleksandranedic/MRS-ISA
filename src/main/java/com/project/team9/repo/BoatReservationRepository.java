@@ -28,4 +28,10 @@ public interface BoatReservationRepository extends JpaRepository<BoatReservation
 
     @Query("FROM BoatReservation WHERE resource.id=?1 ")
     List<BoatReservation> findReservationsByResourceId(Long id);
+
+    @Query("FROM BoatReservation WHERE resource.owner.id=?1 ")
+    List<BoatReservation> findReservationsByVendorId(Long id);
+
+    @Query("FROM BoatReservation WHERE client.id=?1 ")
+    List<BoatReservation> findBoatReservationByClientId(Long id);
 }
