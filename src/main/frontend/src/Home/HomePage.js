@@ -49,16 +49,13 @@ export function HomePage() {
     let profileLink;
 
     if (isLoggedIn()) {
-        if (isClient()){
+        if (isClient()) {
             profileLink = frontLink + "client/" + localStorage.getItem("userId");
-        }
-        else if (isVacationHouseOwner()){
+        } else if (isVacationHouseOwner()) {
             profileLink = frontLink + "houseOwner/" + localStorage.getItem("userId");
-        }
-        else if (isBoatOwner()){
+        } else if (isBoatOwner()) {
             profileLink = frontLink + "boatOwner/" + localStorage.getItem("userId");
-        }
-        else if (isFishingInstructor()){
+        } else if (isFishingInstructor()) {
             profileLink = frontLink + "fishingInstructor/" + localStorage.getItem("userId");
         }
 
@@ -73,13 +70,11 @@ export function HomePage() {
 
                     <a href={profileLink} className="m-3">
                         <BsPerson className="icon"/>
-                    </a>
-                }
+                    </a>}
 
                 {(!isLoggedIn()) ?
                     <Button href={frontLink + "login"} className="m-3" variant="outline-secondary">Prijavi se</Button> :
-                    <Button className="m-3" variant="outline-secondary" onClick={() => logOut()}>Odjavi se</Button>
-                }
+                    <Button className="m-3" variant="outline-secondary" onClick={() => logOut()}>Odjavi se</Button>}
 
             </div>
 
@@ -245,32 +240,28 @@ function HomePageVendorCard({id, fullName, rate, profileImage, type}) {
         path = backLink + profileImage.path;
     }
 
-    return <Card className="vendor-card m-5 reveal">
-        <Card.Body className="d-flex h-100">
-            <div>
-                <a href={frontLink + type + "/" + id}>
-
-                    {profileImage ?
-                        <img src={path} alt="profileImage" className="vendor-profile-image"/>
-                        :
-                        <div
+    return <>
+        <Card className="vendor-card m-5 reveal">
+            <Card.Body className="d-flex h-100">
+                <div>
+                    <a href={frontLink + type + "/" + id}>
+                        {profileImage ? <img src={path} alt="profileImage" className="vendor-profile-image"/> : <div
                             className="d-flex justify-content-center align-items-center vendor-profile-image-placeholder">
                             <BsPerson style={{color: "rgba(0,0,0,0.3)"}}/>
 
-                        </div>
-                    }
-
-                </a>
-            </div>
-            <div className="ms-3 mt-auto mb-auto flex-column h-100">
-                <h6 className="vendor-name">{fullName}</h6>
-                <div>
-                    <StarRatings rating={rate} starDimension="13px" starSpacing="0.8px" starRatedColor="#345775"/>
+                        </div>}
+                    </a>
                 </div>
-            </div>
-        </Card.Body>
+                <div className="ms-3 mt-auto mb-auto flex-column h-100">
+                    <h6 className="vendor-name">{fullName}</h6>
+                    <div>
+                        <StarRatings rating={rate} starDimension="13px" starSpacing="0.8px" starRatedColor="#345775"/>
+                    </div>
+                </div>
+            </Card.Body>
+        </Card>
 
-    </Card>
+    </>
 }
 
 function reveal() {

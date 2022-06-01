@@ -18,6 +18,9 @@ export default function Login() {
             notifySuccess("Uspešno ste se ulogovali")
             localStorage.setItem("token", res.data)
             setTimeout(function () {
+
+                localStorage.getItem("")
+
                 window.location.href = frontLink
             }, 5000)
         }).catch(error => {
