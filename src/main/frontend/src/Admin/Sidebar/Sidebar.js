@@ -2,15 +2,14 @@ import {Button, Nav, Navbar} from "react-bootstrap";
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css'
 import {BsArrowRight} from "react-icons/bs";
-import {logOut, logOutAdmin} from "../../Consts";
 
-export function Sidebar({user}) {
+export function Sidebar() {
 
-    return (<div className="flex-column"><Navbar bg="light" expand="lg">
+
+    return (<Navbar bg="light" expand="lg">
         <Nav className="d-flex flex-column m-3 align-items-stretch">
-            <h2 className="fw-light m-3">
-                {user.firstName + " " + user.lastName}
-            </h2>
+            <h2 className="fw-light m-3">Milica Todorov</h2>
+            {/*TODO treba da se dobavi ulogovani admin*/}
             <h4 className="fw-light m-3">Zahtevi</h4>
 
             <Nav.Link className="ms-4" href={"http://localhost:3000/admin/registrationRequests"}>
@@ -44,8 +43,7 @@ export function Sidebar({user}) {
                 <BsArrowRight className="me-2"/>
                 Bodovi
             </Nav.Link>
+
         </Nav>
-    </Navbar>
-        <Button className="m-3" variant="outline-secondary" onClick={() => logOutAdmin()}>Odjavi se</Button>
-    </div>)
+    </Navbar>)
 }

@@ -8,12 +8,10 @@ import com.project.team9.model.request.DeleteRequest;
 import com.project.team9.model.request.RegistrationRequest;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
-import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.resource.Resource;
-import com.project.team9.model.review.ClientReview;
 import com.project.team9.model.user.Administrator;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.resource.VacationHouse;
@@ -988,72 +986,39 @@ public class Config {
         List<Resource> resources = Arrays.asList(adventure1, adventure2, adventure3, adventure4, adventure5, adventure6, boat7, boat8, boat9, boat10);
 
         List<Client> clients = Arrays.asList(client3, client4, client5, client6);
-        addAdventureAndBoatReservations(resources, clients);
-        addVacationHouseReservations(houses, clients);
+//        addAdventureAndBoatReservations(resources, clients);
+//        addVacationHouseReservations(houses, clients);
 
         Address a19 = new Address("Novi Sad", "19", "Laze Nančića", "Srbija");
         addressRepository.save(a19);
         RegistrationRequest registrationRequest = testData.createRegistrationRequest(
-                "U ponudi ima 3 avanture", "", "aleksa123", "Aleksu", "Aleksić", "aleksa.aleksić@gmail.com", "06398765421", "Novi Sad", "19", "Laze Nančića", "Srbija", "FISHING_INSTRUCTOR", "Živim na lepom plavom Dunavu.", ""
+                "U ponudi ima 3 avanture", "", "aleksa123", "Aleksu", "Aleksić", "tim9raketa+aleksa.aleksić@gmail.com", "06398765421", "Novi Sad", "19", "Laze Nančića", "Srbija", "FISHING_INSTRUCTOR", "Živim na lepom plavom Dunavu.", ""
         );
         registrationRequestRepository.save(registrationRequest);
         registrationRequest = testData.createRegistrationRequest(
-                "U ponudi ima 2 vikendice", "", "julia123", "Julia", "Annie", "jula.annie@gmail.com", "06398765421", "Novi Sad", "20", "Laze Nančića", "Srbija", "VACATION_HOUSE_OWNER", "Volim da uživam na lepoj vikendici uz čašu vina.", ""
+                "U ponudi ima 2 vikendice", "", "julia123", "Julia", "Annie", "tim9raketa+jula.annie@gmail.com", "06398765421", "Novi Sad", "20", "Laze Nančića", "Srbija", "VACATION_HOUSE_OWNER", "Volim da uživam na lepoj vikendici uz čašu vina.", ""
         );
         registrationRequestRepository.save(registrationRequest);
 
         DeleteRequest deleteRequest=testData.createDeleteRequest("Želim da mi se nalog obriše","","6","CLIENT");
-        deleteRequestRepository.delete(deleteRequest);
+        deleteRequestRepository.save(deleteRequest);
         deleteRequest=testData.createDeleteRequest("Želim da mi se nalog obriše","","7","VACATION_HOUSE_OWNER");
-        deleteRequestRepository.delete(deleteRequest);
-
-        ClientReview clientReview = getClientReview(vacationHouse14.getId(), client3.getId(), 4, "Odlična vikendica, prijatan boravak, malo udaljena od centra.");
-        reviewRepository.save(clientReview);
-        ClientReview clientReview1 = getClientReview(vacationHouse15.getId(), client6.getId(), 5, "Čista i sjajna vikendica, sve preporuke!.");
-        reviewRepository.save(clientReview1);
-        ClientReview clientReview2 = getClientReview(vacationHouse14.getId(), client6.getId(), 4, "Vikendica je super, gazda takođe. Potrudili su se maksimalno. Stara stolarija.");
-        reviewRepository.save(clientReview2);
-
-        ClientReview clientReview3 = getClientReview(boat7.getId(), client3.getId(), 4, "Uredu je brod.");
-        reviewRepository.save(clientReview3);
-        ClientReview clientReview4 = getClientReview(boat10.getId(), client6.getId(), 5, "Čist i sjajan brod, sve preporuke!.");
-        reviewRepository.save(clientReview4);
-        ClientReview clientReview5 = getClientReview(boat10.getId(), client6.getId(), 4, "Odlicno iskustvo");
-        reviewRepository.save(clientReview5);
-
-        ClientReview clientReview6 = getClientReview(adventure3.getId(), client3.getId(), 4, "Solidno.");
-        reviewRepository.save(clientReview6);
-        ClientReview clientReview7 = getClientReview(adventure5.getId(), client6.getId(), 5, "Strava");
-        reviewRepository.save(clientReview7);
-        ClientReview clientReview8 = getClientReview(adventure3.getId(), client6.getId(), 4, "Malo naporno.");
-        reviewRepository.save(clientReview8);
-
-    }
-
-    private ClientReview getClientReview(Long resourceID, Long clientID, int rating, String text) {
-        return new ClientReview(resourceID, null, rating, text, clientID);
+        deleteRequestRepository.save(deleteRequest);
     }
 
     private void addAdventureAndBoatReservations(List<Resource> resources, List<Client> clients) {
         List<Appointment> dayAppointments = new ArrayList<Appointment>();
 
         for (int i = 1; i < 30; i++) {
-            for (int j = 5; j< 20; j++){
+            for (int j = 5; j < 20; j++) {
                 dayAppointments.add(Appointment.getHourAppointment(2022, 4, i, j, 0));
-            }
-        }
-        for (int i = 1; i < 31; i++) {
-            for (int j = 5; j< 20; j++){
-                dayAppointments.add(Appointment.getHourAppointment(2022, 5, i, j, 0));
-            }
-        }
-        for (int i = 1; i < 30; i++) {
-            for (int j = 5; j< 20; j++){
                 dayAppointments.add(Appointment.getHourAppointment(2022, 6, i, j, 0));
             }
+
         }
         for (int i = 1; i < 31; i++) {
-            for (int j = 5; j< 20; j++){
+            for (int j = 5; j < 20; j++) {
+                dayAppointments.add(Appointment.getHourAppointment(2022, 5, i, j, 0));
                 dayAppointments.add(Appointment.getHourAppointment(2022, 7, i, j, 0));
             }
         }
@@ -1064,12 +1029,12 @@ public class Config {
         int numberOfClients;
         double discount;
         boolean isQuickReservation;
-        int price;
+        ArrayList<Appointment> reservationAppointments;
 
         while (appointmentIndex < dayAppointments.size()) {
             numberOfAppointments = random.nextInt(5) + 2;
-            Resource resource = resources.get(random.nextInt(resources.size()));
-            if (numberOfQuickReservations < 75 && dayAppointments.get(appointmentIndex).getStartTime().getMonth() == Month.JULY) {
+
+            if (numberOfQuickReservations < 35 && dayAppointments.get(appointmentIndex).getStartTime().getMonth() == Month.JULY) {
                 discount = (0.4) * random.nextDouble();
             } else {
                 discount = 0;
@@ -1077,63 +1042,40 @@ public class Config {
 
             if (discount == 0) {
                 isQuickReservation = false;
-                price = resource.getPricelist().getPrice();
 
             } else {
                 isQuickReservation = true;
                 numberOfQuickReservations++;
-                price = resource.getPricelist().getPrice()-20;
             }
 
+            Resource resource = resources.get(random.nextInt(resources.size()));
             Client client = clients.get(random.nextInt(clients.size()));
 
-            ArrayList<Appointment> reservationAppointments = new ArrayList<Appointment>();
+            reservationAppointments = new ArrayList<Appointment>();
 
-            for (int i = appointmentIndex; i < appointmentIndex + numberOfAppointments-7; i++) {
+            for (int i = appointmentIndex; i < appointmentIndex + numberOfAppointments - 1; i++) {
                 reservationAppointments.add(dayAppointments.get(i));
             }
             appointmentRepository.saveAll(reservationAppointments);
             if (resource.getClass() == Adventure.class) {
-                numberOfClients = random.nextInt( ((Adventure) resource).getNumberOfClients()- 1) + 1;
+                numberOfClients = random.nextInt(((Adventure) resource).getNumberOfClients() - 1) + 1;
 
                 AdventureReservation r1 = testData.createAdventureReservation(
                         reservationAppointments,
                         numberOfClients,
                         new ArrayList<>(),
-                        price,
+                        (int) (resource.getPricelist().getPrice() * numberOfAppointments * (1 - discount)),
                         client,
-                        (Adventure)resource,
+                        (Adventure) resource,
                         isQuickReservation
                 );
                 adventureReservationRepository.save(r1);
-
-                ((Adventure)resource).addQuickReservation(r1);
-                adventureRepository.save((Adventure)resource);
+            } else if (resource.getClass() == Boat.class) {
+                numberOfClients = random.nextInt(((Boat) resource).getCapacity() - 1) + 1;
             }
 
-            else if (resource.getClass() == Boat.class) {
-                numberOfClients = random.nextInt( ((Boat) resource).getCapacity()- 1) + 1;
 
-               price = resource.getPricelist().getPrice();
-
-
-                BoatReservation b1 = testData.createBoatReservation(
-                        reservationAppointments,
-                        numberOfClients,
-                        new ArrayList<>(),
-                        price,
-                        client,
-                        (Boat)resource,
-                        isQuickReservation
-
-                );
-
-                boatReservationRepository.save(b1);
-                ((Boat)resource).addReservation(b1);
-                boatRepository.save((Boat)resource);
-            }
-
-            appointmentIndex += numberOfAppointments+1;
+            appointmentIndex += numberOfAppointments;
 
         }
     }
@@ -1143,14 +1085,10 @@ public class Config {
 
         for (int i = 1; i < 30; i++) {
             dayAppointments.add(Appointment.getDayAppointment(2022, 4, i));
-        }
-        for (int i = 1; i < 31; i++) {
-            dayAppointments.add(Appointment.getDayAppointment(2022, 5, i));
-        }
-        for (int i = 1; i < 30; i++) {
             dayAppointments.add(Appointment.getDayAppointment(2022, 6, i));
         }
         for (int i = 1; i < 31; i++) {
+            dayAppointments.add(Appointment.getDayAppointment(2022, 5, i));
             dayAppointments.add(Appointment.getDayAppointment(2022, 7, i));
         }
 
@@ -1160,7 +1098,7 @@ public class Config {
         int numberOfClients;
         double discount;
         boolean isQuickReservation;
-
+        ArrayList<Appointment> reservationAppointments;
 
         while (appointmentIndex < dayAppointments.size()) {
             numberOfAppointments = random.nextInt(5) + 2;
@@ -1184,25 +1122,22 @@ public class Config {
 
             numberOfClients = random.nextInt(house.getNumberOfRooms() * house.getNumberOfBedsPerRoom() - 1) + 1;
 
-            ArrayList<Appointment> reservationAppointments = new ArrayList<Appointment>();
+            reservationAppointments = new ArrayList<Appointment>();
 
-            for (int i = appointmentIndex; i < appointmentIndex + numberOfAppointments-3; i++) {
+            for (int i = appointmentIndex; i < appointmentIndex + numberOfAppointments - 1; i++) {
                 reservationAppointments.add(dayAppointments.get(i));
             }
             appointmentRepository.saveAll(reservationAppointments);
-
-            int price = house.getPricelist().getPrice() * numberOfAppointments-20;
-
-
 
             VacationHouseReservation r1 = testData.createVacationHouseReservation(
                     reservationAppointments,
                     numberOfClients,
                     new ArrayList<>(),
-                    price,
+                    (int) (house.getPricelist().getPrice() * numberOfAppointments * (1 - discount)),
                     client,
                     house,
                     isQuickReservation
+
             );
             vacationHouseReservationRepository.save(r1);
 
@@ -1211,7 +1146,7 @@ public class Config {
                 vacationHouseRepository.save(house);
             }
 
-            appointmentIndex += numberOfAppointments+1;
+            appointmentIndex += numberOfAppointments;
 
 
         }
