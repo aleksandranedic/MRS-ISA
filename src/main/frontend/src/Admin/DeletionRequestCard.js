@@ -1,7 +1,7 @@
 import {Badge, Button, Card, Form, Modal} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {backLink} from "../Consts";
+import {backLink, notifySuccess} from "../Consts";
 
 export function DeletionRequestCard({request}) {
     const [show, setShow] = useState(false);
@@ -15,16 +15,16 @@ export function DeletionRequestCard({request}) {
             requestId: request.id.toString(),
             type: type
         }
-        console.log(dto)
-        console.log(request.id)
         axios.post(backLink + "/deletionRequests/validateDeletion", dto).then(
             response => {
                 console.log(response.data)
+                notifySuccess(response.data)
                 setShow(false)
+                setTimeout(function () {
+                    window.location.reload();
+                }, 5000)
             }
         )
-        window.location.reload();
-
     }
 
     const fetchUserData = () => {
