@@ -51,6 +51,8 @@ public class UserServiceSecurity implements UserDetailsService {
             return vacationHouseOwnerService.getVacationHouseOwnerByEmail(username);
         } else if (boatOwnerService.getBoatOwnerByEmail(username) != null) {
             return boatOwnerService.getBoatOwnerByEmail(username);
+        } else if (administratorService.getAdministratorByEmail(username) != null) {
+            return administratorService.getAdministratorByEmail(username);
         } else {
             throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
         }

@@ -1,6 +1,7 @@
 package com.project.team9.controller;
 
 import com.project.team9.dto.LoginDTO;
+import com.project.team9.dto.LoginResponseDTO;
 import com.project.team9.dto.PasswordsDTO;
 import com.project.team9.dto.UserDTO;
 import com.project.team9.model.user.Administrator;
@@ -48,7 +49,7 @@ public class AuthenticationController {
     // Prvi endpoint koji pogadja korisnik kada se loguje.
     // Tada zna samo svoje korisnicko ime i lozinku i to prosledjuje na backend.
     @PostMapping("/login")
-    public ResponseEntity<String> createAuthenticationToken(
+    public ResponseEntity<LoginResponseDTO> createAuthenticationToken(
             @RequestBody LoginDTO loginDTO, HttpServletResponse response) {
 
 //        User user=clientRepository.findByEmail(loginDTO.getUsername());
@@ -68,14 +69,14 @@ public class AuthenticationController {
         User user = (User) authentication.getPrincipal();
 
         if (user.getDeleted()) {
-            return ResponseEntity.ok("Korisnik je obrisan");
+            return ResponseEntity.badRequest().body(new LoginResponseDTO("Korisnik je obrisan", null, null));
         }
         String jwt = tokenUtils.generateToken(user.getUsername());
 
         // Vrati token kao odgovor na uspesnu autentifikaciju
-        return ResponseEntity.ok(jwt);}
+        return ResponseEntity.ok(new LoginResponseDTO(jwt, user.getRoleName(), user.getId()));}
         catch (Exception e){
-            return ResponseEntity.badRequest().body("Uneli ste porgrešne podatke");
+            return ResponseEntity.badRequest().body(new LoginResponseDTO("Uneli ste porgrešne podatke", null, null));
         }
     }
 

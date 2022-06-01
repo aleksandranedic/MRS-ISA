@@ -194,7 +194,7 @@ public class BoatService {
     private List<BoatQuickReservationDTO> getQuickReservations(Boat bt) {
         List<BoatQuickReservationDTO> quickReservations = new ArrayList<BoatQuickReservationDTO>();
         for (BoatReservation reservation : bt.getReservations()) {
-            if (reservation.getPrice() < bt.getPricelist().getPrice() && reservation.getClient() == null)
+            if (reservation.getPrice() < bt.getPricelist().getPrice() && reservation.getClient() == null && reservation.isQuickReservation())
                 quickReservations.add(createBoatReservationDTO(bt.getPricelist().getPrice(), reservation));
         }
         return quickReservations;

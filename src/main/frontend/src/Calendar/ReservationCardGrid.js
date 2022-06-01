@@ -6,13 +6,11 @@ import {TimeFooter} from "./TimeFooter";
 
 export function ReservationCardGrid({reservations}) {
 
+
     let indexesToPop = []
     for (let index in reservations) {
         let reservation = reservations.at(index);
         if (reservation.busyPeriod === true) {
-            indexesToPop.push(index);
-        }
-        else if (convertToDate(reservation.appointments.at(0).startTime)< Date.now()){
             indexesToPop.push(index);
         }
     }

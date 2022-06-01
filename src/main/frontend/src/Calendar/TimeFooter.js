@@ -3,6 +3,10 @@ import React from "react";
 
 export function TimeFooter({reservation}) {
 
+    if (reservation.appointments.length == 0) {
+        return "";
+    }
+
     let startDateArray = reservation.appointments.at(0).startTime;
     let endDateArray = reservation.appointments.at(reservation.appointments.length - 1).endTime;
 

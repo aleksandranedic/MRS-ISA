@@ -35,8 +35,8 @@ function App() {
     const getLoggedUser = () => {
         axios.get(backLink + "/getLoggedUser").then(
             response => {
-                localStorage.setItem("userRoleName", response.data.role);
-                localStorage.setItem("userId", response.data.id);
+                localStorage.setItem("firstName", response.data.firstName);
+                localStorage.setItem("lastName", response.data.lastName);
             }
         )
     }

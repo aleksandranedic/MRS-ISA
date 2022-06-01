@@ -1,4 +1,8 @@
 export function getStartTime(reservation) {
+    if (reservation.appointments.length == 0) {
+        return "";
+    }
+
     let dateArray = reservation.appointments.at(0).startTime;
     return getDateFromArray(dateArray);
 }
@@ -11,6 +15,9 @@ function getDateFromArray(dateArray) {
 }
 
 export function getEndTime(reservation) {
+    if (reservation.appointments.length == 0) {
+        return "";
+    }
     let dateArray = reservation.appointments.at(reservation.appointments.length - 1).endTime;
     return getDateFromArray(dateArray);
 }

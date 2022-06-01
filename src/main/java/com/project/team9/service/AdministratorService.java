@@ -4,6 +4,8 @@ import com.project.team9.model.user.Administrator;
 import com.project.team9.repo.AdministratorRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class AdministratorService {
     private final AdministratorRepository administratorRepository;
@@ -13,5 +15,9 @@ public class AdministratorService {
     }
     public Administrator addAdmin(Administrator administrator){
        return administratorRepository.save(administrator);
+    }
+
+    public Administrator getAdministratorByEmail(String username) {
+        return administratorRepository.findByEmail(username);
     }
 }
