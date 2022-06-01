@@ -132,9 +132,9 @@ public class VendorRegistrationService {
             registrationRequest.setResponse(replay.getResponse());
             registrationRequest.setDeleted(true);
             service.addRegistrationRequest(registrationRequest);
-            emailSender.send(
-                    registrationRequest.getEmail(),
-                    buildEmail(registrationRequest.getFirstName() + " " + registrationRequest.getLastName()));
+//            emailSender.send(
+//                    registrationRequest.getEmail(),
+//                    buildEmail(registrationRequest.getFirstName() + " " + registrationRequest.getLastName()));
             return "Odobravanje registracije je uspešno";
         }
     }

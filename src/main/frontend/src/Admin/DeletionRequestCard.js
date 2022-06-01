@@ -1,7 +1,8 @@
 import {Badge, Button, Card, Form, Modal} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {backLink, notifySuccess} from "../Consts";
+import {backLink, loadingToast, notifySuccess, updateForFetchedDataError, updateForFetchedDataSuccess} from "../Consts";
+import {ToastContainer} from "react-toastify";
 
 export function DeletionRequestCard({request}) {
     const [show, setShow] = useState(false);
@@ -15,10 +16,10 @@ export function DeletionRequestCard({request}) {
             requestId: request.id.toString(),
             type: type
         }
+        let id=loadingToast()
         axios.post(backLink + "/deletionRequests/validateDeletion", dto).then(
             response => {
-                console.log(response.data)
-                notifySuccess(response.data)
+                updateForFetchedDataSuccess(response.data,id)
                 setShow(false)
                 setTimeout(function () {
                     window.location.reload();
@@ -124,6 +125,18 @@ export function DeletionRequestCard({request}) {
                     </Modal.Footer>
                 </Modal>
             </div>
+            <ToastContainer
+                position="top-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme={"colored"}
+            />
         </>;
     }
     return html;

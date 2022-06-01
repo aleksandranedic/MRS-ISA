@@ -100,15 +100,15 @@ public class DeleteRequestService {
                     return "Nalog ne može da se obriše pošto klijent ima zakazane rezervacije";
                 }
             }
-            response = "Korisnik je obrisan";
+            response = "Uspešno ste obrisali korisnika";
+            emailService.send(email, buildEmail(fullName));
         } else {
-            response = "Korisnik nije obrisan";
+            response = "Uspešno ste odbili brisanje korisnika";
         }
         DeleteRequest deleteRequest = getById(deleteReplayDTO.getRequestId());
         deleteReplayDTO.setComment(deleteReplayDTO.getComment());
         deleteRequest.setDeleted(true);
         addDeleteRequest(deleteRequest);
-        emailService.send(email, buildEmail(fullName));
         return response;
     }
 

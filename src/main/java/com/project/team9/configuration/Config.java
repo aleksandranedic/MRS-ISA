@@ -992,18 +992,18 @@ public class Config {
         Address a19 = new Address("Novi Sad", "19", "Laze Nančića", "Srbija");
         addressRepository.save(a19);
         RegistrationRequest registrationRequest = testData.createRegistrationRequest(
-                "U ponudi ima 3 avanture", "", "aleksa123", "Aleksu", "Aleksić", "aleksa.aleksić@gmail.com", "06398765421", "Novi Sad", "19", "Laze Nančića", "Srbija", "FISHING_INSTRUCTOR", "Živim na lepom plavom Dunavu.", ""
+                "U ponudi ima 3 avanture", "", "aleksa123", "Aleksu", "Aleksić", "tim9raketa+aleksa.aleksić@gmail.com", "06398765421", "Novi Sad", "19", "Laze Nančića", "Srbija", "FISHING_INSTRUCTOR", "Živim na lepom plavom Dunavu.", ""
         );
         registrationRequestRepository.save(registrationRequest);
         registrationRequest = testData.createRegistrationRequest(
-                "U ponudi ima 2 vikendice", "", "julia123", "Julia", "Annie", "jula.annie@gmail.com", "06398765421", "Novi Sad", "20", "Laze Nančića", "Srbija", "VACATION_HOUSE_OWNER", "Volim da uživam na lepoj vikendici uz čašu vina.", ""
+                "U ponudi ima 2 vikendice", "", "julia123", "Julia", "Annie", "tim9raketa+jula.annie@gmail.com", "06398765421", "Novi Sad", "20", "Laze Nančića", "Srbija", "VACATION_HOUSE_OWNER", "Volim da uživam na lepoj vikendici uz čašu vina.", ""
         );
         registrationRequestRepository.save(registrationRequest);
 
         DeleteRequest deleteRequest=testData.createDeleteRequest("Želim da mi se nalog obriše","","6","CLIENT");
-        deleteRequestRepository.delete(deleteRequest);
+        deleteRequestRepository.save(deleteRequest);
         deleteRequest=testData.createDeleteRequest("Želim da mi se nalog obriše","","7","VACATION_HOUSE_OWNER");
-        deleteRequestRepository.delete(deleteRequest);
+        deleteRequestRepository.save(deleteRequest);
     }
 
     private void addAdventureAndBoatReservations(List<Resource> resources, List<Client> clients) {

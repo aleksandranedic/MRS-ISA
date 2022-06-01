@@ -16,12 +16,17 @@ export default function Login() {
         }
         axios.post(backLink + "/login", loginDto).then(res => {
             notifySuccess("Uspešno ste se ulogovali")
-            localStorage.setItem("token", res.data)
+            localStorage.setItem("token", res.data.jwt)
+            localStorage.setItem("userRoleName", res.data.roleName);
+            localStorage.setItem("userId", res.data.id);
+            console.log(res.data.roleName);
             setTimeout(function () {
-
-                localStorage.getItem("")
-
-                window.location.href = frontLink
+                if (res.data.roleName === "ADMINISTRATOR") {
+                    window.location.href = frontLink + "admin";
+                }
+                else {
+                    window.location.href = frontLink;
+                }
             }, 5000)
         }).catch(error => {
             notifyError(error.response.data)

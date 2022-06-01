@@ -19,11 +19,11 @@ export function RegistrationRequestCard({props}) {
         }
         axios.post(backLink + "/vendorRegistration/validate", dto).then(
             response => {
-                setShow(false);
                 if(response.data==="Odobravanje registracije je uspešno")
                     notifySuccess(response.data)
                 else
                     notifyError(response.data)
+                setShow(false);
                 setTimeout(function () {
                     window.location.reload();
                 }, 5000)

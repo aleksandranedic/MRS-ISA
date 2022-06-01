@@ -11,7 +11,6 @@ public class Administrator extends User {
 
     private boolean isSuperAdministrator;
 
-
     public Administrator() {
     }
 
