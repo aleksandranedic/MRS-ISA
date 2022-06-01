@@ -1,10 +1,9 @@
-import React, {useEffect, useState} from 'react'
-import axios from "axios";
+import React, {useState} from 'react'
 import {backLink, frontLink} from "../Consts";
 import {SearchResultCard} from "./SearchResultCard";
 import Pagination from "../Pagination";
 
-const SearchResultsResources = ({list,name}) => {
+const SearchResultsResources = ({list, name}) => {
 
     const [currentPage, setCurrentPage] = useState(1)
 
@@ -22,10 +21,9 @@ const SearchResultsResources = ({list,name}) => {
     if (currentVHPost.length !== 0) {
         return <>{currentVHPost.map((item) =>
             (<SearchResultCard key={item.id} title={item.title} description={item.description}
-                               link={frontLink +name+"/" + item.id} image={backLink + item.images.at(0).path}/>))}
-                               {/*+ "adventure/"*/}
+                               link={frontLink + name + "/" + item.id} image={backLink + item.images.at(0).path}/>))}
             <Pagination key={name} paginate={paginate} postPerPage={postsPerPage}
-                        totalPosts={currentVHPost.length} name={name}/></>
+                        totalPosts={list.length} name={name}/></>
     }
     return "";
 }
