@@ -12,6 +12,7 @@ import com.project.team9.repo.FishingInstructorRepository;
 import com.project.team9.security.PasswordEncoder;
 import com.project.team9.security.email.EmailSender;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -53,7 +54,7 @@ public class VendorRegistrationService {
         } else if (fishingInstructorService.getFishingInstructorByEmail(replay.getUsername()) != null
                 || vacationHouseOwnerService.getVacationHouseOwnerByEmail(replay.getUsername()) != null
                 || boatOwnerService.getBoatOwnerByEmail(replay.getUsername()) != null) {
-            return "Коrisnik sa unetim emailom vec postoji";
+            return "Коrisnik sa unetim emailom već postoji";
         } else {
             Address requestAddress = new Address(registrationRequest.getPlace(),
                     registrationRequest.getNumber(),
@@ -162,7 +163,7 @@ public class VendorRegistrationService {
                 "                  \n" +
                 "                    </td>\n" +
                 "                    <td style=\"font-size:28px;line-height:1.315789474;Margin-top:4px;padding-left:10px\">\n" +
-                "                      <span style=\"font-family:Helvetica,Arial,sans-serif;font-weight:700;color:#ffffff;text-decoration:none;vertical-align:top;display:inline-block\">Confirm your email</span>\n" +
+                "                      <span style=\"font-family:Helvetica,Arial,sans-serif;font-weight:700;color:#ffffff;text-decoration:none;vertical-align:top;display:inline-block\">Obaveštenje o potvrdi registracije</span>\n" +
                 "                    </td>\n" +
                 "                  </tr>\n" +
                 "                </tbody></table>\n" +
@@ -200,7 +201,7 @@ public class VendorRegistrationService {
                 "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
                 "      <td style=\"font-family:Helvetica,Arial,sans-serif;font-size:19px;line-height:1.315789474;max-width:560px\">\n" +
                 "        \n" +
-                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Hi " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> Uspesno ste registrovani. </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a href=\"" + "http://localhost:3000/login" + "\">Go to login</a> </p></blockquote>\n  <p>See you soon</p>" +
+                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Zdravo " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> Uspešno ste registrovani. </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a href=\"" + "http://localhost:3000/login" + "\">Ulogujte se na sajt</a> </p></blockquote>\n  <p>Vidimo se uskoro</p>" +
                 "        \n" +
                 "      </td>\n" +
                 "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
@@ -211,5 +212,13 @@ public class VendorRegistrationService {
                 "  </tbody></table><div class=\"yj6qo\"></div><div class=\"adL\">\n" +
                 "\n" +
                 "</div></div>";
+    }
+
+    public String processRegistrationRequest(VendorRegistrationRequestReplay replay) {
+        if (replay.getType().equals("approve")) {
+            return validateVendor(replay);
+        } else {
+            return deleteRegistrationRequest(replay);
+        }
     }
 }
