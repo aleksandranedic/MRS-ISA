@@ -18,10 +18,10 @@ function QuickReservations({reservations, name, address, entity, priceText, dura
     return (
     <div className="m-5" id="actions">
         <div className='w-100 d-flex justify-content-center mb-3 align-items-end'>
-            <h1 className="ms-auto m-0 text-lead" style={{color: "#313041", fontSize: "46px", lineHeight: "60px", letterSpacing: "-.02em"}}> Specijalne ponude i popusti</h1>
+            <h1 className="ms-auto m-0 text-lead me-auto" style={{color: "#313041", fontSize: "46px", lineHeight: "60px", letterSpacing: "-.02em"}}> Specijalne ponude i popusti</h1>
 
             {isLoggedIn() && isClient() &&
-                <Button className="ms-auto" style={{border:"none", height: "2.8rem", backgroundColor: "rgb(236,115,2)"}}>Prijavi se</Button>
+                <Button style={{border:"none", height: "2.8rem", backgroundColor: "rgb(236,115,2)"}}>Prijavi se</Button>
             }
 
         </div>
