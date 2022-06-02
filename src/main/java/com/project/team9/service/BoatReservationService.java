@@ -5,6 +5,7 @@ import com.project.team9.repo.BoatReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -58,5 +59,13 @@ public class BoatReservationService {
 
     public List<BoatReservation> getReservationsByBoatId(Long id) {
         return repository.findReservationsByResourceId(id);
+    }
+
+    public List<BoatReservation> getBoatReservationsForVendorId(Long id) {
+        return repository.findReservationsByVendorId(id);
+    }
+
+    public List<BoatReservation> getBoatReservationsForClientId(Long id) {
+        return repository.findBoatReservationByClientId(id);
     }
 }

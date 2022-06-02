@@ -2,8 +2,9 @@ import {Button, Form, Modal} from "react-bootstrap";
 import React, {useState} from "react";
 import axios from "axios";
 
-import {backLink} from "../Consts";
+import {backLink, notifyError, notifySuccess} from "../Consts";
 import PopUp from "../PopUp";
+import {ToastContainer} from "react-toastify";
 
 export function ChangeClientPassword({show, setShow}) {
 
@@ -43,13 +44,12 @@ export function ChangeClientPassword({show, setShow}) {
             // We got errors!
             setErrors(newErrors)
         } else {
-            axios.post(backLink + "changePassword", form).then(res => {
-                console.log(res.data)
-                if(res.data!=="Neuspešno.Pokušajte ponovo") {
-                    setText("Uspešno ste promenili šifru")
-                }
-                else{
-                    setText(res.data)
+            axios.post(backLink + "/changePassword", form).then(res => {
+                localStorage.setItem('token', res.data)
+                if (res.data !== "Neuspešno.Pokušajte ponovo") {
+                    notifySuccess("Uspešno ste promenili šifru")
+                } else {
+                    notifyError(res.data)
                 }
                 handleShowPopUp()
             })
@@ -60,7 +60,7 @@ export function ChangeClientPassword({show, setShow}) {
 
     return (
         <>
-            <Modal show={show} onHide={() => setShow(false)}>
+            <Modal show={show} onHide={() => setShow(false)} className="p-5 mt-5">
                 <Form>
                     <Modal.Header closeButton>
                         <Modal.Title>Promena lozinke</Modal.Title>
@@ -96,6 +96,17 @@ export function ChangeClientPassword({show, setShow}) {
                 </Form>
 
             </Modal>
-            <PopUp show={showPopUp} handleClose={handleClosePopUp} text={text}/>
-            </>)
+            <ToastContainer
+                position="top-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme={"colored"}
+            />
+        </>)
 }

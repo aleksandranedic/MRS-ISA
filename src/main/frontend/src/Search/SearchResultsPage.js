@@ -44,14 +44,14 @@ export function SearchResultsPage() {
     };
 
 
+    const {searchTerm} = useParams();
+
     useEffect(() => {
         //TODO resi nesto sto ne znas ti ce refresha kada imas popunjen filter
         fetchVacationHouses()
         fetchBoats()
         fetchAdventures()
     }, []);
-
-    const {searchTerm} = useParams();
 
     const updateResults = (formValues) => {
         const adventureFilter = {
@@ -70,7 +70,6 @@ export function SearchResultsPage() {
         console.log(adventureFilter)
         axios.post(backLink + "/adventure/filterAdventures", adventureFilter).then(
             response => {
-                console.log(response.data)
                 setAdventures(response.data)
             }
         )
@@ -91,7 +90,6 @@ export function SearchResultsPage() {
         console.log(houseFilter)
         axios.post(backLink + "/house/filterHouse", houseFilter).then(
             response => {
-                console.log(response.data)
                 setVacationHouses(response.data)
             }
         )
@@ -114,7 +112,6 @@ export function SearchResultsPage() {
         }
         axios.post(backLink + "/boat/filterBoats", boatFilter).then(
             response => {
-                console.log(response.data)
                 setBoats(response.data)
             }
         )

@@ -74,10 +74,7 @@ const Adventure = ({id}) => {
 
     const fetchReservations = () => {
         axios.get(backLink + "/adventure/reservation/adventure/" + id).then(res => {
-            if (reservations === null) {
-                setReservations(res.data);
-                console.log(res.data);
-            }
+            setReservations(res.data);
             setEvents(processReservationsForResources(res.data));
 
         })
@@ -104,14 +101,14 @@ const Adventure = ({id}) => {
         fetchAdventure();
     }, []);
 
-
+    console.log(reservations);
     const [show, setShow] = useState(false);
     const handleShow = () => setShow(true);
     const [adventureReviews, setAdventureReviews] = useState([])
 
     const [open, setOpen] = useState(false);
 
-    if (adventure !== null && reservations !== null) {
+    if (adventure !== null) {
         html = (<div>
             <Banner caption={adventure.title}/>
             <Navigation buttons={

@@ -1,6 +1,7 @@
 package com.project.team9.controller;
 
 import com.project.team9.dto.LoginDTO;
+import com.project.team9.dto.LoginResponseDTO;
 import com.project.team9.dto.PasswordsDTO;
 import com.project.team9.dto.UserDTO;
 import com.project.team9.model.user.Administrator;
@@ -9,7 +10,6 @@ import com.project.team9.model.user.User;
 import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
-import com.project.team9.repo.ClientRepository;
 import com.project.team9.security.PasswordEncoder;
 import com.project.team9.security.auth.TokenUtils;
 import com.project.team9.service.UserServiceSecurity;
@@ -48,64 +48,59 @@ public class AuthenticationController {
     // Prvi endpoint koji pogadja korisnik kada se loguje.
     // Tada zna samo svoje korisnicko ime i lozinku i to prosledjuje na backend.
     @PostMapping("/login")
-    public ResponseEntity<String> createAuthenticationToken(
+    public ResponseEntity<LoginResponseDTO> createAuthenticationToken(
             @RequestBody LoginDTO loginDTO, HttpServletResponse response) {
 
 //        User user=clientRepository.findByEmail(loginDTO.getUsername());
         // Ukoliko kredencijali nisu ispravni, logovanje nece biti uspesno, desice se
         // AuthenticationException
-        try{
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginDTO.getUsername(), loginDTO.getPassword()));
+        try {
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    loginDTO.getUsername(), loginDTO.getPassword()));
+            // Ukoliko je autentifikacija uspesna, ubaci korisnika u trenutni security
+            // kontekst
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            // Kreiraj token za tog korisnika
+            User user = (User) authentication.getPrincipal();
+            if (user.getDeleted()) {
+                return ResponseEntity.badRequest().body(new LoginResponseDTO("Korisnik je obrisan", null, null));
+            }
+            String jwt = tokenUtils.generateToken(user.getUsername());
 
-        // Ukoliko je autentifikacija uspesna, ubaci korisnika u trenutni security
-        // kontekst
-
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        // Kreiraj token za tog korisnika
-        User user = (User) authentication.getPrincipal();
-
-        if (user.getDeleted()) {
-            return ResponseEntity.ok("Korisnik je obrisan");
-        }
-        String jwt = tokenUtils.generateToken(user.getUsername());
-
-        // Vrati token kao odgovor na uspesnu autentifikaciju
-        return ResponseEntity.ok(jwt);}
-        catch (Exception e){
-            return ResponseEntity.badRequest().body("Uneli ste porgrešne podatke");
+            // Vrati token kao odgovor na uspesnu autentifikaciju
+            return ResponseEntity.ok(new LoginResponseDTO(jwt, user.getRoleName(), user.getId()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new LoginResponseDTO("Uneli ste porgrešne podatke", null, null));
         }
     }
 
     @PostMapping("/changePassword")
     public ResponseEntity<String> changePassword(@RequestBody PasswordsDTO passwordsDTO) {
-        try{
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication instanceof AnonymousAuthenticationToken)
-            return new ResponseEntity<>("Neuspešno. Ne postoji ulogovani korisnik",HttpStatus.NOT_FOUND);
-        User user = (User) authentication.getPrincipal();
-        if (user == null)
-            return new ResponseEntity<>("Neuspešno. Ne postoji ulogovani korisnik",HttpStatus.EXPECTATION_FAILED);
-        if (!passwordEncoder.bCryptPasswordEncoder().matches(passwordsDTO.getOldPassword(), user.getPassword()))
-            return new ResponseEntity<>("Neuspešno. Stara šifra i uneta stara šifra Vam se ne poklapaju",HttpStatus.EXPECTATION_FAILED);
-        user.setPassword(passwordEncoder.bCryptPasswordEncoder().encode(passwordsDTO.getNewPassword()));
-        user.setLastPasswordResetDate(Timestamp.valueOf(LocalDateTime.now()));
-        if (user instanceof Client) {
-            userServiceSecurity.addClient((Client) user);
-        } else if (user instanceof FishingInstructor) {
-            userServiceSecurity.addFishingInstructor((FishingInstructor) user);
-        } else if (user instanceof VacationHouseOwner) {
-            userServiceSecurity.addVacationHouseOwner((VacationHouseOwner) user);
-        } else if (user instanceof BoatOwner) {
-            userServiceSecurity.addBoatOwner((BoatOwner) user);
-        }else if(user instanceof Administrator){
-            userServiceSecurity.addAdmin((Administrator) user);
-        }
-        String jwt = tokenUtils.generateToken(user.getUsername());
-        return new ResponseEntity<>(jwt, HttpStatus.OK);
-        }catch (Exception e){
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication instanceof AnonymousAuthenticationToken)
+                return new ResponseEntity<>("Neuspešno. Ne postoji ulogovani korisnik", HttpStatus.NOT_FOUND);
+            User user = (User) authentication.getPrincipal();
+            if (user == null)
+                return new ResponseEntity<>("Neuspešno. Ne postoji ulogovani korisnik", HttpStatus.EXPECTATION_FAILED);
+            if (!passwordEncoder.bCryptPasswordEncoder().matches(passwordsDTO.getOldPassword(), user.getPassword()))
+                return new ResponseEntity<>("Neuspešno. Stara šifra i uneta stara šifra Vam se ne poklapaju", HttpStatus.EXPECTATION_FAILED);
+            user.setPassword(passwordEncoder.bCryptPasswordEncoder().encode(passwordsDTO.getNewPassword()));
+            user.setLastPasswordResetDate(Timestamp.valueOf(LocalDateTime.now()));
+            if (user instanceof Client) {
+                userServiceSecurity.addClient((Client) user);
+            } else if (user instanceof FishingInstructor) {
+                userServiceSecurity.addFishingInstructor((FishingInstructor) user);
+            } else if (user instanceof VacationHouseOwner) {
+                userServiceSecurity.addVacationHouseOwner((VacationHouseOwner) user);
+            } else if (user instanceof BoatOwner) {
+                userServiceSecurity.addBoatOwner((BoatOwner) user);
+            } else if (user instanceof Administrator) {
+                userServiceSecurity.addAdmin((Administrator) user);
+            }
+            String jwt = tokenUtils.generateToken(user.getUsername());
+            return new ResponseEntity<>(jwt, HttpStatus.OK);
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body("Korisnik nije pronadjen");
         }
 
@@ -116,11 +111,9 @@ public class AuthenticationController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof AnonymousAuthenticationToken)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
         User user = (User) authentication.getPrincipal();
         if (user == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
         return new ResponseEntity<>(new UserDTO(user), HttpStatus.OK);
     }
 

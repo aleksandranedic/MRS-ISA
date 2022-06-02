@@ -5,6 +5,7 @@ import com.project.team9.repo.AdventureReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -59,5 +60,12 @@ public class AdventureReservationService {
 
     public boolean clientHasReservationsWithVendor(Long vendorId, Long clientId) {
         return repository.findReservationsForVendorAndClient(vendorId, clientId).size() > 0;
+    }
+    public List<AdventureReservation> getAdventureReservationsForVendorId(Long id){
+        return repository.findReservationsForVendor(id);
+    }
+
+    public List<AdventureReservation> getAdventureReservationsForClientId(Long id) {
+        return repository.findAdventureReservationForClientId(id);
     }
 }

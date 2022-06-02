@@ -33,4 +33,10 @@ public interface AdventureReservationRepository extends JpaRepository<AdventureR
 
     @Query("FROM AdventureReservation WHERE resource.owner.id=?1 AND client.id = ?2")
     List<AdventureReservation> findReservationsForVendorAndClient(Long vendorId, Long clientId);
+
+    @Query("FROM AdventureReservation WHERE resource.owner.id=?1")
+    List<AdventureReservation> findReservationsForVendor(Long vendorId);
+
+    @Query("FROM AdventureReservation WHERE client.id=?1")
+    List<AdventureReservation> findAdventureReservationForClientId(Long id);
 }

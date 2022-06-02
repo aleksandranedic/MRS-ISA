@@ -46,7 +46,6 @@
     overflow: hidden;
 }
 
-
 .resource-img {
     height: 12vw;
     width: 12vw;
@@ -102,10 +101,11 @@
     position:absolute;
     z-index:0;
     display:block;
+
 }
 
 .links {
-    height:100vh;
+    height:115vh;
 
 }
 
@@ -161,16 +161,15 @@
 }
 
 .vendor-card {
-    position:absolute;
     background: linear-gradient(175deg, rgba(248,248,248,0.9) 50%, rgba(201, 201, 201, 0.6) 100%);
     border: none;
     width: 20%;
-    transform: translateY(68vh);
+
 }
 
 .vendor-banner {
     height: 12vw;
-    transform: translateY(80vh);
+    transform: translateY(95vh);
 }
 
 .vendor-name {

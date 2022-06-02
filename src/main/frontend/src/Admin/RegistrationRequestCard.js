@@ -1,8 +1,9 @@
 import {Badge, Button, Card, Form, Modal} from "react-bootstrap";
 import React, {useState} from "react";
 import image from "../images/document.png"
-import {backLink} from "../Consts";
+import {backLink, frontLink, notifyError, notifySuccess} from "../Consts";
 import axios from "axios";
+import {ToastContainer} from "react-toastify";
 
 export function RegistrationRequestCard({props}) {
     const [show, setShow] = useState(false);
@@ -18,13 +19,16 @@ export function RegistrationRequestCard({props}) {
         }
         axios.post(backLink + "/vendorRegistration/validate", dto).then(
             response => {
-                console.log(response.data)
+                if(response.data==="Odobravanje registracije je uspešno")
+                    notifySuccess(response.data)
+                else
+                    notifyError(response.data)
                 setShow(false);
-                //TODO postaviti pop up da je uspesno
+                setTimeout(function () {
+                    window.location.reload();
+                }, 5000)
             }
         )
-
-        window.location.reload();
     }
 
     return (
@@ -75,6 +79,18 @@ export function RegistrationRequestCard({props}) {
                             className="m-1">Poništi</Button>
                 </Modal.Footer>
             </Modal>
+            <ToastContainer
+                position="top-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme={"colored"}
+            />
         </div>
     )
 }

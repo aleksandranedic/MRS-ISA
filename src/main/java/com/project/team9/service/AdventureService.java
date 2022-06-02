@@ -8,28 +8,20 @@ import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
-import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.resource.Adventure;
-import com.project.team9.model.resource.Boat;
-import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.repo.AdventureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import sun.swing.BakedArrayList;
-import sun.util.resources.LocaleData;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class AdventureService {
@@ -92,7 +84,7 @@ public class AdventureService {
         List<Appointment> appointments = new ArrayList<Appointment>();
         String[] splitDate = dto.getStartDate().split(" ");
         String[] splitTime = splitDate[3].split(":");
-        Appointment startDateAppointment = Appointment.getBoatAppointment(Integer.parseInt(splitDate[2]), Integer.parseInt(splitDate[1]), Integer.parseInt(splitDate[0]), Integer.parseInt(splitTime[0]), Integer.parseInt(splitTime[1]));
+        Appointment startDateAppointment = Appointment.getHourAppointment(Integer.parseInt(splitDate[2]), Integer.parseInt(splitDate[1]), Integer.parseInt(splitDate[0]), Integer.parseInt(splitTime[0]), Integer.parseInt(splitTime[1]));
         appointments.add(startDateAppointment);
         appointmentService.save(startDateAppointment);
         Appointment currApp = startDateAppointment;

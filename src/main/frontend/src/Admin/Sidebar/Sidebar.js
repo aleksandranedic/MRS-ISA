@@ -8,7 +8,8 @@ export function Sidebar() {
 
     return (<Navbar bg="light" expand="lg">
         <Nav className="d-flex flex-column m-3 align-items-stretch">
-            <h2 className="fw-light m-3">Teodora Irinić</h2>
+            <h2 className="fw-light m-3">Milica Todorov</h2>
+            {/*TODO treba da se dobavi ulogovani admin*/}
             <h4 className="fw-light m-3">Zahtevi</h4>
 
             <Nav.Link className="ms-4" href={"http://localhost:3000/admin/registrationRequests"}>

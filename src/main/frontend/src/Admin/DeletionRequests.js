@@ -11,7 +11,6 @@ export function DeletionRequests() {
     const fetchData = () => {
         axios.get(backLink + "/deletionRequests").then(
             response => {
-                console.log(response.data)
                 setRequests(response.data)
             }
         )

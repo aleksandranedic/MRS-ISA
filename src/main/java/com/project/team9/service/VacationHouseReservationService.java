@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -46,8 +47,6 @@ public class VacationHouseReservationService {
     public List<VacationHouseReservation> getBusyPeriodForVacationHouse(Long id) {
         return repository.findBusyPeriodForVacationHouse(id);
     }
-
-    @Query("FROM VacationHouseReservation WHERE resource.id=?1 AND client.id = ?2")
     public boolean clientHasReservations(Long resourceId, Long clientId) {
         return repository.findReservationsForClient(resourceId, clientId).size() > 0;
     }
@@ -58,5 +57,13 @@ public class VacationHouseReservationService {
 
     public boolean clientCanReviewVendor(Long vendorId, Long clientId) {
         return repository.findReservationsForClientAndVendor(vendorId, clientId).size() > 0;
+    }
+
+    public List<VacationHouseReservation> getVacationHouseReservationsForVendorId(Long id) {
+        return repository.findVacationHouseReservationForVendorId(id);
+    }
+
+    public List<VacationHouseReservation> getVacationHouseReservationsForClienId(Long id) {
+        return repository.findVacationHouseReservationForClientId(id);
     }
 }

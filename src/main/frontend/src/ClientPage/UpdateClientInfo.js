@@ -3,8 +3,9 @@ import React, {useState, useRef} from "react";
 import DeleteClientPopUp from "./DeleteClientPopUp";
 import axios from "axios";
 import {ChangeClientPassword} from "./ChangeClientPassword";
-import {backLink} from "../Consts";
+import {backLink, frontLink, notifySuccess} from "../Consts";
 import { useParams } from "react-router-dom";
+import {ToastContainer} from "react-toastify";
 
 axios.interceptors.request.use(config => {
         config.headers.authorization = "Bearer " + localStorage.getItem('token')
@@ -22,9 +23,9 @@ function UpdateClientInfo({client, handleClose, showPopUp,setClient, profileImg}
 
     function handleUpdateAccount(userDTO) {
         axios.put(backLink+"/client/update/" + client.id, userDTO).then(res => {
-            console.log(res);
+            notifySuccess("Uspešno ste ažurirali podatke")
+            // console.log(res);
             setClient(res.data)
-            window.location.reload();
         });
     }
 
@@ -228,6 +229,18 @@ function UpdateClientInfo({client, handleClose, showPopUp,setClient, profileImg}
             </Modal>
             <DeleteClientPopUp client={client} showDeleteClient={showDeleteClient}
                                handleCloseDeleteClient={handleCloseDeleteClient}/>
+            <ToastContainer
+                position="top-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme={"colored"}
+            />
         </>
     );
 }

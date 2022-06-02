@@ -19,18 +19,10 @@ import java.util.List;
 @RequestMapping("deletionRequests")
 public class DeletionRequestController {
     private final DeleteRequestService service;
-    private final FishingInstructorService fishingInstructorService;
-    private final ClientService clientService;
-    private final BoatOwnerService boatOwnerService;
-    private final VacationHouseOwnerService vacationHouseOwnerService;
 
     @Autowired
-    public DeletionRequestController(DeleteRequestService service, FishingInstructorService fishingInstructorService, ClientService clientService, BoatOwnerService boatOwnerService, VacationHouseOwnerService vacationHouseOwnerService) {
+    public DeletionRequestController(DeleteRequestService service) {
         this.service = service;
-        this.fishingInstructorService = fishingInstructorService;
-        this.clientService = clientService;
-        this.boatOwnerService = boatOwnerService;
-        this.vacationHouseOwnerService = vacationHouseOwnerService;
     }
 
     @GetMapping
@@ -40,33 +32,6 @@ public class DeletionRequestController {
 
     @PostMapping(path="/validateDeletion",produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<String> deleteUser(@RequestBody DeleteReplayDTO deleteReplayDTO) {
-        String response="";
-        if(deleteReplayDTO.getType().equals("approve")) {
-            if (fishingInstructorService.getFishingInstructorByEmail(deleteReplayDTO.getUsername()) != null) {
-                FishingInstructor fishingInstructor = fishingInstructorService.getFishingInstructorByEmail(deleteReplayDTO.getUsername());
-                fishingInstructor.setDeleted(true);
-                fishingInstructorService.addFishingInstructor(fishingInstructor);
-            } else if (boatOwnerService.getBoatOwnerByEmail(deleteReplayDTO.getUsername()) != null) {
-                BoatOwner boatOwner = boatOwnerService.getBoatOwnerByEmail(deleteReplayDTO.getUsername());
-                boatOwner.setDeleted(true);
-                boatOwnerService.save(boatOwner);
-            } else if (vacationHouseOwnerService.getVacationHouseOwnerByEmail(deleteReplayDTO.getUsername()) != null) {
-                VacationHouseOwner vacationHouseOwner = vacationHouseOwnerService.getVacationHouseOwnerByEmail(deleteReplayDTO.getUsername());
-                vacationHouseOwner.setDeleted(true);
-                vacationHouseOwnerService.save(vacationHouseOwner);
-            } else if (clientService.getClientByEmail(deleteReplayDTO.getUsername()) != null) {
-                Client client = clientService.getClientByEmail(deleteReplayDTO.getUsername());
-                client.setDeleted(true);
-                clientService.addClient(client);
-            }
-            response = "Korisnik je obrisan";
-        }else {
-            response = "Korisnik nije obrisan";
-        }
-        DeleteRequest deleteRequest=service.getById(deleteReplayDTO.getRequestId());
-        deleteReplayDTO.setComment(deleteReplayDTO.getComment());
-        deleteRequest.setDeleted(true);
-        service.addDeleteRequest(deleteRequest);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(service.processDeletionRequest(deleteReplayDTO));
     }
 }
