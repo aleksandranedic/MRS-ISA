@@ -10,7 +10,6 @@ import {BsPlusLg} from "react-icons/bs";
 
 export function Calendar({reservable, pricelist, type, resourceId, events, myPage}) {
 
-    console.log(events);
     let perHour = true;
     if (type === "vacationHouse") {
         perHour = false;
@@ -90,7 +89,7 @@ export function Calendar({reservable, pricelist, type, resourceId, events, myPag
                                 </Card.Body>
                             </Card>
                         </div>
-                        <Button className="m-2" style={{width: "12rem"}} onClick={reservationClick}>Rezervisi</Button>
+                        <Button className="m-2" style={{width: "12rem"}} onClick={reservationClick}>Rezerviši</Button>
 
                         {myPage &&
                             <Button className="m-2 d-flex align-items-center" style={{width: "12rem"}}

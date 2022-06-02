@@ -101,7 +101,6 @@ const Adventure = ({id}) => {
         fetchAdventure();
     }, []);
 
-    console.log(reservations);
     const [show, setShow] = useState(false);
     const handleShow = () => setShow(true);
     const [adventureReviews, setAdventureReviews] = useState([])

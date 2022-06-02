@@ -73,7 +73,7 @@ function QuickReservation({reservation, name, address, image, entity, priceText,
                     <div className='rounded m-0 p-0 d-flex justify-content-center align-items-center'
                          style={{width: "25%", backgroundColor: "#ED7301"}}>
                         <p className='fw-bold text-lead text-light m-1 me-0 p-0'>{state.discount}</p>
-                        <p className='fw-bold text-lead tet-light m-0 p-0'>% off</p>
+                        <p className='fw-bold text-lead text-light m-0 p-0'>% off</p>
                     </div>
                 </div>
             </Card.ImgOverlay>
