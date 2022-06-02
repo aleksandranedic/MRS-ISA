@@ -11,8 +11,7 @@ export function ReservationCardGrid({reservations}) {
         let reservation = reservations.at(index);
         if (reservation.busyPeriod === true) {
             indexesToPop.push(index);
-        }
-        else if (convertToDate(reservation.appointments.at(0).startTime)< Date.now()){
+        } else if (convertToDate(reservation.appointments.at(0).startTime) < Date.now()) {
             indexesToPop.push(index);
         }
     }
@@ -21,10 +20,10 @@ export function ReservationCardGrid({reservations}) {
         reservations.pop(index);
     }
 
-    return( <div className="ms-5 me-5"
+    return (<div className="ms-5 me-5"
                  style={{
-                     maxHeight: "60vh",
-                     overflow: "auto"}}>
+                     maxHeight: "60vh", overflow: "auto"
+                 }}>
         <Row xs={1} md={2} lg={3} className="g-4 mb-4 w-100">
             {reservations.map((reservation, index) => (
                 <Col key={index + "col"}>
@@ -60,8 +59,7 @@ export function ReservationCardGrid({reservations}) {
                             <TimeFooter reservation={reservation}/>
                         </Card.Footer>
                     </Card>
-                </Col>
-            ))}
+                </Col>))}
         </Row>
 
 

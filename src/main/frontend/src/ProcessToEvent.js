@@ -9,29 +9,31 @@ export function processReservationsForResources(reservations) {
     for (let index in reservations) {
         let r = reservations.at(index);
 
-        let start = convertToDate(r.appointments.at(0).startTime);
-        start.setHours(start.getHours() + 2);
-        let end = convertToDate(r.appointments.at(r.appointments.length - 1).endTime);
-        end.setHours(end.getHours() + 2);
+        if (r.appointments.length>0) {
+            let start = convertToDate(r.appointments.at(0).startTime);
+            start.setHours(start.getHours() + 2);
+            let end = convertToDate(r.appointments.at(r.appointments.length - 1).endTime);
+            end.setHours(end.getHours() + 2);
 
-        if (r.busyPeriod === true) {
-            newEvents.push({
-                title: "",
-                start: start,
-                end: end,
-                backgroundColor: "rgb(224,48,22)"
-            })
-        }
-        else {
+            if (r.busyPeriod === true) {
+                newEvents.push({
+                    title: "",
+                    start: start,
+                    end: end,
+                    backgroundColor: "rgb(224,48,22)"
+                })
+            }
+            else {
 
-            let clientName = r.client.firstName + " " + r.client.lastName;
+                let clientName = r.client.firstName + " " + r.client.lastName;
 
-            newEvents.push({
-                title: clientName,
-                start: start,
-                end: end,
-                backgroundColor: "rgb(34,215,195)"
-            })
+                newEvents.push({
+                    title: clientName,
+                    start: start,
+                    end: end,
+                    backgroundColor: "rgb(34,215,195)"
+                })
+            }
         }
 
     }
@@ -40,6 +42,8 @@ export function processReservationsForResources(reservations) {
 
 export function processReservationsForUsers(reservations) {
     let newEvents = [];
+
+    console.log(reservations);
 
     for (let index in reservations) {
         let r = reservations.at(index);

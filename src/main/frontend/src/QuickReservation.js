@@ -50,11 +50,11 @@ function QuickReservation({reservation, name, address, image, entity, priceText,
             price: reservation.price,
             discount: reservation.discount,
             tagsText: reservation.tagsText,
-            clientID : loggedUser.id
+            clientID: loggedUser.id
 
         }
         if (type === "adventure") {
-            axios.post(backLink + "/adventure/quickReservations/reserve", dto).then(res =>{
+            axios.post(backLink + "/adventure/quickReservations/reserve", dto).then(res => {
                 console.log(res.data);
                 window.location.reload();
             }).catch(error => {
@@ -73,15 +73,18 @@ function QuickReservation({reservation, name, address, image, entity, priceText,
                     <div className='rounded m-0 p-0 d-flex justify-content-center align-items-center'
                          style={{width: "25%", backgroundColor: "#ED7301"}}>
                         <p className='fw-bold text-lead text-light m-1 me-0 p-0'>{state.discount}</p>
-                        <p className='fw-bold text-lead text-light m-0 p-0'>% off</p>
+                        <p className='fw-bold text-lead tet-light m-0 p-0'>% off</p>
                     </div>
                 </div>
             </Card.ImgOverlay>
             <Card.Body>
                 <div className='d-flex justify-content-between'>
                     <Card.Title className='mb-1'>{name}</Card.Title>
-                    <button onClick={handleShow} style={{zIndex: "3", border: "0", background: "transparent"}}>
-                        <BsPencilSquare/></button>
+
+                    {myPage &&
+                        <button onClick={handleShow} style={{zIndex: "3", border: "0", background: "transparent"}}>
+                            <BsPencilSquare/></button>}
+
                 </div>
                 <div>
                     <div className="d-flex flex-column">

@@ -28,15 +28,11 @@ public class Appointment {
     }
 
     public static Appointment getDayAppointment(int year, int month, int day) {
-        return new Appointment(LocalDateTime.of(year, Month.of(month+1), day, 10, 0, 0), LocalDateTime.of(year, Month.of(month+1), day, 10, 0, 0).plusDays(1));
-    }
-
-    public static Appointment getAdventureAppointment(int year, int month, int day, int hour, int minute) {
-        return new Appointment(LocalDateTime.of(year, Month.of(month+1), day, hour, minute,0), LocalDateTime.of(year, Month.of(month+1), day, hour+1, minute,0));
+        return new Appointment(LocalDateTime.of(year, Month.of(month), day, 10, 0, 0), LocalDateTime.of(year, Month.of(month), day, 10, 0, 0).plusDays(1));
     }
 
     public static Appointment getHourAppointment(int year, int month, int day, int hour, int minute) {
-        return new Appointment(LocalDateTime.of(year, Month.of(month+1), day, hour, minute,0), LocalDateTime.of(year, Month.of(month+1), day, hour+1, minute,0));
+        return new Appointment(LocalDateTime.of(year, Month.of(month), day, hour, minute,0), LocalDateTime.of(year, Month.of(month), day, hour+1, minute,0));
     }
 
     public Long getId() {

@@ -2,6 +2,7 @@ package com.project.team9.model.buissness;
 
 import javax.persistence.*;
 
+
 @Entity
 public class UserCategory {
     @Id
@@ -18,15 +19,27 @@ public class UserCategory {
     private int minimumPoints;
     private int maximumPoints;
     private int priceAlteration;
+    private String color;
+    private boolean isVendorCategory;
+    private boolean isClientCategory;
 
     public UserCategory() {
     }
 
-    public UserCategory(String name, int minimumPoints, int maximumPoints, int priceAlteration) {
+    public UserCategory(String name, int minimumPoints, int maximumPoints, int priceAlteration, String color) {
         this.name = name;
         this.minimumPoints = minimumPoints;
         this.maximumPoints = maximumPoints;
         this.priceAlteration = priceAlteration;
+        this.color = color;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     public Long getId() {

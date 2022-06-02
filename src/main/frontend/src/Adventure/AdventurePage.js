@@ -88,7 +88,7 @@ const Adventure = ({id}) => {
 
     const fetchReviews = () => {
         axios
-            .get("http://localhost:4444/review/getReviews/" + id)
+            .get(backLink+"/review/getReviews/" + id)
             .then(res => {
                 setAdventureReviews(res.data);
             });

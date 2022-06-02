@@ -2,48 +2,55 @@ import {Button, Nav, Navbar} from "react-bootstrap";
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css'
 import {BsArrowRight} from "react-icons/bs";
+import {frontLink, logOut, logOutAdmin} from "../../Consts";
 
 export function Sidebar() {
 
-
-    return (<Navbar bg="light" expand="lg">
+    return (<div className="flex-column"><Navbar bg="light" expand="lg">
         <Nav className="d-flex flex-column m-3 align-items-stretch">
-            <h2 className="fw-light m-3">Milica Todorov</h2>
-            {/*TODO treba da se dobavi ulogovani admin*/}
+            <h2 className="fw-light m-3">
+                {localStorage.getItem("firstName") + " " + localStorage.getItem("lastName")}
+            </h2>
             <h4 className="fw-light m-3">Zahtevi</h4>
 
-            <Nav.Link className="ms-4" href={"http://localhost:3000/admin/registrationRequests"}>
+            <Nav.Link className="ms-4" href={frontLink+"admin/registrationRequests"}>
                 <BsArrowRight className="me-2"/>
                 Zahtevi za registraciju
             </Nav.Link>
 
-            <Nav.Link className="ms-4" href="http://localhost:3000/admin/deletionRequests">
+            <Nav.Link className="ms-4" href={frontLink+"admin/deletionRequests"}>
                 <BsArrowRight className="me-2"/>
                 Zahtevi za brisanje naloga
             </Nav.Link>
 
-            <Nav.Link className="ms-4">
+            <Nav.Link className="ms-4" href={frontLink+"admin/penaltyRequests"}>
                 <BsArrowRight className="me-2"/>
-                Zahtevi za davanje penala
+                Zahtevi za recenzije pružaoca usluga
             </Nav.Link>
 
-            <Nav.Link className="ms-4">
+            <Nav.Link className="ms-4" href={frontLink+"admin/reviewRequests"}>
+                <BsArrowRight className="me-2"/>
+                Zahtevi za korisničke recenzije
+            </Nav.Link>
+
+            <Nav.Link className="ms-4" href={frontLink+"admin/complaints"}>
                 <BsArrowRight className="me-2"/>
                 Žalbe
             </Nav.Link>
 
             <h4 className="fw-light ms-3">Loyalti program</h4>
 
-            <Nav.Link className="ms-4">
+            <Nav.Link className="ms-4" href={frontLink + "admin/categories"}>
                 <BsArrowRight className="me-2"/>
                 Kategorije
             </Nav.Link>
 
-            <Nav.Link className="ms-4">
-                <BsArrowRight className="me-2"/>
+            <Nav.Link className="ms-4" href={frontLink + "admin/points"}>
+                <BsArrowRight className="me-2" />
                 Bodovi
             </Nav.Link>
-
         </Nav>
-    </Navbar>)
+    </Navbar>
+        <Button className="m-3" variant="outline-secondary" onClick={() => logOutAdmin()}>Odjavi se</Button>
+    </div>)
 }

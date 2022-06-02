@@ -112,7 +112,7 @@ public class VacationHouseService {
     private List<VacationHouseQuickReservationDTO> getQuickReservations(VacationHouse vh) {
         List<VacationHouseQuickReservationDTO> quickReservations = new ArrayList<VacationHouseQuickReservationDTO>();
         for (VacationHouseReservation reservation : vh.getReservations()) {
-            if (reservation.getPrice() < vh.getPricelist().getPrice() && reservation.getClient() == null)
+            if (reservation.getPrice() < vh.getPricelist().getPrice() && reservation.getClient() == null && reservation.isQuickReservation())
                 quickReservations.add(createVacationHouseQuickReservationDTO(vh.getPricelist().getPrice(), reservation));
         }
         return quickReservations;

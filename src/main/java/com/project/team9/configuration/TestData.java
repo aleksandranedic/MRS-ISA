@@ -148,15 +148,15 @@ public class TestData {
         return new DeleteRequest(text, response, userId, userType);
     }
 
-    private ClientReview createClientReviewForResource(Long resourceId, Long clientId, int rating, String text) {
+    public ClientReview createClientReviewForResource(Long resourceId, Long clientId, int rating, String text) {
         return new ClientReview(resourceId, null, rating, text, clientId);
     }
 
-    private ClientReview createClientReviewForVendor(Long vendorId, Long clientId, int rating, String text) {
+    public ClientReview createClientReviewForVendor(Long vendorId, Long clientId, int rating, String text) {
         return new ClientReview(null, vendorId, rating, text, clientId);
     }
 
-    private VendorReview createVendorReview(Long resourceId, Long vendorId, int rating, String text, Long clientId, boolean penalty, boolean noShow, Long reservationId) {
+    public VendorReview createVendorReview(Long resourceId, Long vendorId, int rating, String text, Long clientId, boolean penalty, boolean noShow, Long reservationId) {
         return new VendorReview(resourceId, vendorId, rating, text, clientId, penalty, noShow, reservationId);
     }
 

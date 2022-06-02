@@ -8,7 +8,7 @@ import {FilterModal} from "../Filter/FilterModal";
 
 import {frontLink, logOut} from "../Consts";
 import axios from "axios";
-import {isLoggedIn} from "../Autentification";
+import {isBoatOwner, isClient, isFishingInstructor, isLoggedIn, isVacationHouseOwner} from "../Autentification";
 
 axios.interceptors.request.use(config => {
         config.headers.authorization = "Bearer " + localStorage.getItem('token')
@@ -22,8 +22,19 @@ export default function Navigation(props) {
 
     const [searchTerm, setSearchTerm] = useState("");
 
-    function isLoggedIn() {
-        return localStorage.getItem('token') !== "" && localStorage.getItem('token') !== null;
+    let profileLink;
+
+    if (isLoggedIn()) {
+        if (isClient()) {
+            profileLink = frontLink + "client/" + localStorage.getItem("userId");
+        } else if (isVacationHouseOwner()) {
+            profileLink = frontLink + "houseOwner/" + localStorage.getItem("userId");
+        } else if (isBoatOwner()) {
+            profileLink = frontLink + "boatOwner/" + localStorage.getItem("userId");
+        } else if (isFishingInstructor()) {
+            profileLink = frontLink + "fishingInstructor/" + localStorage.getItem("userId");
+        }
+
     }
 
     const [open, setOpen] = useState(false);
@@ -34,46 +45,56 @@ export default function Navigation(props) {
             <Container style={{minHeight: "2.4rem"}}>
                 <Nav className="d-flex justify-content-evenly w-100">
                     <div className="d-flex justify-content-start">
+                        <div className="h-100 d-flex align-items-center p-0 m-0">
+                            <Nav.Link className="line-dark font-monospace p-0 m-0 ms-4 display-5" href={frontLink}
+                                      style={{fontSize: "1.75rem"}}>
+                                SAVANA
+                            </Nav.Link>
+                        </div>
+
+
                         {props.searchable &&
-                        <>
-                            <Button variant="outline-light"
-                                    className="border-0 p-0 d-flex justify-content-right align-items-center"
-                                    style={{marginLeft: "1rem", marginRight: "1rem"}} width="0.8rem"
-                                    height="1rem"
-                                    onClick={() => setOpen(!open)}>
-                                <BsSearch aria-controls="collapse-search-bar" aria-expanded={open}
-                                          style={{width: '0.8rem', height: '1rem', color: "rgb(106,106,106)"}}/>
-                            </Button>
+                            <>
+                                <Button variant="outline-light"
+                                        className="border-0 p-0 d-flex justify-content-right align-items-center"
+                                        style={{marginLeft: "1rem", marginRight: "1rem"}} width="0.8rem"
+                                        height="1rem"
+                                        onClick={() => setOpen(!open)}>
+                                    <BsSearch aria-controls="collapse-search-bar" aria-expanded={open}
+                                              style={{width: '0.8rem', height: '1rem', color: "rgb(106,106,106)"}}/>
+                                </Button>
 
 
-                            <Collapse in={open} dimension="width">
-                                <Form id="collapse-search-bar">
-                                    <div className="d-flex" style={{width: '30rem'}}>
-                                        <Form.Control type="text" value={searchTerm}
-                                                      onChange={e => setSearchTerm(e.target.value)}/>
-                                        <Button variant="outline-light"
-                                                className="border-0 p-0 d-flex justify-content-right align-items-center"
-                                                style={{marginLeft: "0.3rem"}} width="0.8rem"
-                                                height="1rem">
-                                            <BsFilter aria-controls="collapse-search-bar" aria-expanded={open}
-                                                      style={{
-                                                          width: '2rem',
-                                                          height: '1.2rem',
-                                                          color: "rgb(106,106,106)"
-                                                      }}
-                                                      onClick={handleShow}/>
-                                        </Button>
-                                        <Button variant="outline-secondary" value="Pretraga"
-                                                style={{marginLeft: '0.3rem'}}
-                                                href={frontLink + "search/" + searchTerm}
-                                        >Pretraga</Button>
-                                    </div>
-                                </Form>
-                            </Collapse> </>}
+                                <Collapse in={open} dimension="width">
+                                    <Form id="collapse-search-bar">
+                                        <div className="d-flex" style={{width: '30rem'}}>
+                                            <Form.Control type="text" value={searchTerm}
+                                                          onChange={e => setSearchTerm(e.target.value)}/>
+                                            <Button variant="outline-light"
+                                                    className="border-0 p-0 d-flex justify-content-right align-items-center"
+                                                    style={{marginLeft: "0.3rem"}} width="0.8rem"
+                                                    height="1rem">
+                                                <BsFilter aria-controls="collapse-search-bar" aria-expanded={open}
+                                                          style={{
+                                                              width: '2rem',
+                                                              height: '1.2rem',
+                                                              color: "rgb(106,106,106)"
+                                                          }}
+                                                          onClick={handleShow}/>
+                                            </Button>
+                                            <Button variant="outline-secondary" value="Pretraga"
+                                                    style={{marginLeft: '0.3rem'}}
+                                                    href={frontLink + "search/" + searchTerm}
+                                            >Pretraga</Button>
+                                        </div>
+                                    </Form>
+                                </Collapse> </>}
                     </div>
 
+
+
                     <div className="d-flex justify-content-center" style={{width: "90%"}}>
-                        <NavigationButton text={"Početna strana"} path={frontLink} key={999999}/>
+
                         {props.buttons.map(
                             (button, index) => {
                                 return <NavigationButton text={button.text} path={button.path} key={index}/>
@@ -85,10 +106,9 @@ export default function Navigation(props) {
 
 
                         {(isLoggedIn()) && <Button variant="outline-light"
-                                                    className="border-0 p-0 ms-2 d-flex justify-content-right align-items-center"
-                                                    width="2rem" height="1rem"
-                                                    href={"http://localhost:3000/client"}>
-                            {/*TODO ovde mora da se dobavi id korisnika*/}
+                                                   className="border-0 p-0 ms-2 d-flex justify-content-right align-items-center"
+                                                   width="2rem" height="1rem"
+                                                   href={profileLink}>
 
                             <BsPerson style={{width: '2rem', height: '1rem', color: "rgb(106,106,106)"}}/>
                         </Button>}
@@ -103,9 +123,14 @@ export default function Navigation(props) {
                     {(isLoggedIn()) ?
 
                         <Button className="ms-3 font-monospace"
-                        style={{background: "#eaeaea", borderColor: "#eaeaea", color: "#6a6a6a", minWidth: "8rem"}}
-                        onClick={()=> logOut()}>
-                        Odjavi se
+                                style={{
+                                    background: "#eaeaea",
+                                    borderColor: "#eaeaea",
+                                    color: "#6a6a6a",
+                                    minWidth: "8rem"
+                                }}
+                                onClick={() => logOut()}>
+                            Odjavi se
                         </Button>
                         :
                         <Button className="ms-3 font-monospace text-center"

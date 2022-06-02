@@ -90,6 +90,11 @@ export const logOut = () => {
     localStorage.setItem('token', "");
     window.location.reload();
 }
+
+export const logOutAdmin = () => {
+    localStorage.setItem('token', "");
+    window.location.href = frontLink;
+}
 export const client = "CLIENT";
 export const fishingInstructor = "FISHING_INSTRUCTOR";
 export const vacationHouseOwner = "VACATION_HOUSE_OWNER";

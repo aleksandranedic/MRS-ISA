@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, {useEffect, useState} from "react";
 import Banner from "../Banner";
-import ClientInfo from "./ClientInfo";
 import ClientLoyalty from "./ClientLoyalty";
 import UpdateClientInfo from "./UpdateClientInfo"
 import Navigation from "../Navigation/Navigation";
@@ -13,6 +12,7 @@ import {Collapse} from "react-bootstrap";
 import {ReservationsTable} from "../Calendar/ReservationsTable";
 import BeginButton from "../BeginButton.js"
 import OwnerInfo from "../OwnerInfo";
+import {processReservationsForUsers} from "../ProcessToEvent";
 
 
 const UpdateClientInfoComp = ({client, handleClose,showPopUp,setClient}) => {
@@ -35,6 +35,8 @@ const UpdateClientInfoComp = ({client, handleClose,showPopUp,setClient}) => {
 const Client = () => {
     const [client, setClient] = useState([]);
     const [reservations, setReservations] = useState([]);
+    const [events, setEvents] = useState(null)
+
 
     const {id}=useParams()
     let html;
@@ -46,36 +48,18 @@ const Client = () => {
 
     const fetchReservations = () => {
 
-        let newReservations = [];
-        axios.get(backLink+ "/adventure/reservation/client/" + id).then(res => {
 
-            for (let index in res.data) {
-                newReservations.push(res.data.at(index))
-            }
-        })
-
-        axios.get(backLink+ "/boat/reservation/client/" + id).then(res => {
-
-
-            for (let index in res.data) {
-                newReservations.push(res.data.at(index))
-            }
+        axios.get(backLink+ "/client/reservation/" + id).then(res => {
+            setReservations(res.data);
+            setEvents(processReservationsForUsers(res.data));
 
         })
 
-        axios.get(backLink+ "/house/reservation/client/" + id).then(res => {
-            for (let index in res.data) {
-                newReservations.push(res.data.at(index))
-            }
-
-        })
-        setReservations(newReservations);
     }
 
     useEffect(() => {
         fetchClient();
-        if(localStorage.getItem("token")!==null && localStorage.getItem("token")!=="") //dodao sam jer neko kad gleda njegov profil ne moze tako da ostavi
-            fetchReservations();
+        fetchReservations();
     }, []);
 
     const [show, setShow] = useState(false);
@@ -91,13 +75,15 @@ const Client = () => {
             <UpdateClientInfoComp client={client} handleClose={handleClose} showPopUp={show} setClient={setClient}/>
             <Navigation buttons={
                 [
-                    {text: "Osnovne informacije", path: "#"}
+                    {text: "Osnovne informacije", path: "#info"},
+                    {text: "Kalendar", path: "#calendar"},
+                    {text: "Rezervacije", path: "#reservations"}
                 ]}
                         editable={true} editFunction={handleShow}
-            />
+            searchable={true}/>
            
 
-                <OwnerInfo 
+                <div id="info"><OwnerInfo
                     bio = {client.biography}
                     name={client.firstName + " " + client.lastName}
                     rate = {4.5}
@@ -105,12 +91,12 @@ const Client = () => {
                     phoneNum={client.phoneNumber}
                     address={client.address}
                     profileImg = {client.profileImg !== null ? backLink + client.profileImg.path : profilePicturePlaceholder}
-                    />            
+                    />   </div>
             <ClientLoyalty/>
 
 
             <hr className="me-5 ms-5"/>
-            <Calendar reservations={reservations} reservable={false}/>
+            <Calendar id="calendar" events={events} reservable={false}/>
 
             <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
             <hr className="me-5 ms-5"/>
