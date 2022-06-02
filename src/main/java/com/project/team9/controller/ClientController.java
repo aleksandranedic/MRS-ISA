@@ -1,6 +1,7 @@
 package com.project.team9.controller;
 
 import com.project.team9.dto.ClientDTO;
+import com.project.team9.dto.ReservationDTO;
 import com.project.team9.model.Address;
 import com.project.team9.model.request.DeleteRequest;
 import com.project.team9.model.user.Client;
@@ -77,6 +78,11 @@ public class ClientController {
         deleteRequest.setResponse("");
         deleteRequestService.addDeleteRequest(deleteRequest);
         return ResponseEntity.ok().body(deleteRequest);
+    }
+
+    @GetMapping("/reservation/{id}")
+    public List<ReservationDTO> getReservations(@PathVariable Long id) {
+        return clientService.getReservations(id);
     }
 }
 

@@ -16,9 +16,11 @@ export default function Login() {
         }
         axios.post(backLink + "/login", loginDto).then(res => {
             notifySuccess("Uspešno ste se ulogovali")
+
             localStorage.setItem("token", res.data.jwt)
             localStorage.setItem("userRoleName", res.data.roleName);
             localStorage.setItem("userId", res.data.id);
+
             console.log(res.data.roleName);
             setTimeout(function () {
                 if (res.data.roleName === "ADMINISTRATOR") {

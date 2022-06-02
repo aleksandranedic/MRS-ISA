@@ -49,7 +49,7 @@ public class AuthenticationController {
     // Tada zna samo svoje korisnicko ime i lozinku i to prosledjuje na backend.
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> createAuthenticationToken(
-            @RequestBody LoginDTO loginDTO, HttpServletResponse response) {
+            @RequestBody LoginDTO loginDTO) {
 
 //        User user=clientRepository.findByEmail(loginDTO.getUsername());
         // Ukoliko kredencijali nisu ispravni, logovanje nece biti uspesno, desice se

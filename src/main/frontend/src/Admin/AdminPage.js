@@ -27,7 +27,7 @@ export function AdminPage() {
         html = <>
             <div className="d-flex" style={{height: "100vh"}}>
                 <div className="w-25" style={{backgroundColor: "#f7f8f9"}}>
-                    <Sidebar user={user}/>
+                    <Sidebar/>
                 </div>
                 <div className="w-75">
 

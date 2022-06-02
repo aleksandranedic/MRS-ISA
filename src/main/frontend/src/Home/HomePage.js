@@ -235,6 +235,9 @@ function HomePageResourceCard({id, title, rate, images, type}) {
 }
 
 function HomePageVendorCard({id, fullName, rate, profileImage, type}) {
+
+
+
     let path;
     if (profileImage) {
         path = backLink + profileImage.path;

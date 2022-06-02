@@ -1,9 +1,11 @@
 package com.project.team9.service;
 
 import com.project.team9.dto.LoginDTO;
+import com.project.team9.dto.ReservationDTO;
 import com.project.team9.model.Image;
+import com.project.team9.model.Tag;
+import com.project.team9.model.reservation.*;
 import com.project.team9.model.user.Client;
-import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,11 +25,17 @@ public class ClientService {
     final String IMAGES_PATH = "/images/clients/";
     private final ClientRepository clientRepository;
     private final ImageService imageService;
+    private final AdventureReservationService adventureReservationService;
+    private final BoatReservationService boatReservationService;
+    private final VacationHouseReservationService vacationHouseReservationService ;
 
     @Autowired
-    public ClientService(ClientRepository clientRepository, ImageService imageService) {
+    public ClientService(ClientRepository clientRepository, ImageService imageService, AdventureReservationService adventureReservationService, BoatReservationService boatReservationService, VacationHouseReservationService vacationHouseReservationService) {
         this.clientRepository = clientRepository;
         this.imageService = imageService;
+        this.adventureReservationService = adventureReservationService;
+        this.boatReservationService = boatReservationService;
+        this.vacationHouseReservationService = vacationHouseReservationService;
     }
 
     public List<Client> getClients() {
@@ -111,5 +120,17 @@ public class ClientService {
         return null;
     }
     public Client getClientByEmail(String email) {return clientRepository.findByEmail(email);}
-
+    public List<ReservationDTO> getReservations(Long id) {
+        List<ReservationDTO> reservations = new ArrayList<>();
+        for (AdventureReservation reservation: adventureReservationService.getAdventureReservationsForClientId(id)) {
+            reservations.add(new ReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation(), reservation.getResource().getId()));
+        }
+        for (BoatReservation reservation: boatReservationService.getBoatReservationsForClientId(id)) {
+            reservations.add(new ReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation(), reservation.getResource().getId()));
+        }
+        for (VacationHouseReservation reservation: vacationHouseReservationService.getVacationHouseReservationsForClienId(id)) {
+            reservations.add(new ReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation(), reservation.getResource().getId()));
+        }
+        return reservations;
+    }
 }

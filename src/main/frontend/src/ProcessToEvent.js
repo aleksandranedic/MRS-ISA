@@ -43,6 +43,8 @@ export function processReservationsForResources(reservations) {
 export function processReservationsForUsers(reservations) {
     let newEvents = [];
 
+    console.log(reservations);
+
     for (let index in reservations) {
         let r = reservations.at(index);
 

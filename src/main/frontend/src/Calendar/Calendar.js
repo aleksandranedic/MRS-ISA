@@ -10,6 +10,7 @@ import {BsPlusLg} from "react-icons/bs";
 
 export function Calendar({reservable, pricelist, type, resourceId, events, myPage}) {
 
+    console.log(events);
     let perHour = true;
     if (type === "vacationHouse") {
         perHour = false;

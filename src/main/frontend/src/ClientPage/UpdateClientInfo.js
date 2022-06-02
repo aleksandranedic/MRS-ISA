@@ -24,7 +24,6 @@ function UpdateClientInfo({client, handleClose, showPopUp,setClient, profileImg}
     function handleUpdateAccount(userDTO) {
         axios.put(backLink+"/client/update/" + client.id, userDTO).then(res => {
             notifySuccess("Uspešno ste ažurirali podatke")
-            // console.log(res);
             setClient(res.data)
         });
     }
@@ -101,7 +100,7 @@ function UpdateClientInfo({client, handleClose, showPopUp,setClient, profileImg}
                 }
                 data.append("fileImage",file);
                 axios
-                .post("http://localhost:4444/client/changeProfilePicture/" + id, data)
+                .post(backLink + "/client/changeProfilePicture/" + id, data)
                 .then(res => {
                         console.log(res.data)
                 });
@@ -203,7 +202,7 @@ function UpdateClientInfo({client, handleClose, showPopUp,setClient, profileImg}
                         </Form.Group>
 
                         <Form.Group className="mb-3 m-2" controlId="formCountry">
-                            <Form.Label>Drzava</Form.Label>
+                            <Form.Label>Država</Form.Label>
                             <Form.Control type="text" defaultValue={client.address.country}
                                           onChange={e => setField('country', e.target.value)}
                                           isInvalid={!!errors.country}/>
@@ -217,13 +216,13 @@ function UpdateClientInfo({client, handleClose, showPopUp,setClient, profileImg}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button className="me-auto" variant="btn btn-outline-danger" onClick={handleShowDeleteAccPopUp}>
-                        Obrisi nalog
+                        Obriši nalog
                     </Button>
                     <Button variant="secondary" onClick={handleClose}>
-                        Otkazi
+                        Otkaži
                     </Button>
                     <Button variant="primary" onClick={handleSubmit}>
-                        Azuriraj
+                        Ažuriraj
                     </Button>
                 </Modal.Footer>
             </Modal>
