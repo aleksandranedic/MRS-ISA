@@ -135,6 +135,7 @@ public class AdventureService {
         List<Tag> additionalServices = reservation.getAdditionalServices();
         int duration = reservation.getAppointments().size();
         int price = reservation.getPrice();
+        boatPrice = boatPrice*duration;
         int discount = 100 - (100 * price / boatPrice);
         return new AdventureQuickReservationDTO(reservation.getId(), strDate, numberOfPeople, additionalServices, duration, price, discount);
     }
