@@ -671,7 +671,7 @@ public class BoatService {
     }
 
     private boolean checkReviewRating(BoatFilterDTO boatFilterDTO, Boat boat) {
-        List<ClientReviewDTO> list = reviewService.getReviews(boat.getId());
+        List<ClientReviewDTO> list = reviewService.getResourceReviews(boat.getId());
         if (list.isEmpty() && (boatFilterDTO.getReviewRating().isEmpty() || boatFilterDTO.getReviewRating().equals("0")))
             return true;
         double score = list.stream().mapToDouble(ClientReviewDTO::getRating).sum() / list.size();

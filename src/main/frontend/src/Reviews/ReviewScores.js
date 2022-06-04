@@ -4,32 +4,54 @@ import axios from "axios";
 import StarRatings from 'react-star-ratings';
 import { Line } from 'rc-progress';
 import { AiFillStar } from "react-icons/ai";
+import { backLink } from '../Consts';
 
-function ReviewScores() {
+function ReviewScores({type}) {
 
     const [scores, setScores] = useState({fiveStars:0, fourStars:0, threeStars:0, twoStars:0, oneStars:0})
     const [rating, setRating] = useState(0)
     const {id} = useParams();
     
-    const fetchScores = () => {
+    const fetchResourceScores = () => {
         axios
-        .get("http://localhost:4444/review/getReviewScores/" + id)
+        .get(backLink + "/review/getReviewScores/" + id)
         .then(res => {
             setScores(res.data);
         });
     };
 
-    const fetchRating = () => {
+    const fetchResourceRating = () => {
         axios
-        .get("http://localhost:4444/house/getRating/" + id)
+        .get(backLink + "/review/getRating/" + id)
+        .then(res => {
+            setRating(res.data);
+        });
+    };
+
+    const fetchVendorScores = () => {
+        axios
+        .get(backLink + "/review/getVendorReviewScores/" + id)
+        .then(res => {
+            setScores(res.data);
+        });
+    };
+
+    const fetchVendorRating = () => {
+        axios
+        .get(backLink + "/review/getVendorRating/" + id)
         .then(res => {
             setRating(res.data);
         });
     };
 
     useEffect(() => {
-        fetchScores();
-        fetchRating();
+        if (type === "vacationHouse" || type === "boat" || type === "adventure"){
+            fetchResourceScores();
+            fetchResourceRating();
+        } else {
+            fetchVendorScores();
+            fetchVendorRating();
+        }
     }, []);
 
     return (

@@ -89,7 +89,7 @@ public class VacationHouseService {
     }
 
     public double getRatingForHouse(Long id) {
-        ReviewScoresDTO reviews = reviewService.getReviewScores(id);
+        ReviewScoresDTO reviews = reviewService.getReviewScores(id, "resource");
         double sum = reviews.getFiveStars() * 5 + reviews.getFourStars() * 4 + reviews.getThreeStars() * 3 + reviews.getTwoStars() * 2 + reviews.getOneStars();
         double num = reviews.getFiveStars() + reviews.getFourStars() + reviews.getThreeStars() + reviews.getTwoStars() + reviews.getOneStars();
         double result = sum / num;
@@ -614,7 +614,7 @@ public class VacationHouseService {
     }
 
     private boolean checkReviewRating(VacationHouseFilterDTO vacationHouseFilterDTO, VacationHouse vacationHouse) {
-        List<ClientReviewDTO> list = reviewService.getReviews(vacationHouse.getId());
+        List<ClientReviewDTO> list = reviewService.getResourceReviews(vacationHouse.getId());
         if (list.isEmpty() && (vacationHouseFilterDTO.getReviewRating().isEmpty() || vacationHouseFilterDTO.getReviewRating().equals("0")))
             return true;
         double score = list.stream().mapToDouble(ClientReviewDTO::getRating).sum() / list.size();

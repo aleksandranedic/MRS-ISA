@@ -88,17 +88,5 @@ public class VacationHouseOwnerController {
         service.deleteById(id);
         return ResponseEntity.ok().build();
     }
-
-    //    @PutMapping("/{id}")
-    //    public VacationHouseOwner updateOwner(@PathVariable String idStr, @RequestBody VacationHouseOwner owner) {
-    //        Long id = Long.parseLong(idStr);
-    //        VacationHouseOwner vacationHouseOwner = service.getOwner(id);
-    //        vacationHouseOwner.setFirstName(owner.getFirstName());
-    //        vacationHouseOwner.setLastName(owner.getLastName());
-    //        vacationHouseOwner.setPhoneNumber(owner.getPhoneNumber());
-    //        vacationHouseOwner.setPassword(owner.getPassword());
-    //        vacationHouseOwner = service.save(owner);
-    //        return vacationHouseOwner;
-    //    }
 }
 

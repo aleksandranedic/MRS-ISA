@@ -35,8 +35,16 @@ public class ReviewService {
         this.vendorReviewRepository = vendorReviewRepository;
     }
 
-    public List<ClientReviewDTO> getReviews(Long resource_id) {
+    public List<ClientReviewDTO> getResourceReviews(Long resource_id) {
         List<ClientReview> reviews = repository.findByResourceId(resource_id);
+        List<ClientReviewDTO> reviewsDTO = new ArrayList<ClientReviewDTO>();
+        for (ClientReview review : reviews) {
+            reviewsDTO.add(getDTOFromClientReview(review));
+        }
+        return reviewsDTO;
+    }
+    public List<ClientReviewDTO> getVendorReviews(Long vendor_id) {
+        List<ClientReview> reviews = repository.findByVendorId(vendor_id);
         List<ClientReviewDTO> reviewsDTO = new ArrayList<ClientReviewDTO>();
         for (ClientReview review : reviews) {
             reviewsDTO.add(getDTOFromClientReview(review));
@@ -50,8 +58,14 @@ public class ReviewService {
         return new ClientReviewDTO(review.getId(), client.getProfileImg().getPath(), name, review.getRating(), review.getText(), client.getId());
     }
 
-    public ReviewScoresDTO getReviewScores(Long resource_id) {
-        List<ClientReviewDTO> allReviews = this.getReviews(resource_id);
+    public ReviewScoresDTO getReviewScores(Long id, String type) {
+        List<ClientReviewDTO> allReviews;
+        if (type.equals("resource")){
+            allReviews = this.getResourceReviews(id);
+        }
+        else{
+            allReviews = this.getVendorReviews(id);
+        }
         HashMap<String, Integer> scores = new HashMap<>();
         scores.put("five", 0);
         scores.put("four", 0);
@@ -90,6 +104,14 @@ public class ReviewService {
         return new ReviewScoresDTO(fives, fours, threes, twos, ones);
     }
 
+    public double getRating(Long id, String type) {
+        ReviewScoresDTO reviews = getReviewScores(id, type);
+        double sum = reviews.getFiveStars() * 5 + reviews.getFourStars() * 4 + reviews.getThreeStars() * 3 + reviews.getTwoStars() * 2 + reviews.getOneStars();
+        double num = reviews.getFiveStars() + reviews.getFourStars() + reviews.getThreeStars() + reviews.getTwoStars() + reviews.getOneStars();
+        double result = sum / num;
+        double scale = Math.pow(10, 1);
+        return Math.round(result * scale) / scale;
+    }
     public boolean clientHasReview(Long resourceId, Long clientId) {
         return repository.findReviewForClientAndResource(resourceId, clientId).size() > 0;
     }

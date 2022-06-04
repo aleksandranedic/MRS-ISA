@@ -59,7 +59,7 @@ function AddBoat({showModal, closeModal}) {
       .post("http://localhost:4444/boat/createBoat", data)
       .then(res => {
             var boatID = res.data
-            axios.post("http://localhost:4444/boatowner/addBoat/" + id, boatID);
+            axios.post("http://localhost:4444/boatowner/addBoat/" + id, boatID).then( res => {window.location.reload();});
       });
       close();
     }

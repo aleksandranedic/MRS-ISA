@@ -18,32 +18,32 @@ export function HomePage() {
 
     let vacationHouses = GetAllVacationHouses();
     if (vacationHouses.length > 6) {
-        vacationHouses = vacationHouses.subarray(0, 6);
+        vacationHouses = vacationHouses.slice(0, 6);
     }
 
     let vacationHouseOwners = GetAllVacationHouseOwners();
 
     if (vacationHouseOwners.length > 4) {
-        vacationHouseOwners = vacationHouseOwners.subarray(0, 4);
+        vacationHouseOwners = vacationHouseOwners.slice(0, 4);
     }
 
     let fishingInstructors = GetAllFishingInstructors();
     if (fishingInstructors.length > 4) {
-        fishingInstructors = fishingInstructors.subarray(0, 4);
+        fishingInstructors = fishingInstructors.slice(0, 4);
     }
 
     let adventures = GetAllAdventures();
     if (adventures.length > 6) {
-        adventures = adventures.subarray(0, 6);
+        adventures = adventures.slice(0, 6);
     }
     let boats = GetAllBoats();
     if (boats.length > 6) {
-        boats = boats.subarray(0, 6);
+        boats = boats.slice(0, 6);
     }
 
     let boatOwners = GetAllBoatOwners();
     if (boatOwners.length > 4) {
-        boatOwners = boatOwners.subarray(0, 4);
+        boatOwners = boatOwners.slice(0, 4);
     }
 
     let profileLink;
