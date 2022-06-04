@@ -16,7 +16,7 @@ import {Collapse} from "react-bootstrap";
 import {ReservationsTable} from "../Calendar/ReservationsTable";
 import {ReservationsToReview} from "../Calendar/ReservationsToReview";
 import {processReservationsForUsers} from "../ProcessToEvent";
-import {AddReview} from "../Reviews/AddReview";
+import Ratings from '../Reviews/Ratings';
 
 
 const UpdateOwner = ({show, setShow, owner}) => {
@@ -32,10 +32,20 @@ const UpdateOwner = ({show, setShow, owner}) => {
     }
 }
 
+const ReviewsComp = ({reviews}) => {
+    if (typeof reviews !== "undefined"){
+        return <Ratings reviews = {reviews} type={"vacationHouseOwner"}/>
+    }
+    else {
+        return <></>
+    }
+}
+
 function HouseOwnerPage() {
     const {id} = useParams();
     const [houseOwner, setHouseOwner] = useState({address: '', profileImg: {path: ""}});
     const [ownerHouses, setOwnerHouses] = useState([]);
+    const [ownerReviews, setOwnerReviews] = useState([])
     const [events, setEvents] = useState(null);
     const [show, setShow] = useState(false);
     const handleShow = () => setShow(true);
@@ -53,7 +63,7 @@ function HouseOwnerPage() {
 
     const fetchOwnerHouses = () => {
       axios
-      .get("http://localhost:4444/house/getownerhouses/" + id)
+      .get( backLink + "/house/getownerhouses/" + id)
       .then(res => {
           var houses = res.data;
           for (let house of houses){
@@ -71,11 +81,21 @@ function HouseOwnerPage() {
                 setHouseOwner(res.data);
             });
     };
+
+    const fetchReviews = () => {
+        axios
+        .get( backLink + "/review/getVendorReviews/" + id)
+        .then(res => {
+            setOwnerReviews(res.data);
+        });
+    };
+
     useEffect(() => {
         fetchOwnerHouses();
         fetchReservations();
         fetchHouseOwner();
-    }, [ownerHouses]);
+        fetchReviews();
+    }, []);
 
     return (
         <>
@@ -107,12 +127,7 @@ function HouseOwnerPage() {
 
             </div>
 
-            <hr className="me-5 ms-5"/>
-
-            <div className="d-flex justify-content-center">
-                <AddReview type={"vacationHouseOwner"}/>
-            </div>
-
+            <hr className="me-5 ms-5"/>          
 
             <Calendar events={events} reservable={false}/>
 
@@ -133,6 +148,10 @@ function HouseOwnerPage() {
                     <ReservationsTable  reservations={reservations} showResource={false}/>
                 </div>
             </Collapse>
+
+            <div className="ms-5">
+                <ReviewsComp reviews = {ownerReviews}/>
+            </div>
 
             <BeginButton/>
         </>

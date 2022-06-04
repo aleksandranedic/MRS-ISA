@@ -16,7 +16,7 @@ import {Collapse} from "react-bootstrap";
 import {ReservationsTable} from "../Calendar/ReservationsTable";
 import {ReservationsToReview} from "../Calendar/ReservationsToReview";
 import {processReservationsForUsers} from "../ProcessToEvent";
-import {AddReview} from "../Reviews/AddReview";
+import Ratings from '../Reviews/Ratings';
 
 const UpdateOwner = ({show, setShow, owner}) => {
     if (typeof owner.firstName !== "undefined") {
@@ -31,11 +31,22 @@ const UpdateOwner = ({show, setShow, owner}) => {
     }
 }
 
+
+const ReviewsComp = ({reviews}) => {
+    if (typeof reviews !== "undefined"){
+        return <Ratings reviews = {reviews} type={"boatOwner"}/>
+    }
+    else {
+        return <></>
+    }
+}
+
 function BoatOwnerPage() {
     const {id} = useParams();
 
     const [boatOwner, setboatOwner] = useState({address: '', profileImg: {path: ""}});
     let [ownerBoats, setOwnerBoats] = useState([]);
+    const [ownerReviews, setOwnerReviews] = useState([])
 
     const [show, setShow] = useState(false);
     const handleShow = () => setShow(true);
@@ -55,7 +66,7 @@ function BoatOwnerPage() {
 
     const fetchOwnerBoats = () => {
       axios
-      .get("http://localhost:4444/boat/getownerboats/" + id)
+      .get( backLink + "/boat/getownerboats/" + id)
       .then(res => {
           var boats = res.data;
           for (let boat of boats){
@@ -73,11 +84,21 @@ function BoatOwnerPage() {
                 setboatOwner(res.data);
             });
     };
+
+    const fetchReviews = () => {
+        axios
+        .get( backLink + "/review/getVendorReviews/" + id)
+        .then(res => {
+            setOwnerReviews(res.data);
+        });
+    };
+
     useEffect(() => {
         fetchboatOwner();
         fetchOwnerBoats();
         fetchReservations();
-    }, [ownerBoats]);
+        fetchReviews();
+    }, []);
     return (
         <>
             <Banner caption={boatOwner.firstName + " " + boatOwner.lastName}/>
@@ -108,11 +129,7 @@ function BoatOwnerPage() {
 
             </div>
             <hr className="me-5 ms-5"/>
-            <div className="d-flex justify-content-center">
-                <AddReview type={"boatOwner"}/>
-            </div>
-
-
+            
              <Calendar events={events} reservable={false}/>
 
             <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
@@ -134,6 +151,10 @@ function BoatOwnerPage() {
                     <ReservationsTable reservations={reservations} showResource={false}/>
                 </div>
             </Collapse>
+
+            <div className="ms-5">
+                <ReviewsComp reviews = {ownerReviews}/>
+            </div>
 
             <BeginButton/>
         </>

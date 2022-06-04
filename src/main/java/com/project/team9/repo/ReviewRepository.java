@@ -11,6 +11,7 @@ import java.util.List;
 @Repository
 public interface ReviewRepository extends JpaRepository<ClientReview, Long> {
     List<ClientReview> findByResourceId(Long resource_id);
+    List<ClientReview> findByVendorId(Long vendor_id);
 
     @Query("FROM ClientReview WHERE clientId = ?2 AND resourceId = ?1")
     List<ClientReview> findReviewForClientAndResource(Long resourceId, Long clientId);

@@ -7,8 +7,8 @@ function Ratings({reviews, type}) {
     return (
         <div className='mt-5' id="reviews">
             <div className="d-flex">
-                <ReviewScores/>
-                <AddReview type={type}/>
+                <ReviewScores type={type}/>
+                <AddReview type={type}/>   
             </div>
 
             {reviews.length > 1 ?

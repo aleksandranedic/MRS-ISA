@@ -155,7 +155,7 @@ export function BoatProfilePage() {
                 </div>
             </Collapse>
 
-            <ReviewsComp reviews = {boatReviews}/>
+            <ReviewsComp reviews = {boatReviews} showAddReview={true}/>
 
         </div>
         <BeginButton/>

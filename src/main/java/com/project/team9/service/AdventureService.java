@@ -562,7 +562,7 @@ public class AdventureService {
     }
 
     private boolean checkReviewRating(AdventureFilterDTO filterDTO, Adventure adventure) {
-        List<ClientReviewDTO> list = reviewService.getReviews(adventure.getId());
+        List<ClientReviewDTO> list = reviewService.getResourceReviews(adventure.getId());
         if (list.isEmpty() && (filterDTO.getReviewRating().isEmpty() || filterDTO.getReviewRating().equals("0")))
             return true;
         double score = list.stream().mapToDouble(ClientReviewDTO::getRating).sum() / list.size();

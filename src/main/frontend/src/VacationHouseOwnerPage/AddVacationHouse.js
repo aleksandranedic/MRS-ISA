@@ -42,7 +42,7 @@ function AddVacationHouse({showModal, closeModal}) {
       .post("http://localhost:4444/house/createHouse", data)
       .then(res => {
             var houseID = res.data
-            axios.post("http://localhost:4444/houseowner/addHouse/" + id, houseID);
+            axios.post("http://localhost:4444/houseowner/addHouse/" + id, houseID).then( res => {window.location.reload();});
       });
       close();
     }
