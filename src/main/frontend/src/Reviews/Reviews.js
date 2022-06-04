@@ -33,7 +33,7 @@ function toggleReviews() {
 function Reviews({reviews}) {
     return (
         <div className='d-flex flex-column'>
-            <Row id="allReviews" xs={1} md={2} className="g-4 mt-3" style={{width:"fit-content", position:"relative", maxHeight:"30vh", minHeight:"30vh",overflow:"hidden"}}>
+            <Row id="allReviews" xs={1} md={2} className="g-4 mt-3" style={{position:"relative", maxHeight:"30vh", minHeight:"30vh",overflow:"hidden"}}>
                 {reviews.map( (review) => (
                     <Review key={review.id} review={review}/>                      
                 ))}
