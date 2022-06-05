@@ -63,14 +63,14 @@ public class AuthenticationController {
             // Kreiraj token za tog korisnika
             User user = (User) authentication.getPrincipal();
             if (user.getDeleted()) {
-                return ResponseEntity.badRequest().body(new LoginResponseDTO("Korisnik je obrisan", null, null));
+                return ResponseEntity.ok(new LoginResponseDTO("Korisnik je obrisan", null, null));
             }
             String jwt = tokenUtils.generateToken(user.getUsername());
 
             // Vrati token kao odgovor na uspesnu autentifikaciju
             return ResponseEntity.ok(new LoginResponseDTO(jwt, user.getRoleName(), user.getId()));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new LoginResponseDTO("Uneli ste porgrešne podatke", null, null));
+            return ResponseEntity.ok(new LoginResponseDTO("Uneli ste porgrešne podatke", null, null));
         }
     }
 

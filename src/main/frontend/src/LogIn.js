@@ -15,23 +15,21 @@ export default function Login() {
             password: password
         }
         axios.post(backLink + "/login", loginDto).then(res => {
-            notifySuccess("Uspešno ste se ulogovali")
-
-            localStorage.setItem("token", res.data.jwt)
-            localStorage.setItem("userRoleName", res.data.roleName);
-            localStorage.setItem("userId", res.data.id);
-
-            console.log(res.data.roleName);
-            setTimeout(function () {
-                if (res.data.roleName === "ADMINISTRATOR") {
-                    window.location.href = frontLink + "admin";
-                }
-                else {
-                    window.location.href = frontLink;
-                }
-            }, 5000)
-        }).catch(error => {
-            notifyError(error.response.data)
+            if (res.data.id === null) {
+                notifyError(res.data.jwt)
+            } else {
+                notifySuccess("Uspešno ste se ulogovali")
+                localStorage.setItem("token", res.data.jwt)
+                localStorage.setItem("userRoleName", res.data.roleName);
+                localStorage.setItem("userId", res.data.id);
+                setTimeout(function () {
+                    if (res.data.roleName === "ADMINISTRATOR") {
+                        window.location.href = frontLink + "admin";
+                    } else {
+                        window.location.href = frontLink;
+                    }
+                }, 2000)
+            }
         })
     }
 
