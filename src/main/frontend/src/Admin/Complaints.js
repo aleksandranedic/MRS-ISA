@@ -1,27 +1,26 @@
 import {Sidebar} from "./Sidebar/Sidebar";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Badge, Button, Card, Form, Modal} from "react-bootstrap";
 import {BsArrowRight} from "react-icons/bs";
 import StarRatings from "react-star-ratings";
-
+import {backLink} from "../Consts";
+import axios from "axios";
 
 export function Complaints() {
 
     //TODO: Napraviti complaintDTO koji sadrzi sledece podatke, moze i dodatne ako ti treba
+    const [complaints, setComplaints] = useState([]);
 
-
-
-    const [requests, setRequests] = useState([
-        {
-            userFullName: "Ana Nikolic",
-            comment: "Ne mogu da nadjem dugme za akcije!"
-        },
-        {
-            userFullName: "Mirko Markic",
-            comment: "Navigacija vam je realno onako"
-        }
-
-    ]);
+    const fetchComplaints=()=>{
+        axios.get(backLink+"/complaints").then(
+            response=>{
+                setComplaints(response.data)
+            }
+        )
+    }
+    useEffect(() => {
+        fetchComplaints()
+    })
 
 
     return (<div className="d-flex" style={{height: "100vh"}}>
@@ -30,7 +29,7 @@ export function Complaints() {
         </div>
         <div className="w-75 overflow-auto">
 
-            {requests.map((request, index) => {
+            {complaints.map((request, index) => {
                 return (
                     <Complaint key={index} request={request}/>
                 )
