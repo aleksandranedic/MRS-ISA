@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import {Badge, Button, Card, Form, Modal} from "react-bootstrap";
 import {BsArrowRight} from "react-icons/bs";
 import StarRatings from "react-star-ratings";
-import {backLink} from "../Consts";
+import {backLink, loadingToast, updateForFetchedDataSuccess} from "../Consts";
 import axios from "axios";
 
 export function Complaints() {
@@ -72,6 +72,19 @@ function Complaint({request}) {
 function ComplaintModal({request, show, setShow}) {
 
     const [response, setResponse] = useState("");
+    const answerComplaint=()=>{
+        const dto={
+            complaintId:request.id,
+            userId:request.userId,
+            entityId:request.entityId,
+            response:response,
+            entityType:request.entityType
+        }
+        let id = loadingToast()
+        axios.post(backLink+"/complaints",dto).then(response=>{
+            updateForFetchedDataSuccess(response.data, id)
+        })
+    }
 
     return <Modal show={show} onHide={() => setShow(false)}>
         <Modal.Header closeButton className="d-flex align-items-center">
@@ -89,7 +102,7 @@ function ComplaintModal({request, show, setShow}) {
         </Modal.Body>
 
         <Modal.Footer className="d-flex justify-content-end">
-            <Button className="ms-auto m-1" variant="outline-secondary">Odgovori</Button>
+            <Button className="ms-auto m-1" variant="outline-secondary" onClick={()=>answerComplaint()}>Odgovori</Button>
         </Modal.Footer>
     </Modal>
 }
