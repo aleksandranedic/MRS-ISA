@@ -101,7 +101,7 @@ public class DeleteRequestService {
                 }
             }
             response = "Uspešno ste obrisali korisnika";
-            emailService.send(email, buildEmail(fullName));
+            emailService.send(email, buildEmail(fullName),"Brisanje korisnika");
         } else {
             response = "Uspešno ste odbili brisanje korisnika";
         }

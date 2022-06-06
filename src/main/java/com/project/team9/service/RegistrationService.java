@@ -27,7 +27,7 @@ public class RegistrationService {
 
 
     @Autowired
-    public RegistrationService(UserServiceSecurity userServiceSecurity, RegistrationRequestService registrationRequestService, ConfirmationTokenService confirmationTokenService, EmailSender emailSender, RoleService roleService) {
+    public RegistrationService(UserServiceSecurity userServiceSecurity, RegistrationRequestService registrationRequestService, EmailSender emailSender,ConfirmationTokenService confirmationTokenService, RoleService roleService) {
         this.userServiceSecurity = userServiceSecurity;
         this.registrationRequestService = registrationRequestService;
         this.confirmationTokenService = confirmationTokenService;
@@ -61,7 +61,7 @@ public class RegistrationService {
                 String link = "http://localhost:3000/confirmedEmail/" + token;
                 emailSender.send(
                         registrationRequest.getEmail(),
-                        buildEmail(registrationRequest.getFirstName() + " " + registrationRequest.getLastName(), link));
+                        buildEmail(registrationRequest.getFirstName() + " " + registrationRequest.getLastName(), link),"Verifikacija emaila");
                 ConfirmationToken confirmationToken = new ConfirmationToken(
                         token,
                         LocalDateTime.now(),

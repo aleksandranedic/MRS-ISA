@@ -13,7 +13,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 @Service
-public class EmailService implements EmailSender {
+public class EmailService implements EmailSender{
 
     private final static Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
 
@@ -24,16 +24,15 @@ public class EmailService implements EmailSender {
         this.mailSender = mailSender;
     }
 
-
     @Override
     @Async
-    public void send(String to, String email) {
+    public void send(String to, String email,String subject) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
             helper.setText(email, true);
             helper.setTo("tim9raketa+"+to);
-            helper.setSubject("Confirm your email");
+            helper.setSubject(subject);
             helper.setFrom("tim9raketa@gmail.com");
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
@@ -41,4 +40,5 @@ public class EmailService implements EmailSender {
             throw new IllegalStateException("failed to send email");
         }
     }
+
 }

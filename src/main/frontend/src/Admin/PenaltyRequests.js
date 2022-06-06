@@ -1,45 +1,29 @@
 import {Sidebar} from "./Sidebar/Sidebar";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Badge, Button, Card, Form, Modal} from "react-bootstrap";
 import {BsArrowRight} from "react-icons/bs";
 import StarRatings from "react-star-ratings";
-
+import {backLink, loadingToast, updateForFetchedDataSuccess} from "../Consts";
+import axios from "axios";
+import {ToastContainer} from "react-toastify";
 
 export function PenaltyRequests() {
 
     //TODO: Napraviti vendorReviewDTO koji sadrzi sledece podatke, moze i dodatne ako ti treba
 
-    const [requests, setRequests] = useState([
-        {
-            resourceTitle: "Vikendica",
-            vendorFullName: "Marko Jelic",
-            rating: 5,
-            clientFullName: "Ana Nikolic",
-            penalty: false,
-            noShow: false,
-            comment: "Solidan klijent, nemam vecih primedbi. Kupatilo je ostalo malo u neredu."
-        },
-        {
-            resourceTitle: "Vikendica",
-            vendorFullName: "Marko Jelic",
-            rating: 1,
-            clientFullName: "Mirko Markic",
-            penalty: false,
-            noShow: true,
-            comment: "Nije se pojavio!"
-        },
-        {
-            resourceTitle: "Vikendica",
-            vendorFullName: "Marko Jelic",
-            rating: 1,
-            clientFullName: "Petar Perin",
-            penalty: true,
-            noShow: true,
-            comment: "Vikendica izgleda kao da je tornado prosao kroz nju!"
-        }
+    const [requests, setRequests] = useState([]);
 
-    ]);
+    const fetchPenalty = () => {
+        axios.get(backLink + "/penaltyReview").then(
+            response => {
+                setRequests(response.data)
+            }
+        )
+    }
 
+    useEffect(() => {
+        fetchPenalty()
+    }, [])
 
     return (<div className="d-flex" style={{height: "100vh"}}>
         <div className="w-25" style={{backgroundColor: "#f7f8f9"}}>
@@ -77,13 +61,13 @@ function PenaltyRequestCard({request}) {
                 <h5 className="mt-2">{request.resourceTitle}</h5>
 
                 {request.penalty === true &&
-                    <Badge className="ms-auto" bg="danger">PENAL</Badge>
+                <Badge className="ms-auto" bg="danger">PENAL</Badge>
                 }
                 {request.noShow === true && request.penalty === false &&
-                    <Badge className="ms-auto" bg="warning">BEZ POJAVLJIVANJA</Badge>
+                <Badge className="ms-auto" bg="warning">BEZ POJAVLJIVANJA</Badge>
                 }
                 {request.noShow === true && request.penalty === true &&
-                    <Badge className="ms-2" bg="warning">BEZ POJAVLJIVANJA</Badge>
+                <Badge className="ms-2" bg="warning">BEZ POJAVLJIVANJA</Badge>
                 }
 
             </Card.Header>
@@ -111,10 +95,49 @@ function PenaltyRequestCard({request}) {
 }
 
 function PenaltyRequestModal({request, show, setShow}) {
-
+    const [checkPenalty, setCheckPenalty] = useState(false)
+    const [checkNoShow, setNoShow] = useState(false)
     const [response, setResponse] = useState("");
 
-    return <Modal show={show} onHide={() => setShow(false)}>
+    const reviewPenalty = () => {
+        const dto = {
+            response: response,
+            clientId: request.clientId,
+            penalty: request.penalty,
+            noShow: request.noShow,
+            reservationId: request.reservationId,
+            resourceId: request.resourceId,
+            rating: request.rating,
+            text: request.comment,
+            checkNoShow: checkNoShow,
+            checkPenalty: checkPenalty,
+            vendorReviewRequestId: request.vendorReviewRequestId
+        }
+        let id = loadingToast()
+        axios.post(backLink + "/penaltyReview", dto).then(
+            res => {
+                updateForFetchedDataSuccess(res.data, id)
+            }
+        )
+    }
+    const denyPenalty = () => {
+
+        const dto = {
+            vendorReviewRequestId: request.vendorReviewRequestId,
+            resourceId: request.resourceId,
+            response: response,
+        }
+        console.log(dto)
+        let id = loadingToast()
+        axios.post(backLink + "/penaltyReview/deny", dto).then(
+            res => {
+                updateForFetchedDataSuccess(res.data, id)
+            }
+        )
+    }
+
+
+    return <> <Modal show={show} onHide={() => setShow(false)}>
         <Modal.Header closeButton className="d-flex align-items-center">
             <h5 className="mt-2">{request.resourceTitle}</h5>
 
@@ -136,31 +159,54 @@ function PenaltyRequestModal({request, show, setShow}) {
                 <Form.Control as="textarea" rows={3} name="response" value={response}
                               onChange={e => setResponse(e.target.value)}/>
                 {request.penalty === true &&
-                    <Form.Check
-                        type="switch"
-                        id="penalty"
-                        label="Dodeli penal"
-                        className="mt-2"
-                    />}
+                <Form.Check
+                    value={checkPenalty}
+                    onChange={() => {
+                        setCheckPenalty(!checkPenalty)
+                        console.log(checkPenalty)
+                    }}
+                    type="switch"
+                    id="penalty"
+                    label="Dodeli penal"
+                    className="mt-2"
+                />}
                 {request.noShow === true &&
-                    <Form.Check
-                        type="switch"
-                        id="noShow"
-                        label="Dodeli penal za nepojavljivanje"
-                        className="mt-2"
-                    />}
+                <Form.Check
+                    value={checkNoShow}
+                    onChange={() => {
+                        setNoShow(!checkNoShow)
+                    }}
+                    type="switch"
+                    id="noShow"
+                    label="Dodeli penal za nepojavljivanje"
+                    className="mt-2"
+                />}
             </Form>
 
         </Modal.Body>
 
         <Modal.Footer className="d-flex justify-content-end">
             {request.penalty === true &&
-                <Badge bg="danger">PENAL</Badge>
+            <Badge bg="danger">PENAL</Badge>
             }
             {request.noShow === true &&
-                <Badge bg="warning">BEZ POJAVLJIVANJA</Badge>
+            <Badge bg="warning">BEZ POJAVLJIVANJA</Badge>
             }
-            <Button className="ms-auto m-1" variant="outline-secondary">Odgovori</Button>
+            <Button className="ms-auto m-1" variant="outline-success" onClick={() => reviewPenalty()}>Odobri</Button>
+            <Button className="m-1" variant="outline-danger" onClick={() => denyPenalty()}>Poništi</Button>
         </Modal.Footer>
     </Modal>
+        <ToastContainer
+            position="top-center"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme={"colored"}
+        />
+    </>
 }

@@ -6,6 +6,7 @@ import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.request.DeleteRequest;
 import com.project.team9.model.request.RegistrationRequest;
+import com.project.team9.model.request.VendorReviewRequest;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
@@ -156,8 +157,49 @@ public class TestData {
         return new ClientReview(null, vendorId, rating, text, clientId);
     }
 
-    public VendorReview createVendorReview(Long resourceId, Long vendorId, int rating, String text, Long clientId, boolean penalty, boolean noShow, Long reservationId) {
-        return new VendorReview(resourceId, vendorId, rating, text, clientId, penalty, noShow, reservationId);
+    public VendorReview createVendorReview(Long resourceId, Long vendorId, int rating, String text, Long clientId, boolean penalty, boolean noShow, Long reservationId,String response) {
+        return new VendorReview(resourceId, vendorId, rating, text, clientId, penalty, noShow, reservationId, response);
     }
 
+    public VendorReviewRequest createVendorReviewRequestForAdventure(String comment, Adventure adventure, Long clientId, int rating, boolean penalty, boolean noShow, Long reservationId) {
+        return new VendorReviewRequest(
+                comment,
+                "",
+                adventure.getId(),
+                adventure.getOwner().getId(),
+                rating,
+                clientId,
+                penalty,
+                noShow,
+                reservationId
+        );
+    }
+
+    public VendorReviewRequest createVendorReviewRequestForVacationHouse(String s, VacationHouse vacationHouse, Long id, int rating,  boolean penalty, boolean noShow,  long l) {
+        return new VendorReviewRequest(
+                s,
+                "",
+                vacationHouse.getId(),
+                vacationHouse.getOwner().getId(),
+                rating,
+                id,
+                penalty,
+                noShow,
+                l
+        );
+    }
+
+    public VendorReviewRequest createVendorReviewRequestForBoat(String s, Boat boat, Long id, int rating,boolean penalty, boolean noShow, long reservationId) {
+        return new VendorReviewRequest(
+                s,
+                "",
+                boat.getId(),
+                boat.getOwner().getId(),
+                rating,
+                id,
+                penalty,
+                noShow,
+                reservationId
+        );
+    }
 }

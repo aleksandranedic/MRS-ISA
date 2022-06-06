@@ -6,6 +6,7 @@ import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.request.DeleteRequest;
 import com.project.team9.model.request.RegistrationRequest;
+import com.project.team9.model.request.VendorReviewRequest;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
@@ -27,7 +28,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.time.Month;
 import java.util.*;
 
 @Configuration
@@ -53,13 +53,15 @@ public class Config {
     DeleteRequestRepository deleteRequestRepository;
     AdministratorRepository administratorRepository;
     TestData testData;
+    VendorReviewRequestRepository vendorReviewRequestRepository;
     private Random random;
     private HashMap<Integer, String> messages;
 
 
     @Bean
-    CommandLineRunner configureTestData(AdventureRepository adventureRepository, FishingInstructorRepository fishingInstructorRepository, PricelistRepository pricelistRepository, AddressRepository addressRepository, TagRepository tagRepository, AdventureReservationRepository adventureReservationRepository, AppointmentRepository appointmentRepository, ImageRepository imageRepository, ClientRepository clientRepository, VacationHouseOwnerRepository vacationHouseOwnerRepository, VacationHouseRepository vacationHouseRepository, RoleRepository roleRepository, BoatOwnerRepository boatOwnerRepository, BoatRepository boatRepository, VacationHouseReservationRepository vacationHouseReservationRepository, BoatReservationRepository boatReservationRepository, ReviewRepository reviewRepository, RegistrationRequestRepository registrationRequestRepository, DeleteRequestRepository deleteRequestRepository, AdministratorRepository administratorRepository, TestData testData) {
+    CommandLineRunner configureTestData(VendorReviewRequestRepository vendorReviewRequestRepository,AdventureRepository adventureRepository, FishingInstructorRepository fishingInstructorRepository, PricelistRepository pricelistRepository, AddressRepository addressRepository, TagRepository tagRepository, AdventureReservationRepository adventureReservationRepository, AppointmentRepository appointmentRepository, ImageRepository imageRepository, ClientRepository clientRepository, VacationHouseOwnerRepository vacationHouseOwnerRepository, VacationHouseRepository vacationHouseRepository, RoleRepository roleRepository, BoatOwnerRepository boatOwnerRepository, BoatRepository boatRepository, VacationHouseReservationRepository vacationHouseReservationRepository, BoatReservationRepository boatReservationRepository, ReviewRepository reviewRepository, RegistrationRequestRepository registrationRequestRepository, DeleteRequestRepository deleteRequestRepository, AdministratorRepository administratorRepository, TestData testData) {
         this.adventureRepository = adventureRepository;
+        this.vendorReviewRequestRepository=vendorReviewRequestRepository;
         this.fishingInstructorRepository = fishingInstructorRepository;
         this.pricelistRepository = pricelistRepository;
         this.addressRepository = addressRepository;
@@ -447,12 +449,37 @@ public class Config {
 
         addClientReviewForVendor(fishingInstructor18, client5);
         addClientReviewForVendor(fishingInstructor18, client6);
+        //-------------------------------------------------------
 
 
+
+        addVendorReviewRequestForAdventure(client4,adventure4,(long)59);
+        addVendorReviewRequestForBoat(client6,boat8,(long) 79);
+        addVendorReviewRequestForVacationHouse(client6,vacationHouse13,(long)4);
         //-------------------------------------------------------
 
 
     }
+
+    private void addVendorReviewRequestForVacationHouse(Client client, VacationHouse vacationHouse, long l) {
+        int rating = random.nextInt(4)+1;
+        VendorReviewRequest vendorReviewRequest=testData.createVendorReviewRequestForVacationHouse("Solidan klijent, nemam vecih primedbi. Kupatilo je ostalo malo u neredu.",vacationHouse,client.getId(),rating,false,false,l);
+        vendorReviewRequestRepository.save(vendorReviewRequest);
+    }
+
+    private void addVendorReviewRequestForAdventure(Client client, Adventure adventure, long reservationId) {
+        int rating = random.nextInt(4)+1;
+        VendorReviewRequest vendorReviewRequest=testData.createVendorReviewRequestForAdventure("Solidan klijent, nemam vecih primedbi. Kupatilo je ostalo malo u neredu.",adventure,client.getId(),rating,false,true,reservationId);
+        vendorReviewRequestRepository.save(vendorReviewRequest);
+    }
+
+    private void addVendorReviewRequestForBoat(Client client, Boat boat, long reservationId) {
+        int rating = random.nextInt(4)+1;
+        VendorReviewRequest vendorReviewRequest=testData.createVendorReviewRequestForBoat("Solidan klijent, nemam vecih primedbi. Kupatilo je ostalo malo u neredu.",boat,client.getId(),rating,true,true,reservationId);
+        vendorReviewRequestRepository.save(vendorReviewRequest);
+    }
+
+
 
     private void addClientReviewForResource(Resource resource, Client client) {
         int rating = random.nextInt(4)+1;
@@ -555,7 +582,6 @@ public class Config {
         adventureReservationRepository.save(r);
         adventure.addQuickReservation(r);
         adventureRepository.save(adventure);
-
     }
 
     private void addAdventureQuickReservation(Adventure adventure, int month, int day, int startHour, int endHour) {

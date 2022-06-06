@@ -5,7 +5,9 @@ import com.project.team9.repo.VendorReviewRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class VendorReviewRequestService {
@@ -24,5 +26,17 @@ public class VendorReviewRequestService {
     public boolean reservationHasReviewRequest(Long id) {
 
         return this.repository.findReviewForReservation(id).size() > 0;
+    }
+
+    public List<VendorReviewRequest> getAllVendorReviews() {
+        return repository.findAll().stream().filter(vendorReviewRequest -> !vendorReviewRequest.getDeleted()).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public VendorReviewRequest getById(Long id){return repository.getById(id);}
+
+    public void delete(Long vendorReviewRequestId) {
+        VendorReviewRequest vendorReviewRequest=getById(vendorReviewRequestId);
+        vendorReviewRequest.setDeleted(true);
+        repository.save(vendorReviewRequest);
     }
 }
