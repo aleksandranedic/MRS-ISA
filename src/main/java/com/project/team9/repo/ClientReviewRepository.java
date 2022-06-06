@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Repository
-public interface ReviewRepository extends JpaRepository<ClientReview, Long> {
+public interface ClientReviewRepository extends JpaRepository<ClientReview, Long> {
     List<ClientReview> findByResourceId(Long resource_id);
     List<ClientReview> findByVendorId(Long vendor_id);
 

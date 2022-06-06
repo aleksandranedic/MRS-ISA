@@ -99,7 +99,7 @@ function PenaltyRequestModal({request, show, setShow}) {
     const [checkNoShow, setNoShow] = useState(false)
     const [response, setResponse] = useState("");
 
-    const reviewPenalty = () => {
+    const approveVendorReview = () => {
         const dto = {
             response: response,
             clientId: request.clientId,
@@ -114,13 +114,13 @@ function PenaltyRequestModal({request, show, setShow}) {
             vendorReviewRequestId: request.vendorReviewRequestId
         }
         let id = loadingToast()
-        axios.post(backLink + "/penaltyReview", dto).then(
+        axios.post(backLink + "/penaltyReview/approve", dto).then(
             res => {
                 updateForFetchedDataSuccess(res.data, id)
             }
         )
     }
-    const denyPenalty = () => {
+    const denyVendorReview = () => {
 
         const dto = {
             vendorReviewRequestId: request.vendorReviewRequestId,
@@ -192,8 +192,8 @@ function PenaltyRequestModal({request, show, setShow}) {
             {request.noShow === true &&
             <Badge bg="warning">BEZ POJAVLJIVANJA</Badge>
             }
-            <Button className="ms-auto m-1" variant="outline-success" onClick={() => reviewPenalty()}>Odobri</Button>
-            <Button className="m-1" variant="outline-danger" onClick={() => denyPenalty()}>Poništi</Button>
+            <Button className="ms-auto m-1" variant="outline-success" onClick={() => approveVendorReview()}>Odobri</Button>
+            <Button className="m-1" variant="outline-danger" onClick={() => denyVendorReview()}>Poništi</Button>
         </Modal.Footer>
     </Modal>
         <ToastContainer

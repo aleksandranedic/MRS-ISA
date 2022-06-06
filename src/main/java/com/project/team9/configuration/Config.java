@@ -4,6 +4,7 @@ import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
+import com.project.team9.model.request.ClientReviewRequest;
 import com.project.team9.model.request.DeleteRequest;
 import com.project.team9.model.request.RegistrationRequest;
 import com.project.team9.model.request.VendorReviewRequest;
@@ -48,18 +49,20 @@ public class Config {
     BoatRepository boatRepository;
     VacationHouseReservationRepository vacationHouseReservationRepository;
     BoatReservationRepository boatReservationRepository;
-    ReviewRepository reviewRepository;
+    ClientReviewRepository clientReviewRepository;
     RegistrationRequestRepository registrationRequestRepository;
     DeleteRequestRepository deleteRequestRepository;
     AdministratorRepository administratorRepository;
     TestData testData;
     VendorReviewRequestRepository vendorReviewRequestRepository;
+    ClientReviewRequestRepository clientReviewRequestRepository;
     private Random random;
     private HashMap<Integer, String> messages;
 
 
     @Bean
-    CommandLineRunner configureTestData(VendorReviewRequestRepository vendorReviewRequestRepository,AdventureRepository adventureRepository, FishingInstructorRepository fishingInstructorRepository, PricelistRepository pricelistRepository, AddressRepository addressRepository, TagRepository tagRepository, AdventureReservationRepository adventureReservationRepository, AppointmentRepository appointmentRepository, ImageRepository imageRepository, ClientRepository clientRepository, VacationHouseOwnerRepository vacationHouseOwnerRepository, VacationHouseRepository vacationHouseRepository, RoleRepository roleRepository, BoatOwnerRepository boatOwnerRepository, BoatRepository boatRepository, VacationHouseReservationRepository vacationHouseReservationRepository, BoatReservationRepository boatReservationRepository, ReviewRepository reviewRepository, RegistrationRequestRepository registrationRequestRepository, DeleteRequestRepository deleteRequestRepository, AdministratorRepository administratorRepository, TestData testData) {
+    CommandLineRunner configureTestData(ClientReviewRequestRepository clientReviewRequestRepository, VendorReviewRequestRepository vendorReviewRequestRepository, AdventureRepository adventureRepository, FishingInstructorRepository fishingInstructorRepository, PricelistRepository pricelistRepository, AddressRepository addressRepository, TagRepository tagRepository, AdventureReservationRepository adventureReservationRepository, AppointmentRepository appointmentRepository, ImageRepository imageRepository, ClientRepository clientRepository, VacationHouseOwnerRepository vacationHouseOwnerRepository, VacationHouseRepository vacationHouseRepository, RoleRepository roleRepository, BoatOwnerRepository boatOwnerRepository, BoatRepository boatRepository, VacationHouseReservationRepository vacationHouseReservationRepository, BoatReservationRepository boatReservationRepository, ClientReviewRepository clientReviewRepository, RegistrationRequestRepository registrationRequestRepository, DeleteRequestRepository deleteRequestRepository, AdministratorRepository administratorRepository, TestData testData) {
+        this.clientReviewRequestRepository=clientReviewRequestRepository;
         this.adventureRepository = adventureRepository;
         this.vendorReviewRequestRepository=vendorReviewRequestRepository;
         this.fishingInstructorRepository = fishingInstructorRepository;
@@ -77,7 +80,7 @@ public class Config {
         this.boatRepository = boatRepository;
         this.vacationHouseReservationRepository = vacationHouseReservationRepository;
         this.boatReservationRepository = boatReservationRepository;
-        this.reviewRepository = reviewRepository;
+        this.clientReviewRepository = clientReviewRepository;
         this.registrationRequestRepository = registrationRequestRepository;
         this.deleteRequestRepository = deleteRequestRepository;
         this.administratorRepository = administratorRepository;
@@ -458,7 +461,29 @@ public class Config {
         addVendorReviewRequestForVacationHouse(client6,vacationHouse13,(long)4);
         //-------------------------------------------------------
 
+//        {
+//            resourceTitle: "Vikendica",
+//                    vendorFullName: null,
+//                rating: 5,
+//                clientFullName: "Ana Nikolic",
+//                comment: "Savrsena vikendica!"
+//        },
+//        {
+//            resourceTitle: null,
+//                    vendorFullName: "Marko Jelic",
+//                rating: 1,
+//                clientFullName: "Mirko Markic",
+//                comment: "Vrlo losa usluga! Vikendicu je nemoguce pronaci"
+//        }
+        addClientRequestReview(client3,vacationHouse13,"Savrsena vikendica!",true);
+        addClientRequestReview(client3,vacationHouse14,"Vrlo losa usluga! Vikendicu je nemoguce pronaci",false);
 
+    }
+
+    private void addClientRequestReview(Client client3, VacationHouse vacationHouse13, String comment,Boolean isResource) {
+        int rating = random.nextInt(4)+1;
+        ClientReviewRequest clientReviewRequest=testData.createClientReviewRequestForResource(client3,vacationHouse13,rating,comment,isResource);
+        clientReviewRequestRepository.save(clientReviewRequest);
     }
 
     private void addVendorReviewRequestForVacationHouse(Client client, VacationHouse vacationHouse, long l) {
@@ -484,13 +509,13 @@ public class Config {
     private void addClientReviewForResource(Resource resource, Client client) {
         int rating = random.nextInt(4)+1;
         ClientReview r = testData.createClientReviewForResource(resource.getId(), client.getId(),  rating, messages.get(rating));
-        reviewRepository.save(r);
+        clientReviewRepository.save(r);
     }
 
     private void addClientReviewForVendor(Vendor vendor, Client client) {
         int rating = random.nextInt(4)+1;
         ClientReview r = testData.createClientReviewForVendor(vendor.getId(), client.getId(),  rating, messages.get(rating));
-        reviewRepository.save(r);
+        clientReviewRepository.save(r);
     }
 
 

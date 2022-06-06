@@ -4,6 +4,7 @@ import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
+import com.project.team9.model.request.ClientReviewRequest;
 import com.project.team9.model.request.DeleteRequest;
 import com.project.team9.model.request.RegistrationRequest;
 import com.project.team9.model.request.VendorReviewRequest;
@@ -34,7 +35,6 @@ public class TestData {
     private final BCryptPasswordEncoder passwordEncoder;
 
 
-
     public TestData() {
         this.passwordEncoder = new BCryptPasswordEncoder();
 
@@ -62,7 +62,7 @@ public class TestData {
     }
 
     public FishingInstructor createFishingInstructor(Long id, String firstName, String lastName, String biography, Address address, Image profilePhoto, Role role) {
-        FishingInstructor fishingInstructor = new FishingInstructor(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName,  firstName.toLowerCase() + "." + lastName.toLowerCase() + "@gmail.com", "0601234567", address, false, "", biography, role, new ArrayList<Adventure>());
+        FishingInstructor fishingInstructor = new FishingInstructor(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName, firstName.toLowerCase() + "." + lastName.toLowerCase() + "@gmail.com", "0601234567", address, false, "", biography, role, new ArrayList<Adventure>());
 
         fishingInstructor.setId(id);
 
@@ -78,13 +78,13 @@ public class TestData {
 
     public BoatOwner createBoatOwner(Long id, String firstName, String lastName, Address address, Image profilePhoto, Role role) {
 
-        BoatOwner boatOwner = new BoatOwner(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName,  firstName.toLowerCase() + "." + lastName.toLowerCase() + "@gmail.com", "0601234567", address, false, "", new ArrayList<>(), role);
+        BoatOwner boatOwner = new BoatOwner(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName, firstName.toLowerCase() + "." + lastName.toLowerCase() + "@gmail.com", "0601234567", address, false, "", new ArrayList<>(), role);
         boatOwner.setId(id);
         return boatOwner;
     }
 
     public Administrator createAdministrator(Long id, String firstName, String lastName, Address address, Image profilePhoto, Role role, boolean isSuperAdministrator) {
-        Administrator administrator = new Administrator(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName,  firstName.toLowerCase() + "." + lastName.toLowerCase() + "@gmail.com", "0601234567", address, false, role, isSuperAdministrator);
+        Administrator administrator = new Administrator(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName, firstName.toLowerCase() + "." + lastName.toLowerCase() + "@gmail.com", "0601234567", address, false, role, isSuperAdministrator);
         administrator.setId(id);
         return administrator;
     }
@@ -150,14 +150,14 @@ public class TestData {
     }
 
     public ClientReview createClientReviewForResource(Long resourceId, Long clientId, int rating, String text) {
-        return new ClientReview(resourceId, null, rating, text, clientId);
+        return new ClientReview(resourceId, null, rating, text, clientId,"");
     }
 
     public ClientReview createClientReviewForVendor(Long vendorId, Long clientId, int rating, String text) {
-        return new ClientReview(null, vendorId, rating, text, clientId);
+        return new ClientReview(null, vendorId, rating, text, clientId,"");
     }
 
-    public VendorReview createVendorReview(Long resourceId, Long vendorId, int rating, String text, Long clientId, boolean penalty, boolean noShow, Long reservationId,String response) {
+    public VendorReview createVendorReview(Long resourceId, Long vendorId, int rating, String text, Long clientId, boolean penalty, boolean noShow, Long reservationId, String response) {
         return new VendorReview(resourceId, vendorId, rating, text, clientId, penalty, noShow, reservationId, response);
     }
 
@@ -175,7 +175,7 @@ public class TestData {
         );
     }
 
-    public VendorReviewRequest createVendorReviewRequestForVacationHouse(String s, VacationHouse vacationHouse, Long id, int rating,  boolean penalty, boolean noShow,  long l) {
+    public VendorReviewRequest createVendorReviewRequestForVacationHouse(String s, VacationHouse vacationHouse, Long id, int rating, boolean penalty, boolean noShow, long l) {
         return new VendorReviewRequest(
                 s,
                 "",
@@ -189,7 +189,7 @@ public class TestData {
         );
     }
 
-    public VendorReviewRequest createVendorReviewRequestForBoat(String s, Boat boat, Long id, int rating,boolean penalty, boolean noShow, long reservationId) {
+    public VendorReviewRequest createVendorReviewRequestForBoat(String s, Boat boat, Long id, int rating, boolean penalty, boolean noShow, long reservationId) {
         return new VendorReviewRequest(
                 s,
                 "",
@@ -200,6 +200,12 @@ public class TestData {
                 penalty,
                 noShow,
                 reservationId
+        );
+    }
+
+    public ClientReviewRequest createClientReviewRequestForResource(Client client3, VacationHouse vacationHouse13, int rating, String comment, Boolean isResource) {
+        return new ClientReviewRequest(
+                comment, "", isResource ? vacationHouse13.getId() : null, !isResource ? vacationHouse13.getOwner().getId() : null, rating, client3.getId()
         );
     }
 }

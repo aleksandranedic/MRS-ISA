@@ -98,7 +98,7 @@ public class PenaltyReviewService {
         return list;
     }
 
-    public String createVendorReview(VendorReviewResponseDTO reviewResponseDTO) {
+    public String approveVendorReview(VendorReviewResponseDTO reviewResponseDTO) {
         String[] list = getResourceTitleVendorNameVendorId(reviewResponseDTO.getResourceId());
         VendorReview vendorReview = new VendorReview(
                 reviewResponseDTO.getResourceId(),
@@ -212,7 +212,7 @@ public class PenaltyReviewService {
                 "</div></div>";
     }
 
-    public String denyReview(VendorRequestReviewDenialDTO denialDTO) {
+    public String denyVendorReview(VendorRequestReviewDenialDTO denialDTO) {
         String[] list = getResourceTitleVendorNameVendorId(denialDTO.getResourceId());
         vendorReviewRequestService.delete(denialDTO.getVendorReviewRequestId());
         emailSender.send(list[3], buildEmail(list[1], denialDTO.getResponse(),"Recenzija je odbijena"), "Recenzija");

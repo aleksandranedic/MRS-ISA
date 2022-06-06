@@ -16,7 +16,7 @@ public class VendorReview extends Review{
     }
 
     public VendorReview(Long resourceId, Long vendorId, int rating, String text, Long clientId, boolean penalty, boolean noShow, Long reservationId, String response) {
-        super(resourceId, vendorId, rating, text);
+        super(resourceId, vendorId, rating, text, response);
         this.clientId = clientId;
         this.penalty = penalty;
         this.noShow = noShow;

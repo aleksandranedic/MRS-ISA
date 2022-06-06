@@ -23,12 +23,12 @@ public class PenaltyReviewController {
     public ResponseEntity<List<VendorReviewDTO>> getPenaltyRequests(){
         return  ResponseEntity.ok(reviewService.getPenaltyReviews());
     }
-    @PostMapping
-    public ResponseEntity<String> createVendorReview(@RequestBody VendorReviewResponseDTO reviewResponseDTO){
-        return ResponseEntity.ok(reviewService.createVendorReview(reviewResponseDTO));
+    @PostMapping(path = "approve")
+    public ResponseEntity<String> approveVendorReview(@RequestBody VendorReviewResponseDTO reviewResponseDTO){
+        return ResponseEntity.ok(reviewService.approveVendorReview(reviewResponseDTO));
     }
     @PostMapping(path = "deny")
-    public ResponseEntity<String> createVendorReview(@RequestBody VendorRequestReviewDenialDTO vendorRequestReviewDenial){
-        return ResponseEntity.ok(reviewService.denyReview(vendorRequestReviewDenial));
+    public ResponseEntity<String> denyVendorReview(@RequestBody VendorRequestReviewDenialDTO vendorRequestReviewDenial){
+        return ResponseEntity.ok(reviewService.denyVendorReview(vendorRequestReviewDenial));
     }
 }

@@ -10,8 +10,8 @@ public class ClientReview extends Review{
     public ClientReview() {
     }
 
-    public ClientReview(Long resourceId, Long vendorId, int rating, String text, long clientId) {
-        super(resourceId, vendorId, rating, text);
+    public ClientReview(Long resourceId, Long vendorId, int rating, String text, long clientId,String response) {
+        super(resourceId, vendorId, rating, text, response);
         this.clientId = clientId;
     }
 

@@ -41,12 +41,11 @@ public class BoatService {
     private final AppointmentService appointmentService;
     private final ClientService clientService;
     private final ReservationService reservationService;
-    private final ReviewService reviewService;
-    private final ReviewRequestService reviewRequestService;
+    private final ClientReviewService clientReviewService;
 
 
     @Autowired
-    public BoatService(BoatRepository repository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, BoatReservationService boatReservationService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService, ReviewService reviewService, ReviewRequestService reviewRequestService) {
+    public BoatService(BoatRepository repository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, BoatReservationService boatReservationService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService, ClientReviewService clientReviewService) {
         this.repository = repository;
         this.addressService = addressService;
         this.pricelistService = pricelistService;
@@ -56,8 +55,7 @@ public class BoatService {
         this.appointmentService = appointmentService;
         this.clientService = clientService;
         this.reservationService = reservationService;
-        this.reviewService = reviewService;
-        this.reviewRequestService = reviewRequestService;
+        this.clientReviewService = clientReviewService;
     }
 
     public List<Boat> getBoats() {
@@ -543,7 +541,7 @@ public class BoatService {
     public List<ReservationDTO> getReservationsForReview(Long id) {
         List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
         for (BoatReservation r : boatReservationService.getStandardReservations()) {
-            if (!reviewService.reservationHasReview(r.getId())) {
+            if (!clientReviewService.reservationHasReview(r.getId())) {
                 if (Objects.equals(r.getResource().getOwner().getId(), id)) {
                     int index = r.getAppointments().size() - 1;
                     LocalDateTime time = r.getAppointments().get(index).getEndTime();
@@ -671,7 +669,7 @@ public class BoatService {
     }
 
     private boolean checkReviewRating(BoatFilterDTO boatFilterDTO, Boat boat) {
-        List<ClientReviewDTO> list = reviewService.getResourceReviews(boat.getId());
+        List<ClientReviewDTO> list = clientReviewService.getResourceReviews(boat.getId());
         if (list.isEmpty() && (boatFilterDTO.getReviewRating().isEmpty() || boatFilterDTO.getReviewRating().equals("0")))
             return true;
         double score = list.stream().mapToDouble(ClientReviewDTO::getRating).sum() / list.size();
