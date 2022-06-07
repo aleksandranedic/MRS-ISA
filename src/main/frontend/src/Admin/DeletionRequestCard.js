@@ -23,7 +23,7 @@ export function DeletionRequestCard({request}) {
                 setShow(false)
                 setTimeout(function () {
                     window.location.reload();
-                }, 5000)
+                }, 2000)
             }
         )
     }

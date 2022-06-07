@@ -11,6 +11,7 @@ import java.util.List;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Client extends User {
 
+    private int numOfPenalties=0;
     public Client(Image profileImg, String password, String firstName, String lastName, String email, String phoneNumber, Address address, Boolean deleted, Role role) {
         super(profileImg, password, firstName, lastName, email, phoneNumber, address,  deleted, role);
     }
@@ -25,5 +26,13 @@ public class Client extends User {
 
     public Client() {
         super();
+    }
+
+    public int getNumOfPenalties() {
+        return numOfPenalties;
+    }
+
+    public void setNumOfPenalties(int numOfPenalties) {
+        this.numOfPenalties = numOfPenalties;
     }
 }

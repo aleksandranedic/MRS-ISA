@@ -7,17 +7,17 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 
 @Entity
-public class ReviewRequest extends Request{
+public class ClientReviewRequest extends Request{
 
     Long resourceId;
     Long vendorId;
     int rating;
     long clientId;
 
-    public ReviewRequest() {
+    public ClientReviewRequest() {
     }
 
-    public ReviewRequest(String comment, String response, Long resourceId, Long vendorId, int rating, long clientId) {
+    public ClientReviewRequest(String comment, String response, Long resourceId, Long vendorId, int rating, long clientId) {
         super(comment, response);
         this.resourceId = resourceId;
         this.vendorId = vendorId;
@@ -25,7 +25,7 @@ public class ReviewRequest extends Request{
         this.clientId = clientId;
     }
 
-    public ReviewRequest(ClientReview review) {
+    public ClientReviewRequest(ClientReview review) {
         super(review.getText(), "");
         this.resourceId = review.getResourceId();
         this.vendorId = review.getVendorId();

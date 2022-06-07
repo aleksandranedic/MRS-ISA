@@ -20,15 +20,25 @@ public abstract class Review {
 
     private int rating;
     private String text;
+    private String response;
 
     public Review() {
     }
 
-    public Review(Long resourceId, Long vendorId, int rating, String text) {
+    public Review(Long resourceId, Long vendorId, int rating, String text, String response) {
         this.resourceId = resourceId;
         this.vendorId = vendorId;
         this.rating = rating;
         this.text = text;
+        this.response = response;
+    }
+
+    public String getResponse() {
+        return response;
+    }
+
+    public void setResponse(String response) {
+        this.response = response;
     }
 
     public Long getId() {

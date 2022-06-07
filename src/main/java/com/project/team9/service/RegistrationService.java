@@ -27,7 +27,7 @@ public class RegistrationService {
 
 
     @Autowired
-    public RegistrationService(UserServiceSecurity userServiceSecurity, RegistrationRequestService registrationRequestService, ConfirmationTokenService confirmationTokenService, EmailSender emailSender, RoleService roleService) {
+    public RegistrationService(UserServiceSecurity userServiceSecurity, RegistrationRequestService registrationRequestService, EmailSender emailSender,ConfirmationTokenService confirmationTokenService, RoleService roleService) {
         this.userServiceSecurity = userServiceSecurity;
         this.registrationRequestService = registrationRequestService;
         this.confirmationTokenService = confirmationTokenService;
@@ -60,8 +60,9 @@ public class RegistrationService {
                 String token = userServiceSecurity.signUpUser(user);
                 String link = "http://localhost:3000/confirmedEmail/" + token;
                 emailSender.send(
-                        registrationRequest.getEmail(),
-                        buildEmail(registrationRequest.getFirstName() + " " + registrationRequest.getLastName(), link));
+                        user.getEmail(),
+                        buildEmail(user.getName(), link),
+                        "Verifikacija emaila");
                 ConfirmationToken confirmationToken = new ConfirmationToken(
                         token,
                         LocalDateTime.now(),
@@ -87,18 +88,18 @@ public class RegistrationService {
         if (confirmationToken == null)
             return "Token ne postoji";
         if (confirmationToken.getConfirmedAt() != null) {
-            return "Vas email je vec verifikovan";
+            return "Vaš email je vec verifikovan";
         }
         LocalDateTime expiredAt = confirmationToken.getExpiresAt();
         if (expiredAt.isBefore(LocalDateTime.now())) {
-            return "Vas verifikacioni token je istekao";
+            return "Vaš verifikacioni token je istekao";
         }
         confirmationTokenService.setConfirmedAt(token);
         User user = (User) userServiceSecurity.loadUserByUsername(confirmationToken.getUser().getEmail());
         user.setEnabled(true);
         userServiceSecurity.addClient((Client) user);
 
-        return "Vasa verifikacija je uspesna";
+        return "Vaša verifikacija je uspesna";
     }
 
     private String buildEmail(String name, String link) {
@@ -119,7 +120,7 @@ public class RegistrationService {
                 "                  \n" +
                 "                    </td>\n" +
                 "                    <td style=\"font-size:28px;line-height:1.315789474;Margin-top:4px;padding-left:10px\">\n" +
-                "                      <span style=\"font-family:Helvetica,Arial,sans-serif;font-weight:700;color:#ffffff;text-decoration:none;vertical-align:top;display:inline-block\">Confirm your email</span>\n" +
+                "                      <span style=\"font-family:Helvetica,Arial,sans-serif;font-weight:700;color:#ffffff;text-decoration:none;vertical-align:top;display:inline-block\">Verifikujte svoj email</span>\n" +
                 "                    </td>\n" +
                 "                  </tr>\n" +
                 "                </tbody></table>\n" +
@@ -157,7 +158,7 @@ public class RegistrationService {
                 "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
                 "      <td style=\"font-family:Helvetica,Arial,sans-serif;font-size:19px;line-height:1.315789474;max-width:560px\">\n" +
                 "        \n" +
-                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Hi " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> Thank you for registering. Please click on the below link to activate your account: </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a href=\"" + link + "\">Activate Now</a> </p></blockquote>\n Link will expire in 15 minutes. <p>See you soon</p>" +
+                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Zdravo " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> Hvala na registraciji. Molim Vas kliknite link ispod da bi aktivirali svoj nalog: </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a href=\"" + link + "\">Aktivirajte</a> </p></blockquote>\n Link ističe za 15 min. <p>Vidimo se uskoro</p>" +
                 "        \n" +
                 "      </td>\n" +
                 "      <td width=\"10\" valign=\"middle\"><br></td>\n" +

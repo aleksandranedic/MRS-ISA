@@ -36,13 +36,12 @@ public class AdventureService {
     private final ClientService clientService;
     private final AdventureReservationService adventureReservationService;
     private final ReservationService reservationService;
-    private final ReviewService reviewService;
-    private final ReviewRequestService reviewRequestService;
+    private final ClientReviewService clientReviewService;
 
     final String IMAGES_PATH = "/images/adventures/";
 
     @Autowired
-    public AdventureService(AdventureRepository adventureRepository, FishingInstructorService fishingInstructorService, TagService tagService, AddressService addressService, PricelistService pricelistService, ImageService imageService, AppointmentService appointmentService, ClientService clientService, AdventureReservationService adventureReservationService, ReservationService reservationService, ReviewService reviewService, ReviewRequestService reviewRequestService) {
+    public AdventureService(AdventureRepository adventureRepository, FishingInstructorService fishingInstructorService, TagService tagService, AddressService addressService, PricelistService pricelistService, ImageService imageService, AppointmentService appointmentService, ClientService clientService, AdventureReservationService adventureReservationService, ReservationService reservationService, ClientReviewService clientReviewService) {
         this.repository = adventureRepository;
         this.fishingInstructorService = fishingInstructorService;
         this.tagService = tagService;
@@ -53,8 +52,7 @@ public class AdventureService {
         this.clientService = clientService;
         this.adventureReservationService = adventureReservationService;
         this.reservationService = reservationService;
-        this.reviewService = reviewService;
-        this.reviewRequestService = reviewRequestService;
+        this.clientReviewService = clientReviewService;
     }
 
     public List<AdventureQuickReservationDTO> getQuickReservations(String id) {
@@ -426,7 +424,7 @@ public class AdventureService {
     public List<ReservationDTO> getReservationsForReview(Long id) {
         List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
         for (AdventureReservation r : adventureReservationService.getStandardReservations()) {
-            if (!reviewService.reservationHasReview(r.getId())) {
+            if (!clientReviewService.reservationHasReview(r.getId())) {
                 if (Objects.equals(r.getResource().getOwner().getId(), id)) {
                     int index = r.getAppointments().size() - 1;
                     LocalDateTime time = r.getAppointments().get(index).getEndTime();
@@ -573,7 +571,7 @@ public class AdventureService {
     }
 
     private boolean checkReviewRating(AdventureFilterDTO filterDTO, Adventure adventure) {
-        List<ClientReviewDTO> list = reviewService.getResourceReviews(adventure.getId());
+        List<ClientReviewDTO> list = clientReviewService.getResourceReviews(adventure.getId());
         if (list.isEmpty() && (filterDTO.getReviewRating().isEmpty() || filterDTO.getReviewRating().equals("0")))
             return true;
         double score = list.stream().mapToDouble(ClientReviewDTO::getRating).sum() / list.size();

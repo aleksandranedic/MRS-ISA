@@ -9,17 +9,19 @@ public class VendorReview extends Review{
     private boolean penalty;
     private boolean noShow;
     private Long reservationId;
+    private String response;
 
 
     public VendorReview() {
     }
 
-    public VendorReview(Long resourceId, Long vendorId, int rating, String text, Long clientId, boolean penalty, boolean noShow, Long reservationId) {
-        super(resourceId, vendorId, rating, text);
+    public VendorReview(Long resourceId, Long vendorId, int rating, String text, Long clientId, boolean penalty, boolean noShow, Long reservationId, String response) {
+        super(resourceId, vendorId, rating, text, response);
         this.clientId = clientId;
         this.penalty = penalty;
         this.noShow = noShow;
         this.reservationId = reservationId;
+        this.response = response;
     }
 
     public Long getReservationId() {
@@ -53,5 +55,13 @@ public class VendorReview extends Review{
 
     public void setClientId(Long clientId) {
         this.clientId = clientId;
+    }
+
+    public String getResponse() {
+        return response;
+    }
+
+    public void setResponse(String response) {
+        this.response = response;
     }
 }
