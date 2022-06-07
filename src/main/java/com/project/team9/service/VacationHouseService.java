@@ -7,7 +7,9 @@ import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.Appointment;
+import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.reservation.VacationHouseReservation;
+import com.project.team9.model.resource.Boat;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
@@ -82,6 +84,23 @@ public class VacationHouseService {
             houseCards.add(new HouseCardDTO(house.getId(), thumbnail, house.getTitle(), house.getDescription(), address));
         }
         return houseCards;
+    }
+
+    public List<VacationHouse> getOwnersHouses(Long owner_id){
+        return repository.findByOwnerId(owner_id);
+    }
+    public List<VacationHouseReservation> getHouseReservations(Long house_id){
+        return vacationHouseReservationService.getReservationsByVacationHouseId(house_id);
+    }
+
+    public List<ResourceReportDTO> getOwnerResources(Long owner_id) {
+        List<VacationHouse> houses = repository.findByOwnerId(owner_id);
+        List<ResourceReportDTO> resources = new ArrayList<ResourceReportDTO>();
+        for (VacationHouse resource : houses) {
+            Image img = resource.getImages().get(0);
+            resources.add(new ResourceReportDTO(resource.getId(), resource.getTitle(), img, reviewService.getRating(resource.getId(), "resource")));
+        }
+        return resources;
     }
 
     public VacationHouse getVacationHouse(Long id) {
