@@ -90,11 +90,8 @@ const FishingInstructors = ({id}) => {
                     {text: "Avanture", path: "#adventures"},
                     {text: "Kalendar zauzetosti", path: "#calendar"}
                 ]}
-                        editable={myPage} editFunction={handleShow} searchable={true} showProfile={true}
+                        editable={myPage} editFunction={handleShow} searchable={true} showProfile={true} showReports={true} type="adventure"
             />
-
-
-           
 
             <div className="pe-5 pt-0">
                 <OwnerInfo bio={fishingInstructor.biography}
@@ -119,25 +116,8 @@ const FishingInstructors = ({id}) => {
             <hr className="me-5 ms-5"/>
 
             {myPage && <>
-
                 <ReservationsToReview type={"adventure"}/>
-
-                <ReservationCardGrid reservations={reservations}/>
-
-                <h4 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)}
-                    aria-controls="reservationsTable"
-                    aria-expanded={open}
-                    style={{cursor: "pointer"}}
-                    id="reservationsHistory"
-                >Istorija rezervacija</h4>
-
-                <hr className="me-5 ms-5"/>
-                <Collapse in={open}>
-                    <div id="reservationsTable">
-                        <ReservationsTable reservations={reservations} showResource={false}/>
-                    </div>
-                </Collapse>
-                <AddReview type={"fishingInstructor"}/>
+                <ReservationCardGrid reservations={reservations}/>                    
                 <BeginButton/>
             </>}
             <ReviewsComp reviews = {ownerReviews}/>        
