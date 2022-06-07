@@ -103,6 +103,12 @@ public class BoatController {
         return  service.getReservationsForOwner(id);
     }
 
+    @GetMapping(value = "getOwnerResources/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ResourceReportDTO> getOwnerResources(@PathVariable String id) {
+        Long owner_id = Long.parseLong(id);
+        return service.getOwnerResources(owner_id);
+    }
+
     @GetMapping("/clientCanReviewVendor/{vendorId}/{clientId}")
     public boolean clientCanReviewVendor(@PathVariable Long vendorId, @PathVariable Long clientId){
         return service.clientCanReviewVendor(vendorId, clientId);
