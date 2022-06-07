@@ -81,7 +81,7 @@ function ComplaintModal({request, show, setShow}) {
             entityType:request.entityType
         }
         let id = loadingToast()
-        axios.post(backLink+"/complaints",dto).then(response=>{
+        axios.post(backLink+"/complaintemas",dto).then(response=>{
             updateForFetchedDataSuccess(response.data, id)
         })
     }

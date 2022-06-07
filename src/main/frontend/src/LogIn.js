@@ -36,7 +36,7 @@ export default function Login() {
     const [form, setForm] = useState({})
     const [errors, setErrors] = useState({})
 
-    const emailRegExp = new RegExp("[A-Za-z0-9]+@[a-z]+.(com)")
+    const emailRegExp = new RegExp("[A-Za-z0-9]+(@[a-z]+.(com)|(@maildrop\\.cc))")
 
     const findFormErrors = () => {
         const {email, password} = form

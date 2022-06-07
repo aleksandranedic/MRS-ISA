@@ -19,7 +19,7 @@ export default function EmailConfirmed() {
     const getData = () => {
         axios.get(backLink + "/registration/confirm/" + token.token).then(res => {
             console.log(res.data)
-            if (!res.data.message.startsWith("Vaš"))
+            if (!res.data.messageTitle.toString().startsWith("Vaša"))
                 setData(res.data)
         })
     }

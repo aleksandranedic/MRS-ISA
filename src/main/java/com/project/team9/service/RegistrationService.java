@@ -60,8 +60,9 @@ public class RegistrationService {
                 String token = userServiceSecurity.signUpUser(user);
                 String link = "http://localhost:3000/confirmedEmail/" + token;
                 emailSender.send(
-                        registrationRequest.getEmail(),
-                        buildEmail(registrationRequest.getFirstName() + " " + registrationRequest.getLastName(), link),"Verifikacija emaila");
+                        user.getEmail(),
+                        buildEmail(user.getName(), link),
+                        "Verifikacija emaila");
                 ConfirmationToken confirmationToken = new ConfirmationToken(
                         token,
                         LocalDateTime.now(),
@@ -87,18 +88,18 @@ public class RegistrationService {
         if (confirmationToken == null)
             return "Token ne postoji";
         if (confirmationToken.getConfirmedAt() != null) {
-            return "Vas email je vec verifikovan";
+            return "Vaš email je vec verifikovan";
         }
         LocalDateTime expiredAt = confirmationToken.getExpiresAt();
         if (expiredAt.isBefore(LocalDateTime.now())) {
-            return "Vas verifikacioni token je istekao";
+            return "Vaš verifikacioni token je istekao";
         }
         confirmationTokenService.setConfirmedAt(token);
         User user = (User) userServiceSecurity.loadUserByUsername(confirmationToken.getUser().getEmail());
         user.setEnabled(true);
         userServiceSecurity.addClient((Client) user);
 
-        return "Vasa verifikacija je uspesna";
+        return "Vaša verifikacija je uspesna";
     }
 
     private String buildEmail(String name, String link) {
