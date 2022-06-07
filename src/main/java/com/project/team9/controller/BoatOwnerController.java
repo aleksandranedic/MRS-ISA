@@ -1,5 +1,8 @@
 package com.project.team9.controller;
 
+import com.project.team9.dto.AttendanceReportParams;
+import com.project.team9.dto.IncomeReport;
+import com.project.team9.dto.IncomeReportDateRange;
 import com.project.team9.dto.UpdateOwnerDTO;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.user.vendor.BoatOwner;
@@ -35,9 +38,20 @@ public class BoatOwnerController {
 
     @GetMapping("names")
     public ResponseEntity<List<String>> getBONames(){return ResponseEntity.ok(service.getBONames());}
+
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public BoatOwner getOwner(@PathVariable String id) {
         return service.getOwner(Long.parseLong(id));
+    }
+
+    @PostMapping(value = "getIncomeReport/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public IncomeReport getIncomeReport(@PathVariable String id, IncomeReportDateRange dateRange) {
+        return service.getIncomeReport(Long.parseLong(id), dateRange);
+    }
+
+    @PostMapping(value = "getAttendanceReport/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public IncomeReport getAttendanceReport(@PathVariable String id, AttendanceReportParams attendanceReportParams) {
+        return service.getAttendanceReport(Long.parseLong(id), attendanceReportParams);
     }
 
     @PostMapping(value = "updateOwner/{id}")
@@ -79,17 +93,5 @@ public class BoatOwnerController {
         service.deleteById(id);
         return ResponseEntity.ok().build();
     }
-
-    //    @PutMapping("/{id}")
-    //    public VacationHouseOwner updateOwner(@PathVariable String idStr, @RequestBody VacationHouseOwner owner) {
-    //        Long id = Long.parseLong(idStr);
-    //        VacationHouseOwner vacationHouseOwner = service.getOwner(id);
-    //        vacationHouseOwner.setFirstName(owner.getFirstName());
-    //        vacationHouseOwner.setLastName(owner.getLastName());
-    //        vacationHouseOwner.setPhoneNumber(owner.getPhoneNumber());
-    //        vacationHouseOwner.setPassword(owner.getPassword());
-    //        vacationHouseOwner = service.save(owner);
-    //        return vacationHouseOwner;
-    //    }
 }
 

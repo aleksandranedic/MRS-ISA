@@ -9,6 +9,7 @@ import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.resource.Adventure;
+import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.repo.AdventureRepository;
@@ -559,6 +560,16 @@ public class AdventureService {
                 adventure.getAddress().getPlace().equals(location.getPlace()) &&
                 adventure.getAddress().getNumber().equals(location.getNumber()) &&
                 adventure.getAddress().getCountry().equals(location.getCountry());
+    }
+
+    public List<ResourceReportDTO> getOwnerResources(Long owner_id) {
+        List<Adventure> adventures = repository.findByOwnerId(owner_id);
+        List<ResourceReportDTO> resources = new ArrayList<ResourceReportDTO>();
+        for (Adventure resource : adventures) {
+            Image img = resource.getImages().get(0);
+            resources.add(new ResourceReportDTO(resource.getId(), resource.getTitle(), img, reviewService.getRating(resource.getId(), "resource")));
+        }
+        return resources;
     }
 
     private boolean checkReviewRating(AdventureFilterDTO filterDTO, Adventure adventure) {

@@ -9,6 +9,7 @@ import {FilterModal} from "../Filter/FilterModal";
 import {frontLink, logOut} from "../Consts";
 import axios from "axios";
 import {isBoatOwner, isClient, isFishingInstructor, isLoggedIn, isVacationHouseOwner} from "../Autentification";
+import ReportModal from '../Reports/ReportModal';
 
 axios.interceptors.request.use(config => {
         config.headers.authorization = "Bearer " + localStorage.getItem('token')
@@ -21,6 +22,9 @@ axios.interceptors.request.use(config => {
 export default function Navigation(props) {
 
     const [searchTerm, setSearchTerm] = useState("");
+    const [showReports, setShowReports] = useState(false);
+    const handleCloseReports = () => setShowReports(false);
+    const handleShowReports = () => setShowReports(true);
 
     let profileLink;
 
@@ -100,6 +104,14 @@ export default function Navigation(props) {
                                 return <NavigationButton text={button.text} path={button.path} key={index}/>
                             }
                         )}
+                        {props.showReports &&
+                            <>
+                                 <Button variant="outline-" className="border-0 m-0" onClick={handleShowReports}>
+                                    <p className="m-0 text-secondary font-monospace p-1">Izveštaji</p>
+                                 </Button>
+                                <ReportModal closeModal={handleCloseReports} showModal={showReports} type={props.type}/>
+                            </>
+                        }
                     </div>
 
                     <div className="d-flex justify-content-end">

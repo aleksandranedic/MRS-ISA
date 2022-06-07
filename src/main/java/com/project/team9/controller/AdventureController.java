@@ -58,6 +58,12 @@ public class AdventureController {
         return reservationsForAdventure;
     }
 
+    @GetMapping(value = "getOwnerResources/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ResourceReportDTO> getOwnerResources(@PathVariable String id) {
+        Long owner_id = Long.parseLong(id);
+        return service.getOwnerResources(owner_id);
+    }
+
     @GetMapping("/reservation/client/{id}")
     public List<ReservationDTO> getReservationsForClient(@PathVariable Long id) {
         return service.getReservationsForClient(id);

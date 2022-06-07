@@ -104,14 +104,12 @@ function HouseOwnerPage() {
                 [
                     {text: "Osnovne informacije", path: "#info"},
                     {text: "Vikendice", path: "#houses"},
-                    {text: "Rezervacije", path: "#sales"},
-                    {text: "Izveštaji", path: "#reports"}
+                    {text: "Rezervacije", path: "#sales"}                 
                 ]}
-                        editable={true} editFunction={handleShow} searchable={true} showProfile={true}/>
+                        editable={true} editFunction={handleShow} searchable={true} showProfile={true} showReports={true} type="house"/>
             <AddVacationHouse/>
             <UpdateOwner show={show} setShow={setShow} owner={houseOwner}/>
             <div className='p-5 pt-0'>
-
 
                 <OwnerInfo
                     name={houseOwner.firstName + " " + houseOwner.lastName}
@@ -135,19 +133,6 @@ function HouseOwnerPage() {
             <hr className="me-5 ms-5"/>
 
             <ReservationCardGrid reservations={reservations}/>
-
-            <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)}
-                aria-controls="reservationsTable"
-                aria-expanded={open}
-                style = {{cursor: "pointer"}}
-            >Istorija rezervacija</h2>
-
-            <hr className="me-5 ms-5"/>
-            <Collapse in={open}>
-                <div id="reservationsTable">
-                    <ReservationsTable  reservations={reservations} showResource={false}/>
-                </div>
-            </Collapse>
 
             <div className="ms-5">
                 <ReviewsComp reviews = {ownerReviews}/>

@@ -1,5 +1,8 @@
 package com.project.team9.controller;
 
+import com.project.team9.dto.AttendanceReportParams;
+import com.project.team9.dto.IncomeReport;
+import com.project.team9.dto.IncomeReportDateRange;
 import com.project.team9.exceptions.UserNotFoundException;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.service.FishingInstructorService;
@@ -31,6 +34,16 @@ public class FishingInstructorController {
     @PostMapping(value = "changeProfilePicture/{id}")
     public Boolean changeProfilePicture(@PathVariable String id, @RequestParam("fileImage") MultipartFile multipartFile) throws IOException {
         return service.changeProfilePicture(id, multipartFile);
+    }
+
+    @PostMapping(value = "getIncomeReport/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public IncomeReport getIncomeReport(@PathVariable String id, IncomeReportDateRange dateRange) {
+        return service.getIncomeReport(Long.parseLong(id), dateRange);
+    }
+
+    @PostMapping(value = "getAttendanceReport/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public IncomeReport getAttendanceReport(@PathVariable String id, AttendanceReportParams attendanceReportParams) {
+        return service.getAttendanceReport(Long.parseLong(id), attendanceReportParams);
     }
 
     @GetMapping("names")
