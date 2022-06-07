@@ -100,10 +100,10 @@ function ReviewRequestModal({request, show, setShow}) {
         axios.post(backLink + "/clientReviews/approve", dto).then(
             response => {
                 updateForFetchedDataSuccess(response.data, id1)
+                setShow(false)
                 setTimeout(function () {
                     window.location.reload()
                 }, 2000)
-                setShow(false)
             }
         )
     }
@@ -121,10 +121,10 @@ function ReviewRequestModal({request, show, setShow}) {
         axios.post(backLink + "/clientReviews/deny", dto).then(
             response => {
                 updateForFetchedDataSuccess(response.data, id2)
+                setShow(false)
                 setTimeout(function () {
                     window.location.reload()
                 }, 2000)
-                setShow(false)
             }
         )
     }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ComplaintsService {
@@ -43,9 +44,10 @@ public class ComplaintsService {
     }
 
     public List<ComplaintDTO> getAllComplaints() {
+
         List<ComplaintDTO> complaintDTOS=new ArrayList<>();
         for (Complaint complaint :
-                repository.findAll()) {
+                repository.findAll().stream().filter(complaint -> !complaint.getDeleted()).collect(Collectors.toCollection(ArrayList::new))) {
 
             complaintDTOS.add(new ComplaintDTO(
                     complaint.getUserId(),
@@ -89,25 +91,31 @@ public class ComplaintsService {
             case "VACATION_HOUSE_OWNER":
                 fullName=vacationHouseOwnerService.getOwner(responseDTO.getEntityId()).getName();
                 email=vacationHouseOwnerService.getOwner(responseDTO.getEntityId()).getEmail();
+                break;
             case "FISHING_INSTRUCTOR":
                 fullName=fishingInstructorService.getById(String.valueOf(responseDTO.getEntityId())).getName();
                 email=fishingInstructorService.getById(String.valueOf(responseDTO.getEntityId())).getEmail();
+                break;
             case "BOAT_OWNER":
                 fullName=boatOwnerService.getOwner(responseDTO.getEntityId()).getName();
                 email=boatOwnerService.getOwner(responseDTO.getEntityId()).getEmail();
+                break;
             case "VACATION_HOUSE":
                 fullName=vacationHouseService.getVacationHouse(responseDTO.getEntityId()).getOwner().getName();
                 email=vacationHouseService.getVacationHouse(responseDTO.getEntityId()).getOwner().getEmail();
+                break;
             case "BOAT":
                 fullName=boatService.getBoat(responseDTO.getEntityId()).getOwner().getName();
                 email=boatService.getBoat(responseDTO.getEntityId()).getOwner().getEmail();
+                break;
             case "ADVENTURE":
                 fullName=adventureService.getById(String.valueOf(responseDTO.getEntityId())).getOwner().getName();
                 email=adventureService.getById(String.valueOf(responseDTO.getEntityId())).getOwner().getEmail();
+                break;
         }
         Client client= clientService.getById(String.valueOf(responseDTO.getUserId()));
-        emailSender.send(email, buildEmail(fullName, responseDTO.getResponse()), "Odgovor na žalba");
-        emailSender.send(client.getEmail(), buildEmail(client.getName(), responseDTO.getResponse()), "Odgovor na žalba");
+        emailSender.send(email, buildEmail(fullName, responseDTO.getResponse()), "Odgovor na žalbu");
+        emailSender.send(client.getEmail(), buildEmail(client.getName(), responseDTO.getResponse()), "Odgovor na žalbu");
         return "Uspešno ste odgovoroli na žalbu";
     }
     private String buildEmail(String fullName, String response) {

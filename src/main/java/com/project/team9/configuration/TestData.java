@@ -4,10 +4,7 @@ import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
-import com.project.team9.model.request.ClientReviewRequest;
-import com.project.team9.model.request.DeleteRequest;
-import com.project.team9.model.request.RegistrationRequest;
-import com.project.team9.model.request.VendorReviewRequest;
+import com.project.team9.model.request.*;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
@@ -206,6 +203,12 @@ public class TestData {
     public ClientReviewRequest createClientReviewRequestForResource(Client client3, VacationHouse vacationHouse13, int rating, String comment, Boolean isResource) {
         return new ClientReviewRequest(
                 comment, "", isResource ? vacationHouse13.getId() : null, !isResource ? vacationHouse13.getOwner().getId() : null, rating, client3.getId()
+        );
+    }
+
+    public Complaint createComplaint(Long clientId, Long entityId, String entityType, String text) {
+        return new Complaint(
+                text, "", clientId, entityId, entityType
         );
     }
 }

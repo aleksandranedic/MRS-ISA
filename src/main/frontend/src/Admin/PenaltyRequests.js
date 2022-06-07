@@ -117,6 +117,10 @@ function PenaltyRequestModal({request, show, setShow}) {
         axios.post(backLink + "/penaltyReview/approve", dto).then(
             res => {
                 updateForFetchedDataSuccess(res.data, id)
+                setShow(false)
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000)
             }
         )
     }
@@ -132,6 +136,10 @@ function PenaltyRequestModal({request, show, setShow}) {
         axios.post(backLink + "/penaltyReview/deny", dto).then(
             res => {
                 updateForFetchedDataSuccess(res.data, id)
+                setShow(false)
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000)
             }
         )
     }
@@ -163,7 +171,6 @@ function PenaltyRequestModal({request, show, setShow}) {
                     value={checkPenalty}
                     onChange={() => {
                         setCheckPenalty(!checkPenalty)
-                        console.log(checkPenalty)
                     }}
                     type="switch"
                     id="penalty"

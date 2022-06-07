@@ -11,7 +11,7 @@ public class Complaint extends Request {
     public Complaint() {
     }
 
-    public Complaint(String text, String response, Long userId, Long entityId) {
+    public Complaint(String text, String response, Long userId, Long entityId,String entityType) {
         super(text, response);
         this.userId = userId;
         this.entityId = entityId;
