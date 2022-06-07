@@ -2,6 +2,7 @@ import {Table} from "react-bootstrap";
 import Tag from "../Tag";
 import React from "react";
 import {convertToDate, getEndTime, getStartTime} from "./ReservationDateConverter";
+import { frontLink } from "../Consts";
 
 
 export function ReservationsTable(props) {
@@ -20,8 +21,12 @@ export function ReservationsTable(props) {
         reservations.pop(index);
     }
 
+    function visitClient(clientId){
+        window.location.href = frontLink  + "client/" + clientId;
+    }
+
     return (
-        <div className="m-5">
+        <div className="m-4">
             <Table striped bordered hover size="sm">
                 <thead>
                 <tr>
@@ -42,7 +47,7 @@ export function ReservationsTable(props) {
                             <td>{reservation.id}</td>
                             <td>{getStartTime(reservation)}</td>
                             <td>{getEndTime(reservation)}</td>
-                            <td>{reservation.client.firstName + " " + reservation.client.lastName}</td>
+                            <td onClick={e => visitClient(reservation.client.id)} style={{cursor:"pointer"}}>{reservation.client.firstName + " " + reservation.client.lastName}</td>
                             {props.showResource && <td>{reservation.resource.title}</td>}
                             <td>{reservation.price}</td>
                             <td>{reservation.numberOfClients}</td>
