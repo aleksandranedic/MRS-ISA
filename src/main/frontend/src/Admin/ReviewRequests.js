@@ -1,31 +1,26 @@
 import {Sidebar} from "./Sidebar/Sidebar";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Button, Card, Form, Modal} from "react-bootstrap";
 import StarRatings from "react-star-ratings";
-
+import axios from "axios";
+import {backLink, frontLink, loadingToast, notifySuccess, updateForFetchedDataSuccess} from "../Consts";
+import {ToastContainer} from "react-toastify";
 
 export function ReviewRequests() {
 
-    //TODO: Napraviti clientReviewDTO koji sadrzi sledece podatke, moze i dodatne ako ti treba
+    const [requests, setRequests] = useState([]);
 
-    const [requests, setRequests] = useState([
-        {
-            resourceTitle: "Vikendica",
-            vendorFullName: null,
-            rating: 5,
-            clientFullName: "Ana Nikolic",
-            comment: "Savrsena vikendica!"
-        },
-        {
-            resourceTitle: null,
-            vendorFullName: "Marko Jelic",
-            rating: 1,
-            clientFullName: "Mirko Markic",
-            comment: "Vrlo losa usluga! Vikendicu je nemoguce pronaci"
-        }
+    const fetchClientReviews = () => {
+        axios.get(backLink + "/clientReviews").then(
+            response => {
+                setRequests(response.data)
+            }
+        )
+    }
 
-    ]);
-
+    useEffect(() => {
+        fetchClientReviews()
+    }, [])
 
     return (<div className="d-flex" style={{height: "100vh"}}>
         <div className="w-25" style={{backgroundColor: "#f7f8f9"}}>
@@ -60,11 +55,11 @@ function ReviewRequest({request}) {
             <Card.Header className="d-flex align-items-center">
 
                 {request.resourceTitle !== null &&
-                    <h5 className="mt-2">{request.resourceTitle}</h5>
+                <h5 className="mt-2">{request.resourceTitle}</h5>
                 }
 
                 {request.vendorFullName !== null &&
-                    <h5 className="mt-2">{request.vendorFullName}</h5>
+                <h5 className="mt-2">{request.vendorFullName}</h5>
                 }
 
 
@@ -91,15 +86,57 @@ function ReviewRequest({request}) {
 function ReviewRequestModal({request, show, setShow}) {
 
     const [response, setResponse] = useState("");
+    const approveClientReview = () => {
+        const dto = {
+            response: response,
+            clientId: request.clientId,
+            text: request.comment,
+            rating: request.rating,
+            resourceId: request.resourceId,
+            vendorId: request.vendorId,
+            requestId: request.requestId
+        }
+        const id1 = loadingToast()
+        axios.post(backLink + "/clientReviews/approve", dto).then(
+            response => {
+                updateForFetchedDataSuccess(response.data, id1)
+                setShow(false)
+                setTimeout(function () {
+                    window.location.reload()
+                }, 2000)
+            }
+        )
+    }
+    const denyClientReview = () => {
+        const dto = {
+            requestId: request.requestId,
+            response: response,
+            clientId: request.clientId,
+            text: request.comment,
+            rating: request.rating,
+            resourceId: request.resourceId,
+            vendorId: request.vendorId
+        }
+        const id2 = loadingToast()
+        axios.post(backLink + "/clientReviews/deny", dto).then(
+            response => {
+                updateForFetchedDataSuccess(response.data, id2)
+                setShow(false)
+                setTimeout(function () {
+                    window.location.reload()
+                }, 2000)
+            }
+        )
+    }
 
-    return <Modal show={show} onHide={() => setShow(false)}>
+    return <> <Modal show={show} onHide={() => setShow(false)}>
         <Modal.Header closeButton className="d-flex align-items-center">
             {request.resourceTitle !== null &&
-                <h5 className="mt-2">{request.resourceTitle}</h5>
+            <h5 className="mt-2">{request.resourceTitle}</h5>
             }
 
             {request.vendorFullName !== null &&
-                <h5 className="mt-2">{request.vendorFullName}</h5>
+            <h5 className="mt-2">{request.vendorFullName}</h5>
             }
 
         </Modal.Header>
@@ -119,7 +156,22 @@ function ReviewRequestModal({request, show, setShow}) {
         </Modal.Body>
 
         <Modal.Footer className="d-flex justify-content-end">
-            <Button className="ms-auto m-1" variant="outline-secondary">Odgovori</Button>
+            <Button className="ms-auto m-1" variant="outline-success"
+                    onClick={() => approveClientReview()}>Odobri</Button>
+            <Button className="m-1" variant="outline-danger" onClick={() => denyClientReview()}>Odbij</Button>
         </Modal.Footer>
     </Modal>
+        <ToastContainer
+            position="top-center"
+            autoClose={2000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme={"colored"}
+        />
+        </>
 }

@@ -79,11 +79,11 @@ export const loadingToast = () => {
     return id;
 }
 export const updateForFetchedDataSuccess = (message, id) => {
-    toast.update(id, {render: message, type: "success", isLoading: false, autoClose: 5000});
+    toast.update(id, {render: message, type: "success", isLoading: false, autoClose: 2000});
 }
 
 export const updateForFetchedDataError = (message, id) => {
-    toast.update(id, {render: message, type: "error", isLoading: false, autoClose: 5000});
+    toast.update(id, {render: message, type: "error", isLoading: false, autoClose: 2000});
 }
 
 export const logOut = () => {

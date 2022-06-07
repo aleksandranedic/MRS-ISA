@@ -4,8 +4,7 @@ import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
-import com.project.team9.model.request.DeleteRequest;
-import com.project.team9.model.request.RegistrationRequest;
+import com.project.team9.model.request.*;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
@@ -27,7 +26,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.time.Month;
 import java.util.*;
 
 @Configuration
@@ -48,18 +46,24 @@ public class Config {
     BoatRepository boatRepository;
     VacationHouseReservationRepository vacationHouseReservationRepository;
     BoatReservationRepository boatReservationRepository;
-    ReviewRepository reviewRepository;
+    ClientReviewRepository clientReviewRepository;
     RegistrationRequestRepository registrationRequestRepository;
     DeleteRequestRepository deleteRequestRepository;
     AdministratorRepository administratorRepository;
     TestData testData;
+    VendorReviewRequestRepository vendorReviewRequestRepository;
+    ClientReviewRequestRepository clientReviewRequestRepository;
+    ComplaintsRepository complaintsRepository;
     private Random random;
     private HashMap<Integer, String> messages;
 
 
     @Bean
-    CommandLineRunner configureTestData(AdventureRepository adventureRepository, FishingInstructorRepository fishingInstructorRepository, PricelistRepository pricelistRepository, AddressRepository addressRepository, TagRepository tagRepository, AdventureReservationRepository adventureReservationRepository, AppointmentRepository appointmentRepository, ImageRepository imageRepository, ClientRepository clientRepository, VacationHouseOwnerRepository vacationHouseOwnerRepository, VacationHouseRepository vacationHouseRepository, RoleRepository roleRepository, BoatOwnerRepository boatOwnerRepository, BoatRepository boatRepository, VacationHouseReservationRepository vacationHouseReservationRepository, BoatReservationRepository boatReservationRepository, ReviewRepository reviewRepository, RegistrationRequestRepository registrationRequestRepository, DeleteRequestRepository deleteRequestRepository, AdministratorRepository administratorRepository, TestData testData) {
+    CommandLineRunner configureTestData(ComplaintsRepository complaintsRepository,ClientReviewRequestRepository clientReviewRequestRepository, VendorReviewRequestRepository vendorReviewRequestRepository, AdventureRepository adventureRepository, FishingInstructorRepository fishingInstructorRepository, PricelistRepository pricelistRepository, AddressRepository addressRepository, TagRepository tagRepository, AdventureReservationRepository adventureReservationRepository, AppointmentRepository appointmentRepository, ImageRepository imageRepository, ClientRepository clientRepository, VacationHouseOwnerRepository vacationHouseOwnerRepository, VacationHouseRepository vacationHouseRepository, RoleRepository roleRepository, BoatOwnerRepository boatOwnerRepository, BoatRepository boatRepository, VacationHouseReservationRepository vacationHouseReservationRepository, BoatReservationRepository boatReservationRepository, ClientReviewRepository clientReviewRepository, RegistrationRequestRepository registrationRequestRepository, DeleteRequestRepository deleteRequestRepository, AdministratorRepository administratorRepository, TestData testData) {
+        this.complaintsRepository=complaintsRepository;
+        this.clientReviewRequestRepository = clientReviewRequestRepository;
         this.adventureRepository = adventureRepository;
+        this.vendorReviewRequestRepository = vendorReviewRequestRepository;
         this.fishingInstructorRepository = fishingInstructorRepository;
         this.pricelistRepository = pricelistRepository;
         this.addressRepository = addressRepository;
@@ -75,10 +79,11 @@ public class Config {
         this.boatRepository = boatRepository;
         this.vacationHouseReservationRepository = vacationHouseReservationRepository;
         this.boatReservationRepository = boatReservationRepository;
-        this.reviewRepository = reviewRepository;
+        this.clientReviewRepository = clientReviewRepository;
         this.registrationRequestRepository = registrationRequestRepository;
         this.deleteRequestRepository = deleteRequestRepository;
         this.administratorRepository = administratorRepository;
+
         this.testData = testData;
         this.random = new Random();
         this.messages = new HashMap<Integer, String>();
@@ -88,7 +93,6 @@ public class Config {
         messages.put(3, "Solidno.");
         messages.put(4, "Vrlo dobro.");
         messages.put(5, "Odlično!");
-
 
 
         return args -> {
@@ -250,8 +254,8 @@ public class Config {
         addAdventureReservation(adventure1, client5, 6, 25, 9, 13);
         addAdventureReservation(adventure1, client6, 6, 25, 16, 18);
 
-        addAdventureQuickReservation(adventure1, 6, 13, 10,12);
-        addAdventureQuickReservation(adventure1, 6, 18, 14,17);
+        addAdventureQuickReservation(adventure1, 6, 13, 10, 12);
+        addAdventureQuickReservation(adventure1, 6, 18, 14, 17);
 
 
         addAdventureReservation(adventure2, client6, 6, 6, 10, 12);
@@ -259,8 +263,8 @@ public class Config {
         addAdventureReservation(adventure2, client4, 6, 25, 9, 13);
         addAdventureReservation(adventure2, client5, 6, 25, 16, 18);
 
-        addAdventureQuickReservation(adventure2, 6, 13, 10,12);
-        addAdventureQuickReservation(adventure2, 6, 18, 14,17);
+        addAdventureQuickReservation(adventure2, 6, 13, 10, 12);
+        addAdventureQuickReservation(adventure2, 6, 18, 14, 17);
 
 
         addAdventureReservation(adventure3, client5, 6, 6, 10, 12);
@@ -268,8 +272,8 @@ public class Config {
         addAdventureReservation(adventure3, client3, 6, 25, 9, 13);
         addAdventureReservation(adventure3, client4, 6, 25, 16, 18);
 
-        addAdventureQuickReservation(adventure3, 6, 13, 10,12);
-        addAdventureQuickReservation(adventure3, 6, 18, 14,17);
+        addAdventureQuickReservation(adventure3, 6, 13, 10, 12);
+        addAdventureQuickReservation(adventure3, 6, 18, 14, 17);
 
 
         addAdventureReservation(adventure4, client4, 6, 6, 10, 12);
@@ -277,8 +281,8 @@ public class Config {
         addAdventureReservation(adventure4, client6, 6, 25, 9, 13);
         addAdventureReservation(adventure4, client3, 6, 25, 16, 18);
 
-        addAdventureQuickReservation(adventure4, 6, 13, 10,12);
-        addAdventureQuickReservation(adventure4, 6, 18, 14,17);
+        addAdventureQuickReservation(adventure4, 6, 13, 10, 12);
+        addAdventureQuickReservation(adventure4, 6, 18, 14, 17);
 
 
         addAdventureReservation(adventure5, client3, 7, 1, 10, 12);
@@ -286,8 +290,8 @@ public class Config {
         addAdventureReservation(adventure5, client5, 6, 26, 9, 13);
         addAdventureReservation(adventure5, client6, 6, 29, 16, 18);
 
-        addAdventureQuickReservation(adventure5, 6, 13, 15,20);
-        addAdventureQuickReservation(adventure5, 6, 18, 6,9);
+        addAdventureQuickReservation(adventure5, 6, 13, 15, 20);
+        addAdventureQuickReservation(adventure5, 6, 18, 6, 9);
 
 
         addAdventureReservation(adventure6, client6, 7, 1, 10, 12);
@@ -295,8 +299,8 @@ public class Config {
         addAdventureReservation(adventure6, client4, 6, 26, 9, 13);
         addAdventureReservation(adventure6, client5, 6, 29, 16, 18);
 
-        addAdventureQuickReservation(adventure6, 6, 13, 15,20);
-        addAdventureQuickReservation(adventure6, 6, 18, 6,9);
+        addAdventureQuickReservation(adventure6, 6, 13, 15, 20);
+        addAdventureQuickReservation(adventure6, 6, 18, 6, 9);
 
         //--------------------------------------------------------------
 
@@ -334,7 +338,6 @@ public class Config {
 
         addBoatQuickReservation(boat10, 6, 14, 8, 16);
         addBoatQuickReservation(boat10, 6, 19, 15, 21);
-
 
 
         addBoatReservation(boat11, client3, 6, 28, 7, 9);
@@ -447,23 +450,62 @@ public class Config {
 
         addClientReviewForVendor(fishingInstructor18, client5);
         addClientReviewForVendor(fishingInstructor18, client6);
-
-
         //-------------------------------------------------------
 
 
+        addVendorReviewRequestForAdventure(client4, adventure4, (long) 59);
+        addVendorReviewRequestForBoat(client6, boat8, (long) 79);
+        addVendorReviewRequestForVacationHouse(client6, vacationHouse13, (long) 4);
+        //-------------------------------------------------------
+
+        addClientRequestReview(client3, vacationHouse13, "Savrsena vikendica!", true);
+        addClientRequestReview(client3, vacationHouse14, "Vrlo losa usluga! Vikendicu je nemoguce pronaci", false);
+
+        addComplaint(client5.getId(), vacationHouse13.getId(), "VACATION_HOUSE", "Nisam se lepo proveo");
+        addComplaint(client5.getId(), boatOwner13.getId(), "BOAT_OWNER", "Neljubazan covek");
+
     }
 
+    private void addComplaint(Long clientId, Long entityId, String enityType, String text) {
+        Complaint complaint = testData.createComplaint(clientId, entityId, enityType, text);
+        complaintsRepository.save(complaint);
+    }
+
+    private void addClientRequestReview(Client client3, VacationHouse vacationHouse13, String comment, Boolean isResource) {
+        int rating = random.nextInt(4) + 1;
+        ClientReviewRequest clientReviewRequest = testData.createClientReviewRequestForResource(client3, vacationHouse13, rating, comment, isResource);
+        clientReviewRequestRepository.save(clientReviewRequest);
+    }
+
+    private void addVendorReviewRequestForVacationHouse(Client client, VacationHouse vacationHouse, long l) {
+        int rating = random.nextInt(4) + 1;
+        VendorReviewRequest vendorReviewRequest = testData.createVendorReviewRequestForVacationHouse("Solidan klijent, nemam vecih primedbi. Kupatilo je ostalo malo u neredu.", vacationHouse, client.getId(), rating, false, false, l);
+        vendorReviewRequestRepository.save(vendorReviewRequest);
+    }
+
+    private void addVendorReviewRequestForAdventure(Client client, Adventure adventure, long reservationId) {
+        int rating = random.nextInt(4) + 1;
+        VendorReviewRequest vendorReviewRequest = testData.createVendorReviewRequestForAdventure("Solidan klijent, nemam vecih primedbi. Kupatilo je ostalo malo u neredu.", adventure, client.getId(), rating, false, true, reservationId);
+        vendorReviewRequestRepository.save(vendorReviewRequest);
+    }
+
+    private void addVendorReviewRequestForBoat(Client client, Boat boat, long reservationId) {
+        int rating = random.nextInt(4) + 1;
+        VendorReviewRequest vendorReviewRequest = testData.createVendorReviewRequestForBoat("Solidan klijent, nemam vecih primedbi. Kupatilo je ostalo malo u neredu.", boat, client.getId(), rating, true, true, reservationId);
+        vendorReviewRequestRepository.save(vendorReviewRequest);
+    }
+
+
     private void addClientReviewForResource(Resource resource, Client client) {
-        int rating = random.nextInt(4)+1;
-        ClientReview r = testData.createClientReviewForResource(resource.getId(), client.getId(),  rating, messages.get(rating));
-        reviewRepository.save(r);
+        int rating = random.nextInt(4) + 1;
+        ClientReview r = testData.createClientReviewForResource(resource.getId(), client.getId(), rating, messages.get(rating));
+        clientReviewRepository.save(r);
     }
 
     private void addClientReviewForVendor(Vendor vendor, Client client) {
-        int rating = random.nextInt(4)+1;
-        ClientReview r = testData.createClientReviewForVendor(vendor.getId(), client.getId(),  rating, messages.get(rating));
-        reviewRepository.save(r);
+        int rating = random.nextInt(4) + 1;
+        ClientReview r = testData.createClientReviewForVendor(vendor.getId(), client.getId(), rating, messages.get(rating));
+        clientReviewRepository.save(r);
     }
 
 
@@ -477,7 +519,7 @@ public class Config {
 
         appointmentRepository.saveAll(reservationAppointments);
 
-        int numberOfClients = random.nextInt(boat.getCapacity()-2)+2;
+        int numberOfClients = random.nextInt(boat.getCapacity() - 2) + 2;
 
         int price = reservationAppointments.size() * boat.getPricelist().getPrice();
 
@@ -508,9 +550,9 @@ public class Config {
 
         double discount = (0.4) * random.nextDouble();
 
-        int numberOfClients = random.nextInt(boat.getCapacity()-2)+2;
+        int numberOfClients = random.nextInt(boat.getCapacity() - 2) + 2;
 
-        int price = (int) (reservationAppointments.size() * boat.getPricelist().getPrice() * (1-discount));
+        int price = (int) (reservationAppointments.size() * boat.getPricelist().getPrice() * (1 - discount));
 
         BoatReservation r = testData.createBoatReservation(
                 reservationAppointments,
@@ -539,7 +581,7 @@ public class Config {
 
         appointmentRepository.saveAll(reservationAppointments);
 
-        int numberOfClients = random.nextInt(adventure.getNumberOfClients()-2)+2;
+        int numberOfClients = random.nextInt(adventure.getNumberOfClients() - 2) + 2;
 
         int price = reservationAppointments.size() * adventure.getPricelist().getPrice();
 
@@ -555,7 +597,6 @@ public class Config {
         adventureReservationRepository.save(r);
         adventure.addQuickReservation(r);
         adventureRepository.save(adventure);
-
     }
 
     private void addAdventureQuickReservation(Adventure adventure, int month, int day, int startHour, int endHour) {
@@ -570,9 +611,9 @@ public class Config {
 
         double discount = (0.4) * random.nextDouble();
 
-        int numberOfClients = random.nextInt(adventure.getNumberOfClients()-2)+2;
+        int numberOfClients = random.nextInt(adventure.getNumberOfClients() - 2) + 2;
 
-        int price = (int) (reservationAppointments.size() * adventure.getPricelist().getPrice() * (1-discount));
+        int price = (int) (reservationAppointments.size() * adventure.getPricelist().getPrice() * (1 - discount));
 
         AdventureReservation r = testData.createAdventureReservation(
                 reservationAppointments,
@@ -598,7 +639,7 @@ public class Config {
 
         appointmentRepository.saveAll(reservationAppointments);
 
-        int numberOfClients = random.nextInt(vacationHouse.getNumberOfRooms()*vacationHouse.getNumberOfBedsPerRoom()-2)+2;
+        int numberOfClients = random.nextInt(vacationHouse.getNumberOfRooms() * vacationHouse.getNumberOfBedsPerRoom() - 2) + 2;
 
         int price = reservationAppointments.size() * vacationHouse.getPricelist().getPrice();
 
@@ -629,9 +670,9 @@ public class Config {
 
         double discount = (0.4) * random.nextDouble();
 
-        int numberOfClients = random.nextInt(vacationHouse.getNumberOfRooms()*vacationHouse.getNumberOfBedsPerRoom()-2)+2;
+        int numberOfClients = random.nextInt(vacationHouse.getNumberOfRooms() * vacationHouse.getNumberOfBedsPerRoom() - 2) + 2;
 
-        int price = (int) (reservationAppointments.size() * vacationHouse.getPricelist().getPrice() * (1-discount));
+        int price = (int) (reservationAppointments.size() * vacationHouse.getPricelist().getPrice() * (1 - discount));
 
         VacationHouseReservation r = testData.createVacationHouseReservation(
                 reservationAppointments,

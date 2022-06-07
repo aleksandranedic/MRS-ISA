@@ -16,7 +16,7 @@ export default function Registration() {
     const passwordExp = new RegExp(".[^\\n\\t\\s]+")
     const numExp = new RegExp("[1-9][0-9]*[a-z]?")
     const phoneNumRegExp = new RegExp("^[0-9]{7,10}$")
-    const emailRegExp = new RegExp(".+@gmail\\.com")
+    const emailRegExp = new RegExp(".+(@.+\\.com)|(@maildrop\\.cc)")
 
 
     const [show, setShow] = useState(false)

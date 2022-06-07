@@ -40,26 +40,24 @@ public class VacationHouseService {
     private final TagService tagService;
     private final ImageService imageService;
     private final VacationHouseReservationService vacationHouseReservationService;
-    private final ReviewService reviewService;
+    private final ClientReviewService clientReviewService;
     private final AppointmentService appointmentService;
     private final ClientService clientService;
     private final ReservationService reservationService;
-    private final ReviewRequestService reviewRequestService;
 
 
     @Autowired
-    public VacationHouseService(VacationHouseRepository vacationHouseRepository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, VacationHouseReservationService vacationHouseReservationService, ReviewService reviewService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService, ReviewRequestService reviewRequestService) {
+    public VacationHouseService(VacationHouseRepository vacationHouseRepository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, VacationHouseReservationService vacationHouseReservationService, ClientReviewService clientReviewService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService) {
         this.repository = vacationHouseRepository;
         this.addressService = addressService;
         this.pricelistService = pricelistService;
         this.tagService = tagService;
         this.imageService = imageService;
         this.vacationHouseReservationService = vacationHouseReservationService;
-        this.reviewService = reviewService;
+        this.clientReviewService = clientReviewService;
         this.appointmentService = appointmentService;
         this.clientService = clientService;
         this.reservationService = reservationService;
-        this.reviewRequestService = reviewRequestService;
     }
 
     public List<VacationHouse> getVacationHouses() {
@@ -108,7 +106,7 @@ public class VacationHouseService {
     }
 
     public double getRatingForHouse(Long id) {
-        ReviewScoresDTO reviews = reviewService.getReviewScores(id, "resource");
+        ReviewScoresDTO reviews = clientReviewService.getReviewScores(id, "resource");
         double sum = reviews.getFiveStars() * 5 + reviews.getFourStars() * 4 + reviews.getThreeStars() * 3 + reviews.getTwoStars() * 2 + reviews.getOneStars();
         double num = reviews.getFiveStars() + reviews.getFourStars() + reviews.getThreeStars() + reviews.getTwoStars() + reviews.getOneStars();
         double result = sum / num;
@@ -633,7 +631,7 @@ public class VacationHouseService {
     }
 
     private boolean checkReviewRating(VacationHouseFilterDTO vacationHouseFilterDTO, VacationHouse vacationHouse) {
-        List<ClientReviewDTO> list = reviewService.getResourceReviews(vacationHouse.getId());
+        List<ClientReviewDTO> list = clientReviewService.getResourceReviews(vacationHouse.getId());
         if (list.isEmpty() && (vacationHouseFilterDTO.getReviewRating().isEmpty() || vacationHouseFilterDTO.getReviewRating().equals("0")))
             return true;
         double score = list.stream().mapToDouble(ClientReviewDTO::getRating).sum() / list.size();
@@ -655,7 +653,7 @@ public class VacationHouseService {
     public List<ReservationDTO> getReservationsForReview(Long id) {
         List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
         for (VacationHouseReservation r : vacationHouseReservationService.getStandardReservations()) {
-            if (!reviewService.reservationHasReview(r.getId())) {
+            if (!clientReviewService.reservationHasReview(r.getId())) {
                 if (Objects.equals(r.getResource().getOwner().getId(), id)) {
                     int index = r.getAppointments().size() - 1;
                     LocalDateTime time = r.getAppointments().get(index).getEndTime();

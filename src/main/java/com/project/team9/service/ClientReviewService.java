@@ -2,13 +2,11 @@ package com.project.team9.service;
 
 import com.project.team9.dto.ClientReviewDTO;
 import com.project.team9.dto.ReviewScoresDTO;
-import com.project.team9.model.request.ReviewRequest;
 import com.project.team9.model.request.VendorReviewRequest;
 import com.project.team9.model.review.ClientReview;
 import com.project.team9.model.review.VendorReview;
 import com.project.team9.model.user.Client;
-import com.project.team9.repo.ClientRepository;
-import com.project.team9.repo.ReviewRepository;
+import com.project.team9.repo.ClientReviewRepository;
 import com.project.team9.repo.VendorReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,19 +16,17 @@ import java.util.HashMap;
 import java.util.List;
 
 @Service
-public class ReviewService {
-    private final ReviewRepository repository;
-    private final ClientRepository clientRepository;
-    private final ReviewRequestService reviewRequestService;
+public class ClientReviewService {
+    private final ClientReviewRepository repository;
+    private final ClientService clientService;
     private final VendorReviewRequestService vendorReviewRequestService;
     private final VendorReviewRepository vendorReviewRepository;
 
 
     @Autowired
-    public ReviewService(ReviewRepository repository, ClientRepository clientRepository, ReviewRequestService reviewRequestService, VendorReviewRequestService vendorReviewRequestService, VendorReviewRepository vendorReviewRepository) {
+    public ClientReviewService(ClientReviewRepository repository, ClientService clientService, VendorReviewRequestService vendorReviewRequestService, VendorReviewRepository vendorReviewRepository) {
         this.repository = repository;
-        this.clientRepository = clientRepository;
-        this.reviewRequestService = reviewRequestService;
+        this.clientService = clientService;
         this.vendorReviewRequestService = vendorReviewRequestService;
         this.vendorReviewRepository = vendorReviewRepository;
     }
@@ -53,7 +49,7 @@ public class ReviewService {
     }
 
     private ClientReviewDTO getDTOFromClientReview(ClientReview review) {
-        Client client = clientRepository.getById(review.getClientId());
+        Client client = clientService.getById(String.valueOf(review.getClientId()));
         String name = client.getFirstName() + " " + client.getLastName();
         return new ClientReviewDTO(review.getId(), client.getProfileImg().getPath(), name, review.getRating(), review.getText(), client.getId());
     }
@@ -116,10 +112,6 @@ public class ReviewService {
         return repository.findReviewForClientAndResource(resourceId, clientId).size() > 0;
     }
 
-    public Long sendReviewRequest(ClientReview review) {
-        return reviewRequestService.addRequest(new ReviewRequest(review));
-    }
-
     public Long sendVendorReviewRequest(VendorReview vendorReview) {
         return vendorReviewRequestService.addVendorReviewRequest(new VendorReviewRequest(vendorReview));
     }
@@ -132,5 +124,8 @@ public class ReviewService {
         return vendorReviewRepository.findReviewForReservation(id).size() > 0;
     }
 
+    public void saveClientReview(ClientReview clientReview){
+        repository.save(clientReview);
+    }
 
 }

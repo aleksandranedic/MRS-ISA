@@ -1,25 +1,25 @@
 import {Sidebar} from "./Sidebar/Sidebar";
-import React, {useState} from "react";
-import {Badge, Button, Card, Form, Modal} from "react-bootstrap";
-import {BsArrowRight} from "react-icons/bs";
-import StarRatings from "react-star-ratings";
-
+import React, {useEffect, useState} from "react";
+import {Button, Card, Form, Modal} from "react-bootstrap";
+import {backLink, loadingToast, updateForFetchedDataSuccess} from "../Consts";
+import axios from "axios";
+import {ToastContainer} from "react-toastify";
 
 export function Complaints() {
 
-    //TODO: Napraviti complaintDTO koji sadrzi sledece podatke, moze i dodatne ako ti treba
+    const [complaints, setComplaints] = useState([]);
 
-    const [requests, setRequests] = useState([
-        {
-            userFullName: "Ana Nikolic",
-            comment: "Ne mogu da nadjem dugme za akcije!"
-        },
-        {
-            userFullName: "Mirko Markic",
-            comment: "Navigacija vam je realno onako"
-        }
-
-    ]);
+    const fetchComplaints = () => {
+        axios.get(backLink + "/complaints").then(
+            response => {
+                console.log(response.data)
+                setComplaints(response.data)
+            }
+        )
+    }
+    useEffect(() => {
+        fetchComplaints()
+    }, [])
 
 
     return (<div className="d-flex" style={{height: "100vh"}}>
@@ -28,13 +28,25 @@ export function Complaints() {
         </div>
         <div className="w-75 overflow-auto">
 
-            {requests.map((request, index) => {
+            {complaints.map((request, index) => {
                 return (
                     <Complaint key={index} request={request}/>
                 )
             })}
 
         </div>
+        <ToastContainer
+            position="top-center"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme={"colored"}
+        />
     </div>)
 }
 
@@ -49,7 +61,7 @@ function Complaint({request}) {
             <Card.Header className="d-flex align-items-center">
 
 
-                <h5 className="mt-2">{request.userFullName}</h5>
+                <h5 className="mt-2">{request.entityName}</h5>
 
 
             </Card.Header>
@@ -71,6 +83,23 @@ function Complaint({request}) {
 function ComplaintModal({request, show, setShow}) {
 
     const [response, setResponse] = useState("");
+    const answerComplaint = () => {
+        const dto = {
+            complaintId: request.complaintId,
+            userId: request.userId,
+            entityId: request.entityId,
+            response: response,
+            entityType: request.entityType
+        }
+        let id = loadingToast()
+        axios.post(backLink + "/complaints", dto).then(response => {
+            updateForFetchedDataSuccess(response.data, id)
+            setShow(false)
+            setTimeout(function () {
+                window.location.reload();
+            }, 2000)
+        })
+    }
 
     return <Modal show={show} onHide={() => setShow(false)}>
         <Modal.Header closeButton className="d-flex align-items-center">
@@ -88,7 +117,8 @@ function ComplaintModal({request, show, setShow}) {
         </Modal.Body>
 
         <Modal.Footer className="d-flex justify-content-end">
-            <Button className="ms-auto m-1" variant="outline-secondary">Odgovori</Button>
+            <Button className="ms-auto m-1" variant="outline-secondary"
+                    onClick={() => answerComplaint()}>Odgovori</Button>
         </Modal.Footer>
     </Modal>
 }

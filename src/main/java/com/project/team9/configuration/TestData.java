@@ -4,8 +4,7 @@ import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
-import com.project.team9.model.request.DeleteRequest;
-import com.project.team9.model.request.RegistrationRequest;
+import com.project.team9.model.request.*;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
@@ -31,7 +30,6 @@ import java.util.List;
 public class TestData {
 
     private final BCryptPasswordEncoder passwordEncoder;
-
 
 
     public TestData() {
@@ -61,7 +59,7 @@ public class TestData {
     }
 
     public FishingInstructor createFishingInstructor(Long id, String firstName, String lastName, String biography, Address address, Image profilePhoto, Role role) {
-        FishingInstructor fishingInstructor = new FishingInstructor(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName,  firstName.toLowerCase() + "." + lastName.toLowerCase() + "@gmail.com", "0601234567", address, false, "", biography, role, new ArrayList<Adventure>());
+        FishingInstructor fishingInstructor = new FishingInstructor(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName, firstName.toLowerCase() + "." + lastName.toLowerCase() + "@maildrop.cc", "0601234567", address, false, "", biography, role, new ArrayList<Adventure>());
 
         fishingInstructor.setId(id);
 
@@ -70,26 +68,26 @@ public class TestData {
 
     public VacationHouseOwner createVacationHouseOwner(Long id, String firstName, String lastName, Address address, Image profilePhoto, Role role) {
 
-        VacationHouseOwner vacationHouseOwner = new VacationHouseOwner(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName, firstName.toLowerCase() + "." + lastName.toLowerCase() + "@gmail.com", "0601234567", address, false, "", role);
+        VacationHouseOwner vacationHouseOwner = new VacationHouseOwner(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName, firstName.toLowerCase() + "." + lastName.toLowerCase() + "@maildrop.cc", "0601234567", address, false, "", role);
         vacationHouseOwner.setId(id);
         return vacationHouseOwner;
     }
 
     public BoatOwner createBoatOwner(Long id, String firstName, String lastName, Address address, Image profilePhoto, Role role) {
 
-        BoatOwner boatOwner = new BoatOwner(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName,  firstName.toLowerCase() + "." + lastName.toLowerCase() + "@gmail.com", "0601234567", address, false, "", new ArrayList<>(), role);
+        BoatOwner boatOwner = new BoatOwner(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName, firstName.toLowerCase() + "." + lastName.toLowerCase() + "@maildrop.cc", "0601234567", address, false, "", new ArrayList<>(), role);
         boatOwner.setId(id);
         return boatOwner;
     }
 
     public Administrator createAdministrator(Long id, String firstName, String lastName, Address address, Image profilePhoto, Role role, boolean isSuperAdministrator) {
-        Administrator administrator = new Administrator(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName,  firstName.toLowerCase() + "." + lastName.toLowerCase() + "@gmail.com", "0601234567", address, false, role, isSuperAdministrator);
+        Administrator administrator = new Administrator(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName, firstName.toLowerCase() + "." + lastName.toLowerCase() + "@maildrop.cc", "0601234567", address, false, role, isSuperAdministrator);
         administrator.setId(id);
         return administrator;
     }
 
     public Client createClient(Long id, String firstName, String lastName, Address address, Image profilePhoto, Role role) {
-        Client client = new Client(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName, firstName.toLowerCase() + "." + lastName.toLowerCase() + "@gmail.com", "0601234567", address, false, role);
+        Client client = new Client(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName, firstName.toLowerCase() + "." + lastName.toLowerCase() + "@maildrop.cc", "0601234567", address, false, role);
         client.setId(id);
         return client;
     }
@@ -149,15 +147,68 @@ public class TestData {
     }
 
     public ClientReview createClientReviewForResource(Long resourceId, Long clientId, int rating, String text) {
-        return new ClientReview(resourceId, null, rating, text, clientId);
+        return new ClientReview(resourceId, null, rating, text, clientId,"");
     }
 
     public ClientReview createClientReviewForVendor(Long vendorId, Long clientId, int rating, String text) {
-        return new ClientReview(null, vendorId, rating, text, clientId);
+        return new ClientReview(null, vendorId, rating, text, clientId,"");
     }
 
-    public VendorReview createVendorReview(Long resourceId, Long vendorId, int rating, String text, Long clientId, boolean penalty, boolean noShow, Long reservationId) {
-        return new VendorReview(resourceId, vendorId, rating, text, clientId, penalty, noShow, reservationId);
+    public VendorReview createVendorReview(Long resourceId, Long vendorId, int rating, String text, Long clientId, boolean penalty, boolean noShow, Long reservationId, String response) {
+        return new VendorReview(resourceId, vendorId, rating, text, clientId, penalty, noShow, reservationId, response);
     }
 
+    public VendorReviewRequest createVendorReviewRequestForAdventure(String comment, Adventure adventure, Long clientId, int rating, boolean penalty, boolean noShow, Long reservationId) {
+        return new VendorReviewRequest(
+                comment,
+                "",
+                adventure.getId(),
+                adventure.getOwner().getId(),
+                rating,
+                clientId,
+                penalty,
+                noShow,
+                reservationId
+        );
+    }
+
+    public VendorReviewRequest createVendorReviewRequestForVacationHouse(String s, VacationHouse vacationHouse, Long id, int rating, boolean penalty, boolean noShow, long l) {
+        return new VendorReviewRequest(
+                s,
+                "",
+                vacationHouse.getId(),
+                vacationHouse.getOwner().getId(),
+                rating,
+                id,
+                penalty,
+                noShow,
+                l
+        );
+    }
+
+    public VendorReviewRequest createVendorReviewRequestForBoat(String s, Boat boat, Long id, int rating, boolean penalty, boolean noShow, long reservationId) {
+        return new VendorReviewRequest(
+                s,
+                "",
+                boat.getId(),
+                boat.getOwner().getId(),
+                rating,
+                id,
+                penalty,
+                noShow,
+                reservationId
+        );
+    }
+
+    public ClientReviewRequest createClientReviewRequestForResource(Client client3, VacationHouse vacationHouse13, int rating, String comment, Boolean isResource) {
+        return new ClientReviewRequest(
+                comment, "", isResource ? vacationHouse13.getId() : null, !isResource ? vacationHouse13.getOwner().getId() : null, rating, client3.getId()
+        );
+    }
+
+    public Complaint createComplaint(Long clientId, Long entityId, String entityType, String text) {
+        return new Complaint(
+                text, "", clientId, entityId, entityType
+        );
+    }
 }
