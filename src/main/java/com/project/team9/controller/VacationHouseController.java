@@ -129,6 +129,12 @@ public class VacationHouseController {
         return service.getOwnerHouses(owner_id);
     }
 
+    @GetMapping(value = "getOwnerResources/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ResourceReportDTO> getOwnerResources(@PathVariable String id) {
+        Long owner_id = Long.parseLong(id);
+        return service.getOwnerResources(owner_id);
+    }
+
     @GetMapping(value = "getownerhouse/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public HouseCardDTO getOwnerHouse(@PathVariable String id) {
         return service.getVacationHouseCard(Long.parseLong(id));

@@ -63,7 +63,6 @@ function BoatOwnerPage() {
     }
 
 
-
     const fetchOwnerBoats = () => {
       axios
       .get( backLink + "/boat/getownerboats/" + id)
@@ -106,10 +105,9 @@ function BoatOwnerPage() {
                 [
                     {text: "Osnovne informacije", path: "#info"},
                     {text: "Brodovi", path: "#boats"},
-                    {text: "Rezervacije", path: "#sales"},
-                    {text: "Izveštaji", path: "#reports"}
+                    {text: "Rezervacije", path: "#sales"},             
                 ]}
-                        editable={true} editFunction={handleShow} searchable={true} showProfile={true}/>
+                        editable={true} editFunction={handleShow} searchable={true} showProfile={true} showReports={true} type="boat" />
             <AddBoat/>
             <UpdateOwner show={show} setShow={setShow} owner={boatOwner}/>
 
@@ -137,20 +135,7 @@ function BoatOwnerPage() {
 
             <ReservationCardGrid reservations={reservations}/>
 
-            <ReservationsToReview type={"boat"}/>
-
-            <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)}
-                aria-controls="reservationsTable"
-                aria-expanded={open}
-                style={{cursor: "pointer"}}
-            >Istorija rezervacija</h2>
-
-            <hr className="me-5 ms-5"/>
-            <Collapse in={open}>
-                <div id="reservationsTable">
-                    <ReservationsTable reservations={reservations} showResource={false}/>
-                </div>
-            </Collapse>
+            <ReservationsToReview type={"boat"}/>                           
 
             <div className="ms-5">
                 <ReviewsComp reviews = {ownerReviews}/>

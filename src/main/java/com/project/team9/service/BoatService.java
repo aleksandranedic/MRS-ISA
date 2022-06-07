@@ -9,6 +9,7 @@ import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.resource.Boat;
+import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.repo.BoatRepository;
@@ -152,6 +153,13 @@ public class BoatService {
         quickReservation.setClient(client);
         quickReservation.setQuickReservation(false);
         return boatReservationService.save(quickReservation);
+    }
+
+    public List<Boat> getOwnersBoats(Long owner_id){
+        return repository.findByOwnerId(owner_id);
+    }
+    public List<BoatReservation> getBoatReservations(Long boat_id){
+        return boatReservationService.getReservationsByBoatId(boat_id);
     }
 
     public List<BoatCardDTO> getOwnerBoats(Long owner_id) {
@@ -666,6 +674,16 @@ public class BoatService {
                 boat.getAddress().getPlace().equals(location.getPlace()) &&
                 boat.getAddress().getNumber().equals(location.getNumber()) &&
                 boat.getAddress().getCountry().equals(location.getCountry());
+    }
+
+    public List<ResourceReportDTO> getOwnerResources(Long owner_id) {
+        List<Boat> boats = repository.findByOwnerId(owner_id);
+        List<ResourceReportDTO> resources = new ArrayList<ResourceReportDTO>();
+        for (Boat resource : boats) {
+            Image img = resource.getImages().get(0);
+            resources.add(new ResourceReportDTO(resource.getId(), resource.getTitle(), img, reviewService.getRating(resource.getId(), "resource")));
+        }
+        return resources;
     }
 
     private boolean checkReviewRating(BoatFilterDTO boatFilterDTO, Boat boat) {
