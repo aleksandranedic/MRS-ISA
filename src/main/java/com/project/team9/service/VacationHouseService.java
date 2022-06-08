@@ -8,6 +8,7 @@ import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.VacationHouseReservation;
+import com.project.team9.model.resource.Boat;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
@@ -182,9 +183,16 @@ public class VacationHouseService {
         vacationHouseReservationService.addReservation(reservation);
         house.addReservation(reservation);
         this.save(house);
-        //TODO napravi email koji mozes da saljes za quick reservation
-        for (String username: house.getSubClientUsernames()) {
-            emailService.send(username,"Napravljena je akcija na koji ste se preplatili","Notifikacija o pretplacenim akcijama");
+        //TODO proveri da li radi
+        for (Long userId : house.getSubClientUsernames()) {
+            Client client = clientService.getById(String.valueOf(userId));
+            String fullResponse = "Napravljena je akcija na koji ste se preplatili\n " +
+                    "Noćenja na vikendici kоštaju " + reservation.getPrice() + "\n" +
+                    "Zakazani period je od " + reservation.getAppointments().get(0).getStartTime().toString() + " do " +
+                    reservation.getAppointments().get(reservation.getAppointments().size() - 1).getEndTime().toString();
+            String additionalText = "<a href=\"" + "http://localhost:3000" + "\">Prijavite se i rezervišite je</a>";
+            String emailForSubbedUser = emailService.buildHTMLEmail(client.getName(), fullResponse, additionalText, "Notifikacija o pretplacenim akcijama");
+            emailService.send(client.getEmail(), emailForSubbedUser, "Notifikacija o pretplacenim akcijama");
         }
         return true;
     }
@@ -689,14 +697,13 @@ public class VacationHouseService {
     public String subscribeBoatUserOnVacationHouse(SubscribeDTO subscribeDTO) {
         Client client = clientService.getById(String.valueOf(subscribeDTO.getUserId()));
         VacationHouse vacationHouse = getVacationHouse(subscribeDTO.getEntityId());
-        vacationHouse.getSubClientUsernames().add(client.getUsername());
+        vacationHouse.getSubClientUsernames().add(subscribeDTO.getUserId());
         return "Uspešno ste prijavljeni na akcije ove vikendice";
     }
 
     public Boolean isUserSubscribedToVacationHouse(SubscribeDTO subscribeDTO) {
-        Client client = clientService.getById(String.valueOf(subscribeDTO.getUserId()));
         VacationHouse vacationHouse = getVacationHouse(subscribeDTO.getEntityId());
-        return vacationHouse.getSubClientUsernames().contains(client.getEmail());
+        return vacationHouse.getSubClientUsernames().contains(subscribeDTO.getUserId());
     }
 
     public double getVacationHouseRating(Long id) {
@@ -705,9 +712,24 @@ public class VacationHouseService {
     }
 
     public String unsubscribeBoatUserOnVacationHouse(SubscribeDTO subscribeDTO) {
-        Client client = clientService.getById(String.valueOf(subscribeDTO.getUserId()));
         VacationHouse vacationHouse = getVacationHouse(subscribeDTO.getEntityId());
-        vacationHouse.getSubClientUsernames().remove(client.getUsername());
+        vacationHouse.getSubClientUsernames().remove(subscribeDTO.getUserId());
         return "Uspešno ste se odjavili na akcije ove vikendice";
+    }
+
+    public List<EntitySubbedDTO> getClientsSubscribedVacationHouses() {
+        List<EntitySubbedDTO> entities=new ArrayList<>();
+        for(VacationHouse vacationHouse :getVacationHouses()){
+            entities.add(new EntitySubbedDTO(
+                    vacationHouse.getTitle(),
+                    "house",
+                    vacationHouse.getImages().get(0),
+                    getVacationHouseRating(vacationHouse.getId()),
+                    vacationHouse.getId(),
+                    vacationHouse.getAddress(),
+                    vacationHouse.getPricelist().getPrice()
+            ));
+        }
+        return entities;
     }
 }

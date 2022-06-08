@@ -23,17 +23,17 @@ public class PenaltyReviewService {
     private final BoatService boatService;
     private final VacationHouseService vacationHouseService;
     private final VendorReviewRepository vendorReviewRepository;
-    private final EmailSender emailSender;
+    private final EmailService emailService;
 
     @Autowired
-    public PenaltyReviewService(VendorReviewRequestService vendorReviewRequestService, ClientService clientService, AdventureService adventureService, BoatService boatService, VacationHouseService vacationHouseService, VendorReviewRepository vendorReviewRepository, EmailSender emailSender) {
+    public PenaltyReviewService(VendorReviewRequestService vendorReviewRequestService, ClientService clientService, AdventureService adventureService, BoatService boatService, VacationHouseService vacationHouseService, VendorReviewRepository vendorReviewRepository, EmailService emailService) {
         this.vendorReviewRequestService = vendorReviewRequestService;
         this.clientService = clientService;
         this.adventureService = adventureService;
         this.boatService = boatService;
         this.vacationHouseService = vacationHouseService;
         this.vendorReviewRepository = vendorReviewRepository;
-        this.emailSender = emailSender;
+        this.emailService = emailService;
     }
 
     public List<VendorReviewDTO> getPenaltyReviews() {
@@ -112,12 +112,8 @@ public class PenaltyReviewService {
                 reviewResponseDTO.getResponse()
         );
         vendorReviewRepository.save(vendorReview);
-
         vendorReviewRequestService.delete(reviewResponseDTO.getVendorReviewRequestId());
-
-        //TODO proveri koliko klijent ima penala i postavi ga na enabled ili sta god
         Client client= clientService.getById(reviewResponseDTO.getClientId().toString());
-
         String penaltyVendorText = "";
         String penaltyClientText = "";
         if(reviewResponseDTO.isCheckPenalty() && reviewResponseDTO.isCheckNoShow())
@@ -125,97 +121,29 @@ public class PenaltyReviewService {
             client.setNumOfPenalties(client.getNumOfPenalties() + 2);
             penaltyVendorText = "Nalog klijenta koji je koristio jedan od vaših resursa će dobiti 2 penala.";
             penaltyClientText = "Administrator je odlučio da Vaš nalog dobije 2 penala za neprostojnost i odsutstvo";
-        }
-        else if (reviewResponseDTO.isCheckPenalty() ) {
+        } else if (reviewResponseDTO.isCheckPenalty()) {
             client.setNumOfPenalties(client.getNumOfPenalties() + 1);
             penaltyVendorText = "Nalog klijenta koji je koristio jedan od vaših resursa će dobiti penal";
             penaltyClientText = "Administrator je odlučio da Vaš nalog dobije penal";
-        }
-        else if (reviewResponseDTO.isCheckNoShow()) {
+        } else if (reviewResponseDTO.isCheckNoShow()) {
             client.setNumOfPenalties(client.getNumOfPenalties() + 1);
             penaltyVendorText = "Nalog klijenta koji je koristio jedan od vaših resursa će dobiti penal jer se nije pojavio";
             penaltyClientText = "Administrator je odlučio da Vaš nalog dobije penal za odsutstvo";
         }
-        //posalji email vendoru
-        emailSender.send(list[3], buildEmail(list[1], reviewResponseDTO.getResponse(), penaltyVendorText), "Recenzija");
-        //posalji email klijentu
-        emailSender.send(client.getEmail(), buildEmail(client.getName(),reviewResponseDTO.getResponse(), penaltyClientText),"Recenzija");
+        String fullResponse= "Administratorov odgovor na recenziju: " + reviewResponseDTO.getResponse();
+        String emailForVendor=emailService.buildHTMLEmail(list[1],fullResponse,penaltyVendorText,"Recenzija pružaoca usluga");
+        emailService.send(list[3], emailForVendor, "Recenzija pružioca usluga");
+        String emailForClient=emailService.buildHTMLEmail(client.getName(),fullResponse,penaltyClientText,"Recenzija pružaoca usluga");
+        emailService.send(client.getEmail(), emailForClient, "Recenzija pružioca usluga");
         return "Uspešno ste obradili receniziju pružilaca usluga";
-    }
-
-    private String buildEmail(String fullName, String response, String penaltyText) {
-        return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
-                "\n" +
-                "<span style=\"display:none;font-size:1px;color:#fff;max-height:0\"></span>\n" +
-                "\n" +
-                "  <table role=\"presentation\" width=\"100%\" style=\"border-collapse:collapse;min-width:100%;width:100%!important\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n" +
-                "    <tbody><tr>\n" +
-                "      <td width=\"100%\" height=\"53\" bgcolor=\"#0b0c0c\">\n" +
-                "        \n" +
-                "        <table role=\"presentation\" width=\"100%\" style=\"border-collapse:collapse;max-width:580px\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" align=\"center\">\n" +
-                "          <tbody><tr>\n" +
-                "            <td width=\"70\" bgcolor=\"#0b0c0c\" valign=\"middle\">\n" +
-                "                <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse\">\n" +
-                "                  <tbody><tr>\n" +
-                "                    <td style=\"padding-left:10px\">\n" +
-                "                  \n" +
-                "                    </td>\n" +
-                "                    <td style=\"font-size:28px;line-height:1.315789474;Margin-top:4px;padding-left:10px\">\n" +
-                "                      <span style=\"font-family:Helvetica,Arial,sans-serif;font-weight:700;color:#ffffff;text-decoration:none;vertical-align:top;display:inline-block\">Obavestenje o receniziji</span>\n" +
-                "                    </td>\n" +
-                "                  </tr>\n" +
-                "                </tbody></table>\n" +
-                "              </a>\n" +
-                "            </td>\n" +
-                "          </tr>\n" +
-                "        </tbody></table>\n" +
-                "        \n" +
-                "      </td>\n" +
-                "    </tr>\n" +
-                "  </tbody></table>\n" +
-                "  <table role=\"presentation\" class=\"m_-6186904992287805515content\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse;max-width:580px;width:100%!important\" width=\"100%\">\n" +
-                "    <tbody><tr>\n" +
-                "      <td width=\"10\" height=\"10\" valign=\"middle\"></td>\n" +
-                "      <td>\n" +
-                "        \n" +
-                "                <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse\">\n" +
-                "                  <tbody><tr>\n" +
-                "                    <td bgcolor=\"#1D70B8\" width=\"100%\" height=\"10\"></td>\n" +
-                "                  </tr>\n" +
-                "                </tbody></table>\n" +
-                "        \n" +
-                "      </td>\n" +
-                "      <td width=\"10\" valign=\"middle\" height=\"10\"></td>\n" +
-                "    </tr>\n" +
-                "  </tbody></table>\n" +
-                "\n" +
-                "\n" +
-                "\n" +
-                "  <table role=\"presentation\" class=\"m_-6186904992287805515content\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse;max-width:580px;width:100%!important\" width=\"100%\">\n" +
-                "    <tbody><tr>\n" +
-                "      <td height=\"30\"><br></td>\n" +
-                "    </tr>\n" +
-                "    <tr>\n" +
-                "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
-                "      <td style=\"font-family:Helvetica,Arial,sans-serif;font-size:19px;line-height:1.315789474;max-width:560px\">\n" +
-                "        \n" +
-                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Zdravo " + fullName + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> Ovo je administratorov odgovor na recenziju: " + response + " </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> "+penaltyText+"</p></blockquote>\n " +
-                "        \n" +
-                "      </td>\n" +
-                "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
-                "    </tr>\n" +
-                "    <tr>\n" +
-                "      <td height=\"30\"><br></td>\n" +
-                "    </tr>\n" +
-                "  </tbody></table><div class=\"yj6qo\"></div><div class=\"adL\">\n" +
-                "\n" +
-                "</div></div>";
     }
 
     public String denyVendorReview(VendorRequestReviewDenialDTO denialDTO) {
         String[] list = getResourceTitleVendorNameVendorId(denialDTO.getResourceId());
         vendorReviewRequestService.delete(denialDTO.getVendorReviewRequestId());
-        emailSender.send(list[3], buildEmail(list[1], denialDTO.getResponse(),"Recenzija je odbijena"), "Recenzija");
+        String fullResponse= "Administratorov odgovor na recenziju: " + denialDTO.getResponse();
+        String emailForVendor=emailService.buildHTMLEmail(list[1],fullResponse,"Recenzija je odbijena","Recenzija pružaoca usluga");
+        emailService.send(list[3], emailForVendor, "Recenzija pružioca usluga");
         return "Uspešno ste odbili recenziju";
     }
 }

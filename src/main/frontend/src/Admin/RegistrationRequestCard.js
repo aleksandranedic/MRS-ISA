@@ -12,6 +12,7 @@ export function RegistrationRequestCard({props}) {
     function handleSubmit(typeOfResponse) {
 
         const dto = {
+            fullName: props.firstName+" "+props.lastName,
             username: props.email,
             type: typeOfResponse,
             requestId: props.id,

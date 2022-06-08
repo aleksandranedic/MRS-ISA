@@ -35,4 +35,5 @@ public class Client extends User {
     public void setNumOfPenalties(int numOfPenalties) {
         this.numOfPenalties = numOfPenalties;
     }
+
 }

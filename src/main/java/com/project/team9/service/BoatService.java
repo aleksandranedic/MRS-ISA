@@ -8,6 +8,7 @@ import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
+import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.BoatOwner;
@@ -77,9 +78,16 @@ public class BoatService {
         boatReservationService.addReservation(reservation);
         boat.addReservation(reservation);
         this.addBoat(boat);
-        //TODO napravi email koji mozes da saljes za quick reservation
-        for (String username: boat.getSubClientUsernames()) {
-            emailService.send(username,"Napravljena je akcija na koji ste se preplatili","Notifikacija o pretplacenim akcijama");
+        //TODO proveri da li radi
+        for (Long userId : boat.getSubClientUsernames()) {
+            Client client = clientService.getById(String.valueOf(userId));
+            String fullResponse = "Napravljena je akcija na koji ste se preplatili\n " +
+                    "Avanture na brod kоšta " + reservation.getPrice() + "\n" +
+                    "Zakazani period je od " + reservation.getAppointments().get(0).getStartTime().toString() + " do " +
+                    reservation.getAppointments().get(reservation.getAppointments().size() - 1).getEndTime().toString();
+            String additionalText = "<a href=\"" + "http://localhost:3000" + "\">Prijavite se i rezervišite je</a>";
+            String emailForSubbedUser = emailService.buildHTMLEmail(client.getName(), fullResponse, additionalText, "Notifikacija o pretplacenim akcijama");
+            emailService.send(client.getEmail(), emailForSubbedUser, "Notifikacija o pretplacenim akcijama");
         }
         return true;
     }
@@ -728,16 +736,14 @@ public class BoatService {
     }
 
     public String subscribeBoatUserOnBoat(SubscribeDTO subscribeDTO) {
-        Client client = clientService.getById(String.valueOf(subscribeDTO.getUserId()));
         Boat boat = getBoat(subscribeDTO.getEntityId());
-        boat.getSubClientUsernames().add(client.getUsername());
+        boat.getSubClientUsernames().add(subscribeDTO.getUserId());
         return "Uspešno ste prijavljeni na akcije ovog broda";
     }
 
     public Boolean isUserSubscribedToBoat(SubscribeDTO subscribeDTO) {
-        Client client = clientService.getById(String.valueOf(subscribeDTO.getUserId()));
         Boat boat = getBoat(subscribeDTO.getEntityId());
-        return boat.getSubClientUsernames().contains(client.getEmail());
+        return boat.getSubClientUsernames().contains(subscribeDTO.getUserId());
     }
 
     public double getBoarRating(Long id) {
@@ -746,9 +752,24 @@ public class BoatService {
     }
 
     public String unsubscribeBoatUserOnBoat(SubscribeDTO subscribeDTO) {
-        Client client = clientService.getById(String.valueOf(subscribeDTO.getUserId()));
         Boat boat = getBoat(subscribeDTO.getEntityId());
-        boat.getSubClientUsernames().remove(client.getUsername());
+        boat.getSubClientUsernames().remove(subscribeDTO.getUserId());
         return "Uspešno ste se odjavili na akcije ovog broda";
+    }
+
+    public List<EntitySubbedDTO> getClientsSubscribedBoats() {
+        List<EntitySubbedDTO> entities=new ArrayList<>();
+        for(Boat boat :getBoats()){
+            entities.add(new EntitySubbedDTO(
+                    boat.getTitle(),
+                    "boat",
+                    boat.getImages().get(0),
+                    getBoarRating(boat.getId()),
+                    boat.getId(),
+                    boat.getAddress(),
+                    boat.getPricelist().getPrice()
+            ));
+        }
+        return entities;
     }
 }

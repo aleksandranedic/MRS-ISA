@@ -5,15 +5,25 @@ public class VendorRegistrationRequestReplay {
     private String username;
     private String requestId;
     private String response;
+    private String fullName;
 
-    public VendorRegistrationRequestReplay(String type, String id, String requestId, String response) {
+    public VendorRegistrationRequestReplay(String type, String id, String requestId, String response, String fullName) {
         this.type = type;
         this.username = id;
         this.requestId = requestId;
         this.response = response;
+        this.fullName = fullName;
     }
 
     public VendorRegistrationRequestReplay() {
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getResponse() {

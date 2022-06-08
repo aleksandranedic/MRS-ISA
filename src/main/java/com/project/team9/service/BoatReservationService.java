@@ -26,9 +26,10 @@ public class BoatReservationService {
         return repository.getById(id);
     }
     public void deleteById(Long id) {
-        repository.deleteById(id);
-    }//TODO brisanje samo postavljanje na false
-
+        BoatReservation boatReservation=repository.getById(id);
+        boatReservation.setDeleted(true);
+        repository.save(boatReservation);
+    }
     public List<BoatReservation> getAll() {
         return repository.findAll().stream().filter(boatReservation -> !boatReservation.isDeleted()).collect(Collectors.toCollection(ArrayList::new));
     }

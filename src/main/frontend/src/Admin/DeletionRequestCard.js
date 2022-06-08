@@ -1,7 +1,7 @@
 import {Badge, Button, Card, Form, Modal} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {backLink, loadingToast, notifySuccess, updateForFetchedDataError, updateForFetchedDataSuccess} from "../Consts";
+import {backLink, loadingToast, updateForFetchedDataSuccess} from "../Consts";
 import {ToastContainer} from "react-toastify";
 
 export function DeletionRequestCard({request}) {
@@ -11,15 +11,15 @@ export function DeletionRequestCard({request}) {
 
     const handleDeletionRequest = (type) => {
         let dto = {
-            username: user.username,
+            username: request.userId,
             comment: text,
             requestId: request.id.toString(),
             type: type
         }
-        let id=loadingToast()
+        let id = loadingToast()
         axios.post(backLink + "/deletionRequests/validateDeletion", dto).then(
             response => {
-                updateForFetchedDataSuccess(response.data,id)
+                updateForFetchedDataSuccess(response.data, id)
                 setShow(false)
                 setTimeout(function () {
                     window.location.reload();
@@ -31,7 +31,7 @@ export function DeletionRequestCard({request}) {
     const fetchUserData = () => {
         switch (request.userType) {
             case "CLIENT":
-                axios.get(backLink + "/client/" + request.userDeletionIdentification).then(
+                axios.get(backLink + "/client/" + request.userId).then(
                     response => {
                         console.log(response.data)
                         setUser(response.data)
@@ -39,7 +39,7 @@ export function DeletionRequestCard({request}) {
                 )
                 break
             case "FISHING_INSTRUCTOR":
-                axios.get(backLink + "/fishinginstructor/" + request.userDeletionIdentification).then(
+                axios.get(backLink + "/fishinginstructor/" + request.userId).then(
                     response => {
                         console.log(response.data)
                         setUser(response.data)
@@ -47,7 +47,7 @@ export function DeletionRequestCard({request}) {
                 )
                 break
             case "VACATION_HOUSE_OWNER":
-                axios.get(backLink + "/houseowner/" + request.userDeletionIdentification).then(
+                axios.get(backLink + "/houseowner/" + request.userId).then(
                     response => {
                         console.log(response.data)
                         setUser(response.data)
@@ -55,7 +55,7 @@ export function DeletionRequestCard({request}) {
                 )
                 break
             case "BOAT_OWNER":
-                axios.get(backLink + "/boatowner/" + request.userDeletionIdentification).then(
+                axios.get(backLink + "/boatowner/" + request.userId).then(
                     response => {
                         console.log(response.data)
                         setUser(response.data)
@@ -87,10 +87,10 @@ export function DeletionRequestCard({request}) {
                         <Button onClick={() => setShow(true)} variant="outline-primary"
                                 className="ms-auto m-1">Pregledaj</Button>
                         <Button variant="outline-success" className="m-1"
-                                onClick={()=>handleDeletionRequest("approve")}
+                                onClick={() => handleDeletionRequest("approve")}
                         >Odobri</Button>
                         <Button variant="outline-danger" className="m-1"
-                                onClick={()=>handleDeletionRequest("deny")}
+                                onClick={() => handleDeletionRequest("deny")}
                         >Poništi</Button>
                     </Card.Body>
                 </Card>
@@ -115,13 +115,13 @@ export function DeletionRequestCard({request}) {
                         <Button onClick={() => setShow(false)} variant="outline-primary"
                                 className="ms-auto m-1">Otkaži</Button>
                         <Button
-                            onClick={()=>handleDeletionRequest("approve")}
+                            onClick={() => handleDeletionRequest("approve")}
                             variant="outline-success" className="m-1"
                         >Odobri</Button>
                         <Button
-                            onClick={()=>handleDeletionRequest("deny")}
-                                variant="outline-danger"
-                                className="m-1">Poništi</Button>
+                            onClick={() => handleDeletionRequest("deny")}
+                            variant="outline-danger"
+                            className="m-1">Poništi</Button>
                     </Modal.Footer>
                 </Modal>
             </div>
