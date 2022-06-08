@@ -38,6 +38,11 @@ export function Sidebar() {
                 Žalbe
             </Nav.Link>
 
+            <Nav.Link className="ms-4" href={frontLink+"admin/reports"}>
+                <BsArrowRight className="me-2"/>
+                Izveštaji
+            </Nav.Link>
+
             <h4 className="fw-light ms-3">Loyalti program</h4>
 
             <Nav.Link className="ms-4" href={frontLink + "admin/categories"}>

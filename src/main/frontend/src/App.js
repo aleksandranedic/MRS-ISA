@@ -14,6 +14,7 @@ import Login from "./LogIn";
 import {AdminPage} from "./Admin/AdminPage";
 import {RegistrationRequests} from "./Admin/RegistrationRequests";
 import {DeletionRequests} from "./Admin/DeletionRequests";
+import AdminReports from "./Admin/AdminReports";
 
 import {HomePage} from "./Home/HomePage";
 import SuccessPopUp from "./SuccessPopUp";
@@ -63,6 +64,7 @@ function App() {
                 <Route path="/admin/penaltyRequests" element={<PenaltyRequests/>}/>
                 <Route path="/admin/reviewRequests" element={<ReviewRequests/>}/>
                 <Route path="/admin/complaints" element={<Complaints/>}/>
+                <Route path='/admin/reports' element={<AdminReports/>}/>
                 <Route path="/admin/categories" element={<LoyaltyCategories/>}/>
                 <Route path="/admin/points" element={<Points/>}/>
 
