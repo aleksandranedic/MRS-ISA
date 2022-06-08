@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class BoatOwnerService {
@@ -326,7 +327,7 @@ public class BoatOwnerService {
     }
 
     public List<BoatOwner> getAll() {
-        return repository.findAll();
+        return repository.findAll().stream().filter(boatOwner -> !boatOwner.getDeleted()).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public BoatOwner getBoatOwnerByEmail(String username) {
@@ -348,7 +349,7 @@ public class BoatOwnerService {
         List<String> names=new ArrayList<>();
         String fullName="";
         for (BoatOwner boatOwner :
-                repository.findAll()) {
+                getAll()) {
             fullName=boatOwner.getFirstName()+" "+boatOwner.getLastName();
             if(!names.contains(fullName))
                 names.add(fullName);

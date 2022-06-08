@@ -5,8 +5,10 @@ import com.project.team9.repo.BoatReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BoatReservationService {
@@ -25,10 +27,10 @@ public class BoatReservationService {
     }
     public void deleteById(Long id) {
         repository.deleteById(id);
-    }
+    }//TODO brisanje samo postavljanje na false
 
     public List<BoatReservation> getAll() {
-        return repository.findAll();
+        return repository.findAll().stream().filter(boatReservation -> !boatReservation.isDeleted()).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public List<BoatReservation> getStandardReservations() {

@@ -49,6 +49,7 @@ public class VendorRegistrationService {
 
     public String validateVendor(VendorRegistrationRequestReplay replay) {
         RegistrationRequest registrationRequest = service.getRegistrationRequest(replay.getRequestId());
+        String name="";
         if (registrationRequest == null) {
             return "Odobravanje registracija nije uspešno";
         } else if (fishingInstructorService.getFishingInstructorByEmail(replay.getUsername()) != null
@@ -88,6 +89,7 @@ public class VendorRegistrationService {
                             role,
                             new ArrayList<>()
                     );
+                    name=fishingInstructor.getName();
                     fishingInstructor.setEnabled(true);
                     fishingInstructor.setLastPasswordResetDate(new Timestamp(new Date().getTime()));
                     fishingInstructorService.addFishingInstructor(fishingInstructor);
@@ -105,6 +107,7 @@ public class VendorRegistrationService {
                             registrationRequest.getRegistrationRationale(),
                             role
                     );
+                    name= vacationHouseOwner.getName();
                     vacationHouseOwner.setEnabled(true);
                     vacationHouseOwner.setLastPasswordResetDate(new Timestamp(new Date().getTime()));
                     vacationHouseOwnerService.addOwner(vacationHouseOwner);
@@ -123,18 +126,18 @@ public class VendorRegistrationService {
                             new ArrayList<Boat>(),
                             role
                     );
+                    name=boatOwner.getName();
                     boatOwner.setLastPasswordResetDate(new Timestamp(new Date().getTime()));
                     boatOwner.setEnabled(true);
                     boatOwnerService.save(boatOwner);
                     break;
             }
-
             registrationRequest.setResponse(replay.getResponse());
             registrationRequest.setDeleted(true);
             service.addRegistrationRequest(registrationRequest);
-//            emailSender.send(
-//                    registrationRequest.getEmail(),
-//                    buildEmail(registrationRequest.getFirstName() + " " + registrationRequest.getLastName()));
+            emailSender.send(
+                    registrationRequest.getEmail(),
+                    buildEmail(name),"Registracija pružaoca usluga");
             return "Odobravanje registracije je uspešno";
         }
     }

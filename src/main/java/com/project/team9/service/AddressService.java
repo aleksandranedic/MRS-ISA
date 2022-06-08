@@ -26,7 +26,7 @@ public class AddressService {
 
     public void deleteById(Long id) {
         addressRepository.deleteById(id);
-    }
+    }//TODO msm da nam ovo ne treba
 
     public Address addAddress(Address address) {
         return addressRepository.save(address);

@@ -165,4 +165,18 @@ public class VacationHouseController {
     public ResponseEntity<List<VacationHouse>> getFilteredVacationHouse(@RequestBody VacationHouseFilterDTO vacationHouseFilterDTO) {
         return ResponseEntity.ok(service.getFilteredVacationHouses(vacationHouseFilterDTO));
     }
+
+    @PostMapping("subscribe")
+    public ResponseEntity<String> subscribeUserOnVacationHouse(@RequestBody SubscribeDTO subscribeDTO){
+        return ResponseEntity.ok(service.subscribeBoatUserOnVacationHouse(subscribeDTO));
+    }
+    @GetMapping("/isSubscribed")
+    public ResponseEntity<Boolean> isUserSubscribedToVacationHouse(@RequestBody SubscribeDTO subscribeDTO) {
+        return ResponseEntity.ok(service.isUserSubscribedToVacationHouse(subscribeDTO));
+    }
+    @PostMapping("unsubscribe")
+    public ResponseEntity<String> unsubscribeUserOnVacationHouse(@RequestBody SubscribeDTO subscribeDTO){
+        return ResponseEntity.ok(service.unsubscribeBoatUserOnVacationHouse(subscribeDTO));
+    }
+
 }

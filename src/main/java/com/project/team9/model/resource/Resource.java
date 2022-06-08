@@ -7,6 +7,7 @@ import com.project.team9.model.Address;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -35,7 +36,11 @@ public abstract class Resource {
     @OneToOne
     private Pricelist pricelist;
     private int cancellationFee;
+
+    @ElementCollection
+    private Collection<String> subClientUsernames;
     //TODO treba dodati delete
+    private Boolean deleted=false;
 
     public Resource() {
     }
@@ -45,11 +50,13 @@ public abstract class Resource {
         this.address = address;
         this.description = description;
         this.images = new ArrayList<Image>();
+        this.subClientUsernames=new ArrayList<>();
         this.additionalServices = new ArrayList<Tag>();
         this.rulesAndRegulations = rulesAndRegulations;
         this.pricelist = pricelist;
         this.cancellationFee = cancellationFee;
     }
+
 
     public void setId(Long id) {
         this.id = id;
@@ -144,5 +151,21 @@ public abstract class Resource {
                 ", pricelist=" + pricelist +
                 ", cancellationFee=" + cancellationFee +
                 '}';
+    }
+
+    public Collection<String> getSubClientUsernames() {
+        return subClientUsernames;
+    }
+
+    public void setSubClientUsernames(Collection<String> subClientUsernames) {
+        this.subClientUsernames = subClientUsernames;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 }

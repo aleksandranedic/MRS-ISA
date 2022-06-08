@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class FishingInstructorService {
@@ -45,7 +46,7 @@ public class FishingInstructorService {
     }
 
     public List<FishingInstructor> getFishingInstructors() {
-        return repository.findAll();
+        return repository.findAll().stream().filter(fishingInstructor -> !fishingInstructor.getDeleted()).collect(Collectors.toCollection(ArrayList::new));
 
     }
 
@@ -324,7 +325,7 @@ public class FishingInstructorService {
         List<String> names = new ArrayList<>();
         String fullName = "";
         for (FishingInstructor fishingInstructor :
-                repository.findAll()) {
+                getFishingInstructors()) {
             fullName = fishingInstructor.getFirstName() + " " + fishingInstructor.getLastName();
             if (!names.contains(fullName))
                 names.add(fullName);
