@@ -171,4 +171,9 @@ public class BoatController {
     public ResponseEntity<String> unsubscribeUserOnBoat(@RequestBody SubscribeDTO subscribeDTO){
         return ResponseEntity.ok(service.unsubscribeBoatUserOnBoat(subscribeDTO));
     }
+
+    @GetMapping("/clientSubbedBoats/{id}")
+    public ResponseEntity<List<EntitySubbedDTO>> getClientsSubscribedBoats(@PathVariable Long id){
+        return ResponseEntity.ok(service.getClientsSubscribedBoats());
+    }
 }

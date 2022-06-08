@@ -150,8 +150,13 @@ public class AdventureController {
         return ResponseEntity.ok(service.isUserSubscribedToAdventure(subscribeDTO));
     }
 
-    @PostMapping("unsubscribe")
+    @PostMapping("/unsubscribe")
     public ResponseEntity<String> unsubscribeUserOnAdventure(@RequestBody SubscribeDTO subscribeDTO){
         return ResponseEntity.ok(service.unsubscribeBoatUserOnAdventure(subscribeDTO));
     }
+    @GetMapping("/clientSubbedAdventures/{id}")
+    public ResponseEntity<List<EntitySubbedDTO>> getClientsSubscribedAdventures(@PathVariable Long id){
+        return ResponseEntity.ok(service.getClientsSubscribedAdventures());
+    }
+
 }

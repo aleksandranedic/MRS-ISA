@@ -59,7 +59,7 @@ public class TestData {
     }
 
     public FishingInstructor createFishingInstructor(Long id, String firstName, String lastName, String biography, Address address, Image profilePhoto, Role role) {
-        FishingInstructor fishingInstructor = new FishingInstructor(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName, firstName.toLowerCase() + "." + lastName.toLowerCase() + "@maildrop.cc", "0601234567", address, false, "", biography, role, new ArrayList<Adventure>());
+        FishingInstructor fishingInstructor = new FishingInstructor(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName, firstName.toLowerCase() + "." + lastName.toLowerCase() + "@gmail.com", "0601234567", address, false, "", biography, role, new ArrayList<Adventure>());
 
         fishingInstructor.setId(id);
 
@@ -68,26 +68,26 @@ public class TestData {
 
     public VacationHouseOwner createVacationHouseOwner(Long id, String firstName, String lastName, Address address, Image profilePhoto, Role role) {
 
-        VacationHouseOwner vacationHouseOwner = new VacationHouseOwner(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName, firstName.toLowerCase() + "." + lastName.toLowerCase() + "@maildrop.cc", "0601234567", address, false, "", role);
+        VacationHouseOwner vacationHouseOwner = new VacationHouseOwner(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName, firstName.toLowerCase() + "." + lastName.toLowerCase() + "@gmail.com", "0601234567", address, false, "", role);
         vacationHouseOwner.setId(id);
         return vacationHouseOwner;
     }
 
     public BoatOwner createBoatOwner(Long id, String firstName, String lastName, Address address, Image profilePhoto, Role role) {
 
-        BoatOwner boatOwner = new BoatOwner(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName, firstName.toLowerCase() + "." + lastName.toLowerCase() + "@maildrop.cc", "0601234567", address, false, "", new ArrayList<>(), role);
+        BoatOwner boatOwner = new BoatOwner(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName, firstName.toLowerCase() + "." + lastName.toLowerCase() + "@gmail.com", "0601234567", address, false, "", new ArrayList<>(), role);
         boatOwner.setId(id);
         return boatOwner;
     }
 
     public Administrator createAdministrator(Long id, String firstName, String lastName, Address address, Image profilePhoto, Role role, boolean isSuperAdministrator) {
-        Administrator administrator = new Administrator(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName, firstName.toLowerCase() + "." + lastName.toLowerCase() + "@maildrop.cc", "0601234567", address, false, role, isSuperAdministrator);
+        Administrator administrator = new Administrator(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName, firstName.toLowerCase() + "." + lastName.toLowerCase() + "@gmail.com", "0601234567", address, false, role, isSuperAdministrator);
         administrator.setId(id);
         return administrator;
     }
 
     public Client createClient(Long id, String firstName, String lastName, Address address, Image profilePhoto, Role role) {
-        Client client = new Client(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName, firstName.toLowerCase() + "." + lastName.toLowerCase() + "@maildrop.cc", "0601234567", address, false, role);
+        Client client = new Client(profilePhoto, encodePassword(firstName.toLowerCase() + "123"), firstName, lastName, firstName.toLowerCase() + "." + lastName.toLowerCase() + "@gmail.com", "0601234567", address, false, role);
         client.setId(id);
         return client;
     }
@@ -142,7 +142,7 @@ public class TestData {
         return new RegistrationRequest(text, response, encodePassword(password), firstName, lastName, email, phoneNumber, place, number, street, country, userRole, biography, registrationRationale);
     }
 
-    public DeleteRequest createDeleteRequest(String text, String response, String userId, String userType) {
+    public DeleteRequest createDeleteRequest(String text, String response, Long userId, String userType) {
         return new DeleteRequest(text, response, userId, userType);
     }
 

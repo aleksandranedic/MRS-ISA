@@ -9,8 +9,6 @@ import {ToastContainer} from "react-toastify";
 
 export function PenaltyRequests() {
 
-    //TODO: Napraviti vendorReviewDTO koji sadrzi sledece podatke, moze i dodatne ako ti treba
-
     const [requests, setRequests] = useState([]);
 
     const fetchPenalty = () => {
@@ -113,6 +111,7 @@ function PenaltyRequestModal({request, show, setShow}) {
             checkPenalty: checkPenalty,
             vendorReviewRequestId: request.vendorReviewRequestId
         }
+        console.log(dto)
         let id = loadingToast()
         axios.post(backLink + "/penaltyReview/approve", dto).then(
             res => {

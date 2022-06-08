@@ -29,6 +29,7 @@ public class Reservation {
     private boolean isBusyPeriod;
     private boolean isQuickReservation;
     private boolean deleted=false;
+    private boolean confirmed=false;
 
     public Reservation() {
     }
@@ -113,5 +114,13 @@ public class Reservation {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public boolean isConfirmed() {
+        return confirmed;
+    }
+
+    public void setConfirmed(boolean confirmed) {
+        this.confirmed = confirmed;
     }
 }

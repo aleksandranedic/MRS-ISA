@@ -38,8 +38,7 @@ public abstract class Resource {
     private int cancellationFee;
 
     @ElementCollection
-    private Collection<String> subClientUsernames;
-    //TODO treba dodati delete
+    private Collection<Long> subClientUsernames;
     private Boolean deleted=false;
 
     public Resource() {
@@ -153,11 +152,11 @@ public abstract class Resource {
                 '}';
     }
 
-    public Collection<String> getSubClientUsernames() {
+    public Collection<Long> getSubClientUsernames() {
         return subClientUsernames;
     }
 
-    public void setSubClientUsernames(Collection<String> subClientUsernames) {
+    public void setSubClientUsernames(Collection<Long> subClientUsernames) {
         this.subClientUsernames = subClientUsernames;
     }
 

@@ -179,4 +179,8 @@ public class VacationHouseController {
         return ResponseEntity.ok(service.unsubscribeBoatUserOnVacationHouse(subscribeDTO));
     }
 
+    @GetMapping("/clientSubbedVacationHouses/{id}")
+    public ResponseEntity<List<EntitySubbedDTO>> getClientsSubscribedVacationHouses(@PathVariable Long id){
+        return ResponseEntity.ok(service.getClientsSubscribedVacationHouses());
+    }
 }

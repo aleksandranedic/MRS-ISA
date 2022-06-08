@@ -1,6 +1,7 @@
 package com.project.team9.repo;
 
 import com.project.team9.model.reservation.AdventureReservation;
+import org.hibernate.annotations.Where;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

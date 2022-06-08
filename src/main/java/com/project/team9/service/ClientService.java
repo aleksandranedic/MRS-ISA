@@ -1,14 +1,12 @@
 package com.project.team9.service;
 
-import com.project.team9.dto.EntitySubbedDTO;
+import com.project.team9.dto.ClientDTO;
 import com.project.team9.dto.LoginDTO;
 import com.project.team9.dto.ReservationDTO;
 import com.project.team9.model.Address;
 import com.project.team9.model.Image;
+import com.project.team9.model.request.DeleteRequest;
 import com.project.team9.model.reservation.*;
-import com.project.team9.model.resource.Adventure;
-import com.project.team9.model.resource.Boat;
-import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
 import com.project.team9.repo.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,21 +31,18 @@ public class ClientService {
     private final AdventureReservationService adventureReservationService;
     private final BoatReservationService boatReservationService;
     private final VacationHouseReservationService vacationHouseReservationService;
-    private final AdventureService adventureService;
-    private final BoatService boatService;
-    private final VacationHouseService vacationHouseService;
-
+    private final AddressService addressService;
 
     @Autowired
-    public ClientService(ClientRepository clientRepository, ImageService imageService, AdventureReservationService adventureReservationService, BoatReservationService boatReservationService, VacationHouseReservationService vacationHouseReservationService, AdventureService adventureService, BoatService boatService, VacationHouseService vacationHouseService) {
+    public ClientService(ClientRepository clientRepository, ImageService imageService, AdventureReservationService adventureReservationService, BoatReservationService boatReservationService, VacationHouseReservationService vacationHouseReservationService,
+                         AddressService addressService
+    ) {
         this.clientRepository = clientRepository;
         this.imageService = imageService;
         this.adventureReservationService = adventureReservationService;
         this.boatReservationService = boatReservationService;
         this.vacationHouseReservationService = vacationHouseReservationService;
-        this.adventureService = adventureService;
-        this.boatService = boatService;
-        this.vacationHouseService = vacationHouseService;
+        this.addressService = addressService;
     }
 
     public List<Client> getClients() {
@@ -149,45 +144,22 @@ public class ClientService {
         return reservations;
     }
 
-    public List<EntitySubbedDTO> getSubscribedResources(Long userId) {
-        List<EntitySubbedDTO> entities = new ArrayList<>();
-        Client client = clientRepository.getById(userId);
-        for (Adventure adventure : adventureService.getAdventures()) {
-            if (adventure.getSubClientUsernames().contains(client.getEmail())) {
-                entities.add(new EntitySubbedDTO(
-                        adventure.getTitle(),
-                        "adventure",
-                        adventure.getImages().get(0),
-                        adventureService.getAdventureRating(adventure.getId()),
-                        adventure.getId(), adventure.getAddress(),
-                        adventure.getPricelist().getPrice()
-                ));
-            }
+    public Client updateLoggedUser(String id, ClientDTO clientDTO) {
+        Client currentClient = getById(id);
+        currentClient.setFirstName(clientDTO.getFirstName());
+        currentClient.setLastName(clientDTO.getLastName());
+        currentClient.setPhoneNumber(clientDTO.getPhoneNumber());
+        Address address = addressService.getByAttributes(clientDTO.getAddress());
+        if (address == null) {
+            address = new Address();
+            address.setStreet(clientDTO.getAddress().getStreet());
+            address.setNumber(clientDTO.getAddress().getNumber());
+            address.setCountry(clientDTO.getAddress().getCountry());
+            address.setPlace(clientDTO.getAddress().getPlace());
+            addressService.addAddress(address);
         }
-        for (Boat boat : boatService.getBoats()) {
-            if (boat.getSubClientUsernames().contains(client.getEmail())) {
-                entities.add(new EntitySubbedDTO(
-                        boat.getTitle(),
-                        "boat",
-                        boat.getImages().get(0),
-                        boatService.getBoarRating(boat.getId()),
-                        boat.getId(), boat.getAddress(),
-                        boat.getPricelist().getPrice()
-                ));
-            }
-        }
-        for (VacationHouse vacationHouse : vacationHouseService.getVacationHouses()) {
-            if (vacationHouse.getSubClientUsernames().contains(client.getEmail())) {
-                entities.add(new EntitySubbedDTO(
-                        vacationHouse.getTitle(),
-                        "house",
-                        vacationHouse.getImages().get(0),
-                        vacationHouseService.getVacationHouseRating(vacationHouse.getId()),
-                        vacationHouse.getId(), vacationHouse.getAddress(),
-                        vacationHouse.getPricelist().getPrice()
-                ));
-            }
-        }
-        return entities;
+        currentClient.setAddress(address);
+        currentClient = addClient(currentClient);
+        return currentClient;
     }
 }

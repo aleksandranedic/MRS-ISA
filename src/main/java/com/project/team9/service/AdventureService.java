@@ -78,9 +78,16 @@ public class AdventureService {
         adventureReservationService.save(reservation);
         adventure.addQuickReservations(reservation);
         this.addAdventure(adventure);
-        //TODO napravi email koji mozes da saljes za quick reservation
-        for (String username: adventure.getSubClientUsernames()) {
-            emailService.send(username,"Napravljena je akcija na koji ste se preplatili","Notifikacija o pretplacenim akcijama");
+        //TODO proveri da li radi
+        for (Long userId : adventure.getSubClientUsernames()) {
+            Client client = clientService.getById(String.valueOf(userId));
+            String fullResponse = "Napravljena je akcija na koji ste se preplatili\n " +
+                    "Avantura kоšta " + reservation.getPrice() + "\n" +
+                    "Zakazani period je od " + reservation.getAppointments().get(0).getStartTime().toString() + " do " +
+                    reservation.getAppointments().get(reservation.getAppointments().size() - 1).getEndTime().toString();
+            String additionalText = "<a href=\"" + "http://localhost:3000" + "\">Prijavite se i rezervišite je</a>";
+            String emailForSubbedUser = emailService.buildHTMLEmail(client.getName(), fullResponse, additionalText, "Notifikacija o pretplacenim akcijama");
+            emailService.send(client.getEmail(), emailForSubbedUser, "Notifikacija o pretplacenim akcijama");
         }
         return true;
     }
@@ -438,11 +445,8 @@ public class AdventureService {
                     if (time.isBefore(LocalDateTime.now())) {
                         reservations.add(createDTOFromReservation(r));
                     }
-
                 }
             }
-
-
         }
         return reservations;
     }
@@ -591,22 +595,35 @@ public class AdventureService {
     }
 
     public String subscribeBoatUserOnAdventure(SubscribeDTO subscribeDTO) {
-        Client client=clientService.getById(String.valueOf(subscribeDTO.getUserId()));
         Adventure adventure=getById(String.valueOf(subscribeDTO.getEntityId()));
-        adventure.getSubClientUsernames().add(client.getUsername());
+        adventure.getSubClientUsernames().add(subscribeDTO.getUserId());
         return "Uspešno ste prijavljeni na akcije ove avanture";
     }
 
     public Boolean isUserSubscribedToAdventure(SubscribeDTO subscribeDTO) {
-        Client client=clientService.getById(String.valueOf(subscribeDTO.getUserId()));
-        Adventure adventure=getById(String.valueOf(subscribeDTO.getEntityId()));
-        return adventure.getSubClientUsernames().contains(client.getUsername());
+        Adventure adventure = getById(String.valueOf(subscribeDTO.getEntityId()));
+        return adventure.getSubClientUsernames().contains(subscribeDTO.getUserId());
     }
 
     public String unsubscribeBoatUserOnAdventure(SubscribeDTO subscribeDTO) {
-        Client client=clientService.getById(String.valueOf(subscribeDTO.getUserId()));
-        Adventure adventure=getById(String.valueOf(subscribeDTO.getEntityId()));
-        adventure.getSubClientUsernames().remove(client.getUsername());
+        Adventure adventure = getById(String.valueOf(subscribeDTO.getEntityId()));
+        adventure.getSubClientUsernames().remove(subscribeDTO.getUserId());
         return "Uspešno ste se odjavili na akcije ove avanture";
+    }
+
+    public List<EntitySubbedDTO> getClientsSubscribedAdventures() {
+        List<EntitySubbedDTO> entities = new ArrayList<>();
+        for (Adventure adventure : getAdventures()) {
+            entities.add(new EntitySubbedDTO(
+                    adventure.getTitle(),
+                    "adventure",
+                    adventure.getImages().get(0),
+                    getAdventureRating(adventure.getId()),
+                    adventure.getId(),
+                    adventure.getAddress(),
+                    adventure.getPricelist().getPrice()
+            ));
+        }
+        return entities;
     }
 }

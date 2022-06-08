@@ -183,13 +183,13 @@ public class Config {
 
         //----------------------------------------
 
-        addRegistrationRequest("U ponudi ima 3 avanture", "aleksa123", "Aleksu", "Aleksić", "tim9raketa+aleksa.aleksić@gmail.com", "19", "FISHING_INSTRUCTOR", "Živim na lepom plavom Dunavu.");
-        addRegistrationRequest("U ponudi ima 2 vikendice", "julia123", "Julia", "Annie", "tim9raketa+jula.annie@gmail.com", "20", "VACATION_HOUSE_OWNER", "Volim da uživam na lepoj vikendici uz čašu vina.");
+        addRegistrationRequest("U ponudi ima 3 avanture", "aleksa123", "Aleksu", "Aleksić", "aleksa.aleksić@gmail.com", "19", "FISHING_INSTRUCTOR", "Živim na lepom plavom Dunavu.");
+        addRegistrationRequest("U ponudi ima 2 vikendice", "julia123", "Julia", "Annie", "jula.annie@gmail.com", "20", "VACATION_HOUSE_OWNER", "Volim da uživam na lepoj vikendici uz čašu vina.");
 
         //-----------------------------------------------
 
-        addDeleteRequest("6", "CLIENT");
-        addDeleteRequest("7", "VACATION_HOUSE_OWNER");
+        addDeleteRequest(6L, "CLIENT");
+        addDeleteRequest(7L, "VACATION_HOUSE_OWNER");
 
         //-----------------------------------------------
 
@@ -356,7 +356,7 @@ public class Config {
 
         addBoatQuickReservation(boat12, 6, 14, 8, 16);
         addBoatQuickReservation(boat12, 6, 19, 15, 21);
-
+//
         //------------------------------------
 
         addClientReviewForResource(adventure1, client3);
@@ -689,7 +689,7 @@ public class Config {
         vacationHouseRepository.save(vacationHouse);
     }
 
-    private void addDeleteRequest(String userId, String CLIENT) {
+    private void addDeleteRequest(long userId, String CLIENT) {
         DeleteRequest deleteRequest = testData.createDeleteRequest("Želim da mi se nalog obriše", "", userId, CLIENT);
         deleteRequestRepository.save(deleteRequest);
     }

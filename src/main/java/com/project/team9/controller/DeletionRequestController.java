@@ -34,4 +34,10 @@ public class DeletionRequestController {
     private ResponseEntity<String> deleteUser(@RequestBody DeleteReplayDTO deleteReplayDTO) {
         return ResponseEntity.ok(service.processDeletionRequest(deleteReplayDTO));
     }
+
+    @DeleteMapping("/client/{id}")
+    public ResponseEntity<String> deleteClient(@PathVariable Long id, @RequestParam String deletingReason) {
+        return ResponseEntity.ok(service.deleteClient(id,deletingReason));
+    }
+
 }

@@ -22,14 +22,10 @@ import java.util.List;
 public class ClientController {
 
     private final ClientService clientService;
-    private final AddressService addressService;
-    private final DeleteRequestService deleteRequestService;
 
     @Autowired
-    public ClientController(ClientService clientService, AddressService addressService, DeleteRequestService deleteRequestService) {
+    public ClientController(ClientService clientService) {
         this.clientService = clientService;
-        this.addressService = addressService;
-        this.deleteRequestService = deleteRequestService;
     }
 
     @PostMapping(value = "changeProfilePicture/{id}")
@@ -39,7 +35,6 @@ public class ClientController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Client> getClient(@PathVariable String id) {
-
         return ResponseEntity.ok(clientService.getById(id));
     }
 
@@ -51,38 +46,13 @@ public class ClientController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<Client> updateClient(@PathVariable String id, @RequestBody ClientDTO clientDTO) {
-        Client currentClient = clientService.getById(id);
-        currentClient.setFirstName(clientDTO.getFirstName());
-        currentClient.setLastName(clientDTO.getLastName());
-        currentClient.setPhoneNumber(clientDTO.getPhoneNumber());
-        Address address = addressService.getByAttributes(clientDTO.getAddress());
-        if (address == null) {
-            address = new Address();
-            address.setStreet(clientDTO.getAddress().getStreet());
-            address.setNumber(clientDTO.getAddress().getNumber());
-            address.setCountry(clientDTO.getAddress().getCountry());
-            address.setPlace(clientDTO.getAddress().getPlace());
-            addressService.addAddress(address);
-        }
-        currentClient.setAddress(address);
-        currentClient = clientService.addClient(currentClient);
-        return ResponseEntity.ok().body(currentClient);
-    }
-
-    @PostMapping("/delete/{id}")
-    public ResponseEntity<DeleteRequest> deleteClient(@PathVariable String id, @RequestParam String deletingReason) {
-        DeleteRequest deleteRequest = new DeleteRequest();
-        deleteRequest.setUserDeletionIdentification(id);
-        deleteRequest.setUserType("CLIENT");
-        deleteRequest.setComment(deletingReason);
-        deleteRequest.setResponse("");
-        deleteRequestService.addDeleteRequest(deleteRequest);
-        return ResponseEntity.ok().body(deleteRequest);
+        return ResponseEntity.ok(clientService.updateLoggedUser(id,clientDTO));
     }
 
     @GetMapping("/reservation/{id}")
     public List<ReservationDTO> getReservations(@PathVariable Long id) {
         return clientService.getReservations(id);
     }
+
 }
 

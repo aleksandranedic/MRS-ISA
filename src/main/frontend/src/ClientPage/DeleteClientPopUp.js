@@ -3,14 +3,15 @@ import {Button, Form, Modal} from "react-bootstrap";
 import {Info} from "../Info";
 import axios from "axios";
 import Collapse from "react-bootstrap/Collapse";
+import {backLink, notifySuccess} from "../Consts";
 
 export default function DeleteClientPopUp({client, showDeleteClient, handleCloseDeleteClient}) {
     const [deleteReason, setReason] = useState("")
 
     function handleDeleteAccount() {
-        axios.post("http://localhost:4444/client/delete/" + client.id.toString(), deleteReason).then(
+        axios.post(backLink+"/deletionRequests/client/" + client.id.toString(), deleteReason).then(
             res => {
-                console.log(res)
+                notifySuccess(res.data)
             }
         )
     }

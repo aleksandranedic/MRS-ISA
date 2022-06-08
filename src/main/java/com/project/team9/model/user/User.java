@@ -30,7 +30,7 @@ public class User implements UserDetails {
     @OneToOne
     private Address address;
     private Boolean enabled = true;
-    private Boolean deleted = false;
+    private Boolean deleted;
     private Timestamp lastPasswordResetDate;
     @OneToOne
     private Image profileImg;

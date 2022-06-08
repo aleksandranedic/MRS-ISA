@@ -5,6 +5,7 @@ import com.project.team9.model.Image;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.Address;
 import com.project.team9.model.user.Role;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.ArrayList;
