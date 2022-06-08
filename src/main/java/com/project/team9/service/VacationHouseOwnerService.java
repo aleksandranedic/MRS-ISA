@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class VacationHouseOwnerService {
@@ -325,7 +326,7 @@ public class VacationHouseOwnerService {
         return repository.findByEmail(username);
     }
     public List<VacationHouseOwner> getAll() {
-        return repository.findAll();
+        return repository.findAll().stream().filter(vacationHouseOwner -> !vacationHouseOwner.getDeleted()).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public List<VacationHouseOwner> getUnregisteredVacationHouseOwners() {
@@ -342,7 +343,7 @@ public class VacationHouseOwnerService {
         List<String> names=new ArrayList<>();
         String fullName="";
         for (VacationHouseOwner vacationHouseOwner :
-                repository.findAll()) {
+                getAll()) {
             fullName=vacationHouseOwner.getFirstName()+" "+vacationHouseOwner.getLastName();
             if(!names.contains(fullName))
                 names.add(fullName);

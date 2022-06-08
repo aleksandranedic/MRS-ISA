@@ -7,9 +7,7 @@ import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.Appointment;
-import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.reservation.VacationHouseReservation;
-import com.project.team9.model.resource.Boat;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
@@ -44,10 +42,10 @@ public class VacationHouseService {
     private final AppointmentService appointmentService;
     private final ClientService clientService;
     private final ReservationService reservationService;
-
+    private final EmailService emailService;
 
     @Autowired
-    public VacationHouseService(VacationHouseRepository vacationHouseRepository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, VacationHouseReservationService vacationHouseReservationService, ClientReviewService clientReviewService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService) {
+    public VacationHouseService(VacationHouseRepository vacationHouseRepository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, VacationHouseReservationService vacationHouseReservationService, ClientReviewService clientReviewService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService, EmailService emailService) {
         this.repository = vacationHouseRepository;
         this.addressService = addressService;
         this.pricelistService = pricelistService;
@@ -58,10 +56,11 @@ public class VacationHouseService {
         this.appointmentService = appointmentService;
         this.clientService = clientService;
         this.reservationService = reservationService;
+        this.emailService = emailService;
     }
 
     public List<VacationHouse> getVacationHouses() {
-        return repository.findAll();
+        return repository.findAll().stream().filter(vacationHouse -> !vacationHouse.getDeleted()).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public HouseCardDTO getVacationHouseCard(Long id) {
@@ -84,10 +83,11 @@ public class VacationHouseService {
         return houseCards;
     }
 
-    public List<VacationHouse> getOwnersHouses(Long owner_id){
+    public List<VacationHouse> getOwnersHouses(Long owner_id) {
         return repository.findByOwnerId(owner_id);
     }
-    public List<VacationHouseReservation> getHouseReservations(Long house_id){
+
+    public List<VacationHouseReservation> getHouseReservations(Long house_id) {
         return vacationHouseReservationService.getReservationsByVacationHouseId(house_id);
     }
 
@@ -96,7 +96,7 @@ public class VacationHouseService {
         List<ResourceReportDTO> resources = new ArrayList<ResourceReportDTO>();
         for (VacationHouse resource : houses) {
             Image img = resource.getImages().get(0);
-            resources.add(new ResourceReportDTO(resource.getId(), resource.getTitle(), img, reviewService.getRating(resource.getId(), "resource")));
+            resources.add(new ResourceReportDTO(resource.getId(), resource.getTitle(), img, clientReviewService.getRating(resource.getId(), "resource")));
         }
         return resources;
     }
@@ -182,6 +182,10 @@ public class VacationHouseService {
         vacationHouseReservationService.addReservation(reservation);
         house.addReservation(reservation);
         this.save(house);
+        //TODO napravi email koji mozes da saljes za quick reservation
+        for (String username: house.getSubClientUsernames()) {
+            emailService.send(username,"Napravljena je akcija na koji ste se preplatili","Notifikacija o pretplacenim akcijama");
+        }
         return true;
     }
 
@@ -209,7 +213,7 @@ public class VacationHouseService {
         return new ResourceOwnerDTO(owner.getId(), owner.getName(), owner.getProfileImg());
     }
 
-    private VacationHouseReservation getReservationFromDTO(VacationHouseQuickReservationDTO dto, Boolean isQuick){
+    private VacationHouseReservation getReservationFromDTO(VacationHouseQuickReservationDTO dto, Boolean isQuick) {
         List<Appointment> appointments = new ArrayList<Appointment>();
         String[] splitDate = dto.getStartDate().split(" ");
         Appointment startDateAppointment = Appointment.getDayAppointment(Integer.parseInt(splitDate[2]), Integer.parseInt(splitDate[1]), Integer.parseInt(splitDate[0]));
@@ -428,7 +432,7 @@ public class VacationHouseService {
                 }
             }
         }
-
+        //TODO napravi potvrdu o rezervaciji na akciju
         vacationHouseReservationService.save(reservation);
         return reservation.getId();
     }
@@ -541,7 +545,7 @@ public class VacationHouseService {
         List<String> address = new ArrayList<>();
         String fullName = "";
         for (VacationHouse vacationHouse :
-                repository.findAll()) {
+                getVacationHouses()) {
             fullName = vacationHouse.getAddress().getFullAddressName();
             if (!address.contains(fullName)) {
                 address.add(fullName);
@@ -553,7 +557,7 @@ public class VacationHouseService {
     public List<VacationHouse> getFilteredVacationHouses(VacationHouseFilterDTO vacationHouseFilterDTO) {
         if (vacationHouseFilterDTO.isVacationHousesChecked()) {
             ArrayList<VacationHouse> vacationHouses = new ArrayList<>();//treba da prodjes i kroz brze rezervacije
-            for (VacationHouse vacationHouse : repository.findAll()) {
+            for (VacationHouse vacationHouse : getVacationHouses()) {
                 if (checkNumberOfVacationHouseRooms(vacationHouseFilterDTO, vacationHouse) &&
                         checkNumberOfVacationHouseBeds(vacationHouseFilterDTO, vacationHouse) &&
                         checkOwnerName(vacationHouseFilterDTO, vacationHouse) &&
@@ -565,7 +569,7 @@ public class VacationHouseService {
             }
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm");
             String datetime = vacationHouseFilterDTO.getStartDate() + " " + vacationHouseFilterDTO.getStartTime();
-            LocalDateTime startDateTime = LocalDateTime.parse(datetime, formatter);//ovde puca
+            LocalDateTime startDateTime = LocalDateTime.parse(datetime, formatter);
             datetime = vacationHouseFilterDTO.getEndDate() + " " + vacationHouseFilterDTO.getEndTime();
             LocalDateTime endDateTime = LocalDateTime.parse(datetime, formatter);
 
@@ -574,7 +578,7 @@ public class VacationHouseService {
             HashMap<LocalDateTime, Integer> listOfDatesBusyness = new HashMap<>();
             boolean remove = true;
             for (VacationHouse vacationHouse : vacationHouses) {
-                if (!checkPrice(vacationHouseFilterDTO, vacationHouse.getPricelist().getPrice() * numberOfDays))  //of days ce da bude za vikendice
+                if (!checkPrice(vacationHouseFilterDTO, vacationHouse.getPricelist().getPrice() * numberOfDays))
                     vacationHouses.remove(vacationHouse);
                 for (int i = 0; i <= numberOfDays; i++) {
                     listOfDatesBusyness.put(startDateTime.plusDays(i), 0);
@@ -671,14 +675,39 @@ public class VacationHouseService {
     public Long reserveQuickReservation(VacationHouseQuickReservationDTO dto) {
         VacationHouseReservation quickReservation = vacationHouseReservationService.getVacationHouseReservation(dto.getReservationID());
         Client client = clientService.getById(dto.getClientID().toString());
-
         quickReservation.getResource().removeQuickReservation(quickReservation);
         quickReservation.setClient(client);
         quickReservation.setQuickReservation(false);
+        //TODO napravi potvrdu o rezervaciji na akciju
         return vacationHouseReservationService.save(quickReservation);
     }
 
     public boolean clientCanReviewVendor(Long vendorId, Long clientId) {
         return vacationHouseReservationService.clientCanReviewVendor(vendorId, clientId);
+    }
+
+    public String subscribeBoatUserOnVacationHouse(SubscribeDTO subscribeDTO) {
+        Client client = clientService.getById(String.valueOf(subscribeDTO.getUserId()));
+        VacationHouse vacationHouse = getVacationHouse(subscribeDTO.getEntityId());
+        vacationHouse.getSubClientUsernames().add(client.getUsername());
+        return "Uspešno ste prijavljeni na akcije ove vikendice";
+    }
+
+    public Boolean isUserSubscribedToVacationHouse(SubscribeDTO subscribeDTO) {
+        Client client = clientService.getById(String.valueOf(subscribeDTO.getUserId()));
+        VacationHouse vacationHouse = getVacationHouse(subscribeDTO.getEntityId());
+        return vacationHouse.getSubClientUsernames().contains(client.getEmail());
+    }
+
+    public double getVacationHouseRating(Long id) {
+        List<ClientReviewDTO> list = clientReviewService.getResourceReviews(id);
+        return list.isEmpty() ? 0 : list.stream().mapToDouble(ClientReviewDTO::getRating).sum() / list.size();
+    }
+
+    public String unsubscribeBoatUserOnVacationHouse(SubscribeDTO subscribeDTO) {
+        Client client = clientService.getById(String.valueOf(subscribeDTO.getUserId()));
+        VacationHouse vacationHouse = getVacationHouse(subscribeDTO.getEntityId());
+        vacationHouse.getSubClientUsernames().remove(client.getUsername());
+        return "Uspešno ste se odjavili na akcije ove vikendice";
     }
 }

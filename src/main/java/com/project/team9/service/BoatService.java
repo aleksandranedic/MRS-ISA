@@ -9,7 +9,6 @@ import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.resource.Boat;
-import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.repo.BoatRepository;
@@ -43,10 +42,11 @@ public class BoatService {
     private final ClientService clientService;
     private final ReservationService reservationService;
     private final ClientReviewService clientReviewService;
+    private final EmailService emailService;
 
 
     @Autowired
-    public BoatService(BoatRepository repository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, BoatReservationService boatReservationService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService, ClientReviewService clientReviewService) {
+    public BoatService(BoatRepository repository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, BoatReservationService boatReservationService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService, ClientReviewService clientReviewService, EmailService emailService) {
         this.repository = repository;
         this.addressService = addressService;
         this.pricelistService = pricelistService;
@@ -57,10 +57,11 @@ public class BoatService {
         this.clientService = clientService;
         this.reservationService = reservationService;
         this.clientReviewService = clientReviewService;
+        this.emailService = emailService;
     }
 
     public List<Boat> getBoats() {
-        return repository.findAll();
+        return repository.findAll().stream().filter(boat -> !boat.getDeleted()).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public BoatCardDTO getBoatCard(Long id) {
@@ -76,6 +77,10 @@ public class BoatService {
         boatReservationService.addReservation(reservation);
         boat.addReservation(reservation);
         this.addBoat(boat);
+        //TODO napravi email koji mozes da saljes za quick reservation
+        for (String username: boat.getSubClientUsernames()) {
+            emailService.send(username,"Napravljena je akcija na koji ste se preplatili","Notifikacija o pretplacenim akcijama");
+        }
         return true;
     }
 
@@ -148,17 +153,18 @@ public class BoatService {
     public Long reserveQuickReservation(BoatQuickReservationDTO dto) {
         BoatReservation quickReservation = boatReservationService.getBoatReservation(dto.getReservationID());
         Client client = clientService.getById(dto.getClientID().toString());
-
         quickReservation.getResource().removeQuickReservation(quickReservation);
         quickReservation.setClient(client);
         quickReservation.setQuickReservation(false);
+        //TODO napravi potvrdu o rezervaciji na akciju
         return boatReservationService.save(quickReservation);
     }
 
-    public List<Boat> getOwnersBoats(Long owner_id){
+    public List<Boat> getOwnersBoats(Long owner_id) {
         return repository.findByOwnerId(owner_id);
     }
-    public List<BoatReservation> getBoatReservations(Long boat_id){
+
+    public List<BoatReservation> getBoatReservations(Long boat_id) {
         return boatReservationService.getReservationsByBoatId(boat_id);
     }
 
@@ -421,7 +427,7 @@ public class BoatService {
                 }
             }
         }
-
+        //TODO napravi potvrdu o rezervaciji na akciju
         boatReservationService.save(reservation);
         return reservation.getId();
     }
@@ -566,7 +572,7 @@ public class BoatService {
     public List<String> getBoatTypes() {
         List<String> types = new ArrayList<>();
         for (Boat boat :
-                repository.findAll()) {
+                getBoats()) {
             if (!types.contains(boat.getType()))
                 types.add(boat.getType());
         }
@@ -581,7 +587,7 @@ public class BoatService {
         List<String> address = new ArrayList<>();
         String fullName = "";
         for (Boat boat :
-                repository.findAll()) {
+                getBoats()) {
             fullName = boat.getAddress().getFullAddressName();
             if (!address.contains(fullName)) {
                 address.add(fullName);
@@ -592,9 +598,8 @@ public class BoatService {
 
     public List<Boat> getFilteredBoats(BoatFilterDTO boatFilterDTO) {
         if (boatFilterDTO.isBoatsChecked()) {
-            ArrayList<Boat> boats = new ArrayList<>();//treba da prodjes i kroz brze rezervacije
-            for (Boat boat : repository.findAll()) {
-//                private String boatMaxSpeed;
+            ArrayList<Boat> boats = new ArrayList<>();
+            for (Boat boat : getBoats()) {
                 if (checkBoatType(boatFilterDTO, boat) &&
                         checkOwnerName(boatFilterDTO, boat) &&
                         checkBoatEnginePower(boatFilterDTO, boat) &&
@@ -622,8 +627,8 @@ public class BoatService {
             boolean remove = true;
             ArrayList<Boat> boatsToDelete = new ArrayList<>();
             for (Boat boat : boats) {
-                if (!checkPrice(boatFilterDTO, boat.getPricelist().getPrice() * numberOfHours))  //of days ce da bude za vikendice
-                    boats.remove(boat); //cenu za sve dane sto ostaje
+                if (!checkPrice(boatFilterDTO, boat.getPricelist().getPrice() * numberOfHours))
+                    boats.remove(boat);
                 for (int i = 0; i < numberOfDays; i++) {
                     for (int j = 0; j < numberOfHours; j++) {
                         listOfDatesBusyness.put(startDateTime.plusHours(j).plusDays(i), 0);
@@ -681,7 +686,7 @@ public class BoatService {
         List<ResourceReportDTO> resources = new ArrayList<ResourceReportDTO>();
         for (Boat resource : boats) {
             Image img = resource.getImages().get(0);
-            resources.add(new ResourceReportDTO(resource.getId(), resource.getTitle(), img, reviewService.getRating(resource.getId(), "resource")));
+            resources.add(new ResourceReportDTO(resource.getId(), resource.getTitle(), img, clientReviewService.getRating(resource.getId(), "resource")));
         }
         return resources;
     }
@@ -720,5 +725,30 @@ public class BoatService {
 
     private boolean checkPrice(BoatFilterDTO boatFilterDTO, int price) {
         return boatFilterDTO.getPriceRange().isEmpty() || (boatFilterDTO.getPriceRange().get(0) <= price && price <= boatFilterDTO.getPriceRange().get(1));
+    }
+
+    public String subscribeBoatUserOnBoat(SubscribeDTO subscribeDTO) {
+        Client client = clientService.getById(String.valueOf(subscribeDTO.getUserId()));
+        Boat boat = getBoat(subscribeDTO.getEntityId());
+        boat.getSubClientUsernames().add(client.getUsername());
+        return "Uspešno ste prijavljeni na akcije ovog broda";
+    }
+
+    public Boolean isUserSubscribedToBoat(SubscribeDTO subscribeDTO) {
+        Client client = clientService.getById(String.valueOf(subscribeDTO.getUserId()));
+        Boat boat = getBoat(subscribeDTO.getEntityId());
+        return boat.getSubClientUsernames().contains(client.getEmail());
+    }
+
+    public double getBoarRating(Long id) {
+        List<ClientReviewDTO> list = clientReviewService.getResourceReviews(id);
+        return list.isEmpty() ? 0 : list.stream().mapToDouble(ClientReviewDTO::getRating).sum() / list.size();
+    }
+
+    public String unsubscribeBoatUserOnBoat(SubscribeDTO subscribeDTO) {
+        Client client = clientService.getById(String.valueOf(subscribeDTO.getUserId()));
+        Boat boat = getBoat(subscribeDTO.getEntityId());
+        boat.getSubClientUsernames().remove(client.getUsername());
+        return "Uspešno ste se odjavili na akcije ovog broda";
     }
 }

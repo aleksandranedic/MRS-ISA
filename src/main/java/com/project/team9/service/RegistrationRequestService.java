@@ -24,14 +24,6 @@ public class RegistrationRequestService {
     }
 
     public List<RegistrationRequest> getAllUndeletedRegistrationRequests() {
-        //TODO moras da izmenis da proveris da ti proveri i da ti registracija response ne bude prazno
-//        ArrayList<RegistrationRequest> registrationRequests = new ArrayList<>();
-//        for (RegistrationRequest registrationRequest:
-//                repository.findAll()) {
-//            if (!registrationRequest.getDeleted() && registrationRequest.getResponse().isEmpty())
-//                registrationRequests.add(registrationRequest);
-//        }
-//        return registrationRequests;
         return repository.findAll().stream().filter(registrationRequest -> !registrationRequest.getDeleted()).collect(Collectors.toCollection(ArrayList::new));
     }
 

@@ -2,8 +2,6 @@ package com.project.team9.controller;
 
 import com.project.team9.dto.*;
 import com.project.team9.exceptions.ReservationNotAvailableException;
-import com.project.team9.model.Address;
-import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,5 +159,16 @@ public class BoatController {
         return  service.getReservationsForReview(id);
     }
 
-
+    @PostMapping("subscribe")
+    public ResponseEntity<String> subscribeUserOnBoat(@RequestBody SubscribeDTO subscribeDTO){
+        return ResponseEntity.ok(service.subscribeBoatUserOnBoat(subscribeDTO));
+    }
+    @GetMapping("/isSubscribed")
+    public ResponseEntity<Boolean> isUserSubscribedToBoat(@RequestBody SubscribeDTO subscribeDTO) {
+        return ResponseEntity.ok(service.isUserSubscribedToBoat(subscribeDTO));
+    }
+    @PostMapping("unsubscribe")
+    public ResponseEntity<String> unsubscribeUserOnBoat(@RequestBody SubscribeDTO subscribeDTO){
+        return ResponseEntity.ok(service.unsubscribeBoatUserOnBoat(subscribeDTO));
+    }
 }

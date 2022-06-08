@@ -28,6 +28,7 @@ public class Reservation {
     private Client client;
     private boolean isBusyPeriod;
     private boolean isQuickReservation;
+    private boolean deleted=false;
 
     public Reservation() {
     }
@@ -104,5 +105,13 @@ public class Reservation {
 
     public void setQuickReservation(boolean quickReservation) {
         isQuickReservation = quickReservation;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }
