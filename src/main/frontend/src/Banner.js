@@ -10,19 +10,19 @@ export default function Banner({caption}) {
     return (<div>
             <Carousel slide>
                 <Carousel.Item>
-                    <img className="carousel-image d-block w-100" height="500vh" src={boatnotext}
-                        alt="First"/>
+                    <img className="carousel-image d-block w-100" height="300vh" src={boatnotext}
+                        alt="First" style={{opacity:"0.8"}}/>
                     <Carousel.Caption >
-                        <h1>{caption}</h1>
+                        <h1 style={{fontSize:"70px", fontWeight:"400"}}>{caption}</h1>
                     </Carousel.Caption>
                 </Carousel.Item>
 
                 <Carousel.Item>
-                    <img className="d-block w-100" height="500vh" src={housenotext}
-                         alt="Second"
+                    <img className="d-block w-100" height="300vh" src={housenotext}
+                         alt="Second" style={{opacity:"0.8"}}
                     />
                     <Carousel.Caption>
-                        <h1>{caption}</h1>
+                        <h1 style={{fontSize:"70px", fontWeight:"400"}}>{caption}</h1>
                     </Carousel.Caption>
                 </Carousel.Item>
 

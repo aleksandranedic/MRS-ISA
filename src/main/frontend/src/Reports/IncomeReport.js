@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { addDays } from 'date-fns';
 import { DateRangePicker } from 'react-date-range';
 import { Button } from 'react-bootstrap';
@@ -44,9 +44,7 @@ plugins: {
 function IncomeReport({type}) {
     const {id} = useParams();
     const [data, setData] = useState({})
-    const [chartData, setChartData] = useState(
-       
-      )
+    const [chartData, setChartData] = useState()
     const [state, setState] = useState([
         {
             startDate: new Date(),
