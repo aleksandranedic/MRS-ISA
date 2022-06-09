@@ -738,6 +738,7 @@ public class BoatService {
     public String subscribeBoatUserOnBoat(SubscribeDTO subscribeDTO) {
         Boat boat = getBoat(subscribeDTO.getEntityId());
         boat.getSubClientUsernames().add(subscribeDTO.getUserId());
+        repository.save(boat);
         return "Uspešno ste prijavljeni na akcije ovog broda";
     }
 
@@ -754,6 +755,7 @@ public class BoatService {
     public String unsubscribeBoatUserOnBoat(SubscribeDTO subscribeDTO) {
         Boat boat = getBoat(subscribeDTO.getEntityId());
         boat.getSubClientUsernames().remove(subscribeDTO.getUserId());
+        repository.save(boat);
         return "Uspešno ste se odjavili na akcije ovog broda";
     }
 

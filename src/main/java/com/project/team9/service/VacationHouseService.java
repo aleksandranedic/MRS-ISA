@@ -695,9 +695,9 @@ public class VacationHouseService {
     }
 
     public String subscribeBoatUserOnVacationHouse(SubscribeDTO subscribeDTO) {
-        Client client = clientService.getById(String.valueOf(subscribeDTO.getUserId()));
         VacationHouse vacationHouse = getVacationHouse(subscribeDTO.getEntityId());
         vacationHouse.getSubClientUsernames().add(subscribeDTO.getUserId());
+        repository.save(vacationHouse);
         return "Uspešno ste prijavljeni na akcije ove vikendice";
     }
 
@@ -714,6 +714,7 @@ public class VacationHouseService {
     public String unsubscribeBoatUserOnVacationHouse(SubscribeDTO subscribeDTO) {
         VacationHouse vacationHouse = getVacationHouse(subscribeDTO.getEntityId());
         vacationHouse.getSubClientUsernames().remove(subscribeDTO.getUserId());
+        repository.save(vacationHouse);
         return "Uspešno ste se odjavili na akcije ove vikendice";
     }
 

@@ -1,38 +1,45 @@
 import {React, useState} from 'react'
 import Carousel from "react-multi-carousel";
-import {Container, Button} from 'react-bootstrap'
+import {Button, Container} from 'react-bootstrap'
 import {BsFillPlusCircleFill} from 'react-icons/bs'
 import "react-multi-carousel/lib/styles.css";
 import AddQuickReservation from './AddQuickReservation'
 import QuickReservation from "./QuickReservation";
 import {backLink, notifySuccess, responsive} from "./Consts";
-import {isLoggedIn, isClient} from "./Autentification";
+import {isClient, isLoggedIn} from "./Autentification";
 import axios from "axios";
 import {useParams} from "react-router-dom";
+import {ToastContainer} from "react-toastify";
 
 
 function QuickReservations({reservations, name, address, entity, priceText, durationText, type, addable, myPage}) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-    const [isLoggedUserSubscribed,setIsUserSubscribed]=useState(false)
+    const [isLoggedUserSubscribed, setIsUserSubscribed] = useState(false)
+    const {id} = useParams();
 
     const checkSubscription=()=>{
         const dto = {
-            userId:localStorage.getItem("userId"),
-            reservationId:id,
+            userId: localStorage.getItem("userId"),
+            entityId: id,
         }
+        console.log(dto)
         axios.post(backLink + "/"+entity+"/isSubscribed", dto).then(
             response => {
+                console.log(response.data)
                 setIsUserSubscribed(response.data)
             }
         )
     }
-    const {id} = useParams();
+
+    useState(() => {
+        checkSubscription()
+    },[])
     const subscribeUser = () => {
         const dto = {
-            userId:localStorage.getItem("userId"),
-            reservationId:id,
+            userId: localStorage.getItem("userId"),
+            entityId: id,
         }
         axios.post(backLink + "/"+entity+"/subscribe", dto).then(
             response => {
@@ -43,8 +50,8 @@ function QuickReservations({reservations, name, address, entity, priceText, dura
     }
     const unsubscribeUser = () => {
         const dto = {
-            userId:localStorage.getItem("userId"),
-            reservationId:id,
+            userId: localStorage.getItem("userId"),
+            entityId: id,
         }
         axios.post(backLink + "/"+entity+"/unsubscribe", dto).then(
             response => {
@@ -55,23 +62,23 @@ function QuickReservations({reservations, name, address, entity, priceText, dura
     }
 
 
-    return (
-        <div className="m-5" id="actions">
-            <div className='w-100 d-flex justify-content-center mb-3 align-items-end'>
-                <h1 className="ms-auto m-0 text-lead me-auto" style={{
-                    color: "#313041",
-                    fontSize: "46px",
-                    lineHeight: "60px",
-                    letterSpacing: "-.02em"
-                }}> Specijalne ponude i popusti</h1>
+    return (<>
+            <div className="m-5" id="actions">
+                <div className='w-100 d-flex justify-content-center mb-3 align-items-end'>
+                    <h1 className="ms-auto m-0 text-lead me-auto" style={{
+                        color: "#313041",
+                        fontSize: "46px",
+                        lineHeight: "60px",
+                        letterSpacing: "-.02em"
+                    }}> Specijalne ponude i popusti</h1>
 
-                {isLoggedIn() && isClient() && isLoggedUserSubscribed &&
+                    {isLoggedIn() && isClient() && !isLoggedUserSubscribed &&
                 <Button style={{border: "none", height: "2.8rem", backgroundColor: "rgb(236,115,2)"}}
                     onClick={()=>{
                         subscribeUser()
                     }}
                 >Prijavi se</Button>}
-                {isLoggedIn() && isClient() && !isLoggedUserSubscribed &&
+                {isLoggedIn() && isClient() && isLoggedUserSubscribed &&
                 <Button style={{border: "none", height: "2.8rem", backgroundColor: "rgb(236,115,2)"}}
                         onClick={()=>{
                             unsubscribeUser()
@@ -105,8 +112,20 @@ function QuickReservations({reservations, name, address, entity, priceText, dura
                 }
 
             </Container>
-        </div>
-
+            </div>
+            <ToastContainer
+                position="top-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme={"colored"}
+            />
+        </>
 
     )
 }
