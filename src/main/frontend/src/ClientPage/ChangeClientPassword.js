@@ -45,9 +45,9 @@ export function ChangeClientPassword({show, setShow}) {
             setErrors(newErrors)
         } else {
             axios.post(backLink + "/changePassword", form).then(res => {
-                localStorage.setItem('token', res.data)
                 if (res.data !== "Neuspešno.Pokušajte ponovo") {
                     notifySuccess("Uspešno ste promenili šifru")
+                    localStorage.setItem('token', res.data)
                 } else {
                     notifyError(res.data)
                 }

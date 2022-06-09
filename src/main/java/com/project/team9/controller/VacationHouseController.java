@@ -170,7 +170,7 @@ public class VacationHouseController {
     public ResponseEntity<String> subscribeUserOnVacationHouse(@RequestBody SubscribeDTO subscribeDTO){
         return ResponseEntity.ok(service.subscribeBoatUserOnVacationHouse(subscribeDTO));
     }
-    @GetMapping("/isSubscribed")
+    @PostMapping("/isSubscribed")
     public ResponseEntity<Boolean> isUserSubscribedToVacationHouse(@RequestBody SubscribeDTO subscribeDTO) {
         return ResponseEntity.ok(service.isUserSubscribedToVacationHouse(subscribeDTO));
     }

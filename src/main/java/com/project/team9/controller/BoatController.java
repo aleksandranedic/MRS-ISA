@@ -163,7 +163,7 @@ public class BoatController {
     public ResponseEntity<String> subscribeUserOnBoat(@RequestBody SubscribeDTO subscribeDTO){
         return ResponseEntity.ok(service.subscribeBoatUserOnBoat(subscribeDTO));
     }
-    @GetMapping("/isSubscribed")
+    @PostMapping("/isSubscribed")
     public ResponseEntity<Boolean> isUserSubscribedToBoat(@RequestBody SubscribeDTO subscribeDTO) {
         return ResponseEntity.ok(service.isUserSubscribedToBoat(subscribeDTO));
     }

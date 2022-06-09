@@ -594,9 +594,10 @@ public class AdventureService {
         return list.isEmpty()?0:list.stream().mapToDouble(ClientReviewDTO::getRating).sum() / list.size();
     }
 
-    public String subscribeBoatUserOnAdventure(SubscribeDTO subscribeDTO) {
+    public String subscribeUserOnAdventure(SubscribeDTO subscribeDTO) {
         Adventure adventure=getById(String.valueOf(subscribeDTO.getEntityId()));
         adventure.getSubClientUsernames().add(subscribeDTO.getUserId());
+        repository.save(adventure);
         return "Uspešno ste prijavljeni na akcije ove avanture";
     }
 
@@ -605,9 +606,10 @@ public class AdventureService {
         return adventure.getSubClientUsernames().contains(subscribeDTO.getUserId());
     }
 
-    public String unsubscribeBoatUserOnAdventure(SubscribeDTO subscribeDTO) {
+    public String unsubscribeUserOnAdventure(SubscribeDTO subscribeDTO) {
         Adventure adventure = getById(String.valueOf(subscribeDTO.getEntityId()));
         adventure.getSubClientUsernames().remove(subscribeDTO.getUserId());
+        repository.save(adventure);
         return "Uspešno ste se odjavili na akcije ove avanture";
     }
 
