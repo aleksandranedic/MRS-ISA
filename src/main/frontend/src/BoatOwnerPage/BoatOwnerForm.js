@@ -2,7 +2,13 @@ import {Button, Form, Modal, InputGroup} from "react-bootstrap";
 import axios from "axios"; 
 import React, {useState, useRef} from "react";
 import { useParams } from "react-router-dom";
+import { backLink, notifyError, notifySuccess } from "../Consts";
 
+axios.interceptors.request.use(config => {
+    config.headers.authorization = "Bearer " + localStorage.getItem('token')
+    return config
+}
+)
 
 export function BoatOwnerForm({show, setShow, owner, profileImg}) {
     const {id} = useParams();
@@ -175,6 +181,7 @@ export function ChangePassword({show, setShow}) {
     const [validatedPassword, setvalidatedPassword] = useState(false);
     const [passwords, setPasswords] = useState({oldPassword:'', newPassword:''});
     const handleClose = () => setShow(false);
+    
     const changePassword = e => {
         document.getElementById("invalidOldPassword").style.display = "none"
         e.preventDefault()
@@ -183,8 +190,25 @@ export function ChangePassword({show, setShow}) {
             setvalidatedPassword(true);
         }
         else {
-            var oldPassword = passwords.oldPassword
+            var fd = new FormData(formPassword.current);
+            fd.append("oldPassword", passwords.oldPassword)
+            fd.append("newPassword", passwords.newPassword)
+            var dto = {
+                oldPassword: passwords.oldPassword,
+                newPassword: passwords.newPassword
+            }
             axios
+            .post(backLink + "/changePassword", fd)
+            .then( res => {
+                if (res.data !== "Neuspešno.Pokušajte ponovo") {
+                    localStorage.setItem('token', res.data)
+                    notifySuccess("Uspešno ste promenili šifru")
+                } else {
+                    notifyError(res.data)
+                }
+            })
+           
+            /*axios
             .post("http://localhost:4444/boatowner/checkPassword/" + id, oldPassword, {headers: {"Content-Type": "text/plain"}})
             .then(res => {
                 if (res.data){
@@ -193,7 +217,7 @@ export function ChangePassword({show, setShow}) {
                 else {
                     document.getElementById("invalidOldPassword").style.display = "block"
                 }
-            });
+            });*/
         }
     }
     const updatePassword = () => {

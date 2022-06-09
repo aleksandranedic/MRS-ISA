@@ -44,7 +44,7 @@ const ReviewsComp = ({reviews}) => {
 function BoatOwnerPage() {
     const {id} = useParams();
 
-    const [boatOwner, setboatOwner] = useState({address: '', profileImg: {path: ""}});
+    const [boatOwner, setboatOwner] = useState({address: '', profileImg: {path: profilePicturePlaceholder}});
     let [ownerBoats, setOwnerBoats] = useState([]);
     const [ownerReviews, setOwnerReviews] = useState([])
 

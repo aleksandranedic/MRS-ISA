@@ -30,4 +30,3 @@ export function isBoatOwner() {
 export function isFishingInstructor() {
     return localStorage.getItem("userRoleName") === fishingInstructor;
 }
-

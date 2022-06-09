@@ -83,7 +83,8 @@ function QuickReservation({reservation, name, address, image, entity, priceText,
 
                     {myPage &&
                         <button onClick={handleShow} style={{zIndex: "3", border: "0", background: "transparent"}}>
-                            <BsPencilSquare/></button>}
+                            <BsPencilSquare/></button>
+                    }
 
                 </div>
                 <div>

@@ -3,12 +3,11 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import {Modal, Button, Form, Row, Col, InputGroup} from 'react-bootstrap'
 import { TagInfo } from './Info';
-import {DateTimePickerComponent} from '@syncfusion/ej2-react-calendars';
 import './material.css'
+import { backLink } from './Consts';
 
 function AddQuickReservation({showModal, closeModal, entity, priceText, durationText}) {
-    const statePlaceHolder = {startDate:'', price:'', discount:'', numberOfPeople:'', duration:'', additionalServices:[{id:0, text:''}]};
-    const [startDateInt, setStartDateInt] = useState("");
+    const statePlaceHolder = {startDate:'01.01.2022. 00:00', price:'', discount:'', numberOfPeople:'', duration:'', additionalServices:[{id:0, text:''}]};
     let [state, setState] = useState(statePlaceHolder)
     const [tagText, setTagText] = useState('');
     const [validated, setValidated] = useState(false);
@@ -17,16 +16,9 @@ function AddQuickReservation({showModal, closeModal, entity, priceText, duration
 
     const submit = e => {
         e.preventDefault() 
-        if (form.current.checkValidity() === false || startDateInt === '') {
-            if (startDateInt === '') {
-                document.getElementById("noDate").style.display = "block";
-            }
-            else {
-                setStartDateInt("")
-                document.getElementById("noDate").style.display = "none";
-            }
-          e.stopPropagation();
-          setValidated(true);
+        if (form.current.checkValidity() === false) {
+            e.stopPropagation();
+            setValidated(true);
         }
         else {  
             var data = new FormData(form.current);   
@@ -37,9 +29,9 @@ function AddQuickReservation({showModal, closeModal, entity, priceText, duration
                 }
             } 
             data.append("tagsText", state.tagsText);
-            data.append("startDate", startDateInt);
+            data.append("startDate", state.startDate);
             axios
-            .post("http://localhost:4444/" + entity + "/addQuickReservation/" + id, data)
+            .post(backLink + "/" + entity + "/addQuickReservation/" + id, data)
             .then(res => {
                 window.location.reload();
             });
@@ -57,19 +49,20 @@ function AddQuickReservation({showModal, closeModal, entity, priceText, duration
       }
 
     const setStartDate = (val) => {
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        var minutes = (val.getMinutes()<10?'0':'') + val.getMinutes();
-        var days = (val.getDate()<10?'0':'') + val.getDate();
-        var hours = (val.getHours()<10?'0':'') + val.getHours();
-        var newStartDate =  days + " " + monthNames[val.getMonth()] + " " + val.getFullYear() + " " + hours + ":" + minutes + "h"
-        
-        var month = val.getMonth() + 1;
-        var monthInt = (month<10?'0':'') + month;
-        var newStartDateInt =  days + " " + monthInt + " " + val.getFullYear() + " " + hours + ":" + minutes
-        setStartDateInt(newStartDateInt);
+        console.log(val)
+        var sd = state.startDate;
+        var date = val.split('-')
+        var newStartDate = date[2] + " " + date[1] + " " + date[0] + " " + sd.split(" ")[3]
         setState( prevState => {
             return {...prevState, startDate:newStartDate}
-        })  
+        })
+    }
+    const setStartTime = (val) => {
+        var sd = state.startDate;
+        var date = sd.split(" ");
+        var newStartDate = date[0] + " " + date[1] + " " + date[2] + " " + val;
+        setState( prevState => {
+            return {...prevState, startDate:newStartDate}})
     }
     const setDuration = (value) => {
         setState( prevState => {
@@ -104,13 +97,24 @@ function AddQuickReservation({showModal, closeModal, entity, priceText, duration
                 <Modal.Title>Dodavanje akcije</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-          
-                <Form.Group className="mb-3" id={entity}>
-                            <Form.Label>Početak važenja akcije</Form.Label>
-                            <DateTimePickerComponent allowEdit={false} placeholder='Izaberite vremenski početak' format="dd MMM yyyy 10:00'h'" onChange={e => setStartDate(e.target.value)} step={15}></DateTimePickerComponent>                          
-                            <p id="noDate" style={{color:"#dc3545", fontSize: "0.875em", marginLeft:"26%", display:"none"}}>Molimo Vas unesite vremenski početak.</p>        
-                </Form.Group>
+            
+                <Row className="mb-3">
 
+                    <Form.Group as={Col} >
+                        <Form.Label>Datum početka važenja akcije</Form.Label>
+                        <Form.Control required type="date" name="date" onChange={e => setStartDate(e.target.value)}/>
+                        <Form.Control.Feedback type="invalid">Molimo Vas unesite početni datum za koje akcija važi.</Form.Control.Feedback>
+                    </Form.Group>
+
+                    {entity !== "house" &&
+                    <Form.Group as={Col}>
+                        <Form.Label>Vreme početka važenja akcije</Form.Label>
+                        <Form.Control required type="time" name="time" onChange={e => setStartTime(e.target.value)}/>
+                        <Form.Control.Feedback type="invalid">Molimo Vas unesite početno vreme za koje akcija važi.</Form.Control.Feedback>
+                    </Form.Group>
+                    }
+                </Row>
+                
                 <Row className="mb-3">
 
                     <Form.Group as={Col} >
