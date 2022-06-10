@@ -48,9 +48,9 @@ const Update = ({vacationHouse, showModal, closeModal}) => {
     }
 }
 
-const Reservations = ({reservations, name, address}) => {
+const Reservations = ({reservations, name, address, additionalServices}) => {
     if (typeof reservations !== "undefined"){
-        return <QuickReservations type={"vacationHouse"} reservations={reservations} name={name} address={address} entity="house" priceText="po noćenju" durationText="dana"
+        return <QuickReservations type={"vacationHouse"} reservations={reservations} name={name} address={address} additionalServices={additionalServices} entity="house" priceText="po noćenju" durationText="dana"
         addable={true}/>
     }
     else {
@@ -124,7 +124,7 @@ export function VacationHousePage() {
         <div className='p-5 pt-0'>
             <Gallery house={house} images={imgs}/>
 
-            <Reservations reservations={house.quickReservations} name={house.name} address={house.address}/>
+            <Reservations reservations={house.quickReservations} name={house.name} address={house.address} additionalServices={house.additionalServices}/>
             <footer className="blockquote-footer">Svi izlasci iz vikendice obavljaju se do 10:00h.</footer>
             
         </div>

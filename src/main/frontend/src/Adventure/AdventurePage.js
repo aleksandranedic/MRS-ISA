@@ -36,9 +36,9 @@ const Adventure = ({id}) => {
 
     let html;
 
-    const QuickReservationsComp = ({reservations, name, address}) => {
+    const QuickReservationsComp = ({reservations, name, address, additionalServices}) => {
         if (typeof reservations !== "undefined") {
-            return <QuickReservations type={"adventure"} reservations={reservations} name={name}
+            return <QuickReservations type={"adventure"} reservations={reservations} name={name} additionalServices={additionalServices}
                                       address={address.street + " " + address.number + ", " + address.place + ", " + address.country}
                                       entity="adventure" priceText="po vožnji" durationText="h"
                                       addable={myPage} myPage={myPage}/>
@@ -128,7 +128,7 @@ const Adventure = ({id}) => {
                 <AdventureGallery id={id} images={images}/>
             </div>
 
-            <QuickReservationsComp reservations={quickReservations} name={adventure.title} address={adventure.address}/>
+            <QuickReservationsComp reservations={quickReservations} name={adventure.title} address={adventure.address} additionalServices={adventure.fishingEquipment}/>
 
             <hr className="me-5 ms-5"/>
             <Calendar reservable={isLoggedIn()} pricelist={adventure.pricelist} resourceId={adventure.id}

@@ -53,9 +53,9 @@ const Update = ({boat, showModal, closeModal}) => {
     }
 }
 
-const Reservations = ({reservations, name, address}) => {
+const Reservations = ({reservations, name, address, additionalServices}) => {
     if (typeof reservations !== "undefined"){
-        return <QuickReservations type={"boat"} reservations={reservations} name={name} address={address} entity="boat" priceText="po vožnji" durationText="h"
+        return <QuickReservations type={"boat"} reservations={reservations} name={name} address={address} additionalServices={additionalServices} entity="boat" priceText="po vožnji" durationText="h"
             addable={true}
         />
     }
@@ -135,7 +135,7 @@ export function BoatProfilePage() {
         <div className='p-5 pt-0'>
             <Gallery boat={boat} images={imgs}/>
 
-            <Reservations reservations={boat.quickReservations} name={boat.name} address={boat.address}/>
+            <Reservations reservations={boat.quickReservations} name={boat.name} address={boat.address} additionalServices={boat.additionalServices}/>
             <hr className="me-5 ms-5"/>
             <Calendar reservable={true} pricelist={{price: boat.price}} type="boat" resourceId={id} events={events}/>
 

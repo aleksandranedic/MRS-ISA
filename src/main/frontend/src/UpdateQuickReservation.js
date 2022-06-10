@@ -3,12 +3,16 @@ import {Modal, InputGroup, Button, Form, Col, Row} from 'react-bootstrap'
 import { TagInfo } from './Info';
 import axios from "axios";  
 import { useParams } from "react-router-dom";
+import { notifyError } from './Consts';
+import { ToastContainer } from 'react-toastify';
 import './material.css'
 
-function UpdateQuickReservation({state, setState, closeModal, showModal, entity, durationText}) {
+function UpdateQuickReservation({state, setState, closeModal, showModal, entity, durationText, availableTags}) {
     const [startDateInt, setStartDateInt] = useState("");
     const [startTimeInt, setStartTimeInt] = useState("");
     const [originalState, setOriginalState] = useState(state);
+    const [sd, setSd] = useState("");
+    const [availableTagsConst, setAvailableTagsConst] = useState(availableTags);
     const [tagText, setTagText] = useState('');
     const [validated, setValidated] = useState(false);
     const form = useRef();
@@ -18,7 +22,7 @@ function UpdateQuickReservation({state, setState, closeModal, showModal, entity,
         if (state.additionalServices.length === 0)
             state.additionalServices = [{id:'', text:''}]          
         setOriginalState(state);
-        setDateTimeInt();
+        setDateTimeInt(); 
       }, []);
 
     const setDateTimeInt = () => {
@@ -28,29 +32,77 @@ function UpdateQuickReservation({state, setState, closeModal, showModal, entity,
         var time =  state.startDate.split(" ")[3];
         setStartTimeInt(time.substring(0, time.length-1));
         if (monthStr === "Jan")
+        {
             setStartDateInt(year + "-" + "01-" + day); 
+            var sdDMY = day + " 01 " + year;
+            setSd(sdDMY + " " + time.substring(0, time.length-1))
+        }
         if (monthStr === "Feb")
-            setStartDateInt(year + "-" + "02-" + day);
+        {
+            setStartDateInt(year + "-" + "02-" + day); 
+            var sdDMY = day + " 02 " + year;
+            setSd(sdDMY + " " + time.substring(0, time.length-1))
+        }
         if (monthStr === "Mar")
-        setStartDateInt(year + "-" + "03-" + day);
+        {
+            setStartDateInt(year + "-" + "03-" + day); 
+            var sdDMY = day + " 03 " + year;
+            setSd(sdDMY + " " + time.substring(0, time.length-1))
+        }
         if (monthStr === "Apr")
+        {
             setStartDateInt(year + "-" + "04-" + day); 
+            var sdDMY = day + " 04 " + year;
+            setSd(sdDMY + " " + time.substring(0, time.length-1))
+        } 
         if (monthStr === "May")
+        {
             setStartDateInt(year + "-" + "05-" + day); 
+            var sdDMY = day + " 05 " + year;
+            setSd(sdDMY + " " + time.substring(0, time.length-1))
+        } 
         if (monthStr === "Jun")
+        {
             setStartDateInt(year + "-" + "06-" + day); 
+            var sdDMY = day + " 06 " + year;
+            setSd(sdDMY + " " + time.substring(0, time.length-1))
+        }
         if (monthStr === "Jul")
+        {
             setStartDateInt(year + "-" + "07-" + day); 
+            var sdDMY = day + " 07 " + year;
+            setSd(sdDMY + " " + time.substring(0, time.length-1))
+        }
         if (monthStr === "Avg")
+        {
             setStartDateInt(year + "-" + "08-" + day); 
+            var sdDMY = day + " 08 " + year;
+            setSd(sdDMY + " " + time.substring(0, time.length-1))
+        }
         if (monthStr === "Sep")
+        {
             setStartDateInt(year + "-" + "09-" + day); 
+            var sdDMY = day + " 09 " + year;
+            setSd(sdDMY + " " + time.substring(0, time.length-1))
+        }
         if (monthStr === "Oct")
-            setStartDateInt(year + "-" + "10-" + day);  
+        {
+            setStartDateInt(year + "-" + "10-" + day); 
+            var sdDMY = day + " 10 " + year;
+            setSd(sdDMY + " " + time.substring(0, time.length-1))
+        }
         if (monthStr === "Nov")
-            setStartDateInt(year + "-" + "11-" + day);  
+        {
+            setStartDateInt(year + "-" + "11-" + day); 
+            var sdDMY = day + " 11 " + year;
+            setSd(sdDMY + " " + time.substring(0, time.length-1))
+        } 
         if (monthStr === "Dec")
-            setStartDateInt(year + "-" + "12-" + day);
+        {
+            setStartDateInt(year + "-" + "12-" + day); 
+            var sdDMY = day + " 12 " + year;
+            setSd(sdDMY + " " + time.substring(0, time.length-1))
+        }
       }
     const submit = e => {
         e.preventDefault()
@@ -66,10 +118,11 @@ function UpdateQuickReservation({state, setState, closeModal, showModal, entity,
                 if (state.additionalServices[i].text !== ''){
                     state.tagsText.push(state.additionalServices[i].text)
                 }
-            } 
+            }
+            console.log(sd) 
             data.append("tagsText", state.tagsText);
             data.append("reservationID", state.reservationID);
-            data.append("startDate", state.startDate);
+            data.append("startDate", sd);
             axios
             .post("http://localhost:4444/" + entity + "/updateQuickReservation/" + id, data)
             .then(res => {
@@ -99,6 +152,7 @@ function UpdateQuickReservation({state, setState, closeModal, showModal, entity,
         setState( prevState => {
             return {...prevState, startDate:newStartDate}
         })
+        setSd(newStartDate)
     }
     const setStartTime = (val) => {
         var sd = state.startDate;
@@ -134,6 +188,7 @@ function UpdateQuickReservation({state, setState, closeModal, showModal, entity,
         console.log(newStartDate)
         setState( prevState => {
             return {...prevState, startDate:newStartDate}})
+        setSd(newStartDate)
     }
 
     const setDuration = (value) => {
@@ -155,10 +210,19 @@ function UpdateQuickReservation({state, setState, closeModal, showModal, entity,
 
     function addButton() {
         if (tagText !== ''){
-            setState( prevState => {
-                return {...prevState, additionalServices:[...prevState.additionalServices, {id:prevState.additionalServices.at(-1).id+1, text:tagText}]}
-            })
-            setTagText('')
+            var can=false;
+            for (var item of availableTagsConst){
+                if (item.text === tagText){
+                    can = true;
+                    setState( prevState => {
+                        return {...prevState, additionalServices:[...prevState.additionalServices, {id:prevState.additionalServices.at(-1).id+1, text:tagText}]}
+                    })
+                    setTagText('')                 
+                }
+            }
+            if (can === false) {
+                notifyError("Tag se može dodati samo iz postojećih dodatnih usluga entiteta.")
+            }
         }
     }
   
@@ -232,6 +296,18 @@ function UpdateQuickReservation({state, setState, closeModal, showModal, entity,
                 </div>
                 </Modal.Footer>
         </Form>
+        <ToastContainer
+                position="top-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme={"colored"}
+            />
       </Modal>
     );
 }

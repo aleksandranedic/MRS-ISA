@@ -4,11 +4,14 @@ import { useParams } from "react-router-dom";
 import {Modal, Button, Form, Row, Col, InputGroup} from 'react-bootstrap'
 import { TagInfo } from './Info';
 import './material.css'
-import { backLink } from './Consts';
+import { backLink, notifyError } from './Consts';
+import {ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css'
 
-function AddQuickReservation({showModal, closeModal, entity, priceText, durationText}) {
-    const statePlaceHolder = {startDate:'01.01.2022. 00:00', price:'', discount:'', numberOfPeople:'', duration:'', additionalServices:[{id:0, text:''}]};
+function AddQuickReservation({showModal, closeModal, entity, priceText, durationText, additionalServices}) {
+    const statePlaceHolder = {startDate:'01.01.2022. 00:00', price:'', discount:'', numberOfPeople:'', duration:'', additionalServices:additionalServices};
     let [state, setState] = useState(statePlaceHolder)
+    const [availableTags, setAvailableTags] = useState(state.additionalServices);
     const [tagText, setTagText] = useState('');
     const [validated, setValidated] = useState(false);
     const form = useRef();
@@ -49,7 +52,6 @@ function AddQuickReservation({showModal, closeModal, entity, priceText, duration
       }
 
     const setStartDate = (val) => {
-        console.log(val)
         var sd = state.startDate;
         var date = val.split('-')
         var newStartDate = date[2] + " " + date[1] + " " + date[0] + " " + sd.split(" ")[3]
@@ -83,10 +85,19 @@ function AddQuickReservation({showModal, closeModal, entity, priceText, duration
 
     function addButton() {
         if (tagText !== ''){
-            setState( prevState => {
-                return {...prevState, additionalServices:[...prevState.additionalServices, {id:prevState.additionalServices.at(-1).id+1, text:tagText}]}
-            })
-            setTagText('')
+            var can=false;
+            for (var item of availableTags){
+                if (item.text === tagText){
+                    can = true;
+                    setState( prevState => {
+                        return {...prevState, additionalServices:[...prevState.additionalServices, {id:prevState.additionalServices.at(-1).id+1, text:tagText}]}
+                    })
+                    setTagText('')
+                }
+            }
+            if (can === false) {
+                notifyError("Tag se može dodati samo iz postojećih dodatnih usluga entiteta.")
+            }
         }
     }
 
@@ -160,6 +171,18 @@ function AddQuickReservation({showModal, closeModal, entity, priceText, duration
                 <Button variant="primary" onClick={submit}>Dodaj</Button>
             </Modal.Footer>
         </Form>
+        <ToastContainer
+                position="top-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme={"colored"}
+            />
       </Modal>
     );
 }
