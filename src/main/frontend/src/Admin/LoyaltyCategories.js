@@ -1,9 +1,11 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Sidebar} from "./Sidebar/Sidebar";
 import {Badge, Button, ButtonGroup, Card, Col, FloatingLabel, Form, Row, ToggleButton} from "react-bootstrap";
 import {MdStars} from "react-icons/md";
 import {TiDeleteOutline} from "react-icons/ti";
 import "./LoyaltyCategories.css"
+import {backLink, missingDataErrors} from "../Consts";
+import axios from "axios";
 
 const loyaltyColorPalette = {
     'pink-blue': "linear-gradient( 64.5deg,  rgba(245,116,185,1) 14.7%, rgba(89,97,223,1) 88.7% )",
@@ -18,55 +20,98 @@ const loyaltyColorPalette = {
 
 export function LoyaltyCategories() {
 
-    //TODO: Dobavljanje kategorija, cuvanje kategorija, validacija forme
+    const [formValues, setFormValues] = useState({
+        minimumPoints: "",
+        maximumPoints: "",
+        discount: "",
+        name: ""
+    });
 
-    const [type, setType] = useState(0);
+    const [formErrors, setFormErrors] = useState({});
+
+    const [type, setType] = useState("CLIENT");
     const [colorId, setColorId] = useState(null);
 
-    const [userCategories, setUserCategories] = useState([{
-        color: loyaltyColorPalette["pink-blue"],
-        title: "Pink & Blue",
-        minimumPoints: 0,
-        maximumPoints: 2,
-        priceAlteration: 0
-    }, {
-        color: loyaltyColorPalette["green-blue"],
-        title: "Green & Blue",
-        minimumPoints: 3,
-        maximumPoints: 5,
-        priceAlteration: 5
-    }, {
-        color: loyaltyColorPalette["pink-purple"],
-        title: "Pink & Purple",
-        minimumPoints: 6,
-        maximumPoints: 8,
-        priceAlteration: 10
+    const [userCategories, setUserCategories] = useState([]);
+
+    const [vendorCategories, setVendorCategories] = useState([]);
+
+    const validateForm = () => {
+        let errors = {}
+        if (formValues.name === "") {
+            errors.name = missingDataErrors.title;
+        }
+        if (formValues.discount === "") {
+            errors.discount = missingDataErrors.discount;
+        }
+        if (formValues.minimumPoints === "") {
+            errors.minimumPoints = missingDataErrors.points;
+        }
+        if (formValues.maximumPoints === "") {
+            errors.name = missingDataErrors.points;
+        }
+        if (colorId === null) {
+            errors.color = missingDataErrors.color;
+        }
+        return errors;
     }
 
-    ]);
-
-    const [vendorCategories, setVendorCategories] = useState([ {
-        color: loyaltyColorPalette.green,
-        title: "Green",
-        minimumPoints: 9,
-        maximumPoints: 12,
-        priceAlteration: 15
-    }, {color: loyaltyColorPalette.blue, title: "Blue", minimumPoints: 13, maximumPoints: 20, priceAlteration: 20}, {
-        color: loyaltyColorPalette["blue-purple"],
-        title: "Purple & Blue",
-        minimumPoints: 21,
-        maximumPoints: 35,
-        priceAlteration: 25
-    }, {
-        color: loyaltyColorPalette["purple-orange"],
-        title: "Purple & Orange",
-        minimumPoints: 36,
-        maximumPoints: 100,
-        priceAlteration: 30
+    const handleSubmit = e => {
+        e.preventDefault()
+        let errors = validateForm()
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+        } else {
+            addCategory();
+        }
     }
 
-    ])
+    const setField = (fieldName, value) => {
+        setFormValues({
+            ...formValues,
+            [fieldName]: value
+        })
+        if (!!formErrors[fieldName]) {
+            setFormErrors({
+                ...formErrors,
+                [fieldName]: null
+            })
+        }
+    }
 
+    const addCategory = () => {
+        let dto = {
+            name: formValues.name,
+            minimumPoints: formValues.minimumPoints,
+            maximumPoints: formValues.maximumPoints,
+            discount: formValues.discount,
+            color: loyaltyColorPalette[colorId],
+            type: type
+        }
+
+        console.log(dto);
+        axios.post(backLink + "/category/add", dto).then(res => {
+            window.location.reload();
+        })
+    }
+
+
+    const fetchUserCategories = () => {
+        axios.get(backLink + "/category/client").then(res => {
+            setUserCategories(res.data);
+        })
+    }
+
+    const fetchVendorCategories = () => {
+        axios.get(backLink + "/category/vendor").then(res => {
+            setVendorCategories(res.data);
+        })
+    }
+
+    useEffect(() => {
+        fetchUserCategories();
+        fetchVendorCategories();
+    }, [])
 
     function setSelectedColor(elementId) {
 
@@ -89,7 +134,7 @@ export function LoyaltyCategories() {
         </div>
 
 
-        <div className="w-75" style={{overflow:" scroll"}}>
+        <div className="w-75" style={{overflow: " scroll"}}>
 
             <div className="m-4">
                 <div className="display-6" style={{fontSize: "2rem"}}>Nova kategorija</div>
@@ -101,7 +146,11 @@ export function LoyaltyCategories() {
                             label="Naziv"
                             className="mb-2"
                         >
-                            <Form.Control type="text" placeholder="Title"/>
+                            <Form.Control type="text" placeholder="Title" value={formValues.name} isInvalid={!!formErrors.name}
+                                          onChange={(e) => setField("name", e.target.value)}/>
+                            <Form.Control.Feedback type="invalid">
+                                {formErrors.name}
+                            </Form.Control.Feedback>
                         </FloatingLabel>
 
                     </Form.Group>
@@ -113,7 +162,11 @@ export function LoyaltyCategories() {
                                 label="Minimalan broj poena"
                                 className="mb-2"
                             >
-                                <Form.Control type="number" placeholder="Title"/>
+                                <Form.Control type="number" placeholder="Title" isInvalid={!!formErrors.minimumPoints}
+                                              onChange={(e) => setField("minimumPoints", e.target.value)}/>
+                                <Form.Control.Feedback type="invalid">
+                                    {formErrors.minimumPoints}
+                                </Form.Control.Feedback>
                             </FloatingLabel>
                         </Form.Group>
                         <Form.Group className="w-25">
@@ -122,7 +175,11 @@ export function LoyaltyCategories() {
                                 label="Maksimalan broj poena"
                                 className="mb-2"
                             >
-                                <Form.Control type="number" placeholder="Title"/>
+                                <Form.Control type="number" placeholder="Title" isInvalid={!!formErrors.maximumPoints}
+                                              onChange={(e) => setField("maximumPoints", e.target.value)}/>
+                                <Form.Control.Feedback type="invalid">
+                                    {formErrors.maximumPoints}
+                                </Form.Control.Feedback>
                             </FloatingLabel>
                         </Form.Group>
 
@@ -132,7 +189,11 @@ export function LoyaltyCategories() {
                                 label="Popust (%)"
                                 className="mb-2"
                             >
-                                <Form.Control type="number" placeholder="Title"/>
+                                <Form.Control type="number" placeholder="Title" isInvalid={!!formErrors.discount}
+                                              onChange={(e) => setField("discount", e.target.value)}/>
+                                <Form.Control.Feedback type="invalid">
+                                    {formErrors.discount}
+                                </Form.Control.Feedback>
                             </FloatingLabel>
                         </Form.Group>
                     </div>
@@ -145,8 +206,8 @@ export function LoyaltyCategories() {
                                 type="radio"
                                 variant="outline-secondary"
                                 name="radio"
-                                onClick={()=>setType(1)}
-                                checked={type === 1}>
+                                onClick={() => setType("CLIENT")}
+                                checked={type === "CLIENT"}>
                                 Klijent
                             </ToggleButton>
 
@@ -154,31 +215,42 @@ export function LoyaltyCategories() {
                                 type="radio"
                                 variant="outline-secondary"
                                 name="radio"
-                                onClick={()=>setType(2)}
-                                checked={type === 2}>
+                                onClick={() => setType("VENDOR")}
+                                checked={type === "VENDOR"}>
                                 Pružalac usluga
                             </ToggleButton>
 
                         </ButtonGroup>
 
-                        <Button onClick={() => setSelectedColor("purple-orange")} id="purple-orange"
-                                className="color-button" style={{background: loyaltyColorPalette["purple-orange"]}}/>
-                        <Button id="blue-purple" className="color-button"
-                                style={{background: loyaltyColorPalette["blue-purple"]}}/>
-                        <Button id="green-blue" className="color-button"
-                                style={{background: loyaltyColorPalette["green-blue"]}}/>
-                        <Button id="green" className="color-button" style={{background: loyaltyColorPalette["green"]}}/>
-                        <Button id="blue" className="color-button" style={{background: loyaltyColorPalette["blue"]}}/>
-                        <Button id="pink-blue" className="color-button"
-                                style={{background: loyaltyColorPalette["pink-blue"]}}/>
-                        <Button id="pink-purple" className="color-button"
-                                style={{background: loyaltyColorPalette["pink-purple"]}}/>
+                        <div className="d-flex flex-column">
+                            <div className="d-flex">
+                                <Button onClick={() => setSelectedColor("purple-orange")} id="purple-orange" className="color-button"
+                                        style={{background: loyaltyColorPalette["purple-orange"]}}/>
+                                <Button onClick={() => setSelectedColor("blue-purple")} id="blue-purple" className="color-button"
+                                        style={{background: loyaltyColorPalette["blue-purple"]}}/>
+                                <Button onClick={() => setSelectedColor("green-blue")} id="green-blue" className="color-button"
+                                        style={{background: loyaltyColorPalette["green-blue"]}}/>
+                                <Button onClick={() => setSelectedColor("green")} id="green" className="color-button"
+                                        style={{background: loyaltyColorPalette["green"]}}/>
+                                <Button onClick={() => setSelectedColor("blue")} id="blue" className="color-button"
+                                        style={{background: loyaltyColorPalette["blue"]}}/>
+                                <Button onClick={() => setSelectedColor("pink-blue")} id="pink-blue" className="color-button"
+                                        style={{background: loyaltyColorPalette["pink-blue"]}}/>
+                                <Button onClick={() => setSelectedColor("pink-purple")} id="pink-purple" className="color-button"
+                                        style={{background: loyaltyColorPalette["pink-purple"]}}/>
 
 
+                            </div>
+                            {formErrors.color && <p style={{color: "red"}}>Morate odabrati jednu od boja.</p>}
 
-                        <Button className="ms-auto mt-2 mb-2" variant="outline-secondary">Dodaj</Button>
+                        </div>
+
+
+                        <Button onClick={handleSubmit} className="ms-auto mt-2 mb-2" variant="outline-secondary">Dodaj</Button>
 
                     </div>
+
+
 
                 </Form>
             </div>
@@ -187,20 +259,18 @@ export function LoyaltyCategories() {
             <hr className="m-3"/>
 
             <Row xs={1} md={4} className="g-4 ms-2">
-                {userCategories.map((category) => (<Col>
-                    <Card className="m-2" style={{background: category.color, width: "17vw", height: "21.5vw"}}>
+                {userCategories.map((category, index) => (<Col key={index}>
+                    <Card key={index} className="m-2"
+                          style={{background: category.color, width: "17vw", height: "21.5vw"}}>
 
                         <Card.Body className="w-100 m-2">
-                            <Card.Title className="text-light">{category.title}</Card.Title>
-                            <Card.Text className="d-flex flex-column">
+                            <Card.Title className="text-light">{category.name}</Card.Title>
+                            <div className="d-flex">
+                                <MdStars style={{color: "white", height: "1.5rem", width: "1.5rem"}}/>
+                                <div
+                                    className="text-light align-center p-0 m-0 ms-2">{category.minimumPoints} - {category.maximumPoints}</div>
+                            </div>
 
-                                <div className="d-flex">
-                                    <MdStars style={{color: "white", height: "1.5rem", width: "1.5rem"}}/>
-                                    <p className="text-light align-center p-0 m-0 ms-2">{category.minimumPoints} - {category.maximumPoints}</p>
-                                </div>
-
-
-                            </Card.Text>
                         </Card.Body>
 
                         <Card.Footer style={{backgroundColor: "rgba(0,0,0,0.1)"}} className="d-flex">
@@ -211,10 +281,11 @@ export function LoyaltyCategories() {
                             </Button>
                             {category.priceAlteration > 0 && <Badge bg="light"
                                                                     className="ms-auto d-flex align-items-center justify-content-end w-25">
-                                <p className="text-secondary h-100 align-center p-0 m-0 ms-2"
-                                   style={{
-                                       fontSize: "1.25rem", fontWeight: "400"
-                                   }}>{category.priceAlteration}%</p>
+                                <div className="text-secondary h-100 align-center p-0 m-0 ms-2"
+                                     style={{
+                                         fontSize: "1.25rem", fontWeight: "400"
+                                     }}>{category.priceAlteration}%
+                                </div>
                             </Badge>}
                         </Card.Footer>
                     </Card>
@@ -224,20 +295,20 @@ export function LoyaltyCategories() {
             <div className="display-6 m-4" style={{fontSize: "1.5rem"}}>Kategorije pružaoca usluga</div>
             <hr className="m-3"/>
             <Row xs={1} md={4} className="g-4 ms-2">
-                {vendorCategories.map((category) => (<Col>
-                    <Card className="m-2" style={{background: category.color, width: "17vw", height: "21.5vw"}}>
+                {vendorCategories.map((category, index) => (<Col key={index}>
+                    <Card key={index} className="m-2"
+                          style={{background: category.color, width: "17vw", height: "21.5vw"}}>
 
                         <Card.Body className="w-100 m-2">
-                            <Card.Title className="text-light">{category.title}</Card.Title>
-                            <Card.Text className="d-flex flex-column">
-
-                                <div className="d-flex">
-                                    <MdStars style={{color: "white", height: "1.5rem", width: "1.5rem"}}/>
-                                    <p className="text-light align-center p-0 m-0 ms-2">{category.minimumPoints} - {category.maximumPoints}</p>
-                                </div>
+                            <Card.Title className="text-light">{category.name}</Card.Title>
+                            <div className="d-flex">
 
 
-                            </Card.Text>
+                                <MdStars style={{color: "white", height: "1.5rem", width: "1.5rem"}}/>
+                                <div
+                                    className="text-light align-center p-0 m-0 ms-2">{category.minimumPoints} - {category.maximumPoints}</div>
+
+                            </div>
                         </Card.Body>
 
                         <Card.Footer style={{backgroundColor: "rgba(0,0,0,0.1)"}} className="d-flex">
@@ -248,10 +319,11 @@ export function LoyaltyCategories() {
                             </Button>
                             {category.priceAlteration > 0 && <Badge bg="light"
                                                                     className="ms-auto d-flex align-items-center justify-content-end w-25">
-                                <p className="text-secondary h-100 align-center p-0 m-0 ms-2"
-                                   style={{
-                                       fontSize: "1.25rem", fontWeight: "400"
-                                   }}>{category.priceAlteration}%</p>
+                                <div className="text-secondary h-100 align-center p-0 m-0 ms-2"
+                                     style={{
+                                         fontSize: "1.25rem", fontWeight: "400"
+                                     }}>{category.priceAlteration}%
+                                </div>
                             </Badge>}
                         </Card.Footer>
                     </Card>
