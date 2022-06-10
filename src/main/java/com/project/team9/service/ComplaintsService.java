@@ -122,4 +122,8 @@ public class ComplaintsService {
         deleteComplaint(responseDTO.getComplaintId());
         return "Uspešno ste odgovoroli na žalbu";
     }
+
+    public Long addComplaint(Complaint complaint) {
+        return repository.save(complaint).getId();
+    }
 }

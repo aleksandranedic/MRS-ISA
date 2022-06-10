@@ -2,6 +2,7 @@ package com.project.team9.controller;
 
 import com.project.team9.dto.ComplaintDTO;
 import com.project.team9.dto.ComplaintResponseDTO;
+import com.project.team9.model.request.Complaint;
 import com.project.team9.service.ComplaintsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,5 +26,10 @@ public class ComplaintsController {
     @PostMapping
     public ResponseEntity<String> answerComplaint(@RequestBody ComplaintResponseDTO responseDTO) {
         return ResponseEntity.ok(complaintsService.answerComplaint(responseDTO));
+    }
+
+    @PostMapping("/add")
+    public Long addComplaint(@RequestBody Complaint complaint) {
+        return complaintsService.addComplaint(complaint);
     }
 }
