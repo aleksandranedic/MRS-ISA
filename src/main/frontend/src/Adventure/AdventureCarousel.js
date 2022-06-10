@@ -11,7 +11,7 @@ import {Button, Container} from "react-bootstrap";
 export default function AdventureCarousel({adventures, add, ownerId}) {
     const [show, setShow] = useState(false);
     let editable;
-    editable = add === true;
+    editable = add;
 
     return (<div className="m-5" id="adventures">
         <Container className='d-flex p-0'>

@@ -8,7 +8,6 @@ import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
-import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.BoatOwner;
@@ -71,10 +70,20 @@ public class BoatService {
         return new BoatCardDTO(boat.getId(), boat.getImages().get(0).getPath(), boat.getTitle(), boat.getDescription(), address);
     }
 
-    public Boolean addQuickReservation(Long id, BoatQuickReservationDTO quickReservationDTO) {
+    public Boolean addQuickReservation(Long id, BoatQuickReservationDTO quickReservationDTO) throws ReservationNotAvailableException {
         Boat boat = this.getBoat(id);
         BoatReservation reservation = getReservationFromDTO(quickReservationDTO, true);
         reservation.setResource(boat);
+
+        List<BoatReservation> reservations = boatReservationService.getPossibleCollisionReservations(reservation.getResource().getId());
+        for (BoatReservation r : reservations) {
+            for (Appointment a : r.getAppointments()) {
+                for (Appointment newAppointment : reservation.getAppointments()) {
+                    reservationService.checkAppointmentCollision(a, newAppointment);
+                }
+            }
+        }
+
         boatReservationService.addReservation(reservation);
         boat.addReservation(reservation);
         this.addBoat(boat);
@@ -158,14 +167,22 @@ public class BoatService {
         return true;
     }
 
-    public Long reserveQuickReservation(BoatQuickReservationDTO dto) {
+    public Long reserveQuickReservation(ReserveQuickReservationDTO dto) {
         BoatReservation quickReservation = boatReservationService.getBoatReservation(dto.getReservationID());
+
+        Boat boat = quickReservation.getResource();
+        boat.removeQuickReservation(quickReservation);
         Client client = clientService.getById(dto.getClientID().toString());
-        quickReservation.getResource().removeQuickReservation(quickReservation);
+
         quickReservation.setClient(client);
         quickReservation.setQuickReservation(false);
+        boat.addReservation(quickReservation);
+
+        Long id = boatReservationService.save(quickReservation);
+        repository.save(boat);
         //TODO napravi potvrdu o rezervaciji na akciju
-        return boatReservationService.save(quickReservation);
+
+        return id;
     }
 
     public List<Boat> getOwnersBoats(Long owner_id) {
@@ -208,13 +225,17 @@ public class BoatService {
             images.add(img.getPath());
         }
         List<BoatQuickReservationDTO> quickReservations = getQuickReservations(bt);
-        return new BoatDTO(bt.getId(), bt.getTitle(), address, bt.getAddress().getNumber(), bt.getAddress().getStreet(), bt.getAddress().getPlace(), bt.getAddress().getCountry(), bt.getDescription(), bt.getType(), images, bt.getRulesAndRegulations(), bt.getEngineNumber(), bt.getEngineStrength(), bt.getTopSpeed(), bt.getLength(), bt.getNavigationEquipment(), bt.getFishingEquipment(), bt.getAdditionalServices(), bt.getPricelist().getPrice(), bt.getCancellationFee(), bt.getCapacity(), quickReservations);
+
+        BoatDTO boatDTO = new BoatDTO(bt.getId(), bt.getTitle(), address, bt.getAddress().getNumber(), bt.getAddress().getStreet(), bt.getAddress().getPlace(), bt.getAddress().getCountry(), bt.getDescription(), bt.getType(), images, bt.getRulesAndRegulations(), bt.getEngineNumber(), bt.getEngineStrength(), bt.getTopSpeed(), bt.getLength(), bt.getNavigationEquipment(), bt.getFishingEquipment(), bt.getAdditionalServices(), bt.getPricelist().getPrice(), bt.getCancellationFee(), bt.getCapacity(), quickReservations);
+        boatDTO.setOwnerId(bt.getOwner().getId());
+
+        return boatDTO;
     }
 
     private List<BoatQuickReservationDTO> getQuickReservations(Boat bt) {
         List<BoatQuickReservationDTO> quickReservations = new ArrayList<BoatQuickReservationDTO>();
         for (BoatReservation reservation : bt.getReservations()) {
-            if (reservation.getPrice() < bt.getPricelist().getPrice() && reservation.getClient() == null && reservation.isQuickReservation())
+            if (reservation.isQuickReservation())
                 quickReservations.add(createBoatReservationDTO(bt.getPricelist().getPrice(), reservation));
         }
         return quickReservations;
@@ -229,6 +250,7 @@ public class BoatService {
         List<Tag> additionalServices = reservation.getAdditionalServices();
         int duration = reservation.getAppointments().size();
         int price = reservation.getPrice();
+        boatPrice = boatPrice * duration;
         int discount = 100 - (100 * price / boatPrice);
         return new BoatQuickReservationDTO(reservation.getId(), strDate, numberOfPeople, additionalServices, duration, price, discount);
     }
@@ -747,7 +769,7 @@ public class BoatService {
         return boat.getSubClientUsernames().contains(subscribeDTO.getUserId());
     }
 
-    public double getBoarRating(Long id) {
+    public double getBoatRating(Long id) {
         List<ClientReviewDTO> list = clientReviewService.getResourceReviews(id);
         return list.isEmpty() ? 0 : list.stream().mapToDouble(ClientReviewDTO::getRating).sum() / list.size();
     }
@@ -759,19 +781,38 @@ public class BoatService {
         return "Uspešno ste se odjavili na akcije ovog broda";
     }
 
-    public List<EntitySubbedDTO> getClientsSubscribedBoats() {
-        List<EntitySubbedDTO> entities=new ArrayList<>();
+    public List<EntityDTO> getClientsSubscribedBoats() {
+        List<EntityDTO> entities=new ArrayList<>();
         for(Boat boat :getBoats()){
-            entities.add(new EntitySubbedDTO(
+            entities.add(new EntityDTO(
                     boat.getTitle(),
                     "boat",
                     boat.getImages().get(0),
-                    getBoarRating(boat.getId()),
+                    getBoatRating(boat.getId()),
                     boat.getId(),
                     boat.getAddress(),
                     boat.getPricelist().getPrice()
             ));
         }
         return entities;
+    }
+
+    public List<EntityDTO> findBoatsThatClientIsSubbedTo(Long client_id) {
+        List<EntityDTO> boats = new ArrayList<>();
+
+        for (Boat b: repository.findAll()) {
+            if (b.getSubClientUsernames().contains(client_id)) {
+                boats.add(new EntityDTO(
+                        b.getTitle(),
+                        "boat",
+                        b.getImages().get(0),
+                        getBoatRating(b.getId()),
+                        b.getId(),
+                        b.getAddress(),
+                        b.getPricelist().getPrice()));
+            }
+        }
+
+        return boats;
     }
 }

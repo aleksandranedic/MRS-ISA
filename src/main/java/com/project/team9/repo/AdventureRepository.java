@@ -13,4 +13,6 @@ public interface AdventureRepository extends JpaRepository<Adventure, Long> {
     @Query("FROM Adventure WHERE owner.id = ?1")
     List<Adventure> findAdventuresWithOwner(Long ownerId);
     List<Adventure> findByOwnerId(Long owner_id);
+
+
 }

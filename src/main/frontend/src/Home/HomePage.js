@@ -5,12 +5,12 @@ import {GetAllVacationHouses} from "../VacationHousePage/AllVacationHouses";
 import {GetAllAdventures} from "../Adventure/AllAdventures";
 import {GetAllBoats} from "../BoatPage/AllBoats";
 import {backLink, frontLink, logOut} from "../Consts";
-import StarRatings from 'react-star-ratings';
+import "../complaints.css"
 import {GetAllVacationHouseOwners} from "../VacationHouseOwnerPage/AllVacationHouseOwners";
 import {GetAllFishingInstructors} from "../FishingInstructor/AllFishingInstructors";
 import {GetAllBoatOwners} from "../BoatOwnerPage/AllBoatOwners";
 import {BsPerson, BsSearch} from "react-icons/bs";
-import {isBoatOwner, isClient, isFishingInstructor, isLoggedIn, isVacationHouseOwner} from "../Autentification";
+import {getProfileLink, isLoggedIn} from "../Autentification";
 
 export function HomePage() {
 
@@ -46,20 +46,9 @@ export function HomePage() {
         boatOwners = boatOwners.slice(0, 4);
     }
 
-    let profileLink;
 
-    if (isLoggedIn()) {
-        if (isClient()) {
-            profileLink = frontLink + "client/" + localStorage.getItem("userId");
-        } else if (isVacationHouseOwner()) {
-            profileLink = frontLink + "houseOwner/" + localStorage.getItem("userId");
-        } else if (isBoatOwner()) {
-            profileLink = frontLink + "boatOwner/" + localStorage.getItem("userId");
-        } else if (isFishingInstructor()) {
-            profileLink = frontLink + "fishingInstructor/" + localStorage.getItem("userId");
-        }
 
-    }
+    let profileLink = getProfileLink();
 
     return (<div className="page">
         <div id="hero">
@@ -109,7 +98,7 @@ export function HomePage() {
 
                             <div className="d-flex w-100 justify-content-end">
                                 <Button href="#vacationHomes" variant="outline-secondary"
-                                        className="me-2">PREGLEDAJ</Button>
+                                        className="me-2 move-button">PREGLEDAJ</Button>
                             </div>
 
                         </div>
@@ -122,7 +111,8 @@ export function HomePage() {
                             <p>Ukoliko vaša ideja savršenog odmora uključuje boravak na vodenoj površini,
                                 pronađite jahtu, čamac ili brod koji bi ispunio vaš ideal.</p>
                             <div className="d-flex w-100 justify-content-end">
-                                <Button href="#boats" variant="outline-secondary" className="me-2">PREGLEDAJ</Button>
+                                <Button href="#boats" variant="outline-secondary"
+                                        className="me-2 move-button">PREGLEDAJ</Button>
                             </div>
                         </div>
 
@@ -135,7 +125,7 @@ export function HomePage() {
                                 Pogledajte avanture koje vam nude baš to iskustvo.</p>
                             <div className="d-flex w-100 justify-content-end">
                                 <Button href="#adventures" variant="outline-secondary"
-                                        className="me-2">PREGLEDAJ</Button>
+                                        className="me-2 move-button">PREGLEDAJ</Button>
                             </div>
 
                         </div>
@@ -219,25 +209,25 @@ export function HomePage() {
 
         </div>
         <div className="page filler"/>
+
+
     </div>)
 }
 
 function HomePageResourceCard({id, title, rate, images, type}) {
+
     return <Card className="bg-dark text-white links-card reveal">
         <Card.Img src={backLink + images.at(0).path} alt="Card image"/>
         <Card.ImgOverlay>
             <Card.Title><a
                 href={frontLink + type + "/" + id}>{title}</a></Card.Title>
-            <StarRatings rating={rate} starDimension="17px" starSpacing="1px" starRatedColor="#f4b136"/>
+
 
         </Card.ImgOverlay>
     </Card>
 }
 
 function HomePageVendorCard({id, fullName, rate, profileImage, type}) {
-
-
-
     let path;
     if (profileImage) {
         path = backLink + profileImage.path;
@@ -257,9 +247,7 @@ function HomePageVendorCard({id, fullName, rate, profileImage, type}) {
                 </div>
                 <div className="ms-3 mt-auto mb-auto flex-column h-100">
                     <h6 className="vendor-name">{fullName}</h6>
-                    <div>
-                        <StarRatings rating={rate} starDimension="13px" starSpacing="0.8px" starRatedColor="#345775"/>
-                    </div>
+
                 </div>
             </Card.Body>
         </Card>

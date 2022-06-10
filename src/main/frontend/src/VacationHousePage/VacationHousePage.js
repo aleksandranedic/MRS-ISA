@@ -6,68 +6,64 @@ import Banner from "../Banner";
 import HouseInfo from "./HouseInfo";
 import UpdateHouse from "./UpdateHouse"
 import BeginButton from "../BeginButton";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import Ratings from "../Reviews/Ratings";
 import "react-image-gallery/styles/css/image-gallery.css";
 import Navigation from "../Navigation/Navigation";
 import {backLink} from "../Consts";
-import {Collapse} from "react-bootstrap";
-import {ReservationsTable} from "../Calendar/ReservationsTable";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {Calendar} from "../Calendar/Calendar";
 import {processReservationsForResources} from "../ProcessToEvent";
-import {AddReview} from "../Reviews/AddReview";
+import {Complaints} from "../Complaints";
+import {isMyPage} from "../Autentification";
 
-const HOST = "http://localhost:4444";
 const Gallery = ({house, images}) => {
-    if (typeof house.imagePaths !== "undefined"){
+    if (typeof house.imagePaths !== "undefined") {
         let empty = images.length === 0;
-        for (let i=0; i<house.imagePaths.length; i++){
-            if (!house.imagePaths[i].includes(HOST)){
-                house.imagePaths[i] = HOST + house.imagePaths[i];
-                images.push({original:house.imagePaths[i], thumbnail:house.imagePaths[i]})
-            } else if (empty){
-                images.push({original:house.imagePaths[i], thumbnail:house.imagePaths[i]})
+        for (let i = 0; i < house.imagePaths.length; i++) {
+            if (!house.imagePaths[i].includes(backLink)) {
+                house.imagePaths[i] = backLink + house.imagePaths[i];
+                images.push({original: house.imagePaths[i], thumbnail: house.imagePaths[i]})
+            } else if (empty) {
+                images.push({original: house.imagePaths[i], thumbnail: house.imagePaths[i]})
             }
         }
         return <ImagesGallery images={images}/>
-    }
-    else {
+    } else {
         return <></>
     }
 }
 const Update = ({vacationHouse, showModal, closeModal}) => {
-    if (typeof vacationHouse.name !== "undefined"){
-        if (vacationHouse.additionalServices.length == 0){
-            vacationHouse.additionalServices = [{id:0, text:''}]
+    if (typeof vacationHouse.name !== "undefined") {
+        if (vacationHouse.additionalServices.length === 0) {
+            vacationHouse.additionalServices = [{id: 0, text: ''}]
         }
-        return <UpdateHouse closeModal={closeModal} showModal={showModal} vacationHouse = {vacationHouse}/>
-    }
-    else {
+        return <UpdateHouse closeModal={closeModal} showModal={showModal} vacationHouse={vacationHouse}/>
+    } else {
         return <></>
     }
 }
 
-const Reservations = ({reservations, name, address}) => {
-    if (typeof reservations !== "undefined"){
-        return <QuickReservations type={"vacationHouse"} reservations={reservations} name={name} address={address} entity="house" priceText="po noćenju" durationText="dana"
-        addable={true}/>
-    }
-    else {
+const Reservations = ({reservations, name, address, myPage}) => {
+    if (typeof reservations !== "undefined") {
+        return <QuickReservations type={"vacationHouse"} reservations={reservations} name={name} address={address}
+                                  entity="house" priceText="po noćenju" durationText="dana"
+                                  myPage={myPage}/>
+    } else {
         return <></>
     }
 }
 
 const ReviewsComp = ({reviews}) => {
-    if (typeof reviews !== "undefined"){
-        return <Ratings reviews = {reviews} type={"vacationHouse"}/>
-    }
-    else {
+    if (typeof reviews !== "undefined") {
+        return <Ratings reviews={reviews} type={"vacationHouse"}/>
+    } else {
         return <></>
     }
 }
 
 export function VacationHousePage() {
+    const [myPage, setMyPage] = useState(null);
     const [house, setHouse] = useState({});
     const [houseReviews, setHouseReviews] = useState([])
     const [show, setShow] = useState(false);
@@ -81,79 +77,98 @@ export function VacationHousePage() {
     var [imgs, setImgs] = useState([{thumbnail: '', original: ''}]);
 
     const fetchReservations = () => {
-        axios.get(backLink+ "/house/reservation/vacationHouse/" + id).then(res => {
+        axios.get(backLink + "/house/reservation/vacationHouse/" + id).then(res => {
             setReservations(res.data);
-            setEvents(processReservationsForResources(res.data));
+            setEvents(processReservationsForResources(res.data, myPage));
         })
     }
 
     const fetchHouse = () => {
         axios
-        .get("http://localhost:4444/house/houseprof/" + id)
-        .then(res => {
-            setHouse(res.data);
-            setImgs([]);
-        });
+            .get(backLink + "/house/houseprof/" + id)
+            .then(res => {
+
+                console.log(res.data);
+                setHouse(res.data);
+                setImgs([]);
+                setMyPage(isMyPage("VACATION_HOUSE_OWNER", res.data.ownerId));
+            });
     };
     const fetchReviews = () => {
         axios
-        .get("http://localhost:4444/review/getReviews/" + id)
-        .then(res => {
-            setHouseReviews(res.data);
-        });
+            .get(backLink + "/review/getReviews/" + id)
+            .then(res => {
+                setHouseReviews(res.data);
+            });
     };
     useEffect(() => {
         fetchHouse();
         fetchReviews();
         fetchReservations();
     }, []);
-    
+
+
     return (
-    <>
-        <Banner caption={house.name}/>
-        <Navigation buttons={
-            [
-                {text: "Osnovne informacije", path: "#info"},
-                {text: "Fotografije", path: "#gallery"},
-                {text: "Slobodni termini", path: "#actions"},
-                {text: "Recenzije", path:"#reviews"}
-            ]}
-                    editable={true} editFunction={handleShow} searchable={true} showProfile={true}/>
-        <HouseInfo house={house}/>
-        <Update closeModal={handleClose} showModal={show} vacationHouse = {house}/>
-        <div className='p-5 pt-0'>
-            <Gallery house={house} images={imgs}/>
+        <>
+            <Banner caption={house.name}/>
+            <Navigation buttons={
+                [
+                    {text: "Osnovne informacije", path: "#info"},
+                    {text: "Fotografije", path: "#gallery"},
+                    {text: "Akcije", path: "#actions"},
+                    {text: "Kalendar", path: "#calendar"},
+                    {text: "Recenzije", path: "#reviews"}
+                ]}
+                        editable={myPage} editFunction={handleShow} searchable={true}/>
+            <HouseInfo house={house}/>
+            <Update closeModal={handleClose} showModal={show} vacationHouse={house}/>
 
-            <Reservations reservations={house.quickReservations} name={house.name} address={house.address}/>
-            <footer className="blockquote-footer">Svi izlasci iz vikendice obavljaju se do 10:00h.</footer>
-            
-        </div>
+            <div className='p-5 pt-0'>
+                <Gallery house={house} images={imgs}/>
+                {
 
-       
+                    <>
+                        <Reservations myPage={myPage} reservations={house.quickReservations} name={house.name} address={house.address}/>
+                        <footer className="blockquote-footer">Svi izlasci iz vikendice obavljaju se do 10:00h.</footer>
+                    </>
+                }
 
-            <hr className="me-5 ms-5"/>
-                  <Calendar reservable={true} pricelist={{price: house.price}} resourceId={house.id} type={"vacationHouse"} events={events} myPage={true}/>
-            <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
-            <hr className="me-5 ms-5"/>
-            <ReservationCardGrid reservations={reservations}/>
-
-            <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)} aria-controls="reservationsTable" aria-expanded={open} style = {{cursor: "pointer"}}>
-                Istorija rezervacija
-            </h2>
-            <hr className="me-5 ms-5"/>
-            <Collapse in={open}>
-                <div id="reservationsTable">
-                    <ReservationsTable  reservations={reservations} showResource={false}/>
-                </div>
-            </Collapse>
-
-            <div className="ms-5">
-                <ReviewsComp reviews = {houseReviews}/>
             </div>
 
-        <BeginButton/>
-    </>
+            <h2 className="me-5 ms-5 mt-5">
+                Kalendar
+            </h2>
+            <hr className="me-5 ms-5"/>
+            <Calendar reservable={true} pricelist={{price: house.price}} resourceId={house.id} type={"vacationHouse"}
+                      events={events} myPage={myPage}/>
+
+            {myPage && <>
+                <h2 className="me-5 ms-5 mt-5" id="reservations">
+                    Rezervacije
+                </h2>
+                <hr className="me-5 ms-5"/>
+                <ReservationCardGrid reservations={reservations}/>
+
+
+
+
+            </>}
+
+            <h2 className="me-5 ms-5 mt-5">
+                Recenzije
+            </h2>
+            <hr className="me-5 ms-5"/>
+
+            <div className="ms-5">
+                <ReviewsComp reviews={houseReviews}/>
+            </div>
+
+            <Complaints type={"vacationHouse"} toWhom={house.name}/>
+
+            <BeginButton/>
+        </>
 
     )
 }
+
 export default VacationHousePage;

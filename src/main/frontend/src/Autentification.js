@@ -1,4 +1,4 @@
-import {boatOwner, client, fishingInstructor, vacationHouseOwner} from "./Consts";
+import {boatOwner, client, fishingInstructor, frontLink, vacationHouseOwner} from "./Consts";
 
 export function isLoggedIn() {
     return localStorage.getItem('token') !== null && localStorage.getItem('token') !== "";
@@ -31,3 +31,20 @@ export function isFishingInstructor() {
     return localStorage.getItem("userRoleName") === fishingInstructor;
 }
 
+export function getProfileLink() {
+
+    let profileLink;
+    if (isLoggedIn()) {
+        if (isClient()) {
+            profileLink = frontLink + "client/" + localStorage.getItem("userId");
+        } else if (isVacationHouseOwner()) {
+            profileLink = frontLink + "houseOwner/" + localStorage.getItem("userId");
+        } else if (isBoatOwner()) {
+            profileLink = frontLink + "boatOwner/" + localStorage.getItem("userId");
+        } else if (isFishingInstructor()) {
+            profileLink = frontLink + "fishingInstructor/" + localStorage.getItem("userId");
+        }
+
+    }
+    return profileLink;
+}

@@ -1,7 +1,7 @@
 import {convertToDate} from "./Calendar/ReservationDateConverter";
 
 
-export function processReservationsForResources(reservations) {
+export function processReservationsForResources(reservations, myPage) {
     let newEvents = [];
 
 
@@ -23,9 +23,10 @@ export function processReservationsForResources(reservations) {
                 })
             }
             else {
-
-                let clientName = r.client.firstName + " " + r.client.lastName;
-
+                let clientName = "";
+                if (myPage) {
+                    clientName = r.client.firstName + " " + r.client.lastName;
+                }
                 newEvents.push({
                     title: clientName,
                     start: start,
@@ -41,8 +42,6 @@ export function processReservationsForResources(reservations) {
 
 export function processReservationsForUsers(reservations) {
     let newEvents = [];
-
-    console.log(reservations);
 
     for (let index in reservations) {
         let r = reservations.at(index);

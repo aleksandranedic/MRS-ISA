@@ -6,16 +6,16 @@ import Banner from "../Banner";
 import BoatInfo from "./BoatInfo";
 import UpdateBoat from "./UpdateBoat"
 import BeginButton from "../BeginButton";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import "react-image-gallery/styles/css/image-gallery.css";
 import Navigation from "../Navigation/Navigation";
 import Ratings from "../Reviews/Ratings";
 import {backLink} from "../Consts";
 import {Calendar} from "../Calendar/Calendar";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
-import {Collapse} from "react-bootstrap";
-import {ReservationsTable} from "../Calendar/ReservationsTable";
 import {processReservationsForResources} from "../ProcessToEvent";
+import {Complaints} from "../Complaints";
+import {isMyPage} from "../Autentification";
 
 
 const Gallery = ({boat, images}) => {
@@ -53,10 +53,10 @@ const Update = ({boat, showModal, closeModal}) => {
     }
 }
 
-const Reservations = ({reservations, name, address}) => {
+const Reservations = ({reservations, name, address, myPage}) => {
     if (typeof reservations !== "undefined"){
-        return <QuickReservations type={"boat"} reservations={reservations} name={name} address={address} entity="boat" priceText="po vožnji" durationText="h"
-            addable={true}
+        return <QuickReservations type={"boat"} reservations={reservations} name={name} address={address} entity="boat" priceText="po vožnji" durationText="h" myPage={myPage}
+            addable={myPage}
         />
     }
     else {
@@ -83,31 +83,34 @@ export function BoatProfilePage() {
     const [boatReviews, setBoatReviews] = useState([])
     const [events, setEvents] = useState(null);
     var [imgs, setImgs] = useState([{thumbnail: '', original: ''}]);
+    const [myPage, setMyPage] = useState(null);
 
 
     const [reservations, setReservations] = useState([]);
-    const [open, setOpen] = useState(false);
 
     const fetchReservations = () => {
         axios.get(backLink+ "/boat/reservation/boat/" + id).then(res => {
             setReservations(res.data);
-            setEvents(processReservationsForResources(res.data));
+            setEvents(processReservationsForResources(res.data, myPage));
         })
     }
 
 
     const fetchBoat = () => {
         axios
-        .get("http://localhost:4444/boat/boatprof/" + id)
+        .get(backLink + "/boat/boatprof/" + id)
         .then(res => {
             setBoat(res.data);
             setImgs([]);
+            console.log(res.data);
+            setMyPage(isMyPage("BOAT_OWNER", res.data.ownerId));
+
         });
     };
 
     const fetchReviews = () => {
         axios
-        .get("http://localhost:4444/review/getReviews/" + id)
+        .get(backLink + "/review/getReviews/" + id)
         .then(res => {
             setBoatReviews(res.data);
         });
@@ -127,37 +130,36 @@ export function BoatProfilePage() {
                 {text: "Osnovne informacije", path: "#info"},
                 {text: "Fotografije", path: "#gallery"},
                 {text: "Akcije", path: "#actions"},
-                {text: "Kalendar zauzetosti", path: "#"}
+                {text: "Kalendar", path: "#calendar"},
+                {text: "Recenzije", path: "#reviews"}
             ]}
-                    editable={true} editFunction={handleShow} searchable={true} showProfile={true}/>
+                    editable={myPage} editFunction={handleShow} searchable={true}/>
         <BoatInfo boat={boat}/>
         <Update closeModal={handleClose} showModal={show} boat = {boat}/>
         <div className='p-5 pt-0'>
             <Gallery boat={boat} images={imgs}/>
 
-            <Reservations reservations={boat.quickReservations} name={boat.name} address={boat.address}/>
-            <hr className="me-5 ms-5"/>
-            <Calendar reservable={true} pricelist={{price: boat.price}} type="boat" resourceId={id} events={events}/>
-
-
-            <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
-            <hr className="me-5 ms-5"/>
-            <ReservationCardGrid reservations={reservations}/>
-
-            <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)} aria-controls="reservationsTable" aria-expanded={open} style = {{cursor: "pointer"}}>
-                Istorija rezervacija
+            <Reservations myPage={myPage} reservations={boat.quickReservations} name={boat.name} address={boat.address}/>
+            <h2 className="mt-5">
+                Kalendar
             </h2>
+            <hr/>
+            <Calendar myPage={myPage} reservable={true} pricelist={{price: boat.price}} type="boat" resourceId={id} events={events}/>
 
-            <hr className="me-5 ms-5"/>
-            <Collapse in={open}>
-                <div id="reservationsTable">
-                    <ReservationsTable  reservations={reservations} showResource={false}/>
-                </div>
-            </Collapse>
+            {myPage && <>
+                <h2 className="mt-5" id="reservations">Rezervacije</h2>
+                <hr/>
+                <ReservationCardGrid reservations={reservations}/>
+            </>}
 
+            <h2 className="mt-5">
+                Recenzije
+            </h2>
+            <hr/>
             <ReviewsComp reviews = {boatReviews} showAddReview={true}/>
 
         </div>
+        <Complaints type={"boat"} toWhom={boat.name}/>
         <BeginButton/>
     </>
 

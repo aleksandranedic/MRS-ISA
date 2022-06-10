@@ -13,21 +13,22 @@ import {ReservationsTable} from "../Calendar/ReservationsTable";
 import BeginButton from "../BeginButton.js"
 import OwnerInfo from "../OwnerInfo";
 import {processReservationsForUsers} from "../ProcessToEvent";
+import {isMyPage} from "../Autentification";
+import SubscriptionCardCarousel from "./SubscriptionCardCarousel";
 
 
-const UpdateClientInfoComp = ({client, handleClose,showPopUp,setClient}) => {
-    if (typeof client.firstName !== "undefined"){
+const UpdateClientInfoComp = ({client, handleClose, showPopUp, setClient}) => {
+    if (typeof client.firstName !== "undefined") {
         if (client.profileImg !== null) {
-            
+
             var profileImg = backLink + client.profileImg.path;
-        }
-        else {
+        } else {
             var profileImg = profilePicturePlaceholder;
         }
-  
-        return <UpdateClientInfo client={client} handleClose={handleClose} showPopUp={showPopUp} setClient={setClient} profileImg ={profileImg} />
-    }
-    else {
+
+        return <UpdateClientInfo client={client} handleClose={handleClose} showPopUp={showPopUp} setClient={setClient}
+                                 profileImg={profileImg}/>
+    } else {
         return <></>
     }
 }
@@ -35,21 +36,27 @@ const UpdateClientInfoComp = ({client, handleClose,showPopUp,setClient}) => {
 const Client = () => {
     const [client, setClient] = useState([]);
     const [reservations, setReservations] = useState([]);
-    const [events, setEvents] = useState(null)
+    const [events, setEvents] = useState(null);
+    const [adventures, setAdventures] = useState([]);
+    const [boats, setBoats] = useState([]);
+    const [houses, setHouses] = useState([]);
 
 
-    const {id}=useParams()
+    const [myPage, setMyPage] = useState(null);
+
+
+    const {id} = useParams()
     let html;
     const fetchClient = () => {
-        axios.get(backLink+"/client/"+id).then(res => {
+        axios.get(backLink + "/client/" + id).then(res => {
             setClient(res.data)
+            setMyPage(isMyPage("CLIENT", res.data.id))
         });
     };
 
     const fetchReservations = () => {
 
-
-        axios.get(backLink+ "/client/reservation/" + id).then(res => {
+        axios.get(backLink + "/client/reservation/" + id).then(res => {
             setReservations(res.data);
             setEvents(processReservationsForUsers(res.data));
 
@@ -57,9 +64,33 @@ const Client = () => {
 
     }
 
+    const fetchAdventures = ()  => {
+        axios.get(backLink + "/adventure/subs/" + id).then(res => {
+            console.log(res.data);
+            setAdventures(res.data);
+        })
+    }
+
+    const fetchBoats = ()  => {
+        axios.get(backLink + "/boat/subs/" + id).then(res => {
+            console.log(res.data);
+            setBoats(res.data);
+        })
+    }
+
+    const fetchHouses = ()  => {
+        axios.get(backLink + "/house/subs/" + id).then(res => {
+            console.log(res.data);
+            setHouses(res.data);
+        })
+    }
+
     useEffect(() => {
         fetchClient();
         fetchReservations();
+        fetchAdventures();
+        fetchHouses();
+        fetchBoats();
     }, []);
 
     const [show, setShow] = useState(false);
@@ -79,42 +110,48 @@ const Client = () => {
                     {text: "Kalendar", path: "#calendar"},
                     {text: "Rezervacije", path: "#reservations"}
                 ]}
-                        editable={true} editFunction={handleShow}
-            searchable={true}/>
-           
+                        editable={myPage} editFunction={handleShow}
+                        searchable={true}/>
 
-                <div id="info"><OwnerInfo
-                    bio = {client.biography}
-                    name={client.firstName + " " + client.lastName}
-                    rate = {4.5}
-                    email={client.email}
-                    phoneNum={client.phoneNumber}
-                    address={client.address}
-                    profileImg = {client.profileImg !== null ? backLink + client.profileImg.path : profilePicturePlaceholder}
-                    />   </div>
+
+            <div id="info"><OwnerInfo
+                bio={client.biography}
+                name={client.firstName + " " + client.lastName}
+                rate={4.5}
+                email={client.email}
+                phoneNum={client.phoneNumber}
+                address={client.address}
+                profileImg={client.profileImg !== null ? backLink + client.profileImg.path : profilePicturePlaceholder}
+            /></div>
             <ClientLoyalty/>
 
+            {myPage && <>
 
-            <hr className="me-5 ms-5"/>
-            <Calendar id="calendar" events={events} reservable={false}/>
+                <SubscriptionCardCarousel subs={[...houses, ...boats, ...adventures]}/>
+                <h2 className="me-5 ms-5 mt-5">Kalendar</h2>
 
-            <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
-            <hr className="me-5 ms-5"/>
+                <hr className="me-5 ms-5"/>
+                <Calendar id="calendar" events={events} reservable={false}/>
 
-            <ReservationCardGrid reservations={reservations}/>
+                <h2 className="me-5 ms-5 mt-5" id="reservations">Rezervacije</h2>
+                <hr className="me-5 ms-5"/>
 
-            <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)}
-                aria-controls="reservationsTable"
-                aria-expanded={open}
-                style = {{cursor: "pointer"}}
-            >Istorija rezervacija</h2>
+                <ReservationCardGrid reservations={reservations}/>
 
-            <hr className="me-5 ms-5"/>
-            <Collapse in={open}>
-                <div id="reservationsTable">
-                    <ReservationsTable  reservations={reservations} showResource={false}/>
-                </div>
-            </Collapse>
+                <h2 className="me-5 ms-5 mt-5" onClick={() => setOpen(!open)}
+                    aria-controls="reservationsTable"
+                    aria-expanded={open}
+                    style = {{cursor: "pointer"}}
+                >Istorija rezervacija</h2>
+
+                <hr className="me-5 ms-5"/>
+                <Collapse in={open}>
+                    <div id="reservationsTable">
+                        <ReservationsTable  reservations={reservations} showResource={false}/>
+                    </div>
+                </Collapse>
+            </>
+                }
             <BeginButton/>
         </div>)
     }

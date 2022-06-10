@@ -24,6 +24,11 @@ public class AdventureController {
         this.service = adventureService;
     }
 
+    @GetMapping("/subs/{id}")
+    public List<EntityDTO> getSubs(@PathVariable Long id) {
+        return service.findAdventuresThatClientIsSubbedTo(id);
+    }
+
     @PostMapping("/reservation/add")
     public Long addReservation(@RequestBody NewReservationDTO dto) throws ReservationNotAvailableException {
         return service.createReservation(dto);
@@ -80,7 +85,7 @@ public class AdventureController {
     }
 
     @PostMapping("/quickReservations/reserve")
-    public Long reserveQuickReservation(@RequestBody AdventureQuickReservationDTO dto) {
+    public Long reserveQuickReservation(@RequestBody ReserveQuickReservationDTO dto) {
         return service.reserveQuickReservation(dto);
     }
 
@@ -90,7 +95,7 @@ public class AdventureController {
     }
 
     @PostMapping(value = "addQuickReservation/{id}")
-    public Boolean addQuickReservation(@PathVariable String id, AdventureQuickReservationDTO quickReservation) {
+    public Boolean addQuickReservation(@PathVariable String id, AdventureQuickReservationDTO quickReservation) throws ReservationNotAvailableException {
         return service.addQuickReservation(id, quickReservation);
     }
 
@@ -155,7 +160,7 @@ public class AdventureController {
         return ResponseEntity.ok(service.unsubscribeUserOnAdventure(subscribeDTO));
     }
     @GetMapping("/clientSubbedAdventures/{id}")
-    public ResponseEntity<List<EntitySubbedDTO>> getClientsSubscribedAdventures(@PathVariable Long id){
+    public ResponseEntity<List<EntityDTO>> getClientsSubscribedAdventures(@PathVariable Long id){
         return ResponseEntity.ok(service.getClientsSubscribedAdventures());
     }
 

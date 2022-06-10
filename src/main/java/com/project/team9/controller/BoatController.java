@@ -49,7 +49,7 @@ public class BoatController {
     }
 
     @PostMapping(value = "addQuickReservation/{id}")
-    public Boolean addQuickReservation(@PathVariable String id, BoatQuickReservationDTO quickReservation) {
+    public Boolean addQuickReservation(@PathVariable String id, BoatQuickReservationDTO quickReservation) throws ReservationNotAvailableException {
         return service.addQuickReservation(Long.parseLong(id), quickReservation);
     }
 
@@ -67,6 +67,11 @@ public class BoatController {
     public BoatDTO getBoatDTO(@PathVariable String id) {
         Long boatId = Long.parseLong(id);
         return service.getBoatDTO(boatId);
+    }
+
+    @GetMapping("/subs/{id}")
+    public List<EntityDTO> getSubs(@PathVariable Long id) {
+        return service.findBoatsThatClientIsSubbedTo(id);
     }
 
     @GetMapping(value = "getOwner/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -120,7 +125,7 @@ public class BoatController {
     }
 
     @PostMapping("/quickReservations/reserve")
-    public Long reserveQuickReservation(@RequestBody BoatQuickReservationDTO dto) {
+    public Long reserveQuickReservation(@RequestBody ReserveQuickReservationDTO dto) {
         return service.reserveQuickReservation(dto);
     }
 
@@ -173,7 +178,7 @@ public class BoatController {
     }
 
     @GetMapping("/clientSubbedBoats/{id}")
-    public ResponseEntity<List<EntitySubbedDTO>> getClientsSubscribedBoats(@PathVariable Long id){
+    public ResponseEntity<List<EntityDTO>> getClientsSubscribedBoats(@PathVariable Long id){
         return ResponseEntity.ok(service.getClientsSubscribedBoats());
     }
 }

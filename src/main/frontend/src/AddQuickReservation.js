@@ -5,6 +5,9 @@ import {Modal, Button, Form, Row, Col, InputGroup} from 'react-bootstrap'
 import { TagInfo } from './Info';
 import {DateTimePickerComponent} from '@syncfusion/ej2-react-calendars';
 import './material.css'
+import {backLink} from "./Consts";
+import {MessagePopupModal} from "./MessagePopupModal";
+
 
 function AddQuickReservation({showModal, closeModal, entity, priceText, durationText}) {
     const statePlaceHolder = {startDate:'', price:'', discount:'', numberOfPeople:'', duration:'', additionalServices:[{id:0, text:''}]};
@@ -14,6 +17,7 @@ function AddQuickReservation({showModal, closeModal, entity, priceText, duration
     const [validated, setValidated] = useState(false);
     const form = useRef();
     const {id} = useParams();
+    const [showAlert, setShowAlert] = useState(false);
 
     const submit = e => {
         e.preventDefault() 
@@ -39,10 +43,14 @@ function AddQuickReservation({showModal, closeModal, entity, priceText, duration
             data.append("tagsText", state.tagsText);
             data.append("startDate", startDateInt);
             axios
-            .post("http://localhost:4444/" + entity + "/addQuickReservation/" + id, data)
+            .post(backLink+"/" + entity + "/addQuickReservation/" + id, data)
             .then(res => {
                 window.location.reload();
-            });
+            }).catch(error => {
+                console.log(error);
+                setShowAlert(true);
+
+            })
             close();
         }
       
@@ -156,6 +164,13 @@ function AddQuickReservation({showModal, closeModal, entity, priceText, duration
                 <Button variant="primary" onClick={submit}>Dodaj</Button>
             </Modal.Footer>
         </Form>
+
+            <MessagePopupModal
+                show={showAlert}
+                setShow={setShowAlert}
+                message="Termin za akciju koji ste pokušali da zauzmete nije dostupan. Pogledajte kalendar zauzetosti i postojaće akcije i pokušajte ponovo."
+                heading="Zauzet termin"
+            />
       </Modal>
     );
 }

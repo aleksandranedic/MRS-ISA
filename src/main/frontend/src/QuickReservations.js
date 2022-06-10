@@ -1,4 +1,4 @@
-import {React, useState} from 'react'
+import {React, useEffect, useState} from 'react'
 import Carousel from "react-multi-carousel";
 import {Button, Container} from 'react-bootstrap'
 import {BsFillPlusCircleFill} from 'react-icons/bs'
@@ -12,20 +12,20 @@ import {useParams} from "react-router-dom";
 import {ToastContainer} from "react-toastify";
 
 
-function QuickReservations({reservations, name, address, entity, priceText, durationText, type, addable, myPage}) {
+function QuickReservations({reservations, name, address, entity, priceText, durationText, type, myPage}) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const [isLoggedUserSubscribed, setIsUserSubscribed] = useState(false)
     const {id} = useParams();
 
-    const checkSubscription=()=>{
+    const checkSubscription = () => {
         const dto = {
             userId: localStorage.getItem("userId"),
             entityId: id,
         }
         console.log(dto)
-        axios.post(backLink + "/"+entity+"/isSubscribed", dto).then(
+        axios.post(backLink + "/" + entity + "/isSubscribed", dto).then(
             response => {
                 console.log(response.data)
                 setIsUserSubscribed(response.data)
@@ -35,13 +35,13 @@ function QuickReservations({reservations, name, address, entity, priceText, dura
 
     useState(() => {
         checkSubscription()
-    },[])
+    }, [])
     const subscribeUser = () => {
         const dto = {
             userId: localStorage.getItem("userId"),
             entityId: id,
         }
-        axios.post(backLink + "/"+entity+"/subscribe", dto).then(
+        axios.post(backLink + "/" + entity + "/subscribe", dto).then(
             response => {
                 console.log(response.data)
                 notifySuccess(response.data)
@@ -53,12 +53,16 @@ function QuickReservations({reservations, name, address, entity, priceText, dura
             userId: localStorage.getItem("userId"),
             entityId: id,
         }
-        axios.post(backLink + "/"+entity+"/unsubscribe", dto).then(
+        axios.post(backLink + "/" + entity + "/unsubscribe", dto).then(
             response => {
                 console.log(response.data)
                 notifySuccess(response.data)
             }
         )
+    }
+
+    if (reservations.length <= 0) {
+        return (<div></div>);
     }
 
 
@@ -73,45 +77,50 @@ function QuickReservations({reservations, name, address, entity, priceText, dura
                     }}> Specijalne ponude i popusti</h1>
 
                     {isLoggedIn() && isClient() && !isLoggedUserSubscribed &&
-                <Button style={{border: "none", height: "2.8rem", backgroundColor: "rgb(236,115,2)"}}
-                    onClick={()=>{
-                        subscribeUser()
-                    }}
-                >Prijavi se</Button>}
-                {isLoggedIn() && isClient() && isLoggedUserSubscribed &&
-                <Button style={{border: "none", height: "2.8rem", backgroundColor: "rgb(236,115,2)"}}
-                        onClick={()=>{
-                            unsubscribeUser()
-                        }}
-                >Odjavi se</Button>}
+                        <Button style={{border: "none", height: "2.8rem", backgroundColor: "rgb(236,115,2)"}}
+                                onClick={() => {
+                                    subscribeUser()
+                                }}
+                        >Prijavi se</Button>}
+                    {isLoggedIn() && isClient() && isLoggedUserSubscribed &&
+                        <Button style={{border: "none", height: "2.8rem", backgroundColor: "rgb(236,115,2)"}}
+                                onClick={() => {
+                                    unsubscribeUser()
+                                }}
+                        >Odjavi se</Button>}
 
 
-            </div>
-            <hr className='w-100'/>
-            <Container className='d-flex p-0'>
-                <Carousel className="w-100 h-100 quick-reservation-carousel" responsive={responsive} interval="250000"
-                          autoPlay={false} autoPlaySpeed={9000000}>
-                    {reservations.map((reservation) => (
-                        <QuickReservation key={reservation.reservationID} type={type} reservation={reservation}
-                                          name={name} address={address} image={"./images/loginBackground.jpg"}
-                                          entity={entity} priceText={priceText} durationText={durationText}
-                                          myPage={myPage}/>
-                    ))}
-                </Carousel>
+                </div>
+                <hr className='w-100'/>
+                <Container className='d-flex p-0'>
+                    <Carousel className="w-100 h-100 quick-reservation-carousel" responsive={responsive}
+                              interval="250000"
+                              autoPlay={false} autoPlaySpeed={9000000}>
+                        {reservations.map((reservation) => (
+                            <QuickReservation key={reservation.reservationID} type={type} reservation={reservation}
+                                              name={name} address={address} image={"./images/loginBackground.jpg"}
+                                              entity={entity} priceText={priceText} durationText={durationText}
+                                              myPage={myPage}/>
+                        ))}
+                    </Carousel>
 
 
-                {addable &&
-                <>
-                    <Button className="btn btn-light add border-radius-lg align-self-center" onClick={handleShow}>
-                        <BsFillPlusCircleFill viewBox='0 0 16 16' size={25} fill="#7d7d7d"/>
-                    </Button>
-                    <AddQuickReservation closeModal={handleClose} showModal={show} entity={entity} priceText={priceText}
-                                         durationText={durationText}/>
-                </>
+                    {myPage &&
+                        <>
+                            <Button className="btn btn-light add border-radius-lg align-self-center"
+                                    onClick={handleShow}>
+                                <BsFillPlusCircleFill viewBox='0 0 16 16' size={25} fill="#7d7d7d"/>
+                            </Button>
+                            <AddQuickReservation closeModal={handleClose} showModal={show} entity={entity}
+                                                 priceText={priceText}
+                                                 durationText={durationText}/>
+                        </>
 
-                }
+                    }
 
-            </Container>
+                </Container>
+
+
             </div>
             <ToastContainer
                 position="top-center"

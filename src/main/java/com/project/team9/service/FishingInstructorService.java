@@ -47,7 +47,6 @@ public class FishingInstructorService {
 
     public List<FishingInstructor> getFishingInstructors() {
         return repository.findAll().stream().filter(fishingInstructor -> !fishingInstructor.getDeleted()).collect(Collectors.toCollection(ArrayList::new));
-
     }
 
     public FishingInstructor getById(String id) {

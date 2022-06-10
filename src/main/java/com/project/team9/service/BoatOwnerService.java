@@ -10,6 +10,7 @@ import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.user.vendor.BoatOwner;
+import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.repo.BoatOwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,7 +59,9 @@ public class BoatOwnerService {
         BoatOwner oldOwner = this.getOwner(id);
         updateOwner(oldOwner, newOwner);
     }
-
+    public List<BoatOwner> getBoatOwners() {
+        return repository.findAll().stream().filter(BoatOwner -> !BoatOwner.getDeleted()).collect(Collectors.toCollection(ArrayList::new));
+    }
     private void updateOwner(BoatOwner oldOwner, UpdateOwnerDTO newOwner) {
         oldOwner.setFirstName(newOwner.getFirstName());
         oldOwner.setLastName(newOwner.getLastName());

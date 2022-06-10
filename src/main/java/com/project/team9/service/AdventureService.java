@@ -71,10 +71,20 @@ public class AdventureService {
         return quickReservations;
     }
 
-    public Boolean addQuickReservation(String id, AdventureQuickReservationDTO quickReservationDTO) {
+    public Boolean addQuickReservation(String id, AdventureQuickReservationDTO quickReservationDTO) throws ReservationNotAvailableException {
         Adventure adventure = this.getById(id);
         AdventureReservation reservation = getReservationFromDTO(quickReservationDTO);
         reservation.setResource(adventure);
+
+        List<AdventureReservation> reservations = adventureReservationService.getPossibleCollisionReservations(reservation.getResource().getId(), reservation.getResource().getOwner().getId());
+        for (AdventureReservation r : reservations) {
+            for (Appointment a : r.getAppointments()) {
+                for (Appointment newAppointment : reservation.getAppointments()) {
+                    reservationService.checkAppointmentCollision(a, newAppointment);
+                }
+            }
+        }
+
         adventureReservationService.save(reservation);
         adventure.addQuickReservations(reservation);
         this.addAdventure(adventure);
@@ -445,21 +455,30 @@ public class AdventureService {
                     if (time.isBefore(LocalDateTime.now())) {
                         reservations.add(createDTOFromReservation(r));
                     }
+
                 }
             }
+
+
         }
         return reservations;
     }
 
 
-    public Long reserveQuickReservation(AdventureQuickReservationDTO dto) {
+    public Long reserveQuickReservation(ReserveQuickReservationDTO dto) {
         AdventureReservation quickReservation = adventureReservationService.getById(dto.getReservationID());
+        Adventure adventure = quickReservation.getResource();
+        adventure.removeQuickReservation(quickReservation);
+
         Client client = clientService.getById(dto.getClientID().toString());
-        quickReservation.getResource().removeQuickReservation(quickReservation);
+
         quickReservation.setClient(client);
         quickReservation.setQuickReservation(false);
+        adventure.addQuickReservation(quickReservation);
+        Long id  = adventureReservationService.save(quickReservation);
         //TODO napravi potvrdu o rezervaciji na akciju
-        return adventureReservationService.save(quickReservation);
+        repository.save(adventure);
+        return id;
     }
 
     public boolean clientCanReviewVendor(Long vendorId, Long clientId) {
@@ -613,10 +632,10 @@ public class AdventureService {
         return "Uspešno ste se odjavili na akcije ove avanture";
     }
 
-    public List<EntitySubbedDTO> getClientsSubscribedAdventures() {
-        List<EntitySubbedDTO> entities = new ArrayList<>();
+    public List<EntityDTO> getClientsSubscribedAdventures() {
+        List<EntityDTO> entities = new ArrayList<>();
         for (Adventure adventure : getAdventures()) {
-            entities.add(new EntitySubbedDTO(
+            entities.add(new EntityDTO(
                     adventure.getTitle(),
                     "adventure",
                     adventure.getImages().get(0),
@@ -627,5 +646,24 @@ public class AdventureService {
             ));
         }
         return entities;
+    }
+
+    public List<EntityDTO> findAdventuresThatClientIsSubbedTo(Long client_id) {
+        List<EntityDTO> adventures = new ArrayList<>();
+
+        for (Adventure a: repository.findAll()) {
+            if (a.getSubClientUsernames().contains(client_id)) {
+                adventures.add(new EntityDTO(
+                        a.getTitle(),
+                        "adventure",
+                        a.getImages().get(0),
+                        getAdventureRating(a.getId()),
+                        a.getId(),
+                        a.getAddress(),
+                        a.getPricelist().getPrice()));
+            }
+        }
+
+        return adventures;
     }
 }

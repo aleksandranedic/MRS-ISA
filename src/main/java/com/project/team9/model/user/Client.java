@@ -12,6 +12,8 @@ import java.util.List;
 public class Client extends User {
 
     private int numOfPenalties=0;
+    private int numOfPoints=0;
+
     public Client(Image profileImg, String password, String firstName, String lastName, String email, String phoneNumber, Address address, Boolean deleted, Role role) {
         super(profileImg, password, firstName, lastName, email, phoneNumber, address,  deleted, role);
     }
@@ -36,4 +38,15 @@ public class Client extends User {
         this.numOfPenalties = numOfPenalties;
     }
 
+    public int getNumOfPoints() {
+        return numOfPoints;
+    }
+
+    public void setNumOfPoints(int numOfPoints) {
+        this.numOfPoints = numOfPoints;
+    }
+
+    public void addPoints(int points) {
+        this.numOfPoints += points;
+    }
 }

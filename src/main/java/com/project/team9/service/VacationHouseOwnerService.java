@@ -11,6 +11,7 @@ import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.resource.VacationHouse;
+import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.VacationHouseOwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,10 @@ public class VacationHouseOwnerService {
 
     public VacationHouseOwner getOwner(Long id) {
         return repository.getById(id);
+    }
+
+    public List<VacationHouseOwner> getVacationHouseOwners() {
+        return repository.findAll().stream().filter(VacationHouseOwner -> !VacationHouseOwner.getDeleted()).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public IncomeReport getAttendanceReport(Long id, AttendanceReportParams attendanceReportParams){
