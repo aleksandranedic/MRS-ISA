@@ -25,6 +25,7 @@ public class UserCategory {
     private boolean isVendorCategory;
     private boolean isClientCategory;
     private String type;
+    private boolean deleted;
 
     public static HashMap<String, String> colors = new HashMap<String, String>() {{
         put("pink-blue", "linear-gradient( 64.5deg,  rgba(245,116,185,1) 14.7%, rgba(89,97,223,1) 88.7% )");
@@ -47,6 +48,7 @@ public class UserCategory {
         this.color = color;
         this.isClientCategory = isClientCategory;
         this.isVendorCategory = isVendorCategory;
+        this.deleted = false;
     }
 
     public UserCategory(Long id, String name, int minimumPoints, int maximumPoints, int discount, String color, String type) {
@@ -65,6 +67,15 @@ public class UserCategory {
             this.isClientCategory = false;
             this.isVendorCategory = true;
         }
+        this.deleted = false;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public String getType() {

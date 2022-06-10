@@ -31,4 +31,9 @@ public class UserCategoryController {
     public Long addUserCategory(@RequestBody UserCategory userCategory) {
         return service.addUserCategory(userCategory);
     }
+
+    @PostMapping("/delete/{id}")
+    public Long deleteCategory(@PathVariable Long id) {
+        return service.deleteUserCategory(id);
+    }
 }

@@ -128,6 +128,13 @@ export function LoyaltyCategories() {
         button.addClass("selected-color");
     }
 
+    const deleteCategory = (id) => {
+
+        axios.post(backLink + "/category/delete/" + id).then(res => {
+            window.location.reload();
+        })
+    }
+
     return (<div className="d-flex" style={{height: "100vh"}}>
         <div className="w-25" style={{backgroundColor: "#f7f8f9"}}>
             <Sidebar/>
@@ -146,7 +153,8 @@ export function LoyaltyCategories() {
                             label="Naziv"
                             className="mb-2"
                         >
-                            <Form.Control type="text" placeholder="Title" value={formValues.name} isInvalid={!!formErrors.name}
+                            <Form.Control type="text" placeholder="Title" value={formValues.name}
+                                          isInvalid={!!formErrors.name}
                                           onChange={(e) => setField("name", e.target.value)}/>
                             <Form.Control.Feedback type="invalid">
                                 {formErrors.name}
@@ -224,19 +232,24 @@ export function LoyaltyCategories() {
 
                         <div className="d-flex flex-column">
                             <div className="d-flex">
-                                <Button onClick={() => setSelectedColor("purple-orange")} id="purple-orange" className="color-button"
+                                <Button onClick={() => setSelectedColor("purple-orange")} id="purple-orange"
+                                        className="color-button"
                                         style={{background: loyaltyColorPalette["purple-orange"]}}/>
-                                <Button onClick={() => setSelectedColor("blue-purple")} id="blue-purple" className="color-button"
+                                <Button onClick={() => setSelectedColor("blue-purple")} id="blue-purple"
+                                        className="color-button"
                                         style={{background: loyaltyColorPalette["blue-purple"]}}/>
-                                <Button onClick={() => setSelectedColor("green-blue")} id="green-blue" className="color-button"
+                                <Button onClick={() => setSelectedColor("green-blue")} id="green-blue"
+                                        className="color-button"
                                         style={{background: loyaltyColorPalette["green-blue"]}}/>
                                 <Button onClick={() => setSelectedColor("green")} id="green" className="color-button"
                                         style={{background: loyaltyColorPalette["green"]}}/>
                                 <Button onClick={() => setSelectedColor("blue")} id="blue" className="color-button"
                                         style={{background: loyaltyColorPalette["blue"]}}/>
-                                <Button onClick={() => setSelectedColor("pink-blue")} id="pink-blue" className="color-button"
+                                <Button onClick={() => setSelectedColor("pink-blue")} id="pink-blue"
+                                        className="color-button"
                                         style={{background: loyaltyColorPalette["pink-blue"]}}/>
-                                <Button onClick={() => setSelectedColor("pink-purple")} id="pink-purple" className="color-button"
+                                <Button onClick={() => setSelectedColor("pink-purple")} id="pink-purple"
+                                        className="color-button"
                                         style={{background: loyaltyColorPalette["pink-purple"]}}/>
 
 
@@ -246,10 +259,10 @@ export function LoyaltyCategories() {
                         </div>
 
 
-                        <Button onClick={handleSubmit} className="ms-auto mt-2 mb-2" variant="outline-secondary">Dodaj</Button>
+                        <Button onClick={handleSubmit} className="ms-auto mt-2 mb-2"
+                                variant="outline-secondary">Dodaj</Button>
 
                     </div>
-
 
 
                 </Form>
@@ -275,7 +288,9 @@ export function LoyaltyCategories() {
 
                         <Card.Footer style={{backgroundColor: "rgba(0,0,0,0.1)"}} className="d-flex">
                             <Button size="sm" variant="outline-light"
-                                    className="d-flex align-items-center justify-content-center">
+                                    className="d-flex align-items-center justify-content-center"
+                                    onClick={() => deleteCategory(category.id)}
+                            >
 
                                 <TiDeleteOutline style={{color: "white", height: "1.2rem", width: "1.2rem"}}/>
                             </Button>

@@ -39,4 +39,10 @@ public class UserCategoryService {
 
         return repository.save(userCategory).getId();
     }
+
+    public Long deleteUserCategory(Long id) {
+        UserCategory userCategory = repository.getById(id);
+        userCategory.setDeleted(true);
+        return repository.save(userCategory).getId();
+    }
 }
