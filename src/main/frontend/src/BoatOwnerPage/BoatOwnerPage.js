@@ -116,7 +116,7 @@ function BoatOwnerPage() {
 
                     <OwnerInfo
                         name={boatOwner.firstName + " " + boatOwner.lastName}
-                        rate = {4.5}
+                        role = {"Vlasnik broda"}
                         email={boatOwner.email}
                         phoneNum={boatOwner.phoneNumber}
                         address={boatOwner.address}

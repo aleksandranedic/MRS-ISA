@@ -43,7 +43,7 @@ const ReviewsComp = ({reviews}) => {
 
 function HouseOwnerPage() {
     const {id} = useParams();
-    const [houseOwner, setHouseOwner] = useState({address: '', profileImg: {path: ""}});
+    const [houseOwner, setHouseOwner] = useState({address: '', profileImg: {path: profilePicturePlaceholder}});
     const [ownerHouses, setOwnerHouses] = useState([]);
     const [ownerReviews, setOwnerReviews] = useState([])
     const [events, setEvents] = useState(null);
@@ -113,7 +113,7 @@ function HouseOwnerPage() {
 
                 <OwnerInfo
                     name={houseOwner.firstName + " " + houseOwner.lastName}
-                    rate = {4.5}
+                    role = {"Vlasnik vikendice"}
                     email={houseOwner.email}
                     phoneNum={houseOwner.phoneNumber}
                     address={houseOwner.address}

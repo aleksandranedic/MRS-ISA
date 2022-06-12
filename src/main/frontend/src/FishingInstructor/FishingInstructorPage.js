@@ -29,7 +29,7 @@ const ReviewsComp = ({reviews}) => {
 }
 
 const FishingInstructors = ({id}) => {
-    const [fishingInstructor, setFishingInstructor] = useState({address: '', profileImg: {path: ""}});
+    const [fishingInstructor, setFishingInstructor] = useState({address: '', profileImg: {path: profilePicturePlaceholder}});
     const [adventures, setAdventures] = useState([]);
     const [reservations, setReservations] = useState([]);
     const [open, setOpen] = useState(false);
@@ -96,7 +96,7 @@ const FishingInstructors = ({id}) => {
             <div className="pe-5 pt-0">
                 <OwnerInfo bio={fishingInstructor.biography}
                             name={fishingInstructor.firstName + " " + fishingInstructor.lastName}
-                            rate={4.5}
+                            role = {"Instruktor pecanja"}
                             email={fishingInstructor.email}
                             phoneNum={fishingInstructor.phoneNumber}
                             address={fishingInstructor.address}

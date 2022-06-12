@@ -86,7 +86,7 @@ const Client = () => {
                 <div id="info"><OwnerInfo
                     bio = {client.biography}
                     name={client.firstName + " " + client.lastName}
-                    rate = {4.5}
+                    role = {"Klijent"}
                     email={client.email}
                     phoneNum={client.phoneNumber}
                     address={client.address}

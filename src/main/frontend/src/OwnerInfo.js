@@ -3,7 +3,7 @@ import StarRatings from 'react-star-ratings';
 import ProfileInfo from './ProfileInfo'
 import {BsEnvelope, BsTelephone, BsGeoAlt} from 'react-icons/bs'
 
-function OwnerInfo({name, rate, bio, email, phoneNum, address, profileImg}) {
+function OwnerInfo({name, role, bio, email, phoneNum, address, profileImg}) {
     return (
         <div className = "d-flex align-items-center justify-content-center ps-2 m-5" id="info">
             <div className='pt-4 ps-0 d-flex justify-content-center me-2' style={{width:"15%"}}>
@@ -15,9 +15,8 @@ function OwnerInfo({name, rate, bio, email, phoneNum, address, profileImg}) {
                         <div className="d-flex align-items-center justify-content-around infoDiv" style={{width:"100%"}}>
                             <div className="d-flex flex-column justify-content-start">
                                 <h2 className="fw-normal p-0 m-0 pt-2">{name}</h2>
-                                <div className="d-flex align-itens-center">     
-                                    <p className="fw-bold m-0 mt-1 p-0"> {rate} </p>
-                                    <StarRatings rating={rate} starDimension="17px" starSpacing="1px" starRatedColor="#f4b136"/>
+                                <div className="d-flex align-itens-center justify-content-start">     
+                                    <small className='text-secondary pb-2' style={{paddingLeft:"2px"}}>{role}</small>
                                 </div>
                             </div>
                         </div>
