@@ -119,6 +119,8 @@ public class VacationHouseService {
 
     public VacationHouseDTO getVacationHouseDTO(Long id) {
         VacationHouse vh = repository.getById(id);
+        if (vh.getDeleted())
+            return null;
         String address = vh.getAddress().getStreet() + " " + vh.getAddress().getNumber() + ", " + vh.getAddress().getPlace() + ", " + vh.getAddress().getCountry();
         List<String> images = new ArrayList<String>();
         for (Image img : vh.getImages()) {

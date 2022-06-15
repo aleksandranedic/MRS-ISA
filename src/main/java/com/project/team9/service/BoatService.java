@@ -206,6 +206,8 @@ public class BoatService {
 
     public BoatDTO getBoatDTO(Long id) {
         Boat bt = repository.getById(id);
+        if (bt.getDeleted())
+            return null;
         String address = bt.getAddress().getStreet() + " " + bt.getAddress().getNumber() + ", " + bt.getAddress().getPlace() + ", " + bt.getAddress().getCountry();
         List<String> images = new ArrayList<String>();
         for (Image img : bt.getImages()) {

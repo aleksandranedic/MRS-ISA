@@ -10,21 +10,22 @@ import { useParams } from "react-router-dom";
 import Ratings from "../Reviews/Ratings";
 import "react-image-gallery/styles/css/image-gallery.css";
 import Navigation from "../Navigation/Navigation";
-import {backLink} from "../Consts";
+import {backLink, frontLink} from "../Consts";
 import {Collapse} from "react-bootstrap";
 import {ReservationsTable} from "../Calendar/ReservationsTable";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {Calendar} from "../Calendar/Calendar";
 import {processReservationsForResources} from "../ProcessToEvent";
 import {AddReview} from "../Reviews/AddReview";
+import {getProfileLink} from "../Autentification";
 
-const HOST = "http://localhost:4444";
+
 const Gallery = ({house, images}) => {
     if (typeof house.imagePaths !== "undefined"){
         let empty = images.length === 0;
         for (let i=0; i<house.imagePaths.length; i++){
-            if (!house.imagePaths[i].includes(HOST)){
-                house.imagePaths[i] = HOST + house.imagePaths[i];
+            if (!house.imagePaths[i].includes(backLink)){
+                house.imagePaths[i] = backLink + house.imagePaths[i];
                 images.push({original:house.imagePaths[i], thumbnail:house.imagePaths[i]})
             } else if (empty){
                 images.push({original:house.imagePaths[i], thumbnail:house.imagePaths[i]})
@@ -91,6 +92,10 @@ export function VacationHousePage() {
         axios
         .get("http://localhost:4444/house/houseprof/" + id)
         .then(res => {
+            if (res.data === ''){
+                var profileLink = getProfileLink();
+                window.location.href = frontLink + "pageNotFound"
+            }
             setHouse(res.data);
             setImgs([]);
         });

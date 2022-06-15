@@ -10,12 +10,13 @@ import { useParams } from "react-router-dom";
 import "react-image-gallery/styles/css/image-gallery.css";
 import Navigation from "../Navigation/Navigation";
 import Ratings from "../Reviews/Ratings";
-import {backLink} from "../Consts";
+import {backLink, frontLink} from "../Consts";
 import {Calendar} from "../Calendar/Calendar";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {Collapse} from "react-bootstrap";
 import {ReservationsTable} from "../Calendar/ReservationsTable";
 import {processReservationsForResources} from "../ProcessToEvent";
+import { getProfileLink } from "../Autentification";
 
 
 const Gallery = ({boat, images}) => {
@@ -100,6 +101,12 @@ export function BoatProfilePage() {
         axios
         .get("http://localhost:4444/boat/boatprof/" + id)
         .then(res => {
+            console.log(res)
+            console.log(res.data)
+            if (res.data === ''){
+                var profileLink = getProfileLink();
+                window.location.href = frontLink + "pageNotFound"
+            }
             setBoat(res.data);
             setImgs([]);
         });
