@@ -74,6 +74,8 @@ public class VacationHouseService {
         List<VacationHouse> houses = repository.findByOwnerId(owner_id);
         List<HouseCardDTO> houseCards = new ArrayList<HouseCardDTO>();
         for (VacationHouse house : houses) {
+            if (house.getDeleted())
+                continue;
             String address = house.getAddress().getStreet() + " " + house.getAddress().getNumber() + ", " + house.getAddress().getPlace() + ", " + house.getAddress().getCountry();
             String thumbnail = "./images/housenotext.png";
             if (house.getImages().size() > 0) {
@@ -254,7 +256,9 @@ public class VacationHouseService {
     }
 
     public void deleteById(Long id) {
-        repository.deleteById(id);
+        VacationHouse vh = getVacationHouse(id);
+        vh.setDeleted(true);
+        this.addVacationHouses(vh);
     }
 
     public Long createHouse(VacationHouseDTO house, MultipartFile[] multipartFiles) throws IOException {

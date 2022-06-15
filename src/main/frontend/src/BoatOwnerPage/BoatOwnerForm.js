@@ -16,6 +16,8 @@ export function BoatOwnerForm({show, setShow, owner, profileImg}) {
     const [showPassword, setShowPassword] = useState(false);
     const [validatedInfo, setValidatedInfo] = useState(false);
     const [boatOwner, setBoatOwner] = useState(owner);
+    const [showDelete, setShowDelete] = useState(false);
+    const handleShowDelete = () => setShowDelete(true);
     const handleShowPassword = () => setShowPassword(true);
 
     const setFirstName = (value) => {
@@ -167,7 +169,8 @@ export function BoatOwnerForm({show, setShow, owner, profileImg}) {
                 <ChangePassword  show={showPassword} setShow={setShowPassword}/>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="outline-danger" className="me-auto" onClick={()=>setShow(false)}> Obrisi</Button>
+                <Button variant="outline-danger" className="me-auto" onClick={handleShowDelete}> Obriši</Button>
+                <DeleteAccount  show={showDelete} setShow={setShowDelete}/>
                 <Button variant="secondary" onClick={()=>setShow(false)}> Otkazi  </Button>
                 <Button variant="primary" onClick={handleSubmit}> Izmeni </Button>
             </Modal.Footer>
@@ -260,6 +263,52 @@ export function ChangePassword({show, setShow}) {
             <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose}> Otkazi </Button>
                 <Button variant="primary" onClick={changePassword}> Izmeni </Button>
+            </Modal.Footer>
+        </Form>
+    </Modal>
+}
+export function DeleteAccount({show, setShow}) {
+    const formDelete = useRef();
+    const handleClose = () => setShow(false);
+    const [validatedReason, setValidatedReason] = useState(false);
+    const {id} = useParams();
+    const [deleteReason, setDeleteReason] = useState(false);
+
+    const deleteUser = e => {
+        e.preventDefault()
+        if (formDelete.current.checkValidity() === false) {
+            e.stopPropagation();
+            setValidatedReason(true);
+        }
+        else {
+            var formData = new FormData(formDelete.current);
+           // formData.append("deletionRequests", deleteReason)
+           
+            axios
+            .delete(backLink + "/deletionRequests/boatowner/" + id, deleteReason)
+            .then(res => {
+                notifySuccess(res.data)
+                })
+            .catch( e => alert(e))
+        }
+    }
+          
+    return <Modal show={show} onHide={() => setShow(false)}>
+        <Form noValidate validated={validatedReason} ref={formDelete}>
+            <Modal.Header closeButton>
+                <Modal.Title>Brisanje naloga</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Form.Group className="mb-3 m-2" controlId="oldPassword">
+                    <Form.Label>Unesite razlog brisanja naloga</Form.Label>
+                    <Form.Control name="deletingReason" required as="textarea" rows={3} onChange={e => setDeleteReason(e.target.value)}/>
+                    <Form.Control.Feedback type="invalid">Molimo Vas unesite razlog brisanja naloga.</Form.Control.Feedback>                  
+                </Form.Group>
+         
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}> Otkazi </Button>
+                <Button variant="primary" onClick={deleteUser}> Obriši </Button>
             </Modal.Footer>
         </Form>
     </Modal>

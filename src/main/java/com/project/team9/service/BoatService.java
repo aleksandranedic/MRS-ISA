@@ -10,6 +10,7 @@ import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.resource.Boat;
+import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.repo.BoatRepository;
@@ -180,6 +181,9 @@ public class BoatService {
         List<Boat> boats = repository.findByOwnerId(owner_id);
         List<BoatCardDTO> boatCards = new ArrayList<BoatCardDTO>();
         for (Boat boat : boats) {
+            if (boat.getDeleted()){
+                continue;
+            }
             String address = boat.getAddress().getStreet() + " " + boat.getAddress().getNumber() + ", " + boat.getAddress().getPlace() + ", " + boat.getAddress().getCountry();
             String thumbnail = "./images/housenotext.png";
             if (boat.getImages().size() > 0) {
@@ -253,7 +257,9 @@ public class BoatService {
     }
 
     public void deleteById(Long id) {
-        repository.deleteById(id);
+        Boat boat = this.getBoat(id);
+        boat.setDeleted(true);
+        this.addBoat(boat);
     }
 
     public Long createBoat(BoatDTO boat, MultipartFile[] multipartFiles) throws IOException {

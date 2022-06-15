@@ -9,6 +9,7 @@ import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.resource.Adventure;
+import com.project.team9.model.resource.Boat;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.repo.AdventureRepository;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
@@ -26,6 +29,10 @@ import java.util.stream.Collectors;
 
 @Service
 public class AdventureService {
+    final String STATIC_PATH = "src/main/resources/static/";
+    final String STATIC_PATH_TARGET = "target/classes/static/";
+    final String IMAGES_PATH = "/images/adventures/";
+
     private final AdventureRepository repository;
     private final FishingInstructorService fishingInstructorService;
     private final TagService tagService;
@@ -38,8 +45,6 @@ public class AdventureService {
     private final ReservationService reservationService;
     private final ClientReviewService clientReviewService;
     private final EmailService emailService;
-
-    final String IMAGES_PATH = "/images/adventures/";
 
     @Autowired
     public AdventureService(AdventureRepository adventureRepository, FishingInstructorService fishingInstructorService, TagService tagService, AddressService addressService, PricelistService pricelistService, ImageService imageService, AppointmentService appointmentService, ClientService clientService, AdventureReservationService adventureReservationService, ReservationService reservationService, ClientReviewService clientReviewService, EmailService emailService) {
@@ -188,7 +193,64 @@ public class AdventureService {
         repository.deleteById(Long.parseLong(id));
     }
 
-    private Adventure updateAdventure(Adventure oldAdventure, Adventure newAdventure) {
+    public AdventureDTO updateAdventure(String id, AdventureDTO adventureDTO, MultipartFile[] multipartFiles) throws IOException {
+        Adventure originalAdventure = this.getById(id);
+        Adventure newAdventure = createAdventureFromDTO(adventureDTO);
+        updateAdventureFromNew(originalAdventure, newAdventure);
+        this.addAdventure(originalAdventure);
+        List<String> paths = saveImages(originalAdventure, multipartFiles);
+        List<Image> images = getImages(paths);
+        originalAdventure.setImages(images);
+        this.addAdventure(originalAdventure);
+        return this.getDTOById(originalAdventure.getId().toString());
+    }
+    private List<String> saveImages(Adventure adventure, MultipartFile[] multipartFiles) throws IOException {
+        List<String> paths = new ArrayList<>();
+        if (multipartFiles == null) {
+            return paths;
+        }
+        Path path = Paths.get(STATIC_PATH + IMAGES_PATH + adventure.getId());
+        Path path_target = Paths.get(STATIC_PATH_TARGET + IMAGES_PATH + adventure.getId());
+        savePicturesOnPath(adventure, multipartFiles, paths, path);
+        savePicturesOnPath(adventure, multipartFiles, paths, path_target);
+        if (adventure.getImages() != null && adventure.getImages().size() > 0) {
+            for (Image image : adventure.getImages()) {
+                paths.add(image.getPath());
+            }
+        }
+        return paths.stream().distinct().collect(Collectors.toList());
+    }
+
+    private void savePicturesOnPath(Adventure adventure, MultipartFile[] multipartFiles, List<String> paths, Path path) throws IOException {
+        if (!Files.exists(path)) {
+            Files.createDirectories(path);
+        }
+
+        for (MultipartFile mpf : multipartFiles) {
+            String fileName = mpf.getOriginalFilename();
+            try (InputStream inputStream = mpf.getInputStream()) {
+                Path filePath = path.resolve(fileName);
+                Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+                paths.add(IMAGES_PATH + adventure.getId() + "/" + fileName);
+            } catch (DirectoryNotEmptyException dnee) {
+                continue;
+            } catch (IOException ioe) {
+                throw new IOException("Could not save image file: " + fileName, ioe);
+            }
+        }
+    }
+    private List<Image> getImages(List<String> paths) {
+        List<Image> images = new ArrayList<Image>();
+        for (String path : paths) {
+            Optional<Image> optImg = imageService.getImageByPath(path);
+            Image img;
+            img = optImg.orElseGet(() -> new Image(path));
+            imageService.save(img);
+            images.add(img);
+        }
+        return images;
+    }
+    private void updateAdventureFromNew(Adventure oldAdventure, Adventure newAdventure) {
         oldAdventure.setTitle(newAdventure.getTitle());
         oldAdventure.setAddress(newAdventure.getAddress());
         oldAdventure.setDescription(newAdventure.getDescription());
@@ -200,7 +262,6 @@ public class AdventureService {
         oldAdventure.setOwner(newAdventure.getOwner());
         oldAdventure.setNumberOfClients(newAdventure.getNumberOfClients());
         oldAdventure.setFishingEquipment(newAdventure.getFishingEquipment());
-        return oldAdventure;
     }
 
     public List<Adventure> findAdventuresWithOwner(String ownerId) {

@@ -140,7 +140,7 @@ public class VacationHouseController {
         return service.getVacationHouseCard(Long.parseLong(id));
     }
 
-    @DeleteMapping("/{id}")
+    @GetMapping("delete/{id}")
     public ResponseEntity deleteVacationHouse(@PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.ok().build();

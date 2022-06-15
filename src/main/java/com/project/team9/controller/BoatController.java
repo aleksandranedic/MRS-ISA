@@ -44,7 +44,7 @@ public class BoatController {
     }
 
     @PostMapping(value = "updateBoat/{id}")
-    public BoatDTO updateVacationHouse(@PathVariable String id, BoatDTO boatDTO, @RequestParam("fileImage") MultipartFile[] multipartFiles) throws IOException {
+    public BoatDTO updateBoat(@PathVariable String id, BoatDTO boatDTO, @RequestParam("fileImage") MultipartFile[] multipartFiles) throws IOException {
         return service.updateBoat(id, boatDTO, multipartFiles);
     }
 
@@ -90,8 +90,8 @@ public class BoatController {
         return service.getBoatCard(Long.parseLong(id));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteVacationHouse(@PathVariable Long id) {
+    @GetMapping("delete/{id}")
+    public ResponseEntity deleteBoat(@PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.ok().build();
     }
