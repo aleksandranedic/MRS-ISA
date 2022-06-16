@@ -8,6 +8,7 @@ import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
+import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.resource.VacationHouse;
@@ -266,7 +267,7 @@ public class BoatService {
 
     public boolean deleteById(Long id) {
         Boat boat = this.getBoat(id);
-        if (getReservationsForBoat(id).size() > 0)
+        if (haveReservations(id))
             return false;
         boat.setDeleted(true);
         this.addBoat(boat);
@@ -427,6 +428,19 @@ public class BoatService {
         }
         return reservations;
 
+    }
+
+    public boolean haveReservations(Long id){
+        return getReservationsForBoat(id).size() > 0 || haveReservedQuickReservations(id);
+    }
+
+    private boolean haveReservedQuickReservations(Long id){
+        for (BoatReservation br : boatReservationService.getAll()) {
+            if (Objects.equals(br.getResource().getId(), id) && br.isQuickReservation() && br.getClient() != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<ReservationDTO> getReservationsForOwner(Long id) {

@@ -265,7 +265,7 @@ public class VacationHouseService {
 
     public boolean deleteById(Long id) {
         VacationHouse vh = getVacationHouse(id);
-        if (getReservationsForVacationHouse(id).size() > 0)
+        if (haveReservations(id))
             return false;
         vh.setDeleted(true);
         this.addVacationHouses(vh);
@@ -402,6 +402,19 @@ public class VacationHouseService {
         }
 
         return reservations;
+    }
+
+    public boolean haveReservations(Long id){
+        return getReservationsForVacationHouse(id).size() > 0 || haveReservedQuickReservations(id);
+    }
+
+    private boolean haveReservedQuickReservations(Long id){
+        for (VacationHouseReservation vhr : vacationHouseReservationService.getAll()) {
+            if (Objects.equals(vhr.getResource().getId(), id) && vhr.isQuickReservation() && vhr.getClient() != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<ReservationDTO> getReservationsForVacationHouse(Long id) {
