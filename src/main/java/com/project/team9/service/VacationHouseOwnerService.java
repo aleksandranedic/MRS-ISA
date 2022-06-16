@@ -49,7 +49,10 @@ public class VacationHouseOwnerService {
     }
 
     public VacationHouseOwner getOwner(Long id) {
-        return repository.getById(id);
+        VacationHouseOwner vho = repository.getById(id);
+        if (vho.getDeleted())
+            return null;
+        return vho;
     }
 
     public List<VacationHouseOwner> getVacationHouseOwners() {

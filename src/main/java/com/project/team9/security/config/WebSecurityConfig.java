@@ -93,6 +93,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // .antMatchers("/admin").hasRole("ADMIN") ili .antMatchers("/admin").hasAuthority("ROLE_ADMIN")
 
                 // za svaki drugi zahtev korisnik mora biti autentifikovan
+                .antMatchers(HttpMethod.POST,"/**").permitAll()
                 .anyRequest().authenticated().and()
 
                 // za development svrhe ukljuci konfiguraciju za CORS iz WebConfig klase
@@ -112,8 +113,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // Zahtevi koji se mecuju za web.ignoring().antMatchers() nemaju pristup SecurityContext-u
 
         // Dozvoljena POST metoda na ruti /auth/login, za svaki drugi tip HTTP metode greska je 401 Unauthorized
-        web.ignoring().antMatchers(HttpMethod.POST, "/login");
-        web.ignoring().antMatchers(HttpMethod.POST, "/registration");
+
+//        web.ignoring().antMatchers(HttpMethod.POST, "/login");
+//        web.ignoring().antMatchers(HttpMethod.POST, "/registration");
         // Ovim smo dozvolili pristup statickim resursima aplikacije
         web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "favicon.ico", "/**/*.html",
                 "/**/*.css", "/**/*.js");

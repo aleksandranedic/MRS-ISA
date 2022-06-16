@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping(path="deletionRequests")
 public class DeletionRequestController {
     private final DeleteRequestService service;
@@ -40,14 +39,15 @@ public class DeletionRequestController {
         return ResponseEntity.ok(service.deleteUser(id,deletingReason, "CLIENT"));
     }
 
-    @DeleteMapping("/houseowner/{id}")
-    public ResponseEntity<String> deleteHouseOwner(@PathVariable Long id, @RequestParam("deletingReason") String deletingReason) {
+    @DeleteMapping(value = "/houseowner/{id}", consumes=MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> deleteHouseOwner(@PathVariable Long id, @RequestBody String deletingReason) {
         return ResponseEntity.ok(service.deleteUser(id,deletingReason, "VACATION_HOUSE_OWNER"));
     }
-    @DeleteMapping("/boatowner/{id}")
-    public ResponseEntity<String> deleteBoatOwner(@PathVariable Long id, @RequestParam String deletingReason) {
+    @DeleteMapping(value="/boatowner/{id}", consumes=MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> deleteBoatOwner(@PathVariable Long id, @RequestBody String deletingReason) {
         return ResponseEntity.ok(service.deleteUser(id,deletingReason, "BOAT_OWNER"));
     }
+
     @DeleteMapping("/fishinginstructor/{id}")
     public ResponseEntity<String> deleteFishingInstructor(@PathVariable Long id, @RequestParam String deletingReason) {
         return ResponseEntity.ok(service.deleteUser(id,deletingReason, "FISHING_INSTRUCTOR"));

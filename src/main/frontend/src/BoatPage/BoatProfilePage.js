@@ -101,14 +101,14 @@ export function BoatProfilePage() {
         axios
         .get("http://localhost:4444/boat/boatprof/" + id)
         .then(res => {
-            console.log(res)
-            console.log(res.data)
             if (res.data === ''){
                 var profileLink = getProfileLink();
                 window.location.href = frontLink + "pageNotFound"
             }
             setBoat(res.data);
             setImgs([]);
+            fetchReviews();
+            fetchReservations();
         });
     };
 
@@ -122,8 +122,6 @@ export function BoatProfilePage() {
 
     useEffect(() => {
         fetchBoat();
-        fetchReviews();
-        fetchReservations();
     }, []);
 
     return (
@@ -137,7 +135,7 @@ export function BoatProfilePage() {
                 {text: "Kalendar zauzetosti", path: "#"}
             ]}
                     editable={true} editFunction={handleShow} searchable={true} showProfile={true}/>
-        <BoatInfo boat={boat}/>
+        { typeof boat.name !== "undefined" &&<BoatInfo boat={boat}/>}
         <Update closeModal={handleClose} showModal={show} boat = {boat}/>
         <div className='p-5 pt-0'>
             <Gallery boat={boat} images={imgs}/>

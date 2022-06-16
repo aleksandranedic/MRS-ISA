@@ -3,6 +3,7 @@ import axios from "axios";
 import React, {useState, useRef} from "react";
 import { useParams } from "react-router-dom";
 import { backLink, notifyError, notifySuccess } from "../Consts";
+import {ToastContainer} from "react-toastify";
 
 axios.interceptors.request.use(config => {
     config.headers.authorization = "Bearer " + localStorage.getItem('token')
@@ -200,37 +201,20 @@ export function ChangePassword({show, setShow}) {
                 oldPassword: passwords.oldPassword,
                 newPassword: passwords.newPassword
             }
+
             axios
-            .post(backLink + "/changePassword", fd)
+            .post(backLink + "/user/changePassword", dto, { headers: {"Content-Type": "application/json"} })
             .then( res => {
-                if (res.data !== "Neuspešno.Pokušajte ponovo") {
-                    localStorage.setItem('token', res.data)
-                    notifySuccess("Uspešno ste promenili šifru")
-                } else {
-                    notifyError(res.data)
-                }
+                localStorage.setItem('token', res.data)
+                notifySuccess("Uspešno ste promenili šifru");
+                setTimeout(function(){setShow(false)}, 2500);
             })
-           
-            /*axios
-            .post("http://localhost:4444/boatowner/checkPassword/" + id, oldPassword, {headers: {"Content-Type": "text/plain"}})
-            .then(res => {
-                if (res.data){
-                    updatePassword();
-                }
-                else {
-                    document.getElementById("invalidOldPassword").style.display = "block"
-                }
-            });*/
+            .catch(function (error) {
+                notifyError(error.response.data)
+            });        
         }
     }
-    const updatePassword = () => {
-        var newPassword = passwords.newPassword
-        axios
-            .post("http://localhost:4444/boatowner/updatePassword/" + id, newPassword, {headers: {"Content-Type": "text/plain"}})
-            .then(res => {
-                window.location.reload();
-            });
-    }
+    
     const setOldPassword = (value) => {
         setPasswords( prevState => {
            return {...prevState, oldPassword:value}
@@ -265,6 +249,19 @@ export function ChangePassword({show, setShow}) {
                 <Button variant="primary" onClick={changePassword}> Izmeni </Button>
             </Modal.Footer>
         </Form>
+        <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={true}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme={"colored"}
+                
+                />
     </Modal>
 }
 export function DeleteAccount({show, setShow}) {
@@ -280,16 +277,19 @@ export function DeleteAccount({show, setShow}) {
             e.stopPropagation();
             setValidatedReason(true);
         }
-        else {
-            var formData = new FormData(formDelete.current);
-           // formData.append("deletionRequests", deleteReason)
-           
+        else {          
             axios
-            .delete(backLink + "/deletionRequests/boatowner/" + id, deleteReason)
+            .delete(backLink + "/deletionRequests/boatowner/" + id, {
+                headers: {"Content-Type": "text/plain"},
+                data: deleteReason,
+            })
             .then(res => {
                 notifySuccess(res.data)
+                setTimeout(function(){setShow(false)}, 2500);
                 })
-            .catch( e => alert(e))
+                .catch(function (error) {
+                    notifyError(error.response.data)
+                });
         }
     }
           
@@ -311,6 +311,19 @@ export function DeleteAccount({show, setShow}) {
                 <Button variant="primary" onClick={deleteUser}> Obriši </Button>
             </Modal.Footer>
         </Form>
+        <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={true}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme={"colored"}
+                
+                />
     </Modal>
 }
 export default BoatOwnerForm;

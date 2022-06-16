@@ -9,7 +9,7 @@ import AddVacationHouse from './AddVacationHouse';
 import HouseOwnerForm from "./HouseOwnerForm";
 import {useParams} from "react-router-dom";
 import Navigation from "../Navigation/Navigation";
-import {backLink, profilePicturePlaceholder} from '../Consts';
+import {backLink, frontLink, profilePicturePlaceholder} from '../Consts';
 import {Calendar} from "../Calendar/Calendar";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {Collapse} from "react-bootstrap";
@@ -17,6 +17,7 @@ import {ReservationsTable} from "../Calendar/ReservationsTable";
 import {ReservationsToReview} from "../Calendar/ReservationsToReview";
 import {processReservationsForUsers} from "../ProcessToEvent";
 import Ratings from '../Reviews/Ratings';
+import { getProfileLink } from '../Autentification';
 
 
 const UpdateOwner = ({show, setShow, owner}) => {
@@ -78,7 +79,14 @@ function HouseOwnerPage() {
         axios
             .get(backLink + "/houseowner/" + id)
             .then(res => {
+                if (res.data === ''){
+                    var profileLink = getProfileLink();
+                    window.location.href = frontLink + "pageNotFound"
+                }
                 setHouseOwner(res.data);
+                fetchOwnerHouses();
+                fetchReservations();
+                fetchReviews();
             });
     };
 
@@ -91,10 +99,7 @@ function HouseOwnerPage() {
     };
 
     useEffect(() => {
-        fetchOwnerHouses();
-        fetchReservations();
         fetchHouseOwner();
-        fetchReviews();
     }, []);
 
     return (

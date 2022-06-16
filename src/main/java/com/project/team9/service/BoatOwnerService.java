@@ -48,7 +48,10 @@ public class BoatOwnerService {
     }
 
     public BoatOwner getOwner(Long id) {
-        return repository.getById(id);
+        BoatOwner bo =  repository.getById(id);
+        if (bo.getDeleted())
+            return null;
+        return bo;
     }
 
     public void addOwner(BoatOwner owner) {

@@ -118,7 +118,13 @@ public class VacationHouseService {
     }
 
     public VacationHouseDTO getVacationHouseDTO(Long id) {
-        VacationHouse vh = repository.getById(id);
+        VacationHouse vh;
+        try{
+            vh = repository.getById(id);
+        }
+        catch (Exception e){
+            return null;
+        }
         if (vh.getDeleted())
             return null;
         String address = vh.getAddress().getStreet() + " " + vh.getAddress().getNumber() + ", " + vh.getAddress().getPlace() + ", " + vh.getAddress().getCountry();

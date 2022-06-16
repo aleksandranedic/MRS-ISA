@@ -92,12 +92,13 @@ export function VacationHousePage() {
         axios
         .get("http://localhost:4444/house/houseprof/" + id)
         .then(res => {
-            if (res.data === ''){
-                var profileLink = getProfileLink();
+            if (res.data === ''){              
                 window.location.href = frontLink + "pageNotFound"
-            }
+            }            
             setHouse(res.data);
             setImgs([]);
+            fetchReviews();
+            fetchReservations();
         });
     };
     const fetchReviews = () => {
@@ -109,8 +110,6 @@ export function VacationHousePage() {
     };
     useEffect(() => {
         fetchHouse();
-        fetchReviews();
-        fetchReservations();
     }, []);
     
     return (
@@ -124,7 +123,7 @@ export function VacationHousePage() {
                 {text: "Recenzije", path:"#reviews"}
             ]}
                     editable={true} editFunction={handleShow} searchable={true} showProfile={true}/>
-        <HouseInfo house={house}/>
+        { typeof house.name !== "undefined" && <HouseInfo house={house}/>}
         <Update closeModal={handleClose} showModal={show} vacationHouse = {house}/>
         <div className='p-5 pt-0'>
             <Gallery house={house} images={imgs}/>
@@ -138,6 +137,7 @@ export function VacationHousePage() {
 
             <hr className="me-5 ms-5"/>
                   <Calendar reservable={true} pricelist={{price: house.price}} resourceId={house.id} type={"vacationHouse"} events={events} myPage={true}/>
+        
             <h2 className="me-5 ms-5 mt-5" id="reservations">Predstojaće rezervacije</h2>
             <hr className="me-5 ms-5"/>
             <ReservationCardGrid reservations={reservations}/>

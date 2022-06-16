@@ -9,7 +9,7 @@ import OwnerBoats from './OwnerBoats';
 import AddBoat from './AddBoat';
 import {useParams} from "react-router-dom";
 import Navigation from "../Navigation/Navigation";
-import {backLink, profilePicturePlaceholder} from '../Consts';
+import {backLink, frontLink, profilePicturePlaceholder} from '../Consts';
 import {Calendar} from "../Calendar/Calendar";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {Collapse} from "react-bootstrap";
@@ -17,6 +17,7 @@ import {ReservationsTable} from "../Calendar/ReservationsTable";
 import {ReservationsToReview} from "../Calendar/ReservationsToReview";
 import {processReservationsForUsers} from "../ProcessToEvent";
 import Ratings from '../Reviews/Ratings';
+import { getProfileLink } from '../Autentification';
 
 const UpdateOwner = ({show, setShow, owner}) => {
     if (typeof owner.firstName !== "undefined") {
@@ -80,7 +81,14 @@ function BoatOwnerPage() {
         axios
             .get(backLink + "/boatowner/" + id)
             .then(res => {
+                if (res.data === ''){
+                    var profileLink = getProfileLink();
+                    window.location.href = frontLink + "pageNotFound"
+                }
                 setboatOwner(res.data);
+                fetchOwnerBoats();
+                fetchReservations();
+                fetchReviews();
             });
     };
 
@@ -94,9 +102,6 @@ function BoatOwnerPage() {
 
     useEffect(() => {
         fetchboatOwner();
-        fetchOwnerBoats();
-        fetchReservations();
-        fetchReviews();
     }, []);
     return (
         <>

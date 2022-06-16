@@ -205,7 +205,13 @@ public class BoatService {
     }
 
     public BoatDTO getBoatDTO(Long id) {
-        Boat bt = repository.getById(id);
+        Boat bt;
+        try {
+            bt= repository.getById(id);
+        }
+        catch (Exception e){
+            return null;
+        }
         if (bt.getDeleted())
             return null;
         String address = bt.getAddress().getStreet() + " " + bt.getAddress().getNumber() + ", " + bt.getAddress().getPlace() + ", " + bt.getAddress().getCountry();
