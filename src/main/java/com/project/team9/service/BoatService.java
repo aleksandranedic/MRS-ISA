@@ -264,10 +264,13 @@ public class BoatService {
         repository.save(boat);
     }
 
-    public void deleteById(Long id) {
+    public boolean deleteById(Long id) {
         Boat boat = this.getBoat(id);
+        if (getReservationsForBoat(id).size() > 0)
+            return false;
         boat.setDeleted(true);
         this.addBoat(boat);
+        return true;
     }
 
     public Long createBoat(BoatDTO boat, MultipartFile[] multipartFiles) throws IOException {

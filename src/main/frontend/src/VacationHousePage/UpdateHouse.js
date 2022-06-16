@@ -3,8 +3,9 @@ import React, {useState, useRef, useEffect} from 'react';
 import {Modal, Button} from 'react-bootstrap'
 import UpdateHouseForm from './UpdateHouseForm';
 import { useParams } from "react-router-dom";
-import { backLink, frontLink, notifySuccess } from '../Consts';
+import { backLink, frontLink, notifyError, notifySuccess } from '../Consts';
 import {isBoatOwner, isClient, isFishingInstructor, isLoggedIn, isVacationHouseOwner} from "../Autentification";
+import {ToastContainer} from "react-toastify";
 
 function UpdateHouse({showModal, closeModal, vacationHouse}) {
   const form = useRef();
@@ -38,6 +39,9 @@ function UpdateHouse({showModal, closeModal, vacationHouse}) {
         notifySuccess("Uspešno ste obrisali vikendicu.")
         setTimeout(window.location.href = profileLink, 1500);
       } )
+      .catch(function (error) {
+        notifyError(error.response.data)
+    });
     }  
 
   const submit = e => {
@@ -113,6 +117,19 @@ function UpdateHouse({showModal, closeModal, vacationHouse}) {
           <Button variant="primary" onClick={submit} >Sačuvaj</Button>
           </div>
         </Modal.Footer>
+        <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={true}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme={"colored"}
+                
+                />
       </Modal>
     );
 }

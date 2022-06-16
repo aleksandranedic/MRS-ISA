@@ -141,9 +141,11 @@ public class VacationHouseController {
     }
 
     @GetMapping("delete/{id}")
-    public ResponseEntity deleteVacationHouse(@PathVariable Long id) {
-        service.deleteById(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> deleteVacationHouse(@PathVariable Long id) {
+        boolean action = service.deleteById(id);
+        if (action)
+            return ResponseEntity.ok().build();
+        return ResponseEntity.badRequest().body("Vikendica je rezervisana, ne može se izbrisati.");
     }
 
     @GetMapping("/clientCanReview/{resourceId}/{clientId}")

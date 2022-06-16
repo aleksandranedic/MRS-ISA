@@ -3,8 +3,9 @@ import React, {useState, useRef, useEffect} from 'react';
 import {Modal, Button} from 'react-bootstrap'
 import UpdateBoatForm from './UpdateBoatForm';
 import { useParams } from "react-router-dom";
-import { backLink, frontLink, notifySuccess } from '../Consts';
+import { backLink, frontLink, notifyError, notifySuccess } from '../Consts';
 import {isBoatOwner, isClient, isFishingInstructor, isLoggedIn, isVacationHouseOwner} from "../Autentification";
+import {ToastContainer} from "react-toastify";
 
 function UpdateBoat({showModal, closeModal, boat}) {
   const form = useRef();
@@ -39,6 +40,9 @@ function UpdateBoat({showModal, closeModal, boat}) {
       notifySuccess("Uspešno ste obrisali brod.")
       setTimeout(window.location.href = profileLink, 1500);
     } )
+    .catch(function (error) {
+      notifyError(error.response.data)
+  });
   }  
   const submit = e => {
     e.preventDefault()
@@ -132,6 +136,19 @@ function UpdateBoat({showModal, closeModal, boat}) {
           <Button variant="primary" onClick={submit} >Sačuvaj</Button>
           </div>
         </Modal.Footer>
+        <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={true}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme={"colored"}
+                
+                />
       </Modal>
     );
 }

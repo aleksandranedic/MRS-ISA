@@ -263,10 +263,13 @@ public class VacationHouseService {
         repository.save(house);
     }
 
-    public void deleteById(Long id) {
+    public boolean deleteById(Long id) {
         VacationHouse vh = getVacationHouse(id);
+        if (getReservationsForVacationHouse(id).size() > 0)
+            return false;
         vh.setDeleted(true);
         this.addVacationHouses(vh);
+        return true;
     }
 
     public Long createHouse(VacationHouseDTO house, MultipartFile[] multipartFiles) throws IOException {

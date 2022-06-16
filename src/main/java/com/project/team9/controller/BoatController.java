@@ -91,9 +91,11 @@ public class BoatController {
     }
 
     @GetMapping("delete/{id}")
-    public ResponseEntity deleteBoat(@PathVariable Long id) {
-        service.deleteById(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> deleteBoat(@PathVariable Long id) {
+        boolean action = service.deleteById(id);
+        if (action)
+            return ResponseEntity.ok().build();
+        return ResponseEntity.badRequest().body("Brod je rezervisan, ne može se izbrisati.");
     }
 
     @GetMapping("/reservation/boatOwner/{id}")
