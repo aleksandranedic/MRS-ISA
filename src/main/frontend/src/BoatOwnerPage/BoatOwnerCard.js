@@ -6,7 +6,7 @@ function BoatOwnerCard({id, pic, title, text, address}) {
     return (
         <Card className="m-3">
             <a href={url} className="text-decoration-none h-100">
-            <Card.Img variant="top" src={pic} />
+            <Card.Img variant="top" src={pic} style={{minWidth:"100%",maxWidth:"100%",minHeight:"50vh",maxHeight:"50vh"}}/>
             </a>
             <Card.Body className="w-100">
                 <Card.Title className="text-dark">

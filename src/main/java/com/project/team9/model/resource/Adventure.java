@@ -14,6 +14,7 @@ import org.hibernate.annotations.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Version;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,8 @@ public class Adventure extends Resource {
     @OneToMany(cascade = javax.persistence.CascadeType.ALL, orphanRemoval = true, mappedBy = "resource")
     private List<AdventureReservation> quickReservations;
 
+    @Version
+    private Long version;
 
     public Adventure() {
     }

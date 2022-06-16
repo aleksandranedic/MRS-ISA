@@ -8,6 +8,8 @@ import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
+import com.project.team9.model.reservation.VacationHouseReservation;
+import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.BoatOwner;
@@ -202,6 +204,9 @@ public class BoatService {
         List<Boat> boats = repository.findByOwnerId(owner_id);
         List<BoatCardDTO> boatCards = new ArrayList<BoatCardDTO>();
         for (Boat boat : boats) {
+            if (boat.getDeleted()){
+                continue;
+            }
             String address = boat.getAddress().getStreet() + " " + boat.getAddress().getNumber() + ", " + boat.getAddress().getPlace() + ", " + boat.getAddress().getCountry();
             String thumbnail = "./images/housenotext.png";
             if (boat.getImages().size() > 0) {
@@ -223,7 +228,15 @@ public class BoatService {
     }
 
     public BoatDTO getBoatDTO(Long id) {
-        Boat bt = repository.getById(id);
+        Boat bt;
+        try {
+            bt= repository.getById(id);
+        }
+        catch (Exception e){
+            return null;
+        }
+        if (bt.getDeleted())
+            return null;
         String address = bt.getAddress().getStreet() + " " + bt.getAddress().getNumber() + ", " + bt.getAddress().getPlace() + ", " + bt.getAddress().getCountry();
         List<String> images = new ArrayList<String>();
         for (Image img : bt.getImages()) {
@@ -279,8 +292,13 @@ public class BoatService {
         repository.save(boat);
     }
 
-    public void deleteById(Long id) {
-        repository.deleteById(id);
+    public boolean deleteById(Long id) {
+        Boat boat = this.getBoat(id);
+        if (getReservationsForBoat(id).size() > 0)
+            return false;
+        boat.setDeleted(true);
+        this.addBoat(boat);
+        return true;
     }
 
     public Long createBoat(BoatDTO boat, MultipartFile[] multipartFiles) throws IOException {
@@ -437,6 +455,19 @@ public class BoatService {
         }
         return reservations;
 
+    }
+
+    public boolean haveReservations(Long id){
+        return getReservationsForBoat(id).size() > 0 || haveReservedQuickReservations(id);
+    }
+
+    private boolean haveReservedQuickReservations(Long id){
+        for (BoatReservation br : boatReservationService.getAll()) {
+            if (Objects.equals(br.getResource().getId(), id) && br.isQuickReservation() && br.getClient() != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<ReservationDTO> getReservationsForOwner(Long id) {

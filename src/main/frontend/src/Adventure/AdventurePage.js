@@ -38,9 +38,9 @@ const Adventure = ({id}) => {
 
     let html;
 
-    const QuickReservationsComp = ({reservations, name, address}) => {
+    const QuickReservationsComp = ({reservations, name, address, additionalServices}) => {
         if (typeof reservations !== "undefined") {
-            return <QuickReservations type={"adventure"} reservations={reservations} name={name}
+            return <QuickReservations type={"adventure"} reservations={reservations} name={name} additionalServices={additionalServices}
                                       address={address.street + " " + address.number + ", " + address.place + ", " + address.country}
                                       entity="adventure" priceText="po vožnji" durationText="h"
                                       myPage={myPage}/>
@@ -133,7 +133,7 @@ const Adventure = ({id}) => {
 
             <div id="quickReservations">
                 <QuickReservationsComp reservations={quickReservations} name={adventure.title}
-                                       address={adventure.address}/>
+                                       address={adventure.address} additionalServices={adventure.fishingEquipment}/>
             </div>
 
 

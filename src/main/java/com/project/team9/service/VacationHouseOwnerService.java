@@ -6,6 +6,7 @@ import com.project.team9.model.Image;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.resource.VacationHouse;
+import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.VacationHouseOwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,10 @@ public class VacationHouseOwnerService {
     }
 
     public VacationHouseOwner getOwner(Long id) {
-        return repository.getById(id);
+        VacationHouseOwner vho = repository.getById(id);
+        if (vho.getDeleted())
+            return null;
+        return vho;
     }
 
     public List<VacationHouseOwner> getVacationHouseOwners() {

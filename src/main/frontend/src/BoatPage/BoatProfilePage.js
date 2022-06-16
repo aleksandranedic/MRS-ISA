@@ -10,12 +10,13 @@ import {useParams} from "react-router-dom";
 import "react-image-gallery/styles/css/image-gallery.css";
 import Navigation from "../Navigation/Navigation";
 import Ratings from "../Reviews/Ratings";
-import {backLink} from "../Consts";
+import {backLink, frontLink} from "../Consts";
 import {Calendar} from "../Calendar/Calendar";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {processReservationsForResources} from "../ProcessToEvent";
 import {Complaints} from "../Complaints";
 import {isMyPage} from "../Autentification";
+import { getProfileLink } from "../Autentification";
 
 
 const Gallery = ({boat, images}) => {
@@ -53,9 +54,9 @@ const Update = ({boat, showModal, closeModal}) => {
     }
 }
 
-const Reservations = ({reservations, name, address, myPage}) => {
+const Reservations = ({reservations, name, address, myPage, additionalServices}) => {
     if (typeof reservations !== "undefined"){
-        return <QuickReservations type={"boat"} reservations={reservations} name={name} address={address} entity="boat" priceText="po vožnji" durationText="h" myPage={myPage}
+        return <QuickReservations type={"boat"} reservations={reservations} name={name} address={address} additionalServices={additionalServices} entity="boat" priceText="po vožnji" durationText="h" myPage={myPage}
             addable={myPage}
         />
     }
@@ -100,11 +101,17 @@ export function BoatProfilePage() {
         axios
         .get(backLink + "/boat/boatprof/" + id)
         .then(res => {
+            if (res.data === ''){
+                var profileLink = getProfileLink();
+                window.location.href = frontLink + "pageNotFound"
+            }
             setBoat(res.data);
             setImgs([]);
             console.log(res.data);
             setMyPage(isMyPage("BOAT_OWNER", res.data.ownerId));
 
+            fetchReviews();
+            fetchReservations();
         });
     };
 
@@ -118,8 +125,6 @@ export function BoatProfilePage() {
 
     useEffect(() => {
         fetchBoat();
-        fetchReviews();
-        fetchReservations();
     }, []);
 
     return (
@@ -134,17 +139,17 @@ export function BoatProfilePage() {
                 {text: "Recenzije", path: "#reviews"}
             ]}
                     editable={myPage} editFunction={handleShow} searchable={true}/>
-        <BoatInfo boat={boat}/>
+        { typeof boat.name !== "undefined" && <BoatInfo boat={boat}/>}
         <Update closeModal={handleClose} showModal={show} boat = {boat}/>
         <div className='p-5 pt-0'>
             <Gallery boat={boat} images={imgs}/>
 
-            <Reservations myPage={myPage} reservations={boat.quickReservations} name={boat.name} address={boat.address}/>
+            <Reservations myPage={myPage} reservations={boat.quickReservations} name={boat.name} address={boat.address} additionalServices={boat.additionalServices}/>
             <h2 className="mt-5">
-                Kalendar
-            </h2>
-            <hr/>
-            <Calendar myPage={myPage} reservable={true} pricelist={{price: boat.price}} type="boat" resourceId={id} events={events}/>
+                            Kalendar
+                        </h2>
+                        <hr/>
+                        <Calendar myPage={myPage} reservable={true} pricelist={{price: boat.price}} type="boat" resourceId={id} events={events}/>
 
             {myPage && <>
                 <h2 className="mt-5" id="reservations">Rezervacije</h2>

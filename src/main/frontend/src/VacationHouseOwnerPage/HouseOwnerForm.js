@@ -2,7 +2,14 @@ import {Button, Form, Modal, InputGroup} from "react-bootstrap";
 import axios from "axios"; 
 import React, {useState, useRef} from "react";
 import { useParams } from "react-router-dom";
+import {backLink, notifyError, notifySuccess} from '../Consts'
+import {ToastContainer} from "react-toastify";
 
+axios.interceptors.request.use(config => {
+    config.headers.authorization = "Bearer " + localStorage.getItem('token')
+    return config
+}
+)
 
 export function HouseOwnerForm({show, setShow, owner, profileImg}) {
     const {id} = useParams();
@@ -12,6 +19,9 @@ export function HouseOwnerForm({show, setShow, owner, profileImg}) {
     const [houseOwner, setHouseOwner] = useState(owner);
     const handleShowPassword = () => setShowPassword(true);
 
+    const [showDelete, setShowDelete] = useState(false);
+    const handleShowDelete = () => setShowDelete(true);
+    
     const setFirstName = (value) => {
         setHouseOwner( prevState => {
            return {...prevState, firstName:value}
@@ -161,7 +171,8 @@ export function HouseOwnerForm({show, setShow, owner, profileImg}) {
                 <ChangePassword  show={showPassword} setShow={setShowPassword}/>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="outline-danger" className="me-auto" onClick={()=>setShow(false)}> Obrisi</Button>
+                <Button variant="outline-danger" className="me-auto" onClick={handleShowDelete}> Obriši</Button>
+                <DeleteAccount  show={showDelete} setShow={setShowDelete}/>
                 <Button variant="secondary" onClick={()=>setShow(false)}> Otkazi  </Button>
                 <Button variant="primary" onClick={handleSubmit}> Izmeni </Button>
             </Modal.Footer>
@@ -183,27 +194,27 @@ export function ChangePassword({show, setShow}) {
             setvalidatedPassword(true);
         }
         else {
-            var oldPassword = passwords.oldPassword
+            var fd = new FormData(formPassword.current);
+            fd.append("oldPassword", passwords.oldPassword)
+            fd.append("newPassword", passwords.newPassword)
+            var dto = {
+                oldPassword: passwords.oldPassword,
+                newPassword: passwords.newPassword
+            }
+
             axios
-            .post("http://localhost:4444/houseowner/checkPassword/" + id, oldPassword, {headers: {"Content-Type": "text/plain"}})
-            .then(res => {
-                if (res.data){
-                    updatePassword();
-                }
-                else {
-                    document.getElementById("invalidOldPassword").style.display = "block"
-                }
-            });
+            .post(backLink + "/user/changePassword", dto, { headers: {"Content-Type": "application/json"} })
+            .then( res => {
+                localStorage.setItem('token', res.data)
+                notifySuccess("Uspešno ste promenili šifru")
+                setTimeout(function(){setShow(false)}, 2500);
+            })
+            .catch(function (error) {
+                notifyError(error.response.data)
+            }); 
         }
     }
-    const updatePassword = () => {
-        var newPassword = passwords.newPassword
-        axios
-            .post("http://localhost:4444/houseowner/updatePassword/" + id, newPassword, {headers: {"Content-Type": "text/plain"}})
-            .then(res => {
-                window.location.reload();
-            });
-    }
+
     const setOldPassword = (value) => {
         setPasswords( prevState => {
            return {...prevState, oldPassword:value}
@@ -238,6 +249,83 @@ export function ChangePassword({show, setShow}) {
                 <Button variant="primary" onClick={changePassword}> Izmeni </Button>
             </Modal.Footer>
         </Form>
+        <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={true}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme={"colored"}
+                
+                />
     </Modal>
 }
+
+export function DeleteAccount({show, setShow}) {
+    const formDelete = useRef();
+    const handleClose = () => setShow(false);
+    const [validatedReason, setValidatedReason] = useState(false);
+    const {id} = useParams();
+    const [deleteReason, setDeleteReason] = useState(false);
+
+    const deleteUser = e => {
+        e.preventDefault()
+        if (formDelete.current.checkValidity() === false) {
+            e.stopPropagation();
+            setValidatedReason(true);
+        }
+        else {
+            axios
+            .delete(backLink + "/deletionRequests/houseowner/" + id, {
+                headers: {"Content-Type": "text/plain"},
+                data: deleteReason,
+            })
+            .then(res => {
+                notifySuccess(res.data)
+                setTimeout(function(){setShow(false)}, 2500);
+                })
+                .catch(function (error) {
+                    notifyError(error.response.data)
+                });
+        }
+    }
+          
+    return <Modal show={show} onHide={() => setShow(false)}>
+        <Form noValidate validated={validatedReason} ref={formDelete}>
+            <Modal.Header closeButton>
+                <Modal.Title>Brisanje naloga</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Form.Group className="mb-3 m-2" controlId="oldPassword">
+                    <Form.Label>Unesite razlog brisanja naloga</Form.Label>
+                    <Form.Control name="deletingReason" required as="textarea" rows={3} onChange={e => setDeleteReason(e.target.value)}/>
+                    <Form.Control.Feedback type="invalid">Molimo Vas unesite razlog brisanja naloga.</Form.Control.Feedback>                  
+                </Form.Group>
+         
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}> Otkazi </Button>
+                <Button variant="primary" onClick={deleteUser}> Obriši </Button>
+            </Modal.Footer>
+        </Form>
+        <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={true}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme={"colored"}
+                
+                />
+    </Modal>
+}
+
 export default HouseOwnerForm;

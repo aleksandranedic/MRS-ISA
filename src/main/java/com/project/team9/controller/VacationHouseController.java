@@ -146,10 +146,12 @@ public class VacationHouseController {
         return service.getVacationHouseCard(Long.parseLong(id));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteVacationHouse(@PathVariable Long id) {
-        service.deleteById(id);
-        return ResponseEntity.ok().build();
+    @GetMapping("delete/{id}")
+    public ResponseEntity<String> deleteVacationHouse(@PathVariable Long id) {
+        boolean action = service.deleteById(id);
+        if (action)
+            return ResponseEntity.ok().build();
+        return ResponseEntity.badRequest().body("Vikendica je rezervisana, ne može se izbrisati.");
     }
 
     @GetMapping("/clientCanReview/{resourceId}/{clientId}")

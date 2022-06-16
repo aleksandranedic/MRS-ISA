@@ -12,7 +12,7 @@ import {useParams} from "react-router-dom";
 import {ToastContainer} from "react-toastify";
 
 
-function QuickReservations({reservations, name, address, entity, priceText, durationText, type, myPage}) {
+function QuickReservations({reservations,additionalServices, name, address, entity, priceText, durationText, type, myPage}) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -100,7 +100,7 @@ function QuickReservations({reservations, name, address, entity, priceText, dura
                             <QuickReservation key={reservation.reservationID} type={type} reservation={reservation}
                                               name={name} address={address} image={"./images/loginBackground.jpg"}
                                               entity={entity} priceText={priceText} durationText={durationText}
-                                              myPage={myPage}/>
+                                              myPage={myPage} availableTags={additionalServices}/>
                         ))}
                     </Carousel>
 
@@ -113,7 +113,7 @@ function QuickReservations({reservations, name, address, entity, priceText, dura
                             </Button>
                             <AddQuickReservation closeModal={handleClose} showModal={show} entity={entity}
                                                  priceText={priceText}
-                                                 durationText={durationText}/>
+                                                 durationText={durationText} additionalServices={additionalServices}/>
                         </>
 
                     }

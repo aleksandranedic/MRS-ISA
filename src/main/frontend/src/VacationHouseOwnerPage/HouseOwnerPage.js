@@ -9,7 +9,7 @@ import AddVacationHouse from './AddVacationHouse';
 import HouseOwnerForm from "./HouseOwnerForm";
 import {useParams} from "react-router-dom";
 import Navigation from "../Navigation/Navigation";
-import {backLink, profilePicturePlaceholder} from '../Consts';
+import {backLink, frontLink, profilePicturePlaceholder} from '../Consts';
 import {Calendar} from "../Calendar/Calendar";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {processReservationsForUsers} from "../ProcessToEvent";
@@ -17,6 +17,7 @@ import Ratings from '../Reviews/Ratings';
 import {Complaints} from "../Complaints";
 import {isLoggedIn, isMyPage, isClient} from "../Autentification";
 import {ReservationsToReview} from "../Calendar/ReservationsToReview";
+import { getProfileLink } from '../Autentification';
 
 
 const UpdateOwner = ({show, setShow, owner}) => {
@@ -42,7 +43,7 @@ const ReviewsComp = ({reviews}) => {
 
 function HouseOwnerPage() {
     const {id} = useParams();
-    const [houseOwner, setHouseOwner] = useState({address: '', profileImg: {path: ""}});
+    const [houseOwner, setHouseOwner] = useState({address: '', profileImg: {path: profilePicturePlaceholder}});
     const [ownerHouses, setOwnerHouses] = useState([]);
     const [ownerReviews, setOwnerReviews] = useState([])
     const [events, setEvents] = useState(null);
@@ -89,7 +90,15 @@ function HouseOwnerPage() {
         axios
             .get(backLink + "/houseowner/" + id)
             .then(res => {
+                if (res.data === ''){
+                    var profileLink = getProfileLink();
+                    window.location.href = frontLink + "pageNotFound"
+                }
                 setHouseOwner(res.data);
+                fetchOwnerHouses();
+                fetchReservations();
+                fetchReviews();
+                fetchStat();
             });
     };
 
@@ -102,11 +111,8 @@ function HouseOwnerPage() {
     };
 
     useEffect(() => {
-        fetchOwnerHouses();
-        fetchReservations();
         fetchHouseOwner();
         fetchReviews();
-        fetchStat();
     }, []);
 
     let buttons = [

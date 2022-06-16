@@ -79,6 +79,8 @@ public class VacationHouseService {
         List<VacationHouse> houses = repository.findByOwnerId(owner_id);
         List<HouseCardDTO> houseCards = new ArrayList<HouseCardDTO>();
         for (VacationHouse house : houses) {
+            if (house.getDeleted())
+                continue;
             String address = house.getAddress().getStreet() + " " + house.getAddress().getNumber() + ", " + house.getAddress().getPlace() + ", " + house.getAddress().getCountry();
             String thumbnail = "./images/housenotext.png";
             if (house.getImages().size() > 0) {
@@ -121,7 +123,15 @@ public class VacationHouseService {
     }
 
     public VacationHouseDTO getVacationHouseDTO(Long id) {
-        VacationHouse vh = repository.getById(id);
+        VacationHouse vh;
+        try{
+            vh = repository.getById(id);
+        }
+        catch (Exception e){
+            return null;
+        }
+        if (vh.getDeleted())
+            return null;
         String address = vh.getAddress().getStreet() + " " + vh.getAddress().getNumber() + ", " + vh.getAddress().getPlace() + ", " + vh.getAddress().getCountry();
         List<String> images = new ArrayList<String>();
         for (Image img : vh.getImages()) {
@@ -272,8 +282,13 @@ public class VacationHouseService {
         repository.save(house);
     }
 
-    public void deleteById(Long id) {
-        repository.deleteById(id);
+    public boolean deleteById(Long id) {
+        VacationHouse vh = getVacationHouse(id);
+        if (getReservationsForVacationHouse(id).size() > 0)
+            return false;
+        vh.setDeleted(true);
+        this.addVacationHouses(vh);
+        return true;
     }
 
     public Long createHouse(VacationHouseDTO house, MultipartFile[] multipartFiles) throws IOException {
@@ -406,6 +421,19 @@ public class VacationHouseService {
         }
 
         return reservations;
+    }
+
+    public boolean haveReservations(Long id){
+        return getReservationsForVacationHouse(id).size() > 0 || haveReservedQuickReservations(id);
+    }
+
+    private boolean haveReservedQuickReservations(Long id){
+        for (VacationHouseReservation vhr : vacationHouseReservationService.getAll()) {
+            if (Objects.equals(vhr.getResource().getId(), id) && vhr.isQuickReservation() && vhr.getClient() != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<ReservationDTO> getReservationsForVacationHouse(Long id) {

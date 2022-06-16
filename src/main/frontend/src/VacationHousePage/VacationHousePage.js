@@ -10,12 +10,17 @@ import {useParams} from "react-router-dom";
 import Ratings from "../Reviews/Ratings";
 import "react-image-gallery/styles/css/image-gallery.css";
 import Navigation from "../Navigation/Navigation";
-import {backLink} from "../Consts";
+import {backLink, frontLink} from "../Consts";
+import {Collapse} from "react-bootstrap";
+import {ReservationsTable} from "../Calendar/ReservationsTable";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {Calendar} from "../Calendar/Calendar";
 import {processReservationsForResources} from "../ProcessToEvent";
 import {Complaints} from "../Complaints";
 import {isMyPage} from "../Autentification";
+import {AddReview} from "../Reviews/AddReview";
+import {getProfileLink} from "../Autentification";
+
 
 const Gallery = ({house, images}) => {
     if (typeof house.imagePaths !== "undefined") {
@@ -44,10 +49,10 @@ const Update = ({vacationHouse, showModal, closeModal}) => {
     }
 }
 
-const Reservations = ({reservations, name, address, myPage}) => {
+const Reservations = ({reservations, name, address, myPage, additionalServices}) => {
     if (typeof reservations !== "undefined") {
         return <QuickReservations type={"vacationHouse"} reservations={reservations} name={name} address={address}
-                                  entity="house" priceText="po noćenju" durationText="dana"
+                                  entity="house" additionalServices={additionalServices} priceText="po noćenju" durationText="dana"
                                   myPage={myPage}/>
     } else {
         return <></>
@@ -85,14 +90,17 @@ export function VacationHousePage() {
 
     const fetchHouse = () => {
         axios
-            .get(backLink + "/house/houseprof/" + id)
-            .then(res => {
-
-                console.log(res.data);
-                setHouse(res.data);
-                setImgs([]);
-                setMyPage(isMyPage("VACATION_HOUSE_OWNER", res.data.ownerId));
-            });
+        .get(backLink + "/house/houseprof/" + id)
+        .then(res => {
+            if (res.data === ''){
+                window.location.href = frontLink + "pageNotFound"
+            }
+            setHouse(res.data);
+            setImgs([]);
+            setMyPage(isMyPage("VACATION_HOUSE_OWNER", res.data.ownerId));
+            fetchReviews();
+            fetchReservations();
+        });
     };
     const fetchReviews = () => {
         axios
@@ -103,8 +111,6 @@ export function VacationHousePage() {
     };
     useEffect(() => {
         fetchHouse();
-        fetchReviews();
-        fetchReservations();
     }, []);
 
 
@@ -120,7 +126,7 @@ export function VacationHousePage() {
                     {text: "Recenzije", path: "#reviews"}
                 ]}
                         editable={myPage} editFunction={handleShow} searchable={true}/>
-            <HouseInfo house={house}/>
+            { typeof house.name !== "undefined" &&<HouseInfo house={house}/>}
             <Update closeModal={handleClose} showModal={show} vacationHouse={house}/>
 
             <div className='p-5 pt-0'>
@@ -128,7 +134,7 @@ export function VacationHousePage() {
                 {
 
                     <>
-                        <Reservations myPage={myPage} reservations={house.quickReservations} name={house.name} address={house.address}/>
+                        <Reservations myPage={myPage} additionalServices={house.additionalServices} reservations={house.quickReservations} name={house.name} address={house.address}/>
                         <footer className="blockquote-footer">Svi izlasci iz vikendice obavljaju se do 10:00h.</footer>
                     </>
                 }

@@ -20,6 +20,8 @@ public class VacationHouse extends Resource{
     private int numberOfBedsPerRoom;
     @OneToMany(cascade = javax.persistence.CascadeType.ALL, orphanRemoval = true, mappedBy = "resource")
     private List<VacationHouseReservation> reservations;
+    @Version
+    private Long version;
 
     public VacationHouse() {
         super();

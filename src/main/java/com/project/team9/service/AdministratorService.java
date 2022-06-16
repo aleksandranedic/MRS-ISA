@@ -10,6 +10,7 @@ import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.AdministratorRepository;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -88,7 +89,6 @@ public class AdministratorService {
         }
         return incomeReport.sort(false);
     }
-
     public List<Administrator> getAdministrators() {
         return administratorRepository.findAll();
     }
@@ -126,6 +126,5 @@ public class AdministratorService {
         return administratorRepository.save(administrator).getId();
 
     }
-
 
 }

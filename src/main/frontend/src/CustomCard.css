@@ -111,3 +111,16 @@ html {
 .rdrMonth{
     width: 100% !important;
 }
+
+.adminIncome .card:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+}
+
+.adminIncome .selected {
+    transform: scale(1.1);
+}
+
+.adminIncome .unselected {
+    transform: scale(0.9);
+}

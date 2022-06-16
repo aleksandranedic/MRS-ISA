@@ -75,8 +75,7 @@ public class AuthenticationController {
             return ResponseEntity.ok(new LoginResponseDTO("Uneli ste porgrešne podatke", null, null, true));
         }
     }
-
-    @PostMapping("/changePassword")
+    @PostMapping(value ="/changePassword", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> changePassword(@RequestBody PasswordsDTO passwordsDTO) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -86,7 +85,7 @@ public class AuthenticationController {
             if (user == null)
                 return new ResponseEntity<>("Neuspešno. Ne postoji ulogovani korisnik", HttpStatus.EXPECTATION_FAILED);
             if (!passwordEncoder.bCryptPasswordEncoder().matches(passwordsDTO.getOldPassword(), user.getPassword()))
-                return new ResponseEntity<>("Neuspešno. Stara šifra i uneta stara šifra Vam se ne poklapaju", HttpStatus.EXPECTATION_FAILED);
+                return new ResponseEntity<>("Neuspešno. Stara šifra i uneta stara šifra se ne poklapaju", HttpStatus.EXPECTATION_FAILED);
             user.setPassword(passwordEncoder.bCryptPasswordEncoder().encode(passwordsDTO.getNewPassword()));
             user.setLastPasswordResetDate(Timestamp.valueOf(LocalDateTime.now()));
             if (user instanceof Client) {

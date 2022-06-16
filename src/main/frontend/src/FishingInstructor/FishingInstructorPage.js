@@ -26,7 +26,7 @@ const ReviewsComp = ({reviews}) => {
 }
 
 const FishingInstructors = ({id}) => {
-    const [fishingInstructor, setFishingInstructor] = useState({address: '', profileImg: {path: ""}});
+    const [fishingInstructor, setFishingInstructor] = useState({address: '', profileImg: {path: profilePicturePlaceholder}});
     const [adventures, setAdventures] = useState([]);
     const [reservations, setReservations] = useState([]);
     const [events, setEvents] = useState(null);

@@ -9,7 +9,7 @@ import OwnerBoats from './OwnerBoats';
 import AddBoat from './AddBoat';
 import {useParams} from "react-router-dom";
 import Navigation from "../Navigation/Navigation";
-import {backLink, profilePicturePlaceholder} from '../Consts';
+import {backLink, frontLink, profilePicturePlaceholder} from '../Consts';
 import {Calendar} from "../Calendar/Calendar";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {ReservationsToReview} from "../Calendar/ReservationsToReview";
@@ -17,6 +17,7 @@ import {processReservationsForUsers} from "../ProcessToEvent";
 import Ratings from '../Reviews/Ratings';
 import {Complaints} from "../Complaints";
 import {isMyPage} from "../Autentification";
+import { getProfileLink } from '../Autentification';
 
 const UpdateOwner = ({show, setShow, owner}) => {
     if (typeof owner.firstName !== "undefined") {
@@ -43,7 +44,7 @@ const ReviewsComp = ({reviews}) => {
 function BoatOwnerPage() {
     const {id} = useParams();
 
-    const [boatOwner, setBoatOwner] = useState({address: '', profileImg: {path: ""}});
+    const [boatOwner, setboatOwner] = useState({address: '', profileImg: {path: profilePicturePlaceholder}});
     let [ownerBoats, setOwnerBoats] = useState([]);
     const [ownerReviews, setOwnerReviews] = useState([])
 
@@ -85,16 +86,20 @@ function BoatOwnerPage() {
                 setOwnerBoats(res.data);
             });
     };
-
-
-
-    const fetchBoatOwner = () => {
+    const fetchboatOwner = () => {
         axios
             .get(backLink + "/boatowner/" + id)
             .then(res => {
-                setBoatOwner(res.data);
+                if (res.data === ''){
+                    var profileLink = getProfileLink();
+                    window.location.href = frontLink + "pageNotFound"
+                }
+                setboatOwner(res.data);
                 setMyPage(isMyPage("BOAT_OWNER", id));
-
+                fetchOwnerBoats();
+                fetchReservations();
+                fetchReviews();
+                fetchStat();
             });
     };
 
@@ -107,11 +112,7 @@ function BoatOwnerPage() {
     };
 
     useEffect(() => {
-        fetchBoatOwner();
-        fetchOwnerBoats();
-        fetchReservations();
-        fetchReviews();
-        fetchStat();
+        fetchboatOwner();
     }, []);
     let buttons = [
         {text: "Osnovne informacije", path: "#info"},

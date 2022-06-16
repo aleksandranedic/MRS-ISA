@@ -26,6 +26,7 @@ import {Complaints} from "./Admin/Complaints";
 import {PenaltyRequests} from "./Admin/PenaltyRequests";
 import {LoyaltyCategories} from "./Admin/LoyaltyCategories";
 import {Points} from "./Admin/Points";
+import PageNotFound from './PageNotFound';
 import {ResourceOverview} from "./Admin/ResourceOverview";
 import {UserOverview} from "./Admin/UserOverview";
 import {Conformation} from "./Admin/Conformation";
@@ -80,6 +81,7 @@ function App() {
                 <Route path='/confirmedEmail/:token' element={<EmailConfirmed/>}/>
                 <Route path='/' element={<HomePage/>}/>
                 <Route path='popup' element={<SuccessPopUp/>}/>
+                <Route path='pageNotFound' element={<PageNotFound/>}/>
             </Routes>
         </Router>
     );
