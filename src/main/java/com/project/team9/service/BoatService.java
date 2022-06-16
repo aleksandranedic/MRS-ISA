@@ -267,7 +267,7 @@ public class BoatService {
 
     public boolean deleteById(Long id) {
         Boat boat = this.getBoat(id);
-        if (haveReservations(id))
+        if (getReservationsForBoat(id).size() > 0)
             return false;
         boat.setDeleted(true);
         this.addBoat(boat);

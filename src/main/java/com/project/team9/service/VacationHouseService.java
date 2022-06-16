@@ -265,7 +265,7 @@ public class VacationHouseService {
 
     public boolean deleteById(Long id) {
         VacationHouse vh = getVacationHouse(id);
-        if (haveReservations(id))
+        if (getReservationsForVacationHouse(id).size() > 0)
             return false;
         vh.setDeleted(true);
         this.addVacationHouses(vh);
