@@ -24,6 +24,10 @@ export default function Login() {
                 localStorage.setItem("userId", res.data.id);
                 setTimeout(function () {
                     if (res.data.roleName === "ADMINISTRATOR") {
+                        if (res.data.isConfirmed === false) {
+                            window.location.href = frontLink + "admin/conformation";
+                        }
+                        else
                         window.location.href = frontLink + "admin";
                     } else {
                         window.location.href = frontLink;

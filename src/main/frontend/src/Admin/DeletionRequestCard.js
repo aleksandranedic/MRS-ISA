@@ -9,6 +9,8 @@ export function DeletionRequestCard({request}) {
     const [user, setUser] = useState();
     const [text, setComment] = useState("");
 
+    console.log(request);
+
     const handleDeletionRequest = (type) => {
         let dto = {
             username: request.userId,
@@ -97,10 +99,10 @@ export function DeletionRequestCard({request}) {
 
                 <Modal show={show} onHide={() => setShow(false)}>
                     <Modal.Header closeButton>
-                        <Modal.Title>{request.name}</Modal.Title>
+                        <Modal.Title>{user.firstName + " " + user.lastName}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        {request.text}
+                        {request.comment}
 
                         <hr className="mb-3 mt-3"/>
 

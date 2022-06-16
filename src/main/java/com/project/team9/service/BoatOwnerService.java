@@ -1,16 +1,12 @@
 package com.project.team9.service;
 
-import com.project.team9.dto.AttendanceReportParams;
-import com.project.team9.dto.IncomeReport;
-import com.project.team9.dto.IncomeReportDateRange;
-import com.project.team9.dto.UpdateOwnerDTO;
+import com.project.team9.dto.*;
 import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.user.vendor.BoatOwner;
-import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.repo.BoatOwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,18 +29,22 @@ public class BoatOwnerService {
     private final AddressService addressService;
     private final ImageService imageService;
     private final BoatService boatService;
+    private final ClientReviewService clientReviewService;
+    private final UserCategoryService userCategoryService;
 
     final String STATIC_PATH = "src/main/resources/static/";
     final String STATIC_PATH_TARGET = "target/classes/static/";
     final String IMAGES_PATH = "/images/boatOwners/";
 
     @Autowired
-    public BoatOwnerService(BoatOwnerRepository repository, AddressService addressService, ImageService imageService, BoatService boatService) {
+    public BoatOwnerService(BoatOwnerRepository repository, AddressService addressService, ImageService imageService, BoatService boatService, ClientReviewService clientReviewService, UserCategoryService userCategoryService) {
         this.repository = repository;
         this.addressService = addressService;
         this.imageService = imageService;
         this.boatService = boatService;
 
+        this.clientReviewService = clientReviewService;
+        this.userCategoryService = userCategoryService;
     }
 
     public BoatOwner getOwner(Long id) {
@@ -358,5 +358,15 @@ public class BoatOwnerService {
                 names.add(fullName);
         }
         return names;
+    }
+
+    public UserStatDTO getUserStat(Long id) {
+        BoatOwner boatOwner = repository.getById(id);
+        return new UserStatDTO(
+                0,
+                boatOwner.getNumOfPoints(),
+                userCategoryService.getVendorCategoryBasedOnPoints(boatOwner.getNumOfPoints()),
+                clientReviewService.getRating(id, "vendor")
+        );
     }
 }

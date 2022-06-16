@@ -2,6 +2,7 @@ package com.project.team9.controller;
 
 import com.project.team9.dto.ClientReviewDTO;
 import com.project.team9.dto.ReviewScoresDTO;
+import com.project.team9.dto.UserStatDTO;
 import com.project.team9.model.review.ClientReview;
 import com.project.team9.model.review.VendorReview;
 import com.project.team9.service.ClientReviewRequestService;
@@ -62,5 +63,10 @@ public class ReviewController {
     @PostMapping("/vendor/add")
     public Long addVendorReview(@RequestBody VendorReview vendorReview) {
         return clientReviewService.sendVendorReviewRequest(vendorReview);
+    }
+
+    @GetMapping("/getStat/{id}")
+    public UserStatDTO getUserStat(@PathVariable Long id) {
+        return clientReviewService.getUserStat(id);
     }
 }

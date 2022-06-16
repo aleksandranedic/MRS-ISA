@@ -490,6 +490,13 @@ public class Config {
         addSiteFee(10);
         addSiteFee(3);
 
+        boat7.addClient(client5);
+        boatRepository.save(boat7);
+        adventure1.addClient(client5);
+        adventureRepository.save(adventure1);
+        vacationHouse14.addClient(client5);
+        vacationHouseRepository.save(vacationHouse14);
+
     }
 
     private void addSiteFee(int percentage) {
@@ -744,7 +751,7 @@ public class Config {
     }
 
     private void addRegistrationRequest(String text, String aleksa123, String Aleksu, String Aleksić, String email, String number, String FISHING_INSTRUCTOR, String biography) {
-        RegistrationRequest registrationRequest = testData.createRegistrationRequest(text, "", aleksa123, Aleksu, Aleksić, email, "06398765421", "Novi Sad", number, "Laze Nančića", "Srbija", FISHING_INSTRUCTOR, biography, "");
+        RegistrationRequest registrationRequest = testData.createRegistrationRequest(text, "", aleksa123, Aleksu, Aleksić, email, "06398765421", "Novi Sad", number, "Laze Nančića", "Srbija", FISHING_INSTRUCTOR, biography, text);
         registrationRequestRepository.save(registrationRequest);
     }
 

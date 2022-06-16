@@ -53,7 +53,16 @@ function BoatOwnerPage() {
     const [reservations, setReservations] = useState([]);
     const [events, setEvents] = useState(null);
     const [myPage, setMyPage] = useState(null);
+    const [stat, setStat] = useState(null);
 
+    const fetchStat = () => {
+        axios
+            .get(backLink + "/boatowner/getStat/" + id)
+            .then(res => {
+                setStat(res.data);
+                console.log(res.data);
+            });
+    };
 
     const fetchReservations = () => {
         axios.get(backLink + "/boat/reservation/boatOwner/" + id).then(res => {
@@ -76,6 +85,9 @@ function BoatOwnerPage() {
                 setOwnerBoats(res.data);
             });
     };
+
+
+
     const fetchBoatOwner = () => {
         axios
             .get(backLink + "/boatowner/" + id)
@@ -99,6 +111,7 @@ function BoatOwnerPage() {
         fetchOwnerBoats();
         fetchReservations();
         fetchReviews();
+        fetchStat();
     }, []);
     let buttons = [
         {text: "Osnovne informacije", path: "#info"},
@@ -110,8 +123,9 @@ function BoatOwnerPage() {
     }
 
     buttons.push({text: "Recenzije", path: "#reviews"});
-    return (
-        <>
+    let html = "";
+    if (stat !== null) {
+        let html = <><>
             <Banner caption={boatOwner.firstName + " " + boatOwner.lastName}/>
             <Navigation buttons={buttons}
                         editable={myPage} editFunction={handleShow} searchable={true}
@@ -124,11 +138,13 @@ function BoatOwnerPage() {
 
                 <OwnerInfo
                     name={boatOwner.firstName + " " + boatOwner.lastName}
-                    rate={4.5}
+                    rate={stat.rating}
                     email={boatOwner.email}
                     phoneNum={boatOwner.phoneNumber}
                     address={boatOwner.address}
                     profileImg={boatOwner.profileImg !== null ? backLink + boatOwner.profileImg.path : profilePicturePlaceholder}
+                    category={stat.category}
+                    points={stat.points}
                 />
                 <hr/>
                 <OwnerBoats boats={ownerBoats} myPage={myPage}/>
@@ -158,7 +174,10 @@ function BoatOwnerPage() {
             <Complaints type={"boatOwner"} toWhom={boatOwner.firstName + " " + boatOwner.lastName}/>
             <BeginButton/>
         </>
-    );
-}
+    }
+
+    </>;
+    return html;
+}}
 
 export default BoatOwnerPage;

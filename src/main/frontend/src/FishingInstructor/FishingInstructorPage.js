@@ -31,7 +31,9 @@ const FishingInstructors = ({id}) => {
     const [reservations, setReservations] = useState([]);
     const [events, setEvents] = useState(null);
     const [myPage, setMyPage] = useState(null);
+    const [stat, setStat] = useState(null);
     const [ownerReviews, setOwnerReviews] = useState([])
+
 
     const fetchReservations = () => {
         axios.get(backLink + "/adventure/reservation/fishingInstructor/" + id).then(res => {
@@ -40,6 +42,15 @@ const FishingInstructors = ({id}) => {
             setEvents(processReservationsForUsers(res.data));
         })
     }
+
+    const fetchStat = () => {
+        axios
+            .get(backLink + "/fishinginstructor/getStat/" + id)
+            .then(res => {
+                setStat(res.data);
+                console.log(res.data);
+            });
+    };
 
     const fetchReviews = () => {
         axios
@@ -67,6 +78,7 @@ const FishingInstructors = ({id}) => {
         fetchAdventures();
         fetchReservations();
         fetchReviews();
+        fetchStat();
     }, []);
 
     const [show, setShow] = useState(false);
@@ -74,7 +86,7 @@ const FishingInstructors = ({id}) => {
 
     let html;
 
-    if (fishingInstructor.length !== 0) {
+    if (fishingInstructor.length !== 0 && stat !== null) {
 
         let buttons = [
             {text: "Osnovne informacije", path: "#info"},
@@ -98,11 +110,13 @@ const FishingInstructors = ({id}) => {
             <div className="pe-5 pt-0">
                 <OwnerInfo bio={fishingInstructor.biography}
                            name={fishingInstructor.firstName + " " + fishingInstructor.lastName}
-                           rate={4.5}
+                           rate={stat.rating}
                            email={fishingInstructor.email}
                            phoneNum={fishingInstructor.phoneNumber}
                            address={fishingInstructor.address}
                            profileImg={fishingInstructor.profileImg !== null ? backLink + fishingInstructor.profileImg.path : profilePicturePlaceholder}
+                           category={stat.category}
+                           points={stat.points}
                 />
             </div>
             <hr className="me-5 ms-5"/>
@@ -161,3 +175,4 @@ const FishingInstructors = ({id}) => {
 
     )
 }
+

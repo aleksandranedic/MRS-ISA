@@ -28,6 +28,7 @@ import {LoyaltyCategories} from "./Admin/LoyaltyCategories";
 import {Points} from "./Admin/Points";
 import {ResourceOverview} from "./Admin/ResourceOverview";
 import {UserOverview} from "./Admin/UserOverview";
+import {Conformation} from "./Admin/Conformation";
 
 
 function App() {
@@ -62,6 +63,7 @@ function App() {
                 <Route path="/login" element={<Login/>}/>
 
                 <Route path="/admin" element={<AdminPage/>}/>
+                <Route path="/admin/conformation" element={<Conformation/>}/>
                 <Route path="/admin/registrationRequests" element={<RegistrationRequests/>}/>
                 <Route path="/admin/deletionRequests" element={<DeletionRequests/>}/>
                 <Route path="/admin/penaltyRequests" element={<PenaltyRequests/>}/>
