@@ -4,7 +4,6 @@ import { useParams } from "react-router-dom";
 import {Modal, Button, Form, Row, Col, InputGroup} from 'react-bootstrap'
 import { TagInfo } from './Info';
 import './material.css'
-import {backLink} from "./Consts";
 import {MessagePopupModal} from "./MessagePopupModal";
 
 import { backLink, notifyError } from './Consts';

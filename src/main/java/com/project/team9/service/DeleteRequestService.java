@@ -116,7 +116,7 @@ public class DeleteRequestService {
         return response;
     }
 
-    public String deleteClient(Long id,String deletingReason, String UserType) {
+    public String deleteUser(Long id,String deletingReason, String UserType) {
         DeleteRequest deleteRequest = new DeleteRequest();
         deleteRequest.setUserId(id);
         deleteRequest.setUserType(UserType);

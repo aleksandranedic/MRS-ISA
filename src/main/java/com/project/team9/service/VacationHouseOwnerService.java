@@ -58,10 +58,6 @@ public class VacationHouseOwnerService {
         return repository.findAll().stream().filter(VacationHouseOwner -> !VacationHouseOwner.getDeleted()).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public List<VacationHouseOwner> getVacationHouseOwners() {
-        return repository.findAll().stream().filter(VacationHouseOwner -> !VacationHouseOwner.getDeleted()).collect(Collectors.toCollection(ArrayList::new));
-    }
-
     public IncomeReport getAttendanceReport(Long id, AttendanceReportParams attendanceReportParams){
         List<LocalDateTime> allDates = getDates(attendanceReportParams.startDate, attendanceReportParams.endDate);
         List<VacationHouse> houses = vacationHouseService.getOwnersHouses(id);
