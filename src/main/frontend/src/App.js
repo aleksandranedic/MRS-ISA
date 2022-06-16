@@ -27,6 +27,9 @@ import {PenaltyRequests} from "./Admin/PenaltyRequests";
 import {LoyaltyCategories} from "./Admin/LoyaltyCategories";
 import {Points} from "./Admin/Points";
 import PageNotFound from './PageNotFound';
+import {ResourceOverview} from "./Admin/ResourceOverview";
+import {UserOverview} from "./Admin/UserOverview";
+import {Conformation} from "./Admin/Conformation";
 
 
 function App() {
@@ -42,6 +45,7 @@ function App() {
             response => {
                 localStorage.setItem("firstName", response.data.firstName);
                 localStorage.setItem("lastName", response.data.lastName);
+                localStorage.setItem("profileImage", response.data.profileImg.path);
             }
         )
     }
@@ -60,6 +64,7 @@ function App() {
                 <Route path="/login" element={<Login/>}/>
 
                 <Route path="/admin" element={<AdminPage/>}/>
+                <Route path="/admin/conformation" element={<Conformation/>}/>
                 <Route path="/admin/registrationRequests" element={<RegistrationRequests/>}/>
                 <Route path="/admin/deletionRequests" element={<DeletionRequests/>}/>
                 <Route path="/admin/penaltyRequests" element={<PenaltyRequests/>}/>
@@ -68,6 +73,8 @@ function App() {
                 <Route path='/admin/reports' element={<AdminReports/>}/>
                 <Route path="/admin/categories" element={<LoyaltyCategories/>}/>
                 <Route path="/admin/points" element={<Points/>}/>
+                <Route path="/admin/resources" element={<ResourceOverview/>}/>
+                <Route path="/admin/users" element={<UserOverview/>}/>
 
                 <Route path="/search/:searchTerm" element={<SearchResultsPage/>}/>
                 <Route path='/registration' element={<Registration/>}/>

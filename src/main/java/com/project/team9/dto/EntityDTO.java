@@ -3,7 +3,7 @@ package com.project.team9.dto;
 import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 
-public class EntitySubbedDTO {
+public class EntityDTO {
     private String title;
     private String entityType;
     private Image image;
@@ -12,10 +12,10 @@ public class EntitySubbedDTO {
     private Address address;
     private double price;
 
-    public EntitySubbedDTO() {
+    public EntityDTO() {
     }
 
-    public EntitySubbedDTO(String title, String entityType, Image image, double rating, Long entityId, Address address, double price) {
+    public EntityDTO(String title, String entityType, Image image, double rating, Long entityId, Address address, double price) {
         this.title = title;
         this.entityType = entityType;
         this.image = image;

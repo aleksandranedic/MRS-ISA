@@ -4,6 +4,9 @@ import { useParams } from "react-router-dom";
 import {Modal, Button, Form, Row, Col, InputGroup} from 'react-bootstrap'
 import { TagInfo } from './Info';
 import './material.css'
+import {backLink} from "./Consts";
+import {MessagePopupModal} from "./MessagePopupModal";
+
 import { backLink, notifyError } from './Consts';
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css'
@@ -16,6 +19,7 @@ function AddQuickReservation({showModal, closeModal, entity, priceText, duration
     const [validated, setValidated] = useState(false);
     const form = useRef();
     const {id} = useParams();
+    const [showAlert, setShowAlert] = useState(false);
 
     const submit = e => {
         e.preventDefault() 
@@ -34,10 +38,14 @@ function AddQuickReservation({showModal, closeModal, entity, priceText, duration
             data.append("tagsText", state.tagsText);
             data.append("startDate", state.startDate);
             axios
-            .post(backLink + "/" + entity + "/addQuickReservation/" + id, data)
+            .post(backLink+"/" + entity + "/addQuickReservation/" + id, data)
             .then(res => {
                 window.location.reload();
-            });
+            }).catch(error => {
+                console.log(error);
+                setShowAlert(true);
+
+            })
             close();
         }
       
@@ -108,7 +116,7 @@ function AddQuickReservation({showModal, closeModal, entity, priceText, duration
                 <Modal.Title>Dodavanje akcije</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-            
+
                 <Row className="mb-3">
 
                     <Form.Group as={Col} >
@@ -125,7 +133,7 @@ function AddQuickReservation({showModal, closeModal, entity, priceText, duration
                     </Form.Group>
                     }
                 </Row>
-                
+
                 <Row className="mb-3">
 
                     <Form.Group as={Col} >
@@ -171,6 +179,13 @@ function AddQuickReservation({showModal, closeModal, entity, priceText, duration
                 <Button variant="primary" onClick={submit}>Dodaj</Button>
             </Modal.Footer>
         </Form>
+
+            <MessagePopupModal
+                show={showAlert}
+                setShow={setShowAlert}
+                message="Termin za akciju koji ste pokušali da zauzmete nije dostupan. Pogledajte kalendar zauzetosti i postojaće akcije i pokušajte ponovo."
+                heading="Zauzet termin"
+            />
         <ToastContainer
                 position="top-center"
                 autoClose={5000}

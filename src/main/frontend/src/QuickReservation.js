@@ -9,7 +9,7 @@ import axios from "axios";
 import {backLink} from "./Consts";
 import {isLoggedIn} from "./Autentification";
 
-function QuickReservation({reservation, name, address, availableTags, image, entity, priceText, durationText, type, myPage}) {
+function QuickReservation({reservation,availableTags, name, address, image, entity, durationText, type, myPage}) {
     const [state, setState] = useState({
         startDate: '',
         price: '',
@@ -36,6 +36,7 @@ function QuickReservation({reservation, name, address, availableTags, image, ent
     }
 
     useEffect(() => {
+
         setState(reservation);
         getLoggedUser();
     }, []);
@@ -43,18 +44,29 @@ function QuickReservation({reservation, name, address, availableTags, image, ent
     const addReservation = () => {
         let dto = {
             reservationID: reservation.reservationID,
-            startDate: reservation.startDate,
-            numberOfPeople: reservation.numberOfPeople,
-            additionalServices: reservation.additionalServices,
-            duration: reservation.duration,
-            price: reservation.price,
-            discount: reservation.discount,
-            tagsText: reservation.tagsText,
             clientID: loggedUser.id
 
         }
+
+
         if (type === "adventure") {
             axios.post(backLink + "/adventure/quickReservations/reserve", dto).then(res => {
+                console.log(res.data);
+                window.location.reload();
+            }).catch(error => {
+                console.log(error.message);
+            })
+        }
+        else if (type === "vacationHouse") {
+            axios.post(backLink + "/house/quickReservations/reserve", dto).then(res => {
+                console.log(res.data);
+                window.location.reload();
+            }).catch(error => {
+                console.log(error.message);
+            })
+        }
+        else if (type === "boat") {
+            axios.post(backLink + "/boat/quickReservations/reserve", dto).then(res => {
                 console.log(res.data);
                 window.location.reload();
             }).catch(error => {
@@ -81,7 +93,7 @@ function QuickReservation({reservation, name, address, availableTags, image, ent
                 <div className='d-flex justify-content-between'>
                     <Card.Title className='mb-1'>{name}</Card.Title>
 
-                    
+
                         {myPage &&
                         <button onClick={handleShow} style={{zIndex: "3", border: "0", background: "transparent"}}>
                             <BsPencilSquare/></button>
@@ -120,10 +132,7 @@ function QuickReservation({reservation, name, address, availableTags, image, ent
                                     <p className="text-lead m-0"
                                        style={{fontSize: "30px", color: "#ED7301"}}>{state.price}</p>
                                 </span>
-                                <span className='align-self-end pb-2'>
-                                    <small className="text-secondary">/</small>
-                                    <small className="text-secondary">{priceText}</small>
-                                </span>
+
                             </div>
 
                             {isLoggedIn() && localStorage.getItem("userRoleName") === "CLIENT" &&

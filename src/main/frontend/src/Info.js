@@ -17,7 +17,6 @@ export function Info({title, text}) {
 export function LinkInfo({title, text, link, profileImg}) {
     return (
         <div className="d-flex justify-content-end">
-            {/* <p className="lead fw-normal m-0 p-0 me-2"><IoKeyOutline/></p> */}
             <a href={link} className="d-flex align-items-center" style={{textDecoration: "None", color: "#212529", cursor: "pointer"}}>
                 <img className="rounded-circle" src={profileImg} style={{objectFit:"cover",minWidth:"7vh", maxWidth:"7vh", minHeight:"7vh", maxHeight:"7vh"}}/>
                 <p className="fw-light m-0 p-0 lead ms-2">{text}</p>
@@ -27,6 +26,8 @@ export function LinkInfo({title, text, link, profileImg}) {
 
     )
 }
+
+
 
 export function AddressInfo({title, address}) {
     return (

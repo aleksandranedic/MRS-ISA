@@ -14,7 +14,7 @@ public interface BoatReservationRepository extends JpaRepository<BoatReservation
     @Query("FROM BoatReservation WHERE isQuickReservation = false AND isBusyPeriod = false")
     List<BoatReservation> findStandardReservations();
 
-    @Query("FROM BoatReservation  WHERE isQuickReservation = false AND resource.id = ?1 ")
+    @Query("FROM BoatReservation  WHERE resource.id = ?1 ")
     List<BoatReservation> findPossibleCollisionReservations(Long resourceId);
 
     @Query("FROM BoatReservation  WHERE isBusyPeriod = true AND resource.id = ?1 ")

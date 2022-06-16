@@ -24,6 +24,11 @@ public class AdventureController {
         this.service = adventureService;
     }
 
+    @GetMapping("/subs/{id}")
+    public List<EntityDTO> getSubs(@PathVariable Long id) {
+        return service.findAdventuresThatClientIsSubbedTo(id);
+    }
+
     @PostMapping("/reservation/add")
     public Long addReservation(@RequestBody NewReservationDTO dto) throws ReservationNotAvailableException {
         return service.createReservation(dto);
@@ -80,7 +85,7 @@ public class AdventureController {
     }
 
     @PostMapping("/quickReservations/reserve")
-    public Long reserveQuickReservation(@RequestBody AdventureQuickReservationDTO dto) {
+    public Long reserveQuickReservation(@RequestBody ReserveQuickReservationDTO dto) {
         return service.reserveQuickReservation(dto);
     }
 
@@ -90,7 +95,7 @@ public class AdventureController {
     }
 
     @PostMapping(value = "addQuickReservation/{id}")
-    public Boolean addQuickReservation(@PathVariable String id, AdventureQuickReservationDTO quickReservation) {
+    public Boolean addQuickReservation(@PathVariable String id, AdventureQuickReservationDTO quickReservation) throws ReservationNotAvailableException {
         return service.addQuickReservation(id, quickReservation);
     }
 
@@ -135,9 +140,9 @@ public class AdventureController {
         return service.findAdventuresWithOwner(ownerId);
     }
 
-    @DeleteMapping("/{id}/delete")
-    void deleteById(@PathVariable String id) {
-        service.deleteById(id);
+    @PostMapping("/delete/{id}")
+    Long deleteById(@PathVariable Long id) {
+        return service.deleteById(id);
     }
 
     @GetMapping("/address")
@@ -147,19 +152,19 @@ public class AdventureController {
 
     @PostMapping("subscribe")
     public ResponseEntity<String> subscribeUserOnAdventure(@RequestBody SubscribeDTO subscribeDTO){
-        return ResponseEntity.ok(service.subscribeBoatUserOnAdventure(subscribeDTO));
+        return ResponseEntity.ok(service.subscribeUserOnAdventure(subscribeDTO));
     }
-    @GetMapping("/isSubscribed")
+    @PostMapping("/isSubscribed")
     public ResponseEntity<Boolean> isUserSubscribedToAdventure(@RequestBody SubscribeDTO subscribeDTO) {
         return ResponseEntity.ok(service.isUserSubscribedToAdventure(subscribeDTO));
     }
 
     @PostMapping("/unsubscribe")
     public ResponseEntity<String> unsubscribeUserOnAdventure(@RequestBody SubscribeDTO subscribeDTO){
-        return ResponseEntity.ok(service.unsubscribeBoatUserOnAdventure(subscribeDTO));
+        return ResponseEntity.ok(service.unsubscribeUserOnAdventure(subscribeDTO));
     }
     @GetMapping("/clientSubbedAdventures/{id}")
-    public ResponseEntity<List<EntitySubbedDTO>> getClientsSubscribedAdventures(@PathVariable Long id){
+    public ResponseEntity<List<EntityDTO>> getClientsSubscribedAdventures(@PathVariable Long id){
         return ResponseEntity.ok(service.getClientsSubscribedAdventures());
     }
 

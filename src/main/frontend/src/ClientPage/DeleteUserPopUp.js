@@ -5,19 +5,33 @@ import axios from "axios";
 import Collapse from "react-bootstrap/Collapse";
 import {backLink, notifySuccess} from "../Consts";
 
-export default function DeleteClientPopUp({client, showDeleteClient, handleCloseDeleteClient}) {
+export default function DeleteUserPopUp({user, showDelete, handleClose, type}) {
+    console.log(user);
+
     const [deleteReason, setReason] = useState("")
 
     function handleDeleteAccount() {
-        axios.post(backLink+"/deletionRequests/client/" + client.id.toString(), deleteReason).then(
-            res => {
-                notifySuccess(res.data)
-            }
-        )
+        if (type === "CLIENT") {
+            axios.post(backLink+"/deletionRequests/client/" + user.id.toString(), deleteReason).then(
+                res => {
+                    notifySuccess(res.data)
+                    handleClose();
+                }
+            )
+        }
+        else if (type === "FISHING_INSTRUCTOR") {
+            axios.post(backLink+"/deletionRequests/fishingInstructor/" + user.id.toString(), deleteReason).then(
+                res => {
+                    notifySuccess(res.data)
+                    handleClose();
+                }
+            )
+        }
+
     }
 
     return (
-        <Modal show={showDeleteClient} onHide={handleCloseDeleteClient} size="medium" className="mt-lg-5">
+        <Modal show={showDelete} onHide={handleClose} size="medium" className="mt-lg-5">
             <Modal.Header closeButton>
                 <Modal.Title>Brisanje naloga korisnika</Modal.Title>
             </Modal.Header>
@@ -32,13 +46,10 @@ export default function DeleteClientPopUp({client, showDeleteClient, handleClose
                 </Form.Group>
             </Modal.Body>
             <Modal.Footer>
-                <Button className="me-auto" variant="btn btn-outline-danger" onClick={function () {
-                    handleDeleteAccount()
-                    handleCloseDeleteClient()
-                }}>
+                <Button className="ms-auto" variant="btn btn-outline-danger" onClick={handleDeleteAccount}>
                     DA
                 </Button>
-                <Button variant="btn btn-outline-success" onClick={handleCloseDeleteClient}>
+                <Button variant="btn btn-outline-success" onClick={handleClose}>
                     NE
                 </Button>
             </Modal.Footer>

@@ -15,20 +15,25 @@ public class SiteFee {
             generator = "pricelist_sequence"
     )
     private Long id;
-    private int price;
+    private int percentage;
     private Date startTime;
     private Date endTime;
 
     public SiteFee() {
     }
 
-    public SiteFee(int price, Date startTime) {
-        this.price = price;
+    public SiteFee(int percentage, Date startTime) {
+        this.percentage = percentage;
         this.startTime = startTime;
     }
 
-    public SiteFee(int price, Date startTime, Date endTime) {
-        this.price = price;
+    public SiteFee(int percentage) {
+        this.percentage = percentage;
+        this.startTime = new Date();
+    }
+
+    public SiteFee(int percentage, Date startTime, Date endTime) {
+        this.percentage = percentage;
         this.startTime = startTime;
         this.endTime = endTime;
     }
@@ -38,12 +43,12 @@ public class SiteFee {
     }
 
 
-    public int getPrice() {
-        return price;
+    public int getPercentage() {
+        return percentage;
     }
 
-    public void setPrice(int price) {
-        this.price = price;
+    public void setPercentage(int price) {
+        this.percentage = price;
     }
 
     public Date getStartTime() {

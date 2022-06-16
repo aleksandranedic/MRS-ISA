@@ -1,12 +1,16 @@
 package com.project.team9.service;
 
+import com.project.team9.dto.AdminDTO;
 import com.project.team9.dto.IncomeReport;
 import com.project.team9.dto.IncomeReportDateRange;
+import com.project.team9.model.Address;
+import com.project.team9.model.Image;
 import com.project.team9.model.user.Administrator;
 import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.AdministratorRepository;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,12 +22,16 @@ public class AdministratorService {
     private final FishingInstructorService fishingInstructorService;
     private final VacationHouseOwnerService vacationHouseOwnerService;
     private final BoatOwnerService boatOwnerService;
+    private final AddressService addressService;
+    private final ImageService imageService;
 
-    public AdministratorService(AdministratorRepository administratorRepository, FishingInstructorService fishingInstructorService, VacationHouseOwnerService vacationHouseOwnerService, BoatOwnerService boatOwnerService) {
+    public AdministratorService(AdministratorRepository administratorRepository, FishingInstructorService fishingInstructorService, VacationHouseOwnerService vacationHouseOwnerService, BoatOwnerService boatOwnerService, AddressService addressService, ImageService imageService) {
         this.administratorRepository = administratorRepository;
         this.fishingInstructorService = fishingInstructorService;
         this.vacationHouseOwnerService = vacationHouseOwnerService;
         this.boatOwnerService = boatOwnerService;
+        this.addressService = addressService;
+        this.imageService = imageService;
     }
     public Administrator addAdmin(Administrator administrator){
        return administratorRepository.save(administrator);
@@ -81,4 +89,42 @@ public class AdministratorService {
         }
         return incomeReport.sort(false);
     }
+    public List<Administrator> getAdministrators() {
+        return administratorRepository.findAll();
+    }
+
+    public Long deleteById(Long id) {
+        Administrator administrator = administratorRepository.getById(id);
+        administrator.setDeleted(true);
+        return administratorRepository.save(administrator).getId();
+    }
+
+    public Administrator getAdmin(Long id) {
+        return administratorRepository.getAdminById(id);
+    }
+
+    public void save(Administrator administrator) {
+        addressService.addAddress(administrator.getAddress());
+        Image image = new Image();
+        imageService.save(image);
+        administrator.setProfileImg(image);
+        administratorRepository.save(administrator);
+    }
+
+    public Long edit(AdminDTO dto) {
+
+        Administrator administrator = administratorRepository.getAdminById(dto.getId());
+
+        Address address = new Address(dto.getPlace(), dto.getNumber(), dto.getStreet(), dto.getCountry());
+        addressService.addAddress(address);
+        administrator.setFirstName(dto.getFirstName());
+        administrator.setLastName(dto.getLastName());
+        administrator.setEmail(dto.getEmail());
+        administrator.setPhoneNumber(dto.getPhoneNumber());
+        administrator.setAddress(address);
+
+        return administratorRepository.save(administrator).getId();
+
+    }
+
 }

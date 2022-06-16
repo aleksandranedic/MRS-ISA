@@ -12,16 +12,20 @@ export const missingDataErrors = {
     },
     title: "Morate uneti naslov.",
     description: "Morate uneti opis.",
-    numberOfClients: "Morate uneti broj klijenata",
+    numberOfClients: "Morate uneti broj klijenata.",
     price: "Morate uneti cenu.",
     cancellationFee: "Morate uneti naknadu za otkazivanje.",
     rulesAndRegulations: "Morate uneti pravila ponašanja.",
-    date: "Morate uneti datum",
-    time: "Morate uneti vreme",
-    client: "Morate izabrati klijenata",
-    password: "Morate uneti šifru",
-    email:"Morate uneti email",
-    gmail:"Email mora da sadrži @gmail.com"
+    date: "Morate uneti datum.",
+    time: "Morate uneti vreme.",
+    client: "Morate izabrati klijenata.",
+    password: "Morate uneti šifru.",
+    email:"Morate uneti email.",
+    gmail:"Email nije u dobrom formatu",
+    complaintText: "Morate uneti tekst žalbe.",
+    discount: "Morate uneti popust.",
+    points: "Morate uneti broj poena",
+    color: "Morate odabrati boju"
 }
 
 export const frontLink = "http://localhost:3000/"

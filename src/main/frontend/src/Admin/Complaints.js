@@ -4,6 +4,7 @@ import {Button, Card, Form, Modal} from "react-bootstrap";
 import {backLink, loadingToast, updateForFetchedDataSuccess} from "../Consts";
 import axios from "axios";
 import {ToastContainer} from "react-toastify";
+import {BsArrowRight} from "react-icons/bs";
 
 export function Complaints() {
 
@@ -12,7 +13,6 @@ export function Complaints() {
     const fetchComplaints = () => {
         axios.get(backLink + "/complaints").then(
             response => {
-                console.log(response.data)
                 setComplaints(response.data)
             }
         )
@@ -59,11 +59,7 @@ function Complaint({request}) {
     return (
         <Card className="m-3" border={variant}>
             <Card.Header className="d-flex align-items-center">
-
-
-                <h5 className="mt-2">{request.entityName}</h5>
-
-
+                <h5 className="mt-2">{request.userFullName} <BsArrowRight/> {request.entityName}</h5>
             </Card.Header>
             <Card.Body className="d-flex align-items-center">
                 <div className="flex-column">

@@ -33,6 +33,7 @@ public class BoatDTO {
     private int cancellationFee;
     private int capacity;
     private List<BoatQuickReservationDTO> quickReservations;
+    private Long ownerId;
 
     public BoatDTO() {
     }
@@ -319,5 +320,13 @@ public class BoatDTO {
                 ", capacity=" + capacity +
                 ", quickReservations=" + quickReservations +
                 '}';
+    }
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 }

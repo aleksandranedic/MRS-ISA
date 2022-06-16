@@ -15,6 +15,8 @@ public class UserDTO {
     private String lastName;
     private String email;
     private String role;
+    private Image profileImg;
+    private Address address;
 
     public UserDTO() {
     }
@@ -33,6 +35,24 @@ public class UserDTO {
         this.lastName = user.getLastName();
         this.email = user.getEmail();
         this.role = user.getRoleName();
+        this.profileImg = user.getProfileImg();
+        this.address = user.getAddress();
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public Image getProfileImg() {
+        return profileImg;
+    }
+
+    public void setProfileImg(Image profileImg) {
+        this.profileImg = profileImg;
     }
 
     public Long getId() {

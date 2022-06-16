@@ -31,6 +31,11 @@ public class VacationHouseController {
         return service.getVacationHouses();
     }
 
+    @GetMapping("/subs/{id}")
+    public List<EntityDTO> getSubs(@PathVariable Long id) {
+        return service.findVacationHousesThatClientIsSubbedTo(id);
+    }
+
 
     @GetMapping("/reservation/vacationHouseOwner/{id}")
     public List<ReservationDTO> getReservationsForOwner(@PathVariable Long id) {
@@ -43,7 +48,7 @@ public class VacationHouseController {
     }
 
     @PostMapping("/quickReservations/reserve")
-    public Long reserveQuickReservation(@RequestBody VacationHouseQuickReservationDTO dto) {
+    public Long reserveQuickReservation(@RequestBody ReserveQuickReservationDTO dto) {
         return service.reserveQuickReservation(dto);
     }
 
@@ -76,6 +81,7 @@ public class VacationHouseController {
         return service.getVacationHouse(houseId);
     }
 
+
     @GetMapping(value = "getRating/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public double getRating(@PathVariable String id) {
         return service.getRatingForHouse(Long.parseLong(id));
@@ -98,7 +104,7 @@ public class VacationHouseController {
     }
 
     @PostMapping(value = "addQuickReservation/{id}")
-    public Boolean addQuickReservation(@PathVariable String id, VacationHouseQuickReservationDTO quickReservation) {
+    public Boolean addQuickReservation(@PathVariable String id, VacationHouseQuickReservationDTO quickReservation) throws ReservationNotAvailableException {
         return service.addQuickReservation(Long.parseLong(id), quickReservation);
     }
 
@@ -172,7 +178,7 @@ public class VacationHouseController {
     public ResponseEntity<String> subscribeUserOnVacationHouse(@RequestBody SubscribeDTO subscribeDTO){
         return ResponseEntity.ok(service.subscribeBoatUserOnVacationHouse(subscribeDTO));
     }
-    @GetMapping("/isSubscribed")
+    @PostMapping("/isSubscribed")
     public ResponseEntity<Boolean> isUserSubscribedToVacationHouse(@RequestBody SubscribeDTO subscribeDTO) {
         return ResponseEntity.ok(service.isUserSubscribedToVacationHouse(subscribeDTO));
     }
@@ -182,7 +188,7 @@ public class VacationHouseController {
     }
 
     @GetMapping("/clientSubbedVacationHouses/{id}")
-    public ResponseEntity<List<EntitySubbedDTO>> getClientsSubscribedVacationHouses(@PathVariable Long id){
+    public ResponseEntity<List<EntityDTO>> getClientsSubscribedVacationHouses(@PathVariable Long id){
         return ResponseEntity.ok(service.getClientsSubscribedVacationHouses());
     }
 }

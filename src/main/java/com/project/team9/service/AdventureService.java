@@ -1,6 +1,7 @@
 package com.project.team9.service;
 
 import com.project.team9.dto.*;
+import com.project.team9.exceptions.CannotDeleteException;
 import com.project.team9.exceptions.ReservationNotAvailableException;
 import com.project.team9.model.Address;
 import com.project.team9.model.Image;
@@ -45,9 +46,11 @@ public class AdventureService {
     private final ReservationService reservationService;
     private final ClientReviewService clientReviewService;
     private final EmailService emailService;
+    private final UserCategoryService userCategoryService;
+    private final PointlistService pointlistService;
 
     @Autowired
-    public AdventureService(AdventureRepository adventureRepository, FishingInstructorService fishingInstructorService, TagService tagService, AddressService addressService, PricelistService pricelistService, ImageService imageService, AppointmentService appointmentService, ClientService clientService, AdventureReservationService adventureReservationService, ReservationService reservationService, ClientReviewService clientReviewService, EmailService emailService) {
+    public AdventureService(AdventureRepository adventureRepository, FishingInstructorService fishingInstructorService, TagService tagService, AddressService addressService, PricelistService pricelistService, ImageService imageService, AppointmentService appointmentService, ClientService clientService, AdventureReservationService adventureReservationService, ReservationService reservationService, ClientReviewService clientReviewService, EmailService emailService, UserCategoryService userCategoryService, PointlistService pointlistService) {
         this.repository = adventureRepository;
         this.fishingInstructorService = fishingInstructorService;
         this.tagService = tagService;
@@ -60,6 +63,8 @@ public class AdventureService {
         this.reservationService = reservationService;
         this.clientReviewService = clientReviewService;
         this.emailService = emailService;
+        this.userCategoryService = userCategoryService;
+        this.pointlistService = pointlistService;
     }
 
     public List<AdventureQuickReservationDTO> getQuickReservations(String id) {
@@ -76,10 +81,20 @@ public class AdventureService {
         return quickReservations;
     }
 
-    public Boolean addQuickReservation(String id, AdventureQuickReservationDTO quickReservationDTO) {
+    public Boolean addQuickReservation(String id, AdventureQuickReservationDTO quickReservationDTO) throws ReservationNotAvailableException {
         Adventure adventure = this.getById(id);
         AdventureReservation reservation = getReservationFromDTO(quickReservationDTO);
         reservation.setResource(adventure);
+
+        List<AdventureReservation> reservations = adventureReservationService.getPossibleCollisionReservations(reservation.getResource().getId(), reservation.getResource().getOwner().getId());
+        for (AdventureReservation r : reservations) {
+            for (Appointment a : r.getAppointments()) {
+                for (Appointment newAppointment : reservation.getAppointments()) {
+                    reservationService.checkAppointmentCollision(a, newAppointment);
+                }
+            }
+        }
+
         adventureReservationService.save(reservation);
         adventure.addQuickReservations(reservation);
         this.addAdventure(adventure);
@@ -153,7 +168,7 @@ public class AdventureService {
         List<Tag> additionalServices = reservation.getAdditionalServices();
         int duration = reservation.getAppointments().size();
         int price = reservation.getPrice();
-        boatPrice = boatPrice*duration;
+        boatPrice = boatPrice * duration;
         int discount = 100 - (100 * price / boatPrice);
         return new AdventureQuickReservationDTO(reservation.getId(), strDate, numberOfPeople, additionalServices, duration, price, discount);
     }
@@ -189,8 +204,17 @@ public class AdventureService {
         return new AdventureDTO(repository.getById(Long.parseLong(id)));
     }
 
-    public void deleteById(String id) {
-        repository.deleteById(Long.parseLong(id));
+    public Long deleteById(Long id) throws CannotDeleteException {
+
+        for (AdventureReservation r : adventureReservationService.getReservationsByAdventureId(id)) {
+            if (r.getAppointments().get(r.getAppointments().size() - 1).getEndTime().isAfter(LocalDateTime.now())) {
+                throw new CannotDeleteException();
+            }
+        }
+
+        Adventure adventure = repository.getById(id);
+        adventure.setDeleted(true);
+        return repository.save(adventure).getId();
     }
 
     public AdventureDTO updateAdventure(String id, AdventureDTO adventureDTO, MultipartFile[] multipartFiles) throws IOException {
@@ -390,6 +414,13 @@ public class AdventureService {
         }
         //TODO napravi potvrdu o rezervaciji na akciju
         adventureReservationService.save(reservation);
+
+        Client client = reservation.getClient();
+        client.setNumOfPoints(client.getNumOfPoints()+ pointlistService.getClientPointlist().getNumOfPoints());
+        clientService.addClient(client);
+        reservation.setClient(client);
+        adventureReservationService.save(reservation);
+
         return reservation.getId();
     }
 
@@ -416,6 +447,8 @@ public class AdventureService {
         Adventure adventure = this.getById(id);
 
         int price = adventure.getPricelist().getPrice() * appointments.size();
+        int discount = userCategoryService.getClientCategoryBasedOnPoints(client.getNumOfPoints()).getDiscount();
+        price = price * (1 - discount) / 100;
 
         List<Tag> tags = new ArrayList<Tag>();
         for (String text : dto.getAdditionalServicesStrings()) {
@@ -506,21 +539,30 @@ public class AdventureService {
                     if (time.isBefore(LocalDateTime.now())) {
                         reservations.add(createDTOFromReservation(r));
                     }
+
                 }
             }
+
+
         }
         return reservations;
     }
 
 
-    public Long reserveQuickReservation(AdventureQuickReservationDTO dto) {
+    public Long reserveQuickReservation(ReserveQuickReservationDTO dto) {
         AdventureReservation quickReservation = adventureReservationService.getById(dto.getReservationID());
+        Adventure adventure = quickReservation.getResource();
+        adventure.removeQuickReservation(quickReservation);
+
         Client client = clientService.getById(dto.getClientID().toString());
-        quickReservation.getResource().removeQuickReservation(quickReservation);
+
         quickReservation.setClient(client);
         quickReservation.setQuickReservation(false);
+        adventure.addQuickReservation(quickReservation);
+        Long id = adventureReservationService.save(quickReservation);
         //TODO napravi potvrdu o rezervaciji na akciju
-        return adventureReservationService.save(quickReservation);
+        repository.save(adventure);
+        return id;
     }
 
     public boolean clientCanReviewVendor(Long vendorId, Long clientId) {
@@ -604,7 +646,7 @@ public class AdventureService {
     }
 
     private boolean checkNumberOfClients(AdventureFilterDTO filterDTO, Adventure adventure) {
-        return filterDTO.getNumberOfClients().isEmpty() || Integer.parseInt(filterDTO.getNumberOfClients())==adventure.getNumberOfClients();
+        return filterDTO.getNumberOfClients().isEmpty() || Integer.parseInt(filterDTO.getNumberOfClients()) == adventure.getNumberOfClients();
     }
 
     private boolean checkInstructorName(AdventureFilterDTO filterDTO, Adventure adventure) {
@@ -650,14 +692,16 @@ public class AdventureService {
         double score = list.stream().mapToDouble(ClientReviewDTO::getRating).sum() / list.size();
         return (filterDTO.getReviewRating().isEmpty() || Double.parseDouble(filterDTO.getReviewRating()) <= score);
     }
-    public double getAdventureRating(Long id){
+
+    public double getAdventureRating(Long id) {
         List<ClientReviewDTO> list = clientReviewService.getResourceReviews(id);
-        return list.isEmpty()?0:list.stream().mapToDouble(ClientReviewDTO::getRating).sum() / list.size();
+        return list.isEmpty() ? 0 : list.stream().mapToDouble(ClientReviewDTO::getRating).sum() / list.size();
     }
 
-    public String subscribeBoatUserOnAdventure(SubscribeDTO subscribeDTO) {
-        Adventure adventure=getById(String.valueOf(subscribeDTO.getEntityId()));
+    public String subscribeUserOnAdventure(SubscribeDTO subscribeDTO) {
+        Adventure adventure = getById(String.valueOf(subscribeDTO.getEntityId()));
         adventure.getSubClientUsernames().add(subscribeDTO.getUserId());
+        repository.save(adventure);
         return "Uspešno ste prijavljeni na akcije ove avanture";
     }
 
@@ -666,16 +710,17 @@ public class AdventureService {
         return adventure.getSubClientUsernames().contains(subscribeDTO.getUserId());
     }
 
-    public String unsubscribeBoatUserOnAdventure(SubscribeDTO subscribeDTO) {
+    public String unsubscribeUserOnAdventure(SubscribeDTO subscribeDTO) {
         Adventure adventure = getById(String.valueOf(subscribeDTO.getEntityId()));
         adventure.getSubClientUsernames().remove(subscribeDTO.getUserId());
+        repository.save(adventure);
         return "Uspešno ste se odjavili na akcije ove avanture";
     }
 
-    public List<EntitySubbedDTO> getClientsSubscribedAdventures() {
-        List<EntitySubbedDTO> entities = new ArrayList<>();
+    public List<EntityDTO> getClientsSubscribedAdventures() {
+        List<EntityDTO> entities = new ArrayList<>();
         for (Adventure adventure : getAdventures()) {
-            entities.add(new EntitySubbedDTO(
+            entities.add(new EntityDTO(
                     adventure.getTitle(),
                     "adventure",
                     adventure.getImages().get(0),
@@ -686,5 +731,24 @@ public class AdventureService {
             ));
         }
         return entities;
+    }
+
+    public List<EntityDTO> findAdventuresThatClientIsSubbedTo(Long client_id) {
+        List<EntityDTO> adventures = new ArrayList<>();
+
+        for (Adventure a : repository.findAll()) {
+            if (a.getSubClientUsernames().contains(client_id)) {
+                adventures.add(new EntityDTO(
+                        a.getTitle(),
+                        "adventure",
+                        a.getImages().get(0),
+                        getAdventureRating(a.getId()),
+                        a.getId(),
+                        a.getAddress(),
+                        a.getPricelist().getPrice()));
+            }
+        }
+
+        return adventures;
     }
 }

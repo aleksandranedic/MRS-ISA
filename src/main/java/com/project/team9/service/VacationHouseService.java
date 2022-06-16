@@ -8,7 +8,6 @@ import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.VacationHouseReservation;
-import com.project.team9.model.resource.Boat;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
@@ -44,9 +43,13 @@ public class VacationHouseService {
     private final ClientService clientService;
     private final ReservationService reservationService;
     private final EmailService emailService;
+    private final PointlistService pointlistService;
+    private final UserCategoryService userCategoryService;
+
+
 
     @Autowired
-    public VacationHouseService(VacationHouseRepository vacationHouseRepository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, VacationHouseReservationService vacationHouseReservationService, ClientReviewService clientReviewService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService, EmailService emailService) {
+    public VacationHouseService(VacationHouseRepository vacationHouseRepository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, VacationHouseReservationService vacationHouseReservationService, ClientReviewService clientReviewService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService, EmailService emailService, PointlistService pointlistService, UserCategoryService userCategoryService) {
         this.repository = vacationHouseRepository;
         this.addressService = addressService;
         this.pricelistService = pricelistService;
@@ -58,6 +61,8 @@ public class VacationHouseService {
         this.clientService = clientService;
         this.reservationService = reservationService;
         this.emailService = emailService;
+        this.pointlistService = pointlistService;
+        this.userCategoryService = userCategoryService;
     }
 
     public List<VacationHouse> getVacationHouses() {
@@ -134,13 +139,16 @@ public class VacationHouseService {
         }
         int capacity = vh.getNumberOfBedsPerRoom() * vh.getNumberOfRooms();
         List<VacationHouseQuickReservationDTO> quickReservations = getQuickReservations(vh);
-        return new VacationHouseDTO(vh.getId(), vh.getTitle(), address, vh.getAddress().getNumber(), vh.getAddress().getStreet(), vh.getAddress().getPlace(), vh.getAddress().getCountry(), vh.getDescription(), images, vh.getRulesAndRegulations(), vh.getAdditionalServices(), vh.getPricelist().getPrice(), vh.getCancellationFee(), vh.getNumberOfRooms(), capacity, quickReservations);
+        VacationHouseDTO vacationHouseDTO = new VacationHouseDTO(vh.getId(), vh.getTitle(), address, vh.getAddress().getNumber(), vh.getAddress().getStreet(), vh.getAddress().getPlace(), vh.getAddress().getCountry(), vh.getDescription(), images, vh.getRulesAndRegulations(), vh.getAdditionalServices(), vh.getPricelist().getPrice(), vh.getCancellationFee(), vh.getNumberOfRooms(), capacity, quickReservations);
+        vacationHouseDTO.setOwnerId(vh.getOwner().getId());
+
+        return vacationHouseDTO;
     }
 
     private List<VacationHouseQuickReservationDTO> getQuickReservations(VacationHouse vh) {
         List<VacationHouseQuickReservationDTO> quickReservations = new ArrayList<VacationHouseQuickReservationDTO>();
         for (VacationHouseReservation reservation : vh.getReservations()) {
-            if (reservation.getPrice() < vh.getPricelist().getPrice() && reservation.getClient() == null && reservation.isQuickReservation())
+            if (reservation.isQuickReservation())
                 quickReservations.add(createVacationHouseQuickReservationDTO(vh.getPricelist().getPrice(), reservation));
         }
         return quickReservations;
@@ -167,6 +175,7 @@ public class VacationHouseService {
         List<Tag> additionalServices = reservation.getAdditionalServices();
         int duration = reservation.getAppointments().size();
         int price = reservation.getPrice();
+        vacationHousePrice = vacationHousePrice*duration;
         int discount = 100 - (100 * price / vacationHousePrice);
         return new VacationHouseQuickReservationDTO(reservation.getId(), strDate, numberOfPeople, additionalServices, duration, price, discount);
     }
@@ -186,10 +195,20 @@ public class VacationHouseService {
         return appointments;
     }
 
-    public Boolean addQuickReservation(Long id, VacationHouseQuickReservationDTO quickReservationDTO) {
+    public Boolean addQuickReservation(Long id, VacationHouseQuickReservationDTO quickReservationDTO) throws ReservationNotAvailableException{
         VacationHouse house = this.getVacationHouse(id);
         VacationHouseReservation reservation = getReservationFromDTO(quickReservationDTO, true);
         reservation.setResource(house);
+
+        List<VacationHouseReservation> reservations = vacationHouseReservationService.getPossibleCollisionReservations(reservation.getResource().getId());
+        for (VacationHouseReservation r : reservations) {
+            for (Appointment a : r.getAppointments()) {
+                for (Appointment newAppointment : reservation.getAppointments()) {
+                    reservationService.checkAppointmentCollision(a, newAppointment);
+                }
+            }
+        }
+
         vacationHouseReservationService.addReservation(reservation);
         house.addReservation(reservation);
         this.save(house);
@@ -470,6 +489,13 @@ public class VacationHouseService {
         }
         //TODO napravi potvrdu o rezervaciji na akciju
         vacationHouseReservationService.save(reservation);
+
+        Client client = reservation.getClient();
+        client.setNumOfPoints(client.getNumOfPoints()+ pointlistService.getClientPointlist().getNumOfPoints());
+        clientService.addClient(client);
+        reservation.setClient(client);
+
+        vacationHouseReservationService.save(reservation);
         return reservation.getId();
     }
 
@@ -493,6 +519,8 @@ public class VacationHouseService {
         VacationHouse vacationHouse = this.getVacationHouse(id);
 
         int price = vacationHouse.getPricelist().getPrice() * appointments.size();
+        int discount = userCategoryService.getClientCategoryBasedOnPoints(client.getNumOfPoints()).getDiscount();
+        price = price * (1 - discount) / 100;
 
         List<Tag> tags = new ArrayList<Tag>();
         for (String text : dto.getAdditionalServicesStrings()) {
@@ -708,14 +736,22 @@ public class VacationHouseService {
         return reservations;
     }
 
-    public Long reserveQuickReservation(VacationHouseQuickReservationDTO dto) {
+    public Long reserveQuickReservation(ReserveQuickReservationDTO dto) {
         VacationHouseReservation quickReservation = vacationHouseReservationService.getVacationHouseReservation(dto.getReservationID());
+        VacationHouse vacationHouse = quickReservation.getResource();
+        vacationHouse.removeQuickReservation(quickReservation);
+
         Client client = clientService.getById(dto.getClientID().toString());
+
         quickReservation.getResource().removeQuickReservation(quickReservation);
         quickReservation.setClient(client);
         quickReservation.setQuickReservation(false);
+        vacationHouse.addReservation(quickReservation);
+
+        Long id = vacationHouseReservationService.save(quickReservation);
+        repository.save(vacationHouse);
+        return id;
         //TODO napravi potvrdu o rezervaciji na akciju
-        return vacationHouseReservationService.save(quickReservation);
     }
 
     public boolean clientCanReviewVendor(Long vendorId, Long clientId) {
@@ -723,9 +759,9 @@ public class VacationHouseService {
     }
 
     public String subscribeBoatUserOnVacationHouse(SubscribeDTO subscribeDTO) {
-        Client client = clientService.getById(String.valueOf(subscribeDTO.getUserId()));
         VacationHouse vacationHouse = getVacationHouse(subscribeDTO.getEntityId());
         vacationHouse.getSubClientUsernames().add(subscribeDTO.getUserId());
+        repository.save(vacationHouse);
         return "Uspešno ste prijavljeni na akcije ove vikendice";
     }
 
@@ -742,13 +778,14 @@ public class VacationHouseService {
     public String unsubscribeBoatUserOnVacationHouse(SubscribeDTO subscribeDTO) {
         VacationHouse vacationHouse = getVacationHouse(subscribeDTO.getEntityId());
         vacationHouse.getSubClientUsernames().remove(subscribeDTO.getUserId());
+        repository.save(vacationHouse);
         return "Uspešno ste se odjavili na akcije ove vikendice";
     }
 
-    public List<EntitySubbedDTO> getClientsSubscribedVacationHouses() {
-        List<EntitySubbedDTO> entities=new ArrayList<>();
+    public List<EntityDTO> getClientsSubscribedVacationHouses() {
+        List<EntityDTO> entities=new ArrayList<>();
         for(VacationHouse vacationHouse :getVacationHouses()){
-            entities.add(new EntitySubbedDTO(
+            entities.add(new EntityDTO(
                     vacationHouse.getTitle(),
                     "house",
                     vacationHouse.getImages().get(0),
@@ -759,5 +796,24 @@ public class VacationHouseService {
             ));
         }
         return entities;
+    }
+
+    public List<EntityDTO> findVacationHousesThatClientIsSubbedTo(Long client_id) {
+        List<EntityDTO> houses = new ArrayList<>();
+
+        for (VacationHouse vh: repository.findAll()) {
+            if (vh.getSubClientUsernames().contains(client_id)) {
+                houses.add(new EntityDTO(
+                        vh.getTitle(),
+                        "house",
+                        vh.getImages().get(0),
+                        getVacationHouseRating(vh.getId()),
+                        vh.getId(),
+                        vh.getAddress(),
+                        vh.getPricelist().getPrice()));
+            }
+        }
+
+        return houses;
     }
 }

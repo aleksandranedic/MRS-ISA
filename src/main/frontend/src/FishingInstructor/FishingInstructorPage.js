@@ -9,21 +9,18 @@ import {useParams} from "react-router-dom";
 import {Calendar} from "../Calendar/Calendar";
 import {backLink, profilePicturePlaceholder} from "../Consts";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
-import {Collapse} from "react-bootstrap";
 import OwnerInfo from "../OwnerInfo"
-import {ReservationsTable} from "../Calendar/ReservationsTable";
 import {ReservationsToReview} from "../Calendar/ReservationsToReview";
-import {processReservationsForResources, processReservationsForUsers} from "../ProcessToEvent";
-import {AddReview} from "../Reviews/AddReview";
-import {isLoggedIn, isMyPage} from "../Autentification";
+import {processReservationsForUsers} from "../ProcessToEvent";
+import {isLoggedIn, isMyPage, isClient} from "../Autentification";
 import BeginButton from "../BeginButton.js"
 import Ratings from '../Reviews/Ratings';
+import {Complaints} from "../Complaints";
 
 const ReviewsComp = ({reviews}) => {
-    if (typeof reviews !== "undefined"){
-        return <Ratings reviews = {reviews} type={"fishingInstructor"} />
-    }
-    else {
+    if (typeof reviews !== "undefined") {
+        return <Ratings reviews={reviews} type={"fishingInstructor"}/>
+    } else {
         return <></>
     }
 }
@@ -32,10 +29,11 @@ const FishingInstructors = ({id}) => {
     const [fishingInstructor, setFishingInstructor] = useState({address: '', profileImg: {path: profilePicturePlaceholder}});
     const [adventures, setAdventures] = useState([]);
     const [reservations, setReservations] = useState([]);
-    const [open, setOpen] = useState(false);
     const [events, setEvents] = useState(null);
     const [myPage, setMyPage] = useState(null);
+    const [stat, setStat] = useState(null);
     const [ownerReviews, setOwnerReviews] = useState([])
+
 
     const fetchReservations = () => {
         axios.get(backLink + "/adventure/reservation/fishingInstructor/" + id).then(res => {
@@ -45,12 +43,21 @@ const FishingInstructors = ({id}) => {
         })
     }
 
+    const fetchStat = () => {
+        axios
+            .get(backLink + "/fishinginstructor/getStat/" + id)
+            .then(res => {
+                setStat(res.data);
+                console.log(res.data);
+            });
+    };
+
     const fetchReviews = () => {
         axios
-        .get( backLink + "/review/getVendorReviews/" + id)
-        .then(res => {
-            setOwnerReviews(res.data);
-        });
+            .get(backLink + "/review/getVendorReviews/" + id)
+            .then(res => {
+                setOwnerReviews(res.data);
+            });
     };
 
     const fetchFishingInstructors = () => {
@@ -71,6 +78,7 @@ const FishingInstructors = ({id}) => {
         fetchAdventures();
         fetchReservations();
         fetchReviews();
+        fetchStat();
     }, []);
 
     const [show, setShow] = useState(false);
@@ -78,49 +86,74 @@ const FishingInstructors = ({id}) => {
 
     let html;
 
-    if (fishingInstructor.length !== 0) {
+    if (fishingInstructor.length !== 0 && stat !== null) {
 
+        let buttons = [
+            {text: "Osnovne informacije", path: "#info"},
+            {text: "Avanture", path: "#adventures"},
+            {text: "Kalendar", path: "#calendar"}
+        ];
+        if (myPage) {
+            buttons.push({text: "Rezervacije", path: "#reservations"});
+        }
+
+        buttons.push({text: "Recenzije", path: "#reviews"});
         html = (<div key={fishingInstructor.id}>
 
             <Banner caption={fishingInstructor.firstName + " " + fishingInstructor.lastName}/>
 
-            <Navigation buttons={
-                [
-                    {text: "Osnovne informacije", path: "#info"},
-                    {text: "Avanture", path: "#adventures"},
-                    {text: "Kalendar zauzetosti", path: "#calendar"}
-                ]}
-                        editable={myPage} editFunction={handleShow} searchable={true} showProfile={true} showReports={true} type="adventure"
+            <Navigation buttons={buttons}
+                        editable={myPage} editFunction={handleShow} searchable={true}
+                        showReports={myPage} type="adventure"
             />
 
             <div className="pe-5 pt-0">
                 <OwnerInfo bio={fishingInstructor.biography}
-                            name={fishingInstructor.firstName + " " + fishingInstructor.lastName}
-                            role = {"Instruktor pecanja"}
-                            email={fishingInstructor.email}
-                            phoneNum={fishingInstructor.phoneNumber}
-                            address={fishingInstructor.address}
-                            profileImg={fishingInstructor.profileImg !== null ? backLink + fishingInstructor.profileImg.path : profilePicturePlaceholder}
+                           name={fishingInstructor.firstName + " " + fishingInstructor.lastName}
+                           rate={stat.rating}
+                           email={fishingInstructor.email}
+                           phoneNum={fishingInstructor.phoneNumber}
+                           address={fishingInstructor.address}
+                           profileImg={fishingInstructor.profileImg !== null ? backLink + fishingInstructor.profileImg.path : profilePicturePlaceholder}
+                           category={stat.category}
+                           points={stat.points}
                 />
-            </div>              
+            </div>
             <hr className="me-5 ms-5"/>
 
-            <AdventureCarousel adventures={adventures} add={true} ownerId={fishingInstructor.id}/>
+            <AdventureCarousel adventures={adventures} add={myPage} ownerId={fishingInstructor.id}/>
 
-            <FishingInstructorForm show={show} setShow={setShow} fishingInstructor={fishingInstructor}  profileImg= {fishingInstructor.profileImg !== null ? backLink + fishingInstructor.profileImg.path : profilePicturePlaceholder}/>
+            <FishingInstructorForm show={show} setShow={setShow} fishingInstructor={fishingInstructor}
+                                   profileImg={fishingInstructor.profileImg !== null ? backLink + fishingInstructor.profileImg.path : profilePicturePlaceholder}/>
 
-            <hr className="me-5 ms-5"/>         
+            <h2 className="mt-5 ms-5">Kalendar</h2>
+
+            <hr className="me-5 ms-5"/>
 
             <Calendar events={events} reservable={false}/>
 
-            <hr className="me-5 ms-5"/>
 
-            {myPage && <>
+            {myPage && <div id="reservations">
+
                 <ReservationsToReview type={"adventure"}/>
-                <ReservationCardGrid reservations={reservations}/>                    
-                <BeginButton/>
-            </>}
-            <ReviewsComp reviews = {ownerReviews}/>        
+                <h2 className="me-5 ms-5 mt-5" id="reservations">Rezervacije</h2>
+
+                <hr className="me-5 ms-5"/>
+
+                <ReservationCardGrid reservations={reservations}/>
+
+            </div>}
+            <div className="ms-5 me-5" id="reviews">
+                <h2 className="mt-5" id="reviews">Recenzije</h2>
+                <hr/>
+                <ReviewsComp reviews={ownerReviews}/>
+            </div>
+
+                <Complaints type={"fishingInstructor"} toWhom={fishingInstructor.firstName + " " + fishingInstructor.lastName}/>
+
+
+            <BeginButton/>
+
         </div>)
     }
 
@@ -128,7 +161,9 @@ const FishingInstructors = ({id}) => {
 
 };
 
-export function FishingInstructorPage() {
+
+
+            export function FishingInstructorPage() {
     const {id} = useParams();
     return (
         <>
@@ -140,3 +175,4 @@ export function FishingInstructorPage() {
 
     )
 }
+

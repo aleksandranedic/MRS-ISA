@@ -4,6 +4,7 @@ import com.project.team9.model.Image;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.Tag;
 import com.project.team9.model.Address;
+import com.project.team9.model.user.Client;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -158,6 +159,10 @@ public abstract class Resource {
 
     public void setSubClientUsernames(Collection<Long> subClientUsernames) {
         this.subClientUsernames = subClientUsernames;
+    }
+
+    public void addClient(Client client) {
+        this.subClientUsernames.add(client.getId());
     }
 
     public Boolean getDeleted() {

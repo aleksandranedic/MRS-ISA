@@ -1,6 +1,6 @@
 import {Button, Form, Modal} from "react-bootstrap";
 import React, {useState, useRef} from "react";
-import DeleteClientPopUp from "./DeleteClientPopUp";
+import DeleteUserPopUp from "./DeleteUserPopUp";
 import axios from "axios";
 import {ChangeClientPassword} from "./ChangeClientPassword";
 import {backLink, frontLink, notifySuccess} from "../Consts";
@@ -226,8 +226,8 @@ function UpdateClientInfo({client, handleClose, showPopUp,setClient, profileImg}
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <DeleteClientPopUp client={client} showDeleteClient={showDeleteClient}
-                               handleCloseDeleteClient={handleCloseDeleteClient}/>
+            <DeleteUserPopUp user={client} showDelete={showDeleteClient}
+                             handleClose={handleCloseDeleteClient} type={"CLIENT"}/>
             <ToastContainer
                 position="top-center"
                 autoClose={5000}

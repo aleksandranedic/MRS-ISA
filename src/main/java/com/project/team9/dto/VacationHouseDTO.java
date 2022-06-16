@@ -22,6 +22,7 @@ public class VacationHouseDTO {
     private int cancellationFee;
     private int numberOfRooms;
     private int capacity;
+    private Long ownerId;
     private List<VacationHouseQuickReservationDTO> quickReservations;
 
     public VacationHouseDTO() {}
@@ -63,6 +64,15 @@ public class VacationHouseDTO {
         this.numberOfRooms = numberOfRooms;
         this.capacity = capacity;
         this.quickReservations = quickReservations;
+    }
+
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 
     public List<String> getTagsText() {

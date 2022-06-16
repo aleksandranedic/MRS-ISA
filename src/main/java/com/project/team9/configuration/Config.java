@@ -3,7 +3,10 @@ package com.project.team9.configuration;
 import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
+import com.project.team9.model.buissness.Pointlist;
 import com.project.team9.model.buissness.Pricelist;
+import com.project.team9.model.buissness.SiteFee;
+import com.project.team9.model.buissness.UserCategory;
 import com.project.team9.model.request.*;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
@@ -54,12 +57,16 @@ public class Config {
     VendorReviewRequestRepository vendorReviewRequestRepository;
     ClientReviewRequestRepository clientReviewRequestRepository;
     ComplaintsRepository complaintsRepository;
+    UserCategoryRepository userCategoryRepository;
+    SiteFeeRepository siteFeeRepository;
+    PointlistRepository pointlistRepository;
+
     private Random random;
     private HashMap<Integer, String> messages;
 
 
     @Bean
-    CommandLineRunner configureTestData(ComplaintsRepository complaintsRepository,ClientReviewRequestRepository clientReviewRequestRepository, VendorReviewRequestRepository vendorReviewRequestRepository, AdventureRepository adventureRepository, FishingInstructorRepository fishingInstructorRepository, PricelistRepository pricelistRepository, AddressRepository addressRepository, TagRepository tagRepository, AdventureReservationRepository adventureReservationRepository, AppointmentRepository appointmentRepository, ImageRepository imageRepository, ClientRepository clientRepository, VacationHouseOwnerRepository vacationHouseOwnerRepository, VacationHouseRepository vacationHouseRepository, RoleRepository roleRepository, BoatOwnerRepository boatOwnerRepository, BoatRepository boatRepository, VacationHouseReservationRepository vacationHouseReservationRepository, BoatReservationRepository boatReservationRepository, ClientReviewRepository clientReviewRepository, RegistrationRequestRepository registrationRequestRepository, DeleteRequestRepository deleteRequestRepository, AdministratorRepository administratorRepository, TestData testData) {
+    CommandLineRunner configureTestData(SiteFeeRepository siteFeeRepository, PointlistRepository pointlistRepository, UserCategoryRepository userCategoryRepository, ComplaintsRepository complaintsRepository,ClientReviewRequestRepository clientReviewRequestRepository, VendorReviewRequestRepository vendorReviewRequestRepository, AdventureRepository adventureRepository, FishingInstructorRepository fishingInstructorRepository, PricelistRepository pricelistRepository, AddressRepository addressRepository, TagRepository tagRepository, AdventureReservationRepository adventureReservationRepository, AppointmentRepository appointmentRepository, ImageRepository imageRepository, ClientRepository clientRepository, VacationHouseOwnerRepository vacationHouseOwnerRepository, VacationHouseRepository vacationHouseRepository, RoleRepository roleRepository, BoatOwnerRepository boatOwnerRepository, BoatRepository boatRepository, VacationHouseReservationRepository vacationHouseReservationRepository, BoatReservationRepository boatReservationRepository, ClientReviewRepository clientReviewRepository, RegistrationRequestRepository registrationRequestRepository, DeleteRequestRepository deleteRequestRepository, AdministratorRepository administratorRepository, TestData testData) {
         this.complaintsRepository=complaintsRepository;
         this.clientReviewRequestRepository = clientReviewRequestRepository;
         this.adventureRepository = adventureRepository;
@@ -83,6 +90,9 @@ public class Config {
         this.registrationRequestRepository = registrationRequestRepository;
         this.deleteRequestRepository = deleteRequestRepository;
         this.administratorRepository = administratorRepository;
+        this.userCategoryRepository = userCategoryRepository;
+        this.siteFeeRepository = siteFeeRepository;
+        this.pointlistRepository = pointlistRepository;
 
         this.testData = testData;
         this.random = new Random();
@@ -148,7 +158,7 @@ public class Config {
 
         FishingInstructor fishingInstructor15 = getFishingInstructor("/images/instructors/15/fishing_instructor_15.jpg", "15", 15L, "Mirko", "Grujin", "Mnogi smatraju da je pecanje monotono, ali ja sam tu da vam pokažem kako pecanje može biti energično!", roleFishingInstructor);
         FishingInstructor fishingInstructor16 = getFishingInstructor("/images/instructors/16/fishing_instructor_16.jpg", "16", 16L, "Ena", "Jovin", "Ne odajem tajne, ovo će biti misteriozno novo iskustvo samo za hrabre.", roleFishingInstructor);
-        FishingInstructor fishingInstructor17 = getFishingInstructor("/images/instructors/17/fishing_instructor_17.jpg", "17", 17L, "Ana", "Jarkov", "Samnom je potpuno opuštena atmosfera sa puno zezanja.", roleFishingInstructor);
+        FishingInstructor fishingInstructor17 = getFishingInstructor("/images/instructors/17/fishing_instructor_17.jpg", "17", 17L, "Ana", "Jarkov", "Sa mnom je potpuno opuštena atmosfera sa puno zezanja.", roleFishingInstructor);
         FishingInstructor fishingInstructor18 = getFishingInstructor("/images/instructors/18/fishing_instructor_18.jpg", "18", 18L, "Isidora", "Stamenkov", "Veoma profesialna osoba. Mada su mi neki dali epitet: 'blesava'.", roleFishingInstructor);
 
         //----------------------------------------------
@@ -464,6 +474,52 @@ public class Config {
         addComplaint(client5.getId(), vacationHouse13.getId(), "VACATION_HOUSE", "Nisam se lepo proveo");
         addComplaint(client5.getId(), boatOwner13.getId(), "BOAT_OWNER", "Neljubazan covek");
 
+        addCategory("Rozo-Plava", 0, 0, 2, "pink-blue", true, false);
+        addCategory("Plavo-Ljubicasta", 3, 5, 8, "blue-purple", true, false);
+        addCategory("Rozo-Plava", 0, 0, 2, "pink-blue", false, true);
+        addCategory("Plavo-Ljubicasta", 3, 5, 8, "blue-purple", false, true);
+
+
+        //--------------------------------------------
+
+        addPointlist(3, "CLIENT");
+        addPointlist(1, "CLIENT");
+        addPointlist(7, "VENDOR");
+        addPointlist(2, "VENDOR");
+
+        addSiteFee(10);
+        addSiteFee(3);
+
+        boat7.addClient(client5);
+        boatRepository.save(boat7);
+        adventure1.addClient(client5);
+        adventureRepository.save(adventure1);
+        vacationHouse14.addClient(client5);
+        vacationHouseRepository.save(vacationHouse14);
+
+    }
+
+    private void addSiteFee(int percentage) {
+        SiteFee siteFee = new SiteFee(percentage);
+        siteFeeRepository.save(siteFee);
+    }
+
+    private void addPointlist(int numOfPoints, String type) {
+        Pointlist pointlist = new Pointlist(numOfPoints, type);
+        pointlistRepository.save(pointlist);
+    }
+
+    private void addCategory(String name, int minimumPoints, int discount, int maximumPoints, String key, boolean isClient, boolean isVendor) {
+        UserCategory userCategory = new UserCategory(
+                name,
+                minimumPoints,
+                maximumPoints,
+                discount,
+                UserCategory.colors.get(key),
+                isClient,
+                isVendor
+        );
+        userCategoryRepository.save(userCategory);
     }
 
     private void addComplaint(Long clientId, Long entityId, String enityType, String text) {
@@ -695,7 +751,7 @@ public class Config {
     }
 
     private void addRegistrationRequest(String text, String aleksa123, String Aleksu, String Aleksić, String email, String number, String FISHING_INSTRUCTOR, String biography) {
-        RegistrationRequest registrationRequest = testData.createRegistrationRequest(text, "", aleksa123, Aleksu, Aleksić, email, "06398765421", "Novi Sad", number, "Laze Nančića", "Srbija", FISHING_INSTRUCTOR, biography, "");
+        RegistrationRequest registrationRequest = testData.createRegistrationRequest(text, "", aleksa123, Aleksu, Aleksić, email, "06398765421", "Novi Sad", number, "Laze Nančića", "Srbija", FISHING_INSTRUCTOR, biography, text);
         registrationRequestRepository.save(registrationRequest);
     }
 
@@ -827,30 +883,5 @@ public class Config {
     }
 
 
-    private List<Appointment> getHourAppointments() {
-        List<Appointment> dayAppointments = new ArrayList<Appointment>();
-
-        for (int i = 1; i < 30; i++) {
-            for (int j = 5; j < 20; j++) {
-                dayAppointments.add(Appointment.getHourAppointment(2022, 4, i, j, 0));
-            }
-        }
-        for (int i = 1; i < 31; i++) {
-            for (int j = 5; j < 20; j++) {
-                dayAppointments.add(Appointment.getHourAppointment(2022, 5, i, j, 0));
-            }
-        }
-        for (int i = 1; i < 31; i++) {
-            for (int j = 5; j < 20; j++) {
-                dayAppointments.add(Appointment.getHourAppointment(2022, 6, i, j, 0));
-            }
-        }
-        for (int i = 1; i < 31; i++) {
-            for (int j = 5; j < 20; j++) {
-                dayAppointments.add(Appointment.getHourAppointment(2022, 7, i, j, 0));
-            }
-        }
-        return dayAppointments;
-    }
 
 }

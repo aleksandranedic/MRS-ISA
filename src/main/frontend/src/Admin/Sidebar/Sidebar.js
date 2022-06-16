@@ -8,9 +8,12 @@ export function Sidebar() {
 
     return (<div className="flex-column"><Navbar bg="light" expand="lg">
         <Nav className="d-flex flex-column m-3 align-items-stretch">
-            <h2 className="fw-light m-3">
-                {localStorage.getItem("firstName") + " " + localStorage.getItem("lastName")}
-            </h2>
+            <a href={frontLink+"admin"} style={{textDecoration:"none", color:"black"}}>
+                <h2 className="fw-light m-3">
+                    {localStorage.getItem("firstName") + " " + localStorage.getItem("lastName")}
+                </h2>
+            </a>
+
             <h4 className="fw-light m-3">Zahtevi</h4>
 
             <Nav.Link className="ms-4" href={frontLink+"admin/registrationRequests"}>
@@ -41,6 +44,16 @@ export function Sidebar() {
             <Nav.Link className="ms-4" href={frontLink+"admin/reports"}>
                 <BsArrowRight className="me-2"/>
                 Izveštaji
+            </Nav.Link>
+
+            <Nav.Link className="ms-4" href={frontLink+"admin/resources"}>
+                <BsArrowRight className="me-2"/>
+                Pregled resursa
+            </Nav.Link>
+
+            <Nav.Link className="ms-4" href={frontLink+"admin/users"}>
+                <BsArrowRight className="me-2"/>
+                Pregled korisnika
             </Nav.Link>
 
             <h4 className="fw-light ms-3">Loyalti program</h4>

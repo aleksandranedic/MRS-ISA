@@ -31,17 +31,20 @@ export function isFishingInstructor() {
     return localStorage.getItem("userRoleName") === fishingInstructor;
 }
 
-export function getProfileLink(){
+export function getProfileLink() {
+
+    let profileLink;
     if (isLoggedIn()) {
         if (isClient()) {
-            return frontLink + "client/" + localStorage.getItem("userId");
+            profileLink = frontLink + "client/" + localStorage.getItem("userId");
         } else if (isVacationHouseOwner()) {
-            return frontLink + "houseOwner/" + localStorage.getItem("userId");
+            profileLink = frontLink + "houseOwner/" + localStorage.getItem("userId");
         } else if (isBoatOwner()) {
-            return frontLink + "boatOwner/" + localStorage.getItem("userId");
+            profileLink = frontLink + "boatOwner/" + localStorage.getItem("userId");
         } else if (isFishingInstructor()) {
-            return frontLink + "fishingInstructor/" + localStorage.getItem("userId");
+            profileLink = frontLink + "fishingInstructor/" + localStorage.getItem("userId");
         }
 
     }
+    return profileLink;
 }

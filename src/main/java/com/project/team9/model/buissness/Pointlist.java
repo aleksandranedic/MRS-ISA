@@ -19,19 +19,15 @@ public class Pointlist {
     private int numOfPoints;
     private Date startTime;
     private Date endTime;
+    private String type; // CLIENT, VENDOR
 
     public Pointlist() {
     }
 
-    public Pointlist(int numOfPoints, Date startTime, Date endTime) {
+    public Pointlist(int numOfPoints, String type) {
         this.numOfPoints = numOfPoints;
-        this.startTime = startTime;
-        this.endTime = endTime;
-    }
-
-    public Pointlist(int numOfPoints, Date startTime) {
-        this.numOfPoints = numOfPoints;
-        this.startTime = startTime;
+        this.startTime = new Date();
+        this.type = type;
     }
 
     public Long getId() {
@@ -64,5 +60,13 @@ public class Pointlist {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
