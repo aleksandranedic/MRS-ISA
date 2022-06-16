@@ -45,4 +45,22 @@ public class UserCategoryService {
         userCategory.setDeleted(true);
         return repository.save(userCategory).getId();
     }
+
+    public UserCategory getVendorCategoryBasedOnPoints(int points) {
+        for (UserCategory userCategory: repository.getAllVendorCategories()) {
+            if (points >= userCategory.getMinimumPoints() && points <= userCategory.getMaximumPoints()){
+                return userCategory;
+            }
+        }
+        return null;
+    }
+
+    public UserCategory getClientCategoryBasedOnPoints(int points) {
+        for (UserCategory userCategory: repository.getAllClientCategories()) {
+            if (points >= userCategory.getMinimumPoints() && points <= userCategory.getMaximumPoints()){
+                return userCategory;
+            }
+        }
+        return null;
+    }
 }

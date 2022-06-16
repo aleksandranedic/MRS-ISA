@@ -43,10 +43,13 @@ public class BoatService {
     private final ReservationService reservationService;
     private final ClientReviewService clientReviewService;
     private final EmailService emailService;
+    private final PointlistService pointlistService;
+    private final UserCategoryService userCategoryService;
+
 
 
     @Autowired
-    public BoatService(BoatRepository repository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, BoatReservationService boatReservationService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService, ClientReviewService clientReviewService, EmailService emailService) {
+    public BoatService(BoatRepository repository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, BoatReservationService boatReservationService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService, ClientReviewService clientReviewService, EmailService emailService, PointlistService pointlistService, UserCategoryService userCategoryService) {
         this.repository = repository;
         this.addressService = addressService;
         this.pricelistService = pricelistService;
@@ -58,6 +61,8 @@ public class BoatService {
         this.reservationService = reservationService;
         this.clientReviewService = clientReviewService;
         this.emailService = emailService;
+        this.pointlistService = pointlistService;
+        this.userCategoryService = userCategoryService;
     }
 
     public List<Boat> getBoats() {
@@ -459,6 +464,14 @@ public class BoatService {
         }
         //TODO napravi potvrdu o rezervaciji na akciju
         boatReservationService.save(reservation);
+
+        Client client = reservation.getClient();
+        client.setNumOfPoints(client.getNumOfPoints()+ pointlistService.getClientPointlist().getNumOfPoints());
+        clientService.addClient(client);
+        reservation.setClient(client);
+
+        boatReservationService.save(reservation);
+
         return reservation.getId();
     }
 
@@ -482,6 +495,8 @@ public class BoatService {
         Boat boat = this.getBoat(id);
 
         int price = boat.getPricelist().getPrice() * appointments.size();
+        int discount = userCategoryService.getClientCategoryBasedOnPoints(client.getNumOfPoints()).getDiscount();
+        price = price * (1 - discount) / 100;
 
         List<Tag> tags = new ArrayList<Tag>();
         for (String text : dto.getAdditionalServicesStrings()) {

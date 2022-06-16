@@ -2,6 +2,7 @@ package com.project.team9.service;
 
 import com.project.team9.dto.ClientReviewDTO;
 import com.project.team9.dto.ReviewScoresDTO;
+import com.project.team9.dto.UserStatDTO;
 import com.project.team9.model.request.VendorReviewRequest;
 import com.project.team9.model.review.ClientReview;
 import com.project.team9.model.review.VendorReview;
@@ -18,17 +19,21 @@ import java.util.List;
 @Service
 public class ClientReviewService {
     private final ClientReviewRepository repository;
-    private final ClientService clientService;
     private final VendorReviewRequestService vendorReviewRequestService;
     private final VendorReviewRepository vendorReviewRepository;
+    private final ClientService clientService;
+    private final UserCategoryService userCategoryService;
 
 
     @Autowired
-    public ClientReviewService(ClientReviewRepository repository, ClientService clientService, VendorReviewRequestService vendorReviewRequestService, VendorReviewRepository vendorReviewRepository) {
+    public ClientReviewService(ClientReviewRepository repository, ClientService clientService, VendorReviewRequestService vendorReviewRequestService, VendorReviewRepository vendorReviewRepository, ClientService clientService1, UserCategoryService userCategoryService) {
         this.repository = repository;
-        this.clientService = clientService;
+
         this.vendorReviewRequestService = vendorReviewRequestService;
         this.vendorReviewRepository = vendorReviewRepository;
+
+        this.clientService = clientService1;
+        this.userCategoryService = userCategoryService;
     }
 
     public List<ClientReviewDTO> getResourceReviews(Long resource_id) {
@@ -128,4 +133,14 @@ public class ClientReviewService {
         repository.save(clientReview);
     }
 
+
+    public UserStatDTO getUserStat(Long id) {
+        Client client = clientService.getById(String.valueOf(id));
+        return new UserStatDTO(
+                0,
+                client.getNumOfPoints(),
+                userCategoryService.getVendorCategoryBasedOnPoints(client.getNumOfPoints()),
+                this.getRating(id, "client")
+        );
+    }
 }

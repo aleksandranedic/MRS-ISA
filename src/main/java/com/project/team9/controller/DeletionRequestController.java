@@ -35,9 +35,15 @@ public class DeletionRequestController {
         return ResponseEntity.ok(service.processDeletionRequest(deleteReplayDTO));
     }
 
-    @DeleteMapping("/client/{id}")
-    public ResponseEntity<String> deleteClient(@PathVariable Long id, @RequestParam String deletingReason) {
-        return ResponseEntity.ok(service.deleteClient(id,deletingReason));
+
+    @PostMapping("/client/{id}")
+    public ResponseEntity<String> deleteClient(@PathVariable Long id, @RequestBody String deletingReason) {
+        return ResponseEntity.ok(service.deleteClient(id,deletingReason, "CLIENT"));
+    }
+
+    @PostMapping("/fishingInstructor/{id}")
+    public ResponseEntity<String> createFishingInstructorRequest(@PathVariable Long id, @RequestBody String deletingReason) {
+        return ResponseEntity.ok(service.deleteClient(id,deletingReason, "FISHING_INSTRUCTOR"));
     }
 
 }

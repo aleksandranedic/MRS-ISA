@@ -8,6 +8,8 @@ import {ToastContainer} from "react-toastify";
 export function RegistrationRequestCard({props}) {
     const [show, setShow] = useState(false);
     const [response,setResponse]=useState("")
+    
+
 
     function handleSubmit(typeOfResponse) {
 
@@ -57,10 +59,10 @@ export function RegistrationRequestCard({props}) {
 
             <Modal show={show} onHide={() => setShow(false)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{props.name}</Modal.Title>
+                    <Modal.Title>{props.firstName+" "+props.lastName}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <img style={{width: "100%", objectFit: "contain"}} src={image} alt={"Nema dokumenata."}/>
+                    <p>{props.registrationRationale}</p>
 
                     <hr className="mb-3 mt-3"/>
 

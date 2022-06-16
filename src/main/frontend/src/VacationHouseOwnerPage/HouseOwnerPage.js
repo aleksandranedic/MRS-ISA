@@ -53,6 +53,17 @@ function HouseOwnerPage() {
 
     const [reservations, setReservations] = useState([]);
 
+    const [stat, setStat] = useState(null);
+
+    const fetchStat = () => {
+        axios
+            .get(backLink + "/houseowner/getStat/" + id)
+            .then(res => {
+                setStat(res.data);
+                console.log(res.data);
+            });
+    };
+
     const fetchReservations = () => {
         axios.get(backLink + "/house/reservation/vacationHouseOwner/" + id).then(res => {
             setReservations(res.data);
@@ -95,6 +106,7 @@ function HouseOwnerPage() {
         fetchReservations();
         fetchHouseOwner();
         fetchReviews();
+        fetchStat();
     }, []);
 
     let buttons = [
@@ -108,8 +120,10 @@ function HouseOwnerPage() {
     }
 
     buttons.push({text: "Recenzije", path: "#reviews"});
-    return (
-        <>
+
+    let html = "";
+    if (stat !== null) {
+        html = <><>
             <Banner caption={houseOwner.firstName + " " + houseOwner.lastName}/>
             <Navigation buttons={
                 buttons}
@@ -123,11 +137,13 @@ function HouseOwnerPage() {
 
                 <OwnerInfo
                     name={houseOwner.firstName + " " + houseOwner.lastName}
-                    rate={4.5}
+                    rate={stat.rating}
                     email={houseOwner.email}
                     phoneNum={houseOwner.phoneNumber}
                     address={houseOwner.address}
                     profileImg={houseOwner.profileImg !== null ? backLink + houseOwner.profileImg.path : profilePicturePlaceholder}
+                    category={stat.category}
+                    points={stat.points}
                 />
                 <hr/>
                 <OwnerHouses myPage={myPage} houses={ownerHouses}/>
@@ -166,7 +182,10 @@ function HouseOwnerPage() {
 
             <BeginButton/>
         </>
-    );
+        </>;
+    }
+
+    return html;
 }
 
 export default HouseOwnerPage;

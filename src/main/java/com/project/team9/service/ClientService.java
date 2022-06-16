@@ -3,10 +3,12 @@ package com.project.team9.service;
 import com.project.team9.dto.ClientDTO;
 import com.project.team9.dto.LoginDTO;
 import com.project.team9.dto.ReservationDTO;
+
 import com.project.team9.model.Address;
 import com.project.team9.model.Image;
-import com.project.team9.model.request.DeleteRequest;
-import com.project.team9.model.reservation.*;
+import com.project.team9.model.reservation.AdventureReservation;
+import com.project.team9.model.reservation.BoatReservation;
+import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.user.Client;
 import com.project.team9.repo.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +38,7 @@ public class ClientService {
     @Autowired
     public ClientService(ClientRepository clientRepository, ImageService imageService, AdventureReservationService adventureReservationService, BoatReservationService boatReservationService, VacationHouseReservationService vacationHouseReservationService,
                          AddressService addressService
-    ) {
+                         ) {
         this.clientRepository = clientRepository;
         this.imageService = imageService;
         this.adventureReservationService = adventureReservationService;
@@ -162,4 +164,5 @@ public class ClientService {
         currentClient = addClient(currentClient);
         return currentClient;
     }
+
 }

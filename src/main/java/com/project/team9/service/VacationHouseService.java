@@ -43,9 +43,13 @@ public class VacationHouseService {
     private final ClientService clientService;
     private final ReservationService reservationService;
     private final EmailService emailService;
+    private final PointlistService pointlistService;
+    private final UserCategoryService userCategoryService;
+
+
 
     @Autowired
-    public VacationHouseService(VacationHouseRepository vacationHouseRepository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, VacationHouseReservationService vacationHouseReservationService, ClientReviewService clientReviewService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService, EmailService emailService) {
+    public VacationHouseService(VacationHouseRepository vacationHouseRepository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, VacationHouseReservationService vacationHouseReservationService, ClientReviewService clientReviewService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService, EmailService emailService, PointlistService pointlistService, UserCategoryService userCategoryService) {
         this.repository = vacationHouseRepository;
         this.addressService = addressService;
         this.pricelistService = pricelistService;
@@ -57,6 +61,8 @@ public class VacationHouseService {
         this.clientService = clientService;
         this.reservationService = reservationService;
         this.emailService = emailService;
+        this.pointlistService = pointlistService;
+        this.userCategoryService = userCategoryService;
     }
 
     public List<VacationHouse> getVacationHouses() {
@@ -455,6 +461,13 @@ public class VacationHouseService {
         }
         //TODO napravi potvrdu o rezervaciji na akciju
         vacationHouseReservationService.save(reservation);
+
+        Client client = reservation.getClient();
+        client.setNumOfPoints(client.getNumOfPoints()+ pointlistService.getClientPointlist().getNumOfPoints());
+        clientService.addClient(client);
+        reservation.setClient(client);
+
+        vacationHouseReservationService.save(reservation);
         return reservation.getId();
     }
 
@@ -478,6 +491,8 @@ public class VacationHouseService {
         VacationHouse vacationHouse = this.getVacationHouse(id);
 
         int price = vacationHouse.getPricelist().getPrice() * appointments.size();
+        int discount = userCategoryService.getClientCategoryBasedOnPoints(client.getNumOfPoints()).getDiscount();
+        price = price * (1 - discount) / 100;
 
         List<Tag> tags = new ArrayList<Tag>();
         for (String text : dto.getAdditionalServicesStrings()) {

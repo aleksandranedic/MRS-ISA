@@ -97,5 +97,10 @@ public class VacationHouseOwnerController {
         service.deleteById(id);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/getStat/{id}")
+    public UserStatDTO getUserStat(@PathVariable Long id) {
+        return service.getUserStat(id);
+    }
 }
 

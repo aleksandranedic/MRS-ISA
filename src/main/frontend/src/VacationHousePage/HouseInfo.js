@@ -12,7 +12,7 @@ export default function HouseInfo({house}) {
 
     const fetchOwner = () => {
         axios
-        .get("http://localhost:4444/house/getOwner/" + id)
+        .get(backLink + "/house/getOwner/" + id)
         .then(res => {
             setOwner(res.data);
         });
