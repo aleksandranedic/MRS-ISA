@@ -136,9 +136,9 @@ public class AdventureController {
         return service.findAdventuresWithOwner(ownerId);
     }
 
-    @DeleteMapping("/{id}/delete")
-    void deleteById(@PathVariable String id) {
-        service.deleteById(id);
+    @PostMapping("/delete/{id}")
+    Long deleteById(@PathVariable Long id) {
+        return service.deleteById(id);
     }
 
     @GetMapping("/address")
