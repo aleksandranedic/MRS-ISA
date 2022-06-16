@@ -1,9 +1,9 @@
 package com.project.team9.service;
 
-import com.project.team9.dto.AttendanceReportParams;
-import com.project.team9.dto.IncomeReport;
-import com.project.team9.dto.IncomeReportDateRange;
+import com.project.team9.dto.*;
+import com.project.team9.exceptions.CannotDeleteException;
 import com.project.team9.exceptions.UserNotFoundException;
+import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
@@ -36,13 +36,21 @@ public class FishingInstructorService {
     private final ImageService imageService;
     private final AdventureReservationService adventureReservationService;
     private final AdventureRepository adventureRepository;
+    private final ClientReviewService clientReviewService;
+    private final UserCategoryService userCategoryService;
+    private final AddressService addressService;
+
+
 
     @Autowired
-    public FishingInstructorService(FishingInstructorRepository repository, ImageService imageService, AdventureReservationService adventureReservationService, AdventureRepository adventureRepository) {
+    public FishingInstructorService(FishingInstructorRepository repository, ImageService imageService, AdventureReservationService adventureReservationService, AdventureRepository adventureRepository, ClientReviewService clientReviewService, UserCategoryService userCategoryService, AddressService addressService) {
         this.repository = repository;
         this.imageService = imageService;
         this.adventureReservationService = adventureReservationService;
         this.adventureRepository = adventureRepository;
+        this.clientReviewService = clientReviewService;
+        this.userCategoryService = userCategoryService;
+        this.addressService = addressService;
     }
 
     public List<FishingInstructor> getFishingInstructors() {
@@ -330,5 +338,40 @@ public class FishingInstructorService {
                 names.add(fullName);
         }
         return names;
+    }
+
+    public Long deleteById(Long id) throws CannotDeleteException {
+        FishingInstructor fishingInstructor = repository.get(id);
+        fishingInstructor.setDeleted(true);
+
+        for (AdventureReservation r:  adventureReservationService.getAdventureReservationsForVendorId(id)) {
+            if (r.getAppointments().get(r.getAppointments().size() - 1).getEndTime().isAfter(LocalDateTime.now())) {
+                throw new CannotDeleteException();
+            }
+        }
+
+        return repository.save(fishingInstructor).getId();
+    }
+
+    public UserStatDTO getUserStat(Long id) {
+        FishingInstructor fishingInstructor = repository.get(id);
+        return new UserStatDTO(
+                0,
+                fishingInstructor.getNumOfPoints(),
+                userCategoryService.getVendorCategoryBasedOnPoints(fishingInstructor.getNumOfPoints()),
+                clientReviewService.getRating(id, "vendor")
+        );
+    }
+
+    public Long edit(FishingInstructorDTO dto) {
+        Address address = new Address(dto.getPlace(), dto.getNumber(), dto.getStreet(), dto.getCountry());
+        addressService.addAddress(address);
+
+        FishingInstructor fishingInstructor = repository.getById(dto.getId());
+        fishingInstructor.setFirstName(dto.getFirstName());
+        fishingInstructor.setLastName(dto.getLastName());
+        fishingInstructor.setPhoneNumber(dto.getPhoneNumber());
+        fishingInstructor.setAddress(address);
+        return repository.save(fishingInstructor).getId();
     }
 }
