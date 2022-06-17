@@ -306,8 +306,16 @@ public class VacationHouseService {
         repository.save(house);
     }
 
+    @Transactional(readOnly = false)
     public boolean deleteById(Long id) {
-        VacationHouse vh = getVacationHouse(id);
+        VacationHouse vh;
+        try{
+            vh = getByIdConcurrent(id);
+        }
+        catch (PessimisticLockingFailureException plfe){
+            System.out.println("opa djurfjo");
+            return false;
+        }
         if (getReservationsForVacationHouse(id).size() > 0)
             return false;
         vh.setDeleted(true);

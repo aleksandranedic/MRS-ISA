@@ -53,7 +53,7 @@ function QuickReservation({reservation,availableTags, name, address, image, enti
             axios.post(backLink + "/adventure/quickReservations/reserve", dto)
             .then(res => {
                 if (res.data === ''){
-                    notifyError("Akcija je rezervisana, molimo Vas izaberite drugu.")
+                    notifyError("Neuspešno. Molimo Vas pokušajte ponovo.")
                 }
                 else if (res.data === -1){
                     notifyError("Akcija je rezervisana, molimo Vas izaberite drugu.")
@@ -70,7 +70,7 @@ function QuickReservation({reservation,availableTags, name, address, image, enti
             axios.post(backLink + "/house/quickReservations/reserve", dto)
             .then(res => {
                 if (res.data === ''){
-                    notifyError("Akcija je rezervisana, molimo Vas izaberite drugu.")
+                    notifyError("Neuspešno. Molimo Vas pokušajte ponovo.")
                 }
                 else if (res.data === -1){
                     notifyError("Akcija je rezervisana, molimo Vas izaberite drugu.")
@@ -87,7 +87,7 @@ function QuickReservation({reservation,availableTags, name, address, image, enti
             axios.post(backLink + "/boat/quickReservations/reserve", dto)
             .then(res => {
                 if (res.data === ''){
-                    notifyError("Akcija je rezervisana, molimo Vas izaberite drugu.")
+                    notifyError("Neuspešno. Molimo Vas pokušajte ponovo.")
                 }
                 else if (res.data === -1){
                     notifyError("Akcija je rezervisana, molimo Vas izaberite drugu.")

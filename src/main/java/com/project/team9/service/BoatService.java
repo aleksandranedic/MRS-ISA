@@ -317,8 +317,15 @@ public class BoatService {
         repository.save(boat);
     }
 
+    @Transactional(readOnly = false)
     public boolean deleteById(Long id) {
-        Boat boat = this.getBoat(id);
+        Boat boat;
+        try{
+            boat = this.getByIdConcurrent(id);
+        }
+        catch (PessimisticLockingFailureException plfe){
+            return false;
+        }
         if (getReservationsForBoat(id).size() > 0)
             return false;
         boat.setDeleted(true);
