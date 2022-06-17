@@ -1,11 +1,14 @@
 package com.project.team9.model.request;
 
 import javax.persistence.Entity;
+import javax.persistence.Version;
 
 @Entity
 public class DeleteRequest extends Request{
     private Long userId;
     private String userType;
+    @Version
+    private Long version;
 
     public DeleteRequest() {
     }

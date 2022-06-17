@@ -1,7 +1,7 @@
 import {Badge, Button, Card, Form, Modal} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {backLink, loadingToast, updateForFetchedDataSuccess} from "../Consts";
+import {backLink, loadingToast, updateForFetchedDataError, updateForFetchedDataSuccess} from "../Consts";
 import {ToastContainer} from "react-toastify";
 
 export function DeletionRequestCard({request}) {
@@ -19,15 +19,22 @@ export function DeletionRequestCard({request}) {
             type: type
         }
         let id = loadingToast()
-        axios.post(backLink + "/deletionRequests/validateDeletion", dto).then(
-            response => {
+        axios.post(backLink + "/deletionRequests/validateDeletion", dto)
+        .then( response => {
                 updateForFetchedDataSuccess(response.data, id)
                 setShow(false)
                 setTimeout(function () {
                     window.location.reload();
-                }, 2000)
+                }, 2000);
             }
         )
+        .catch(function (error) {
+            updateForFetchedDataError(error.response.data, id)
+                setShow(false)
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000);
+        });
     }
 
     const fetchUserData = () => {

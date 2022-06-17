@@ -60,7 +60,7 @@ function QuickReservation({reservation,availableTags, name, address, image, enti
                 }              
                 else {
                     notifySuccess("Akcija rezervisana.");
-                    //window.location.reload();      
+                    setTimeout(function () {window.location.reload();}, 3000)    
                 }
             }).catch(error => {
                 console.log(error.message);
@@ -77,7 +77,7 @@ function QuickReservation({reservation,availableTags, name, address, image, enti
                 }              
                 else {
                     notifySuccess("Akcija rezervisana.");
-                    //window.location.reload();      
+                    setTimeout(function () {window.location.reload();}, 3000)         
                 }
             }).catch(error => {
                 console.log(error.message);
@@ -94,7 +94,7 @@ function QuickReservation({reservation,availableTags, name, address, image, enti
                 }              
                 else {
                     notifySuccess("Akcija rezervisana.");
-                    //window.location.reload();      
+                    setTimeout(function () {window.location.reload();}, 3000)        
                 }
             }).catch(error => {
                 console.log(error.message);
