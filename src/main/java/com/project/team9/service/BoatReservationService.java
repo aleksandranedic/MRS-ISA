@@ -71,4 +71,9 @@ public class BoatReservationService {
     public List<BoatReservation> getBoatReservationsForClientId(Long id) {
         return repository.findBoatReservationByClientId(id);
     }
+
+    public void deleteReservation(BoatReservation boatReservation) {
+        boatReservation.setDeleted(true);
+        repository.save(boatReservation);
+    }
 }

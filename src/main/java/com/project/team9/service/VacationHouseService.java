@@ -6,6 +6,7 @@ import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
+import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.resource.VacationHouse;
@@ -454,6 +455,14 @@ public class VacationHouseService {
             }
         }
         //TODO napravi potvrdu o rezervaciji na akciju
+        Client client=clientService.getById(String.valueOf(dto.getClientId()));
+        String link = "<a href=\"" + "http://localhost:3000\">Prijavi i rezervišivi još neku avanturu</a>";
+        String fullResponse = "Uspešno ste rezervisali akciju na vikendicu sa imenom "+ reservation.getResource().getTitle() +"\n " +
+                "Avantura kоšta " + reservation.getPrice() + "\n" +
+                "Zakazani period je od " + reservation.getAppointments().get(0).getStartTime().toString() + " do " +
+                reservation.getAppointments().get(reservation.getAppointments().size() - 1).getEndTime().toString();
+        String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda brze rezervacije");
+        emailService.send(client.getEmail(), email, "Potvrda brze rezervacije");
         vacationHouseReservationService.save(reservation);
         return reservation.getId();
     }
@@ -707,6 +716,13 @@ public class VacationHouseService {
 
         Long id = vacationHouseReservationService.save(quickReservation);
         repository.save(vacationHouse);
+        String link = "<a href=\"" + "http://localhost:3000\">Prijavi i rezervišivi još neku avanturu</a>";
+        String fullResponse = "Uspešno ste rezervisali akciju na vikendicu sa imenom "+ quickReservation.getResource().getTitle() +"\n " +
+                "Rezervacija vikendice kоšta " + quickReservation.getPrice() + "\n" +
+                "Zakazani period je od " + quickReservation.getAppointments().get(0).getStartTime().toString() + " do " +
+                quickReservation.getAppointments().get(quickReservation.getAppointments().size() - 1).getEndTime().toString();
+        String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda rezervacije");
+        emailService.send(client.getEmail(), email, "Potvrda rezervacije");
         return id;
         //TODO napravi potvrdu o rezervaciji na akciju
     }
@@ -772,5 +788,25 @@ public class VacationHouseService {
         }
 
         return houses;
+    }
+
+    public String cancelVacationHouseReservation(Long id) {
+        try{
+            VacationHouseReservation vacationHouseReservation=vacationHouseReservationService.getVacationHouseReservation(id);
+            LocalDateTime now=LocalDateTime.now();
+            int numberOfDaysBetween = (int) ChronoUnit.DAYS.between(now.toLocalDate(), vacationHouseReservation.getAppointments().get(0).getStartTime());
+            if(numberOfDaysBetween<3){
+                return  "Otkazivanje rezervacije je moguće najkasnije 3 dana do početka";
+            }
+            for (Appointment appointment :
+                    vacationHouseReservation.getAppointments()) {
+                appointmentService.delete(appointment);
+            }
+            vacationHouseReservationService.deleteReservation(vacationHouseReservation);
+            return "Uspešno ste otkazali rezervaciju vikendicu";
+        }catch (Exception exception){
+            return "Otkazivanje rezervacije nije uspelo probajte ponovo";
+        }
+
     }
 }

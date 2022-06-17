@@ -23,4 +23,8 @@ public class AppointmentService {
     public void saveAll(List<Appointment> appointments) {
         repository.saveAll(appointments);
     }
+
+    public void delete(Appointment appointment) {
+        repository.delete(appointment);
+    }
 }

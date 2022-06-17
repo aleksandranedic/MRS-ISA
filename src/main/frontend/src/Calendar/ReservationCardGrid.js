@@ -1,12 +1,23 @@
-import {Card, Col, Row} from "react-bootstrap";
+import  {Button,Card, Col, Row} from "react-bootstrap";
 import {convertToDate} from "./ReservationDateConverter";
 import Tag from "../Tag";
 import React from "react";
 import {TimeFooter} from "./TimeFooter";
+import {backLink, notifySuccess} from "../Consts";
+import axios from "axios";
 
 export function ReservationCardGrid({reservations}) {
 
+    const cancelReservation=(entityType,reservationId)=>{
+        axios.post(backLink+entityType+"/cancelReservation/"+reservationId).then(
+            response=>{
+                notifySuccess(response.data)
+            }
+        )
+    }
+    console.log(reservations)
     let indexesToPop = []
+
     for (let index in reservations) {
         let reservation = reservations.at(index);
         if (reservation.busyPeriod === true) {
@@ -19,7 +30,6 @@ export function ReservationCardGrid({reservations}) {
     for (let index in indexesToPop) {
         reservations.pop(index);
     }
-
     return (<div className="ms-5 me-5"
                  style={{
                      maxHeight: "60vh", overflow: "auto"
@@ -38,6 +48,7 @@ export function ReservationCardGrid({reservations}) {
                             <div className="ms-auto fw-bold">
                                 {reservation.client.firstName + " " + reservation.client.lastName}
                             </div>
+                            <Button variant={"light"} className="ms-1" onClick={cancelReservation(reservation.entityType,reservation.id)}>Otkaži</Button>
                         </Card.Header>
                         <Card.Body>
 

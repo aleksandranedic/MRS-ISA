@@ -38,11 +38,12 @@ public class AdventureService {
     private final ReservationService reservationService;
     private final ClientReviewService clientReviewService;
     private final EmailService emailService;
+    private final ConfirmationTokenService confirmationTokenService;
 
     final String IMAGES_PATH = "/images/adventures/";
 
     @Autowired
-    public AdventureService(AdventureRepository adventureRepository, FishingInstructorService fishingInstructorService, TagService tagService, AddressService addressService, PricelistService pricelistService, ImageService imageService, AppointmentService appointmentService, ClientService clientService, AdventureReservationService adventureReservationService, ReservationService reservationService, ClientReviewService clientReviewService, EmailService emailService) {
+    public AdventureService(AdventureRepository adventureRepository, FishingInstructorService fishingInstructorService, TagService tagService, AddressService addressService, PricelistService pricelistService, ImageService imageService, AppointmentService appointmentService, ClientService clientService, AdventureReservationService adventureReservationService, ReservationService reservationService, ClientReviewService clientReviewService, EmailService emailService, ConfirmationTokenService confirmationTokenService) {
         this.repository = adventureRepository;
         this.fishingInstructorService = fishingInstructorService;
         this.tagService = tagService;
@@ -55,6 +56,7 @@ public class AdventureService {
         this.reservationService = reservationService;
         this.clientReviewService = clientReviewService;
         this.emailService = emailService;
+        this.confirmationTokenService = confirmationTokenService;
     }
 
     public List<AdventureQuickReservationDTO> getQuickReservations(String id) {
@@ -339,6 +341,14 @@ public class AdventureService {
         }
         //TODO napravi potvrdu o rezervaciji na akciju
         adventureReservationService.save(reservation);
+        Client client = clientService.getById(String.valueOf(dto.getClientId()));
+        String link = "<a href=\"" + "http://localhost:3000\">Prijavi i rezervišivi još neku avanturu</a>";
+        String fullResponse = "Uspešno ste rezervisali avanturu sa imenom "+ reservation.getResource().getTitle() +"\n " +
+                "Avantura kоšta " + reservation.getPrice() + "\n" +
+                "Zakazani period je od " + reservation.getAppointments().get(0).getStartTime().toString() + " do " +
+                reservation.getAppointments().get(reservation.getAppointments().size() - 1).getEndTime().toString();
+        String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda rezervacije");
+        emailService.send(client.getEmail(), email, "Potvrda rezervacije");
         return reservation.getId();
     }
 
@@ -477,6 +487,13 @@ public class AdventureService {
         adventure.addQuickReservation(quickReservation);
         Long id  = adventureReservationService.save(quickReservation);
         //TODO napravi potvrdu o rezervaciji na akciju
+        String link = "<a href=\"" + "http://localhost:3000\">Prijavi i rezervišivi još neku avanturu</a>";
+        String fullResponse = "Uspešno ste rezervisali akciju na avanturu sa imenom "+ quickReservation.getResource().getTitle() +"\n " +
+                "Avantura kоšta " + quickReservation.getPrice() + "\n" +
+                "Zakazani period je od " + quickReservation.getAppointments().get(0).getStartTime().toString() + " do " +
+                quickReservation.getAppointments().get(quickReservation.getAppointments().size() - 1).getEndTime().toString();
+        String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda brze rezervacije");
+        emailService.send(client.getEmail(), email, "Potvrda brze rezervacije");
         repository.save(adventure);
         return id;
     }
@@ -665,5 +682,24 @@ public class AdventureService {
         }
 
         return adventures;
+    }
+
+    public String cancelAdventureReservation(Long id) {
+        try{
+            AdventureReservation adventureReservation=adventureReservationService.getById(Long.valueOf(id));
+            LocalDateTime now=LocalDateTime.now();
+            int numberOfDaysBetween = (int) ChronoUnit.DAYS.between(now.toLocalDate(), adventureReservation.getAppointments().get(0).getStartTime());
+            if(numberOfDaysBetween<3){
+               return  "Otkazivanje rezervacije je moguće najkasnije 3 dana do početka";
+            }
+            for (Appointment appointment :
+                    adventureReservation.getAppointments()) {
+                appointmentService.delete(appointment);
+            }
+            adventureReservationService.deleteReservation(adventureReservation);
+            return "Uspešno ste otkazali rezervaciju avanture";
+        }catch (Exception exception){
+            return "Otkazivanje rezervacije nije uspelo probajte ponovo";
+        }
     }
 }

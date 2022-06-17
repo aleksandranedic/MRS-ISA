@@ -163,5 +163,8 @@ public class AdventureController {
     public ResponseEntity<List<EntityDTO>> getClientsSubscribedAdventures(@PathVariable Long id){
         return ResponseEntity.ok(service.getClientsSubscribedAdventures());
     }
-
+    @PostMapping("/cancelReservation/{id}")
+    public ResponseEntity<String> cancelAdventureReservation(@PathVariable Long id){
+        return ResponseEntity.ok(service.cancelAdventureReservation(id));
+    }
 }

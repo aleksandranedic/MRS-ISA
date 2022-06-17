@@ -1,6 +1,7 @@
 package com.project.team9.service;
 
 import com.project.team9.dto.ClientDTO;
+import com.project.team9.dto.ClientReservationDTO;
 import com.project.team9.dto.LoginDTO;
 import com.project.team9.dto.ReservationDTO;
 import com.project.team9.model.Address;
@@ -133,13 +134,13 @@ public class ClientService {
     public List<ReservationDTO> getReservations(Long id) {
         List<ReservationDTO> reservations = new ArrayList<>();
         for (AdventureReservation reservation : adventureReservationService.getAdventureReservationsForClientId(id)) {
-            reservations.add(new ReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation(), reservation.getResource().getId()));
+            reservations.add(new ClientReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation(), reservation.getResource().getId(),"adventure"));
         }
         for (BoatReservation reservation : boatReservationService.getBoatReservationsForClientId(id)) {
-            reservations.add(new ReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation(), reservation.getResource().getId()));
+            reservations.add(new ClientReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation(), reservation.getResource().getId(),"boat" ));
         }
         for (VacationHouseReservation reservation : vacationHouseReservationService.getVacationHouseReservationsForClienId(id)) {
-            reservations.add(new ReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation(), reservation.getResource().getId()));
+            reservations.add(new ClientReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation(), reservation.getResource().getId(),"house"));
         }
         return reservations;
     }

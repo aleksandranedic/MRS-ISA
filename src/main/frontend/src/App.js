@@ -36,7 +36,7 @@ function App() {
         if (isLoggedIn()) {
             getLoggedUser();
         }
-    })
+    },[])
 
     const getLoggedUser = () => {
         axios.get(backLink + "/getLoggedUser").then(
@@ -60,7 +60,6 @@ function App() {
                 <Route path="/fishingInstructor/:id" element={<FishingInstructorPage/>}/>
                 <Route path="/boat/:id" element={<BoatProfilePage/>}/>
                 <Route path="/login" element={<Login/>}/>
-
                 <Route path="/admin" element={<AdminPage/>}/>
                 <Route path="/admin/registrationRequests" element={<RegistrationRequests/>}/>
                 <Route path="/admin/deletionRequests" element={<DeletionRequests/>}/>
@@ -72,7 +71,6 @@ function App() {
                 <Route path="/admin/points" element={<Points/>}/>
                 <Route path="/admin/resources" element={<ResourceOverview/>}/>
                 <Route path="/admin/users" element={<UserOverview/>}/>
-
                 <Route path="/search/:searchTerm" element={<SearchResultsPage/>}/>
                 <Route path='/registration' element={<Registration/>}/>
                 <Route path='/confirmedEmail/:token' element={<EmailConfirmed/>}/>

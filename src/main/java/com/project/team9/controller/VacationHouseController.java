@@ -189,4 +189,9 @@ public class VacationHouseController {
     public ResponseEntity<List<EntityDTO>> getClientsSubscribedVacationHouses(@PathVariable Long id){
         return ResponseEntity.ok(service.getClientsSubscribedVacationHouses());
     }
+
+    @PostMapping("/cancelReservation/{id}")
+    public ResponseEntity<String> cancelVacationHouseReservation(@PathVariable Long id){
+        return ResponseEntity.ok(service.cancelVacationHouseReservation(id));
+    }
 }
