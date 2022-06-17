@@ -3,6 +3,7 @@ package com.project.team9.controller;
 import com.project.team9.dto.ClientDTO;
 import com.project.team9.dto.ReservationDTO;
 import com.project.team9.dto.UserStatDTO;
+import com.project.team9.exceptions.CannotDeleteException;
 import com.project.team9.model.Address;
 import com.project.team9.model.request.DeleteRequest;
 import com.project.team9.model.user.Client;
@@ -55,6 +56,9 @@ public class ClientController {
         return clientService.getReservations(id);
     }
 
-
+    @PostMapping("/delete/{id}")
+    Long delete(@PathVariable Long id) throws CannotDeleteException {
+        return clientService.delete(id);
+    }
 }
 

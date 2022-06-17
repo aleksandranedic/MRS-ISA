@@ -5,12 +5,14 @@ import com.project.team9.dto.ClientReservationDTO;
 import com.project.team9.dto.LoginDTO;
 import com.project.team9.dto.ReservationDTO;
 
+import com.project.team9.exceptions.CannotDeleteException;
 import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.user.Client;
+import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.repo.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -166,4 +169,24 @@ public class ClientService {
         return currentClient;
     }
 
+    public Long delete(Long id) throws CannotDeleteException {
+        Client client = clientRepository.getById(id);
+        client.setDeleted(true);
+        for (AdventureReservation r:  adventureReservationService.getAdventureReservationsForClientId(id)) {
+            if (r.getAppointments().get(r.getAppointments().size() - 1).getEndTime().isAfter(LocalDateTime.now())) {
+                throw new CannotDeleteException();
+            }
+        }
+        for (BoatReservation r:  boatReservationService.getBoatReservationsForClientId(id)) {
+            if (r.getAppointments().get(r.getAppointments().size() - 1).getEndTime().isAfter(LocalDateTime.now())) {
+                throw new CannotDeleteException();
+            }
+        }
+        for (VacationHouseReservation r:  vacationHouseReservationService.getVacationHouseReservationsForClienId(id)) {
+            if (r.getAppointments().get(r.getAppointments().size() - 1).getEndTime().isAfter(LocalDateTime.now())) {
+                throw new CannotDeleteException();
+            }
+        }
+        return clientRepository.save(client).getId();
+    }
 }

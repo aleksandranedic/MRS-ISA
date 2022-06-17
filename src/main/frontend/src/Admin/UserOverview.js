@@ -95,6 +95,16 @@ export function UserOverview() {
         })
     }
 
+    function deleteClient(client) {
+        axios.post(backLink + "/client/delete/" + client.id)
+            .then(response => {
+                    window.location.reload();
+                }
+            ).catch(error => {
+            setShowAlert(true);
+        })
+    }
+
     function deleteAdmin(admin) {
         axios.post(backLink + "/admin/delete/" + admin.id)
             .then(response => {
