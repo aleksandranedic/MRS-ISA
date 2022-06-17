@@ -183,4 +183,9 @@ public class BoatController {
     public ResponseEntity<List<EntityDTO>> getClientsSubscribedBoats(@PathVariable Long id){
         return ResponseEntity.ok(service.getClientsSubscribedBoats());
     }
+
+    @PostMapping("/cancelReservation/{id}")
+    public ResponseEntity<String> cancelBoatReservation(@PathVariable Long id){
+        return ResponseEntity.ok(service.cancelBoatReservation(id));
+    }
 }

@@ -10,27 +10,27 @@ import java.util.List;
 @Repository
 public interface VacationHouseReservationRepository extends JpaRepository<VacationHouseReservation, Long> {
 
-    @Query("FROM VacationHouseReservation WHERE isQuickReservation = false AND isBusyPeriod = false")
+    @Query("FROM VacationHouseReservation WHERE isQuickReservation = false AND isBusyPeriod = false AND deleted= false")
     List<VacationHouseReservation> findStandardReservations();
 
-    @Query("FROM VacationHouseReservation  WHERE resource.id = ?1 ")
+    @Query("FROM VacationHouseReservation  WHERE resource.id = ?1 AND deleted= false ")
     List<VacationHouseReservation> findPossibleCollisionReservations(Long resourceId);
 
-    @Query("FROM VacationHouseReservation WHERE isBusyPeriod = true and resource.id = ?1")
+    @Query("FROM VacationHouseReservation WHERE isBusyPeriod = true and resource.id = ?1 AND deleted= false")
     List<VacationHouseReservation> findBusyPeriodForVacationHouse(Long id);
 
-    @Query("FROM VacationHouseReservation  WHERE resource.id = ?1 AND client.id = ?2")
+    @Query("FROM VacationHouseReservation  WHERE resource.id = ?1 AND client.id = ?2 AND deleted= false" )
     List<VacationHouseReservation> findReservationsForClient(Long resourceId, Long clientId);
 
-    @Query("FROM VacationHouseReservation  WHERE resource.owner.id = ?1 AND client.id = ?2")
+    @Query("FROM VacationHouseReservation  WHERE resource.owner.id = ?1 AND client.id = ?2 AND deleted= false")
     List<VacationHouseReservation> findReservationsForClientAndVendor(Long vendorId, Long clientId);
 
-    @Query("FROM VacationHouseReservation WHERE resource.id=?1 ")
+    @Query("FROM VacationHouseReservation WHERE resource.id=?1 AND deleted= false")
     List<VacationHouseReservation> findReservationsByResourceId(Long id);
 
-    @Query("FROM VacationHouseReservation WHERE resource.owner.id=?1 ")
+    @Query("FROM VacationHouseReservation WHERE resource.owner.id=?1  AND deleted= false")
     List<VacationHouseReservation> findVacationHouseReservationForVendorId(Long id);
 
-    @Query("FROM VacationHouseReservation WHERE client.id=?1 ")
+    @Query("FROM VacationHouseReservation WHERE client.id=?1 AND deleted= false")
     List<VacationHouseReservation> findVacationHouseReservationForClientId(Long id);
 }

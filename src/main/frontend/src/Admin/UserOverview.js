@@ -43,6 +43,7 @@ export function UserOverview() {
     let fishingInstructors = GetAllFishingInstructors();
     let boatOwners = GetAllBoatOwners();
     let admins = GetAllAdministrators();
+    console.log(admins)
 
     let clients = GetAllClients();
 
@@ -68,9 +69,8 @@ export function UserOverview() {
     let linkAdmin = "";
     let admin = admins[Math.floor(Math.random() * admins.length)];
     if (typeof admin != "undefined") {
+        console.log(admin)
         linkAdmin = admin.profileImg.path !== null ? backLink + admin.profileImg.path: profilePicturePlaceholder;
-
-
     }
 
     let linkClient = "";

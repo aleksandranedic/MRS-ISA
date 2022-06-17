@@ -6,8 +6,10 @@ import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
+import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
+import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.resource.Boat;
@@ -188,6 +190,13 @@ public class BoatService {
         Long id = boatReservationService.save(quickReservation);
         repository.save(boat);
         //TODO napravi potvrdu o rezervaciji na akciju
+        String link = "<a href=\"" + "http://localhost:3000\">Prijavi i rezervišivi još neku avanturu na brodu</a>";
+        String fullResponse = "Uspešno ste rezervisali akciju na brod sa imenom "+ quickReservation.getResource().getTitle() +"\n " +
+                "Rezervaicija broda kоšta " + quickReservation.getPrice() + "\n" +
+                "Zakazani period je od " + quickReservation.getAppointments().get(0).getStartTime().toString() + " do " +
+                quickReservation.getAppointments().get(quickReservation.getAppointments().size() - 1).getEndTime().toString();
+        String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda brze rezervacije");
+        emailService.send(client.getEmail(), email, "Potvrda brze rezervacije");
 
         return id;
     }
@@ -494,9 +503,15 @@ public class BoatService {
             }
         }
         //TODO napravi potvrdu o rezervaciji na akciju
+        Client client=clientService.getById(String.valueOf(dto.getClientId()));
+        String link = "<a href=\"" + "http://localhost:3000\">Prijavi i rezervišivi još neku avanturu</a>";
+        String fullResponse = "Uspešno ste rezervisali avanturu na brodu sa imenom "+ reservation.getResource().getTitle() +"\n " +
+                "Rezervacija broda kоšta " + reservation.getPrice() + "\n" +
+                "Zakazani period je od " + reservation.getAppointments().get(0).getStartTime().toString() + " do " +
+                reservation.getAppointments().get(reservation.getAppointments().size() - 1).getEndTime().toString();
+        String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda rezervacije");
+        emailService.send(client.getEmail(), email, "Potvrda rezervacije");
         boatReservationService.save(reservation);
-
-        Client client = reservation.getClient();
         client.setNumOfPoints(client.getNumOfPoints()+ pointlistService.getClientPointlist().getNumOfPoints());
         clientService.addClient(client);
         reservation.setClient(client);
@@ -860,5 +875,24 @@ public class BoatService {
         }
 
         return boats;
+    }
+
+    public String cancelBoatReservation(Long id) {
+        try{
+            BoatReservation boatReservation=boatReservationService.getBoatReservation(id);
+            LocalDateTime now=LocalDateTime.now();
+            int numberOfDaysBetween = (int) ChronoUnit.DAYS.between(now.toLocalDate(), boatReservation.getAppointments().get(0).getStartTime());
+            if(numberOfDaysBetween<3){
+                return  "Otkazivanje rezervacije je moguće najkasnije 3 dana do početka";
+            }
+            for (Appointment appointment :
+                    boatReservation.getAppointments()) {
+                appointmentService.delete(appointment);
+            }
+            boatReservationService.deleteReservation(boatReservation);
+            return "Uspešno ste otkazali rezervaciju vikendicu";
+        }catch (Exception exception){
+            return "Otkazivanje rezervacije nije uspelo probajte ponovo";
+        }
     }
 }

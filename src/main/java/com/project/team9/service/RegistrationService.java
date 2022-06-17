@@ -1,5 +1,6 @@
 package com.project.team9.service;
 
+import com.project.team9.model.Image;
 import com.project.team9.model.request.RegistrationRequest;
 import com.project.team9.model.user.Administrator;
 import com.project.team9.model.user.Client;
@@ -20,17 +21,17 @@ public class RegistrationService {
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailService emailService;
     private final RoleService roleService;
-    private final AdministratorService administratorService;
+    private final ImageService imageService;
 
 
     @Autowired
-    public RegistrationService(UserServiceSecurity userServiceSecurity, RegistrationRequestService registrationRequestService, EmailService emailService, ConfirmationTokenService confirmationTokenService, RoleService roleService, AdministratorService administratorService) {
+    public RegistrationService(UserServiceSecurity userServiceSecurity, RegistrationRequestService registrationRequestService, EmailService emailService, ConfirmationTokenService confirmationTokenService, RoleService roleService, ImageService imageService) {
         this.userServiceSecurity = userServiceSecurity;
         this.registrationRequestService = registrationRequestService;
         this.confirmationTokenService = confirmationTokenService;
         this.emailService = emailService;
         this.roleService = roleService;
-        this.administratorService = administratorService;
+        this.imageService = imageService;
     }
 
     private static char[] generatePassword(int length) {
@@ -64,9 +65,7 @@ public class RegistrationService {
 
         switch (registrationRequest.getUserRole()) {
             case "ADMINISTRATOR":
-
                 String password = String.valueOf(generatePassword(12));
-
                 Administrator administrator = new Administrator(
                         password,
                         registrationRequest.getFirstName(),
@@ -79,11 +78,14 @@ public class RegistrationService {
                         registrationRequest.getCountry(),
                         Boolean.FALSE, role
                 );
-
                 administrator.setConfirmed(false);
-                administratorService.save(administrator);
-
-                //TODO: Salji mail sa novom sifrom
+                Image image=new Image();
+                image.setPath(null);
+                imageService.save(image);
+                administrator.setProfileImg(image);
+                String emailMessage=userServiceSecurity.signUpAdmin(administrator);
+                String email=emailService.buildHTMLEmail(administrator.getName(),emailMessage,"","Registracija na sajt Savana");
+                emailService.send(administrator.getEmail(),email,"Registracija na sajt Savana");
                 response = "Uspešno ste registrovali novog administratora.";
                 break;
             case "CLIENT":
@@ -99,8 +101,9 @@ public class RegistrationService {
                         registrationRequest.getCountry(),
                         Boolean.FALSE, role);
                 String token = userServiceSecurity.signUpUser(user);
+                // TODO izvadi localhost:3000
                 String link = "<a href=\""+"http://localhost:3000/confirmedEmail/" + token+"\">Aktivirajte</a>";
-                String email=emailService.buildHTMLEmail(user.getName(),"Hvala na registraciji. Molim Vas kliknite link ispod da bi aktivirali svoj nalog:", link ,"Verifikacija emaila");
+                email=emailService.buildHTMLEmail(user.getName(),"Hvala na registraciji. Molim Vas kliknite link ispod da bi aktivirali svoj nalog:", link ,"Verifikacija emaila");
                 emailService.send(user.getEmail(), email, "Verifikacija emaila");
                 ConfirmationToken confirmationToken = new ConfirmationToken(
                         token,

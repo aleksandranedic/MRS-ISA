@@ -83,6 +83,22 @@ public class UserServiceSecurity implements UserDetailsService {
         confirmationTokenService.saveConfirmationToken(confirmationToken);
         return token;
     }
+    public String signUpAdmin(Administrator administrator){
+        if (administratorService.getAdministratorByEmail(administrator.getEmail()) != null)
+            return "korisnik vec postoji";
+
+        String password=administrator.getPassword();
+        String encodedPassword=passwordEncoder.bCryptPasswordEncoder().encode(administrator.getPassword());
+        administrator.setPassword(encodedPassword);
+        Address address = addressService.getByAttributes(administrator.getAddress());
+        if (address == null) {
+            addressService.addAddress(administrator.getAddress());
+        } else {
+            administrator.setAddress(address);
+        }
+        administratorService.addAdmin(administrator);
+        return "Registrovani ste na sajt Savana kao administrator. Vaša prijavna loznika je "+password+". Pri prvom prijavljivanju promenite lozinku.";
+    }
     public void addFishingInstructor(FishingInstructor fishingInstructor){
         fishingInstructorService.addFishingInstructor(fishingInstructor);
     }
