@@ -38,6 +38,8 @@ public class User implements UserDetails {
     @ManyToOne
     private Role role;
 
+    private boolean isConfirmed;
+
     public User() {
     }
 
@@ -51,6 +53,7 @@ public class User implements UserDetails {
         this.address = address;
         this.deleted = deleted;
         this.role = role;
+        this.isConfirmed = true;
     }
 
     public User(Image profileImg, String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, Role role) {
@@ -63,7 +66,21 @@ public class User implements UserDetails {
         this.deleted = deleted;
         this.role = role;
         this.address = new Address(place, number, street, country);
+        this.isConfirmed = true;
     }
+
+    public User(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, Role role) {
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.deleted = deleted;
+        this.role = role;
+        this.address = new Address(place, number, street, country);
+        this.isConfirmed = true;
+    }
+
     public String getName(){
         return firstName + " " + lastName;
     }
@@ -210,5 +227,13 @@ public class User implements UserDetails {
 
     public String getRoleName() {
         return role.getName();
+    }
+
+    public boolean isConfirmed() {
+        return isConfirmed;
+    }
+
+    public void setConfirmed(boolean confirmed) {
+        isConfirmed = confirmed;
     }
 }

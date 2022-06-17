@@ -116,10 +116,10 @@ public class DeleteRequestService {
         return response;
     }
 
-    public String deleteClient(Long id,String deletingReason) {
+    public String deleteUser(Long id,String deletingReason, String UserType) {
         DeleteRequest deleteRequest = new DeleteRequest();
         deleteRequest.setUserId(id);
-        deleteRequest.setUserType("CLIENT");
+        deleteRequest.setUserType(UserType);
         deleteRequest.setComment(deletingReason);
         deleteRequest.setResponse("");
         deleteRequestRepository.save(deleteRequest);

@@ -44,9 +44,13 @@ public class VacationHouseService {
     private final ClientService clientService;
     private final ReservationService reservationService;
     private final EmailService emailService;
+    private final PointlistService pointlistService;
+    private final UserCategoryService userCategoryService;
+
+
 
     @Autowired
-    public VacationHouseService(VacationHouseRepository vacationHouseRepository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, VacationHouseReservationService vacationHouseReservationService, ClientReviewService clientReviewService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService, EmailService emailService) {
+    public VacationHouseService(VacationHouseRepository vacationHouseRepository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, VacationHouseReservationService vacationHouseReservationService, ClientReviewService clientReviewService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService, EmailService emailService, PointlistService pointlistService, UserCategoryService userCategoryService) {
         this.repository = vacationHouseRepository;
         this.addressService = addressService;
         this.pricelistService = pricelistService;
@@ -58,6 +62,8 @@ public class VacationHouseService {
         this.clientService = clientService;
         this.reservationService = reservationService;
         this.emailService = emailService;
+        this.pointlistService = pointlistService;
+        this.userCategoryService = userCategoryService;
     }
 
     public List<VacationHouse> getVacationHouses() {
@@ -74,6 +80,8 @@ public class VacationHouseService {
         List<VacationHouse> houses = repository.findByOwnerId(owner_id);
         List<HouseCardDTO> houseCards = new ArrayList<HouseCardDTO>();
         for (VacationHouse house : houses) {
+            if (house.getDeleted())
+                continue;
             String address = house.getAddress().getStreet() + " " + house.getAddress().getNumber() + ", " + house.getAddress().getPlace() + ", " + house.getAddress().getCountry();
             String thumbnail = "./images/housenotext.png";
             if (house.getImages().size() > 0) {
@@ -116,7 +124,15 @@ public class VacationHouseService {
     }
 
     public VacationHouseDTO getVacationHouseDTO(Long id) {
-        VacationHouse vh = repository.getById(id);
+        VacationHouse vh;
+        try{
+            vh = repository.getById(id);
+        }
+        catch (Exception e){
+            return null;
+        }
+        if (vh.getDeleted())
+            return null;
         String address = vh.getAddress().getStreet() + " " + vh.getAddress().getNumber() + ", " + vh.getAddress().getPlace() + ", " + vh.getAddress().getCountry();
         List<String> images = new ArrayList<String>();
         for (Image img : vh.getImages()) {
@@ -267,8 +283,13 @@ public class VacationHouseService {
         repository.save(house);
     }
 
-    public void deleteById(Long id) {
-        repository.deleteById(id);
+    public boolean deleteById(Long id) {
+        VacationHouse vh = getVacationHouse(id);
+        if (getReservationsForVacationHouse(id).size() > 0)
+            return false;
+        vh.setDeleted(true);
+        this.addVacationHouses(vh);
+        return true;
     }
 
     public Long createHouse(VacationHouseDTO house, MultipartFile[] multipartFiles) throws IOException {
@@ -403,6 +424,19 @@ public class VacationHouseService {
         return reservations;
     }
 
+    public boolean haveReservations(Long id){
+        return getReservationsForVacationHouse(id).size() > 0 || haveReservedQuickReservations(id);
+    }
+
+    private boolean haveReservedQuickReservations(Long id){
+        for (VacationHouseReservation vhr : vacationHouseReservationService.getAll()) {
+            if (Objects.equals(vhr.getResource().getId(), id) && vhr.isQuickReservation() && vhr.getClient() != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public List<ReservationDTO> getReservationsForVacationHouse(Long id) {
         List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
 
@@ -464,6 +498,13 @@ public class VacationHouseService {
         String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda brze rezervacije");
         emailService.send(client.getEmail(), email, "Potvrda brze rezervacije");
         vacationHouseReservationService.save(reservation);
+
+        Client client = reservation.getClient();
+        client.setNumOfPoints(client.getNumOfPoints()+ pointlistService.getClientPointlist().getNumOfPoints());
+        clientService.addClient(client);
+        reservation.setClient(client);
+
+        vacationHouseReservationService.save(reservation);
         return reservation.getId();
     }
 
@@ -487,6 +528,8 @@ public class VacationHouseService {
         VacationHouse vacationHouse = this.getVacationHouse(id);
 
         int price = vacationHouse.getPricelist().getPrice() * appointments.size();
+        int discount = userCategoryService.getClientCategoryBasedOnPoints(client.getNumOfPoints()).getDiscount();
+        price = price * (1 - discount) / 100;
 
         List<Tag> tags = new ArrayList<Tag>();
         for (String text : dto.getAdditionalServicesStrings()) {

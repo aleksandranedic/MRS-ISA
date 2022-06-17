@@ -103,7 +103,11 @@ public class AdventureController {
     public Boolean updateQuickReservation(@PathVariable String id, AdventureQuickReservationDTO quickReservation) {
         return service.updateQuickReservation(id, quickReservation);
     }
-
+    @PostMapping(value = "updateAdventure/{id}")
+    public AdventureDTO updateAdventure(@PathVariable String id, AdventureDTO adventureDTO, @RequestParam("fileImage") MultipartFile[] multipartFiles) throws IOException {
+        System.out.println(adventureDTO);
+        return service.updateAdventure(id, adventureDTO, multipartFiles);
+    }
     @GetMapping(value = "/dto/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public AdventureDTO getDTOById(@PathVariable String id) {
         return service.getDTOById(id);
@@ -136,9 +140,9 @@ public class AdventureController {
         return service.findAdventuresWithOwner(ownerId);
     }
 
-    @DeleteMapping("/{id}/delete")
-    void deleteById(@PathVariable String id) {
-        service.deleteById(id);
+    @PostMapping("/delete/{id}")
+    Long deleteById(@PathVariable Long id) {
+        return service.deleteById(id);
     }
 
     @GetMapping("/address")

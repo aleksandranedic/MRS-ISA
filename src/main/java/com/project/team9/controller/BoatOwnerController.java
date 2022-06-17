@@ -1,9 +1,6 @@
 package com.project.team9.controller;
 
-import com.project.team9.dto.AttendanceReportParams;
-import com.project.team9.dto.IncomeReport;
-import com.project.team9.dto.IncomeReportDateRange;
-import com.project.team9.dto.UpdateOwnerDTO;
+import com.project.team9.dto.*;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.service.BoatOwnerService;
@@ -92,6 +89,11 @@ public class BoatOwnerController {
     public ResponseEntity deleteOwner(@PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/getStat/{id}")
+    public UserStatDTO getUserStat(@PathVariable Long id) {
+        return service.getUserStat(id);
     }
 }
 

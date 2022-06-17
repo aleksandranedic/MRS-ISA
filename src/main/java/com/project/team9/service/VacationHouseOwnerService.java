@@ -1,15 +1,10 @@
 package com.project.team9.service;
 
-import com.project.team9.dto.AttendanceReportParams;
-import com.project.team9.dto.IncomeReport;
-import com.project.team9.dto.IncomeReportDateRange;
-import com.project.team9.dto.UpdateOwnerDTO;
+import com.project.team9.dto.*;
 import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.reservation.Appointment;
-import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.reservation.VacationHouseReservation;
-import com.project.team9.model.resource.Boat;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
@@ -35,21 +30,28 @@ public class VacationHouseOwnerService {
     private final AddressService addressService;
     private final ImageService imageService;
     private final VacationHouseService vacationHouseService;
+    private final ClientReviewService clientReviewService;
+    private final UserCategoryService userCategoryService;
 
     final String STATIC_PATH = "src/main/resources/static/";
     final String STATIC_PATH_TARGET = "target/classes/static/";
     final String IMAGES_PATH = "/images/houseOwners/";
 
     @Autowired
-    public VacationHouseOwnerService(VacationHouseOwnerRepository vacationHouseOwnerRepository, AddressService addressService, ImageService imageService, VacationHouseService vacationHouseService) {
+    public VacationHouseOwnerService(VacationHouseOwnerRepository vacationHouseOwnerRepository, AddressService addressService, ImageService imageService, VacationHouseService vacationHouseService, ClientReviewService clientReviewService, UserCategoryService userCategoryService) {
         this.repository = vacationHouseOwnerRepository;
         this.addressService = addressService;
         this.imageService = imageService;
         this.vacationHouseService = vacationHouseService;
+        this.clientReviewService = clientReviewService;
+        this.userCategoryService = userCategoryService;
     }
 
     public VacationHouseOwner getOwner(Long id) {
-        return repository.getById(id);
+        VacationHouseOwner vho = repository.getById(id);
+        if (vho.getDeleted())
+            return null;
+        return vho;
     }
 
     public List<VacationHouseOwner> getVacationHouseOwners() {
@@ -354,5 +356,15 @@ public class VacationHouseOwnerService {
                 names.add(fullName);
         }
         return names;
+    }
+
+    public UserStatDTO getUserStat(Long id) {
+        VacationHouseOwner houseOwner = repository.getById(id);
+        return new UserStatDTO(
+                0,
+                houseOwner.getNumOfPoints(),
+                userCategoryService.getVendorCategoryBasedOnPoints(houseOwner.getNumOfPoints()),
+                clientReviewService.getRating(id, "vendor")
+        );
     }
 }

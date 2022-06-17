@@ -1,9 +1,10 @@
 import React, {useRef, useState} from "react";
 import {Button, Col, Form, InputGroup, Modal} from "react-bootstrap";
 import axios from "axios";
-import {backLink, missingDataErrors} from "../Consts";
+import {backLink, frontLink, missingDataErrors} from "../Consts";
 import AdventureFormImages from "./AdventureFormImages";
 import {TagInfo} from "../Info";
+import {MessagePopupModal} from "../MessagePopupModal";
 
 
 function getDto(formValues, formReference, imagesRef) {
@@ -39,7 +40,6 @@ function getDto(formValues, formReference, imagesRef) {
     for (let i = 0; i < files.length; i++) {
         images.push(files[i])
     }
-
     dto.append("fileImage", images);
     return dto;
 }
@@ -54,6 +54,7 @@ export function AdventureModal({adventure, show, setShow, ownerId}) {
 
     const [formValues, setFormValues] = useState(initialState);
     const [formErrors, setFormErrors] = useState({});
+    const [showAlert, setShowAlert] = useState(false);
 
     const setField = (fieldName, value) => {
         setFormValues({
@@ -68,6 +69,18 @@ export function AdventureModal({adventure, show, setShow, ownerId}) {
         }
     }
 
+    function handleDelete() {
+        axios.post(backLink + "/adventure/delete/" + adventure.id)
+            .then(response => {
+                console.log(response);
+                window.location.href = frontLink + "fishingInstructor/" + adventure.owner.id;
+                }
+            ).catch(error => {
+            setShowAlert(true);
+
+        })
+    }
+
     function addAdventure() {
 
         let dto = getDto(formValues, formReference, imagesRef);
@@ -75,27 +88,25 @@ export function AdventureModal({adventure, show, setShow, ownerId}) {
         axios
             .post("http://localhost:4444/adventure/add", dto)
             .then(response => {
-                console.log(response)
+                window.location.reload();
             })
             .catch(error => {
                 console.log(error)
             })
-        window.location.reload();
-    }
-
-    function editAdventure() {
-
-        let dto = getDto(formValues, formReference, imagesRef);
-        let url = backLink + "/adventure/" + adventure.id + "/edit";
-
-        axios
+        }
+        
+        function editAdventure() {
+            
+            let dto = getDto(formValues, formReference, imagesRef);
+            let url = backLink + "/adventure/updateAdventure/" + adventure.id;
+            
+            axios
             .post(url, dto)
             .then(response => {
-                console.log(response);
-                adventure = response;
+                window.location.reload();            
             })
             .catch(error => {
-                console.log(error);
+                alert(error);
             })
     }
 
@@ -151,6 +162,13 @@ export function AdventureModal({adventure, show, setShow, ownerId}) {
 
     return (
         <>
+            <MessagePopupModal
+                show={showAlert}
+                setShow={setShowAlert}
+                message="Resurs koji ste pokušali da obrišete sadrži rezervacije koje se još nisu ostvarile."
+                heading="Zabranjeno brisanje"
+            />
+
             <Modal show={show} onHide={() => setShow(false)} size="lg">
                 <Form ref={formReference} encType="multipart/form-data">
                     <Modal.Header closeButton>
@@ -168,8 +186,14 @@ export function AdventureModal({adventure, show, setShow, ownerId}) {
                         />
                     </Modal.Body>
                     <Modal.Footer>
+                        {adventure &&
+                            <Button className="me-auto" variant="secondary" onClick={handleDelete}>
+                                Obriši
+                            </Button>
+                        }
+
                         <Button variant="secondary" onClick={() => setShow(false)}>
-                            Otkazi
+                            Otkaži
                         </Button>
                         <Button variant="primary" onClick={handleSubmit}>
                             {adventure ? 'Izmeni' : 'Dodaj'}
@@ -201,6 +225,7 @@ function AdventureForm({
     }
 
     function addImages() {
+        console.log("aaaa")
         let imageList = formValues.images;
 
         if (!imageList) {
@@ -318,7 +343,7 @@ function AdventureForm({
                     marginLeft: "34%",
                     display: "none"
                 }}>Molimo Vas postavite bar jednu fotografiju.</p>
-                <InputGroup className="mb-3">
+                <InputGroup className="mb-3">                   
                     <Form.Control ref={imagesRef} type="file" multiple name="fileImage"/>
                     <Button variant="primary" id="button-addon2" onClick={e => addImages()}> Dodaj </Button>
                 </InputGroup>
@@ -420,7 +445,7 @@ function getInitialAdventureState(adventure, ownerId) {
         for (let index in adventure.images) {
             images.push(backLink + adventure.images.at(index).path)
         }
-
+  
         return {
             title: adventure.title,
             description: adventure.description,

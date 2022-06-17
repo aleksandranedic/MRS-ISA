@@ -9,7 +9,7 @@ import AddVacationHouse from './AddVacationHouse';
 import HouseOwnerForm from "./HouseOwnerForm";
 import {useParams} from "react-router-dom";
 import Navigation from "../Navigation/Navigation";
-import {backLink, profilePicturePlaceholder} from '../Consts';
+import {backLink, frontLink, profilePicturePlaceholder} from '../Consts';
 import {Calendar} from "../Calendar/Calendar";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {processReservationsForUsers} from "../ProcessToEvent";
@@ -17,6 +17,7 @@ import Ratings from '../Reviews/Ratings';
 import {Complaints} from "../Complaints";
 import {isLoggedIn, isMyPage, isClient} from "../Autentification";
 import {ReservationsToReview} from "../Calendar/ReservationsToReview";
+import { getProfileLink } from '../Autentification';
 
 
 const UpdateOwner = ({show, setShow, owner}) => {
@@ -42,7 +43,7 @@ const ReviewsComp = ({reviews}) => {
 
 function HouseOwnerPage() {
     const {id} = useParams();
-    const [houseOwner, setHouseOwner] = useState({address: '', profileImg: {path: ""}});
+    const [houseOwner, setHouseOwner] = useState({address: '', profileImg: {path: profilePicturePlaceholder}});
     const [ownerHouses, setOwnerHouses] = useState([]);
     const [ownerReviews, setOwnerReviews] = useState([])
     const [events, setEvents] = useState(null);
@@ -52,6 +53,17 @@ function HouseOwnerPage() {
     const handleShow = () => setShow(true);
 
     const [reservations, setReservations] = useState([]);
+
+    const [stat, setStat] = useState(null);
+
+    const fetchStat = () => {
+        axios
+            .get(backLink + "/houseowner/getStat/" + id)
+            .then(res => {
+                setStat(res.data);
+                console.log(res.data);
+            });
+    };
 
     const fetchReservations = () => {
         axios.get(backLink + "/house/reservation/vacationHouseOwner/" + id).then(res => {
@@ -78,7 +90,15 @@ function HouseOwnerPage() {
         axios
             .get(backLink + "/houseowner/" + id)
             .then(res => {
+                if (res.data === ''){
+                    var profileLink = getProfileLink();
+                    window.location.href = frontLink + "pageNotFound"
+                }
                 setHouseOwner(res.data);
+                fetchOwnerHouses();
+                fetchReservations();
+                fetchReviews();
+                fetchStat();
             });
     };
 
@@ -91,8 +111,6 @@ function HouseOwnerPage() {
     };
 
     useEffect(() => {
-        fetchOwnerHouses();
-        fetchReservations();
         fetchHouseOwner();
         fetchReviews();
     }, []);
@@ -108,8 +126,10 @@ function HouseOwnerPage() {
     }
 
     buttons.push({text: "Recenzije", path: "#reviews"});
-    return (
-        <>
+
+    let html = "";
+    if (stat !== null) {
+        html = <><>
             <Banner caption={houseOwner.firstName + " " + houseOwner.lastName}/>
             <Navigation buttons={
                 buttons}
@@ -123,11 +143,13 @@ function HouseOwnerPage() {
 
                 <OwnerInfo
                     name={houseOwner.firstName + " " + houseOwner.lastName}
-                    rate={4.5}
+                    rate={stat.rating}
                     email={houseOwner.email}
                     phoneNum={houseOwner.phoneNumber}
                     address={houseOwner.address}
                     profileImg={houseOwner.profileImg !== null ? backLink + houseOwner.profileImg.path : profilePicturePlaceholder}
+                    category={stat.category}
+                    points={stat.points}
                 />
                 <hr/>
                 <OwnerHouses myPage={myPage} houses={ownerHouses}/>
@@ -166,7 +188,10 @@ function HouseOwnerPage() {
 
             <BeginButton/>
         </>
-    );
+        </>;
+    }
+
+    return html;
 }
 
 export default HouseOwnerPage;

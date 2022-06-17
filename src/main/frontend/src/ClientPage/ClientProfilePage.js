@@ -47,6 +47,18 @@ const Client = () => {
 
     const {id} = useParams()
     let html;
+
+    const [stat, setStat] = useState(null);
+
+    const fetchStat = () => {
+        axios
+            .get(backLink + "/review/getStat/" + id)
+            .then(res => {
+                setStat(res.data);
+                console.log(res.data);
+            });
+    };
+
     const fetchClient = () => {
         axios.get(backLink + "/client/" + id).then(res => {
             setClient(res.data)
@@ -90,6 +102,7 @@ const Client = () => {
         fetchAdventures();
         fetchHouses();
         fetchBoats();
+        fetchStat();
     }, []);
 
     const [show, setShow] = useState(false);
@@ -99,7 +112,7 @@ const Client = () => {
 
     const [open, setOpen] = useState(false);
 
-    if (client.length !== 0) {
+    if (client.length !== 0 && stat !== null) {
         html = (<div>
             <Banner caption={client.firstName + " " + client.lastName}/>
             <UpdateClientInfoComp client={client} handleClose={handleClose} showPopUp={show} setClient={setClient}/>
@@ -116,11 +129,14 @@ const Client = () => {
             <div id="info"><OwnerInfo
                 bio={client.biography}
                 name={client.firstName + " " + client.lastName}
-                rate={4.5}
+                rate={stat.rating}
                 email={client.email}
                 phoneNum={client.phoneNumber}
                 address={client.address}
                 profileImg={client.profileImg !== null ? backLink + client.profileImg.path : profilePicturePlaceholder}
+                category={stat.category}
+                points={stat.points}
+                penalty={stat.penalty}
             /></div>
             <ClientLoyalty/>
 

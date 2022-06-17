@@ -177,7 +177,7 @@ function UpdateBoatForm({state, setState, validated, imagesRef, reference}) {
                 <Form.Group as={Col} controlId="formGridAddress">
                 <Form.Label>Broj motora</Form.Label>
                 <Form.Control required placeholder="Broj motora" name="engineNumber" value={state.engineNumber} onChange={e => setEngineNumber(e.target.value)}/>
-                <Form.Control.Feedback type="invalid">Molimo Vas unesite grad.</Form.Control.Feedback>
+                <Form.Control.Feedback type="invalid">Molimo Vas unesite broj motora.</Form.Control.Feedback>
                 </Form.Group>
 
                 <Form.Group as={Col} controlId="formGridCity">

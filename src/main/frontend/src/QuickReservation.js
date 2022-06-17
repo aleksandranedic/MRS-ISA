@@ -9,7 +9,7 @@ import axios from "axios";
 import {backLink} from "./Consts";
 import {isLoggedIn} from "./Autentification";
 
-function QuickReservation({reservation, name, address, image, entity, durationText, type, myPage}) {
+function QuickReservation({reservation,availableTags, name, address, image, entity, durationText, type, myPage}) {
     const [state, setState] = useState({
         startDate: '',
         price: '',
@@ -93,9 +93,11 @@ function QuickReservation({reservation, name, address, image, entity, durationTe
                 <div className='d-flex justify-content-between'>
                     <Card.Title className='mb-1'>{name}</Card.Title>
 
-                    {myPage &&
+
+                        {myPage &&
                         <button onClick={handleShow} style={{zIndex: "3", border: "0", background: "transparent"}}>
-                            <BsPencilSquare/></button>}
+                            <BsPencilSquare/></button>
+                        }
 
                 </div>
                 <div>
@@ -144,7 +146,7 @@ function QuickReservation({reservation, name, address, image, entity, durationTe
             </Card.Body>
             {state.discount !== '' ?
                 (<UpdateQuickReservation state={state} setState={setState} closeModal={handleClose} showModal={show}
-                                         entity={entity} durationText={durationText}/>) : <></>
+                                         entity={entity} durationText={durationText} availableTags={availableTags}/>) : <></>
             }
         </Card>
     )

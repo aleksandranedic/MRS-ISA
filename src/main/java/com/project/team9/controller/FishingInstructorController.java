@@ -1,8 +1,7 @@
 package com.project.team9.controller;
 
-import com.project.team9.dto.AttendanceReportParams;
-import com.project.team9.dto.IncomeReport;
-import com.project.team9.dto.IncomeReportDateRange;
+import com.project.team9.dto.*;
+import com.project.team9.exceptions.CannotDeleteException;
 import com.project.team9.exceptions.UserNotFoundException;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.service.FishingInstructorService;
@@ -54,14 +53,10 @@ public class FishingInstructorController {
         return service.getById(id);
     }
 
-    @PutMapping("/{id}/edit")
-    FishingInstructor editFishingInstructor(@RequestBody FishingInstructor newFishingInstructor, @PathVariable String id) {
-        try {
-            return service.editFishingInstructor(newFishingInstructor, id);
-        } catch (UserNotFoundException e) {
-            e.printStackTrace();
-        }
-        return newFishingInstructor;
+    @PostMapping("/edit")
+    Long editFishingInstructor(@RequestBody FishingInstructorDTO dto) {
+        return service.edit(dto);
+
     }
 
     @PutMapping("/{id}/edit/password")
@@ -72,5 +67,15 @@ public class FishingInstructorController {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @PostMapping("/delete/{id}")
+    Long delete(@PathVariable Long id) throws CannotDeleteException {
+        return service.deleteById(id);
+    }
+
+    @GetMapping("/getStat/{id}")
+    public UserStatDTO getUserStat(@PathVariable Long id) {
+        return service.getUserStat(id);
     }
 }

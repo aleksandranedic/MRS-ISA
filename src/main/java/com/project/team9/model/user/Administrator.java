@@ -19,8 +19,14 @@ public class Administrator extends User {
         this.isSuperAdministrator = isSuperAdministrator;
     }
 
+
     public Administrator(Image profileImg, String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, Role role) {
         super(profileImg, password, firstName, lastName, email, phoneNumber, place, number, street, country,  deleted, role);
+    }
+
+    public Administrator(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, Role role) {
+        super(password, firstName, lastName, email, phoneNumber, place, number, street, country,  deleted, role);
+
     }
 
     public boolean isSuperAdministrator() {

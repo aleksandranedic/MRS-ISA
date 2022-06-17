@@ -15,8 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin("*")
-@RequestMapping("deletionRequests")
+@RequestMapping(path="deletionRequests")
 public class DeletionRequestController {
     private final DeleteRequestService service;
 
@@ -37,7 +36,22 @@ public class DeletionRequestController {
 
     @DeleteMapping("/client/{id}")
     public ResponseEntity<String> deleteClient(@PathVariable Long id, @RequestParam String deletingReason) {
-        return ResponseEntity.ok(service.deleteClient(id,deletingReason));
+        return ResponseEntity.ok(service.deleteUser(id,deletingReason, "CLIENT"));
     }
+
+    @DeleteMapping(value = "/houseowner/{id}", consumes=MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> deleteHouseOwner(@PathVariable Long id, @RequestBody String deletingReason) {
+        return ResponseEntity.ok(service.deleteUser(id,deletingReason, "VACATION_HOUSE_OWNER"));
+    }
+    @DeleteMapping(value="/boatowner/{id}", consumes=MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> deleteBoatOwner(@PathVariable Long id, @RequestBody String deletingReason) {
+        return ResponseEntity.ok(service.deleteUser(id,deletingReason, "BOAT_OWNER"));
+    }
+    @PostMapping("/fishingInstructor/{id}")
+    public ResponseEntity<String> createFishingInstructorRequest(@PathVariable Long id, @RequestBody String deletingReason) {
+        return ResponseEntity.ok(service.deleteUser(id,deletingReason, "FISHING_INSTRUCTOR"));
+    }
+
+
 
 }

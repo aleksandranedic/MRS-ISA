@@ -2,12 +2,11 @@ package com.project.team9.controller;
 
 import com.project.team9.dto.ClientDTO;
 import com.project.team9.dto.ReservationDTO;
+import com.project.team9.dto.UserStatDTO;
 import com.project.team9.model.Address;
 import com.project.team9.model.request.DeleteRequest;
 import com.project.team9.model.user.Client;
-import com.project.team9.service.AddressService;
-import com.project.team9.service.ClientService;
-import com.project.team9.service.DeleteRequestService;
+import com.project.team9.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +21,8 @@ import java.util.List;
 public class ClientController {
 
     private final ClientService clientService;
+
+
 
     @Autowired
     public ClientController(ClientService clientService) {
@@ -53,6 +54,7 @@ public class ClientController {
     public List<ReservationDTO> getReservations(@PathVariable Long id) {
         return clientService.getReservations(id);
     }
+
 
 }
 

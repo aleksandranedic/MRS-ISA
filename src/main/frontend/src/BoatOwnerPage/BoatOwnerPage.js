@@ -9,7 +9,7 @@ import OwnerBoats from './OwnerBoats';
 import AddBoat from './AddBoat';
 import {useParams} from "react-router-dom";
 import Navigation from "../Navigation/Navigation";
-import {backLink, profilePicturePlaceholder} from '../Consts';
+import {backLink, frontLink, profilePicturePlaceholder} from '../Consts';
 import {Calendar} from "../Calendar/Calendar";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
 import {ReservationsToReview} from "../Calendar/ReservationsToReview";
@@ -17,6 +17,7 @@ import {processReservationsForUsers} from "../ProcessToEvent";
 import Ratings from '../Reviews/Ratings';
 import {Complaints} from "../Complaints";
 import {isMyPage} from "../Autentification";
+import { getProfileLink } from '../Autentification';
 
 const UpdateOwner = ({show, setShow, owner}) => {
     if (typeof owner.firstName !== "undefined") {
@@ -43,7 +44,7 @@ const ReviewsComp = ({reviews}) => {
 function BoatOwnerPage() {
     const {id} = useParams();
 
-    const [boatOwner, setBoatOwner] = useState({address: '', profileImg: {path: ""}});
+    const [boatOwner, setboatOwner] = useState({address: '', profileImg: {path: profilePicturePlaceholder}});
     let [ownerBoats, setOwnerBoats] = useState([]);
     const [ownerReviews, setOwnerReviews] = useState([])
 
@@ -53,7 +54,16 @@ function BoatOwnerPage() {
     const [reservations, setReservations] = useState([]);
     const [events, setEvents] = useState(null);
     const [myPage, setMyPage] = useState(null);
+    const [stat, setStat] = useState(null);
 
+    const fetchStat = () => {
+        axios
+            .get(backLink + "/boatowner/getStat/" + id)
+            .then(res => {
+                setStat(res.data);
+                console.log(res.data);
+            });
+    };
 
     const fetchReservations = () => {
         axios.get(backLink + "/boat/reservation/boatOwner/" + id).then(res => {
@@ -76,13 +86,20 @@ function BoatOwnerPage() {
                 setOwnerBoats(res.data);
             });
     };
-    const fetchBoatOwner = () => {
+    const fetchboatOwner = () => {
         axios
             .get(backLink + "/boatowner/" + id)
             .then(res => {
-                setBoatOwner(res.data);
+                if (res.data === ''){
+                    var profileLink = getProfileLink();
+                    window.location.href = frontLink + "pageNotFound"
+                }
+                setboatOwner(res.data);
                 setMyPage(isMyPage("BOAT_OWNER", id));
-
+                fetchOwnerBoats();
+                fetchReservations();
+                fetchReviews();
+                fetchStat();
             });
     };
 
@@ -95,10 +112,7 @@ function BoatOwnerPage() {
     };
 
     useEffect(() => {
-        fetchBoatOwner();
-        fetchOwnerBoats();
-        fetchReservations();
-        fetchReviews();
+        fetchboatOwner();
     }, []);
     let buttons = [
         {text: "Osnovne informacije", path: "#info"},
@@ -110,8 +124,9 @@ function BoatOwnerPage() {
     }
 
     buttons.push({text: "Recenzije", path: "#reviews"});
-    return (
-        <>
+    let html = "";
+    if (stat !== null) {
+        let html = <><>
             <Banner caption={boatOwner.firstName + " " + boatOwner.lastName}/>
             <Navigation buttons={buttons}
                         editable={myPage} editFunction={handleShow} searchable={true}
@@ -124,11 +139,13 @@ function BoatOwnerPage() {
 
                 <OwnerInfo
                     name={boatOwner.firstName + " " + boatOwner.lastName}
-                    rate={4.5}
+                    rate={stat.rating}
                     email={boatOwner.email}
                     phoneNum={boatOwner.phoneNumber}
                     address={boatOwner.address}
                     profileImg={boatOwner.profileImg !== null ? backLink + boatOwner.profileImg.path : profilePicturePlaceholder}
+                    category={stat.category}
+                    points={stat.points}
                 />
                 <hr/>
                 <OwnerBoats boats={ownerBoats} myPage={myPage}/>
@@ -158,7 +175,10 @@ function BoatOwnerPage() {
             <Complaints type={"boatOwner"} toWhom={boatOwner.firstName + " " + boatOwner.lastName}/>
             <BeginButton/>
         </>
-    );
-}
+    }
+
+    </>;
+    return html;
+}}
 
 export default BoatOwnerPage;

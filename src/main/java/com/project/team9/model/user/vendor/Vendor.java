@@ -12,22 +12,27 @@ import java.util.List;
 public class Vendor extends User {
     private String registrationRationale;
 
+    private int numOfPoints=0;
+
     public Vendor() {
     }
 
     public Vendor(Image profileImg, String password, String firstName, String lastName, String email, String phoneNumber, Address address, Boolean deleted, String registrationRationale, Role role) {
         super(profileImg, password, firstName, lastName, email, phoneNumber, address,  deleted, role);
         this.registrationRationale = registrationRationale;
+        numOfPoints = 0;
     }
 
     public Vendor(Image profileImg, String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, String registrationRationale, Role role) {
         super(profileImg, password, firstName, lastName, email, phoneNumber, place, number, street, country, deleted, role);
         this.registrationRationale = registrationRationale;
+        numOfPoints = 0;
     }
 
     public Vendor(String password, String firstName, String lastName, String email, String phoneNumber, String place, String number, String street, String country, Boolean deleted, String registrationRationale, Role role) {
         super(null, password, firstName, lastName, email, phoneNumber, place, number, street, country, deleted, role);
         this.registrationRationale = registrationRationale;
+        numOfPoints = 0;
     }
 
     public String getRegistrationRationale() {
@@ -38,4 +43,11 @@ public class Vendor extends User {
         this.registrationRationale = registrationRationale;
     }
 
+    public int getNumOfPoints() {
+        return numOfPoints;
+    }
+
+    public void setNumOfPoints(int numOfPoints) {
+        this.numOfPoints = numOfPoints;
+    }
 }

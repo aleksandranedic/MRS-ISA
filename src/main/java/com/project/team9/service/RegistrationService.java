@@ -1,15 +1,16 @@
 package com.project.team9.service;
 
 import com.project.team9.model.request.RegistrationRequest;
+import com.project.team9.model.user.Administrator;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.Role;
 import com.project.team9.model.user.User;
-import com.project.team9.security.email.EmailSender;
 import com.project.team9.security.token.ConfirmationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 
 @Service
 public class RegistrationService {
@@ -19,15 +20,37 @@ public class RegistrationService {
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailService emailService;
     private final RoleService roleService;
+    private final AdministratorService administratorService;
 
 
     @Autowired
-    public RegistrationService(UserServiceSecurity userServiceSecurity, RegistrationRequestService registrationRequestService, EmailService emailService, ConfirmationTokenService confirmationTokenService, RoleService roleService) {
+    public RegistrationService(UserServiceSecurity userServiceSecurity, RegistrationRequestService registrationRequestService, EmailService emailService, ConfirmationTokenService confirmationTokenService, RoleService roleService, AdministratorService administratorService) {
         this.userServiceSecurity = userServiceSecurity;
         this.registrationRequestService = registrationRequestService;
         this.confirmationTokenService = confirmationTokenService;
         this.emailService = emailService;
         this.roleService = roleService;
+        this.administratorService = administratorService;
+    }
+
+    private static char[] generatePassword(int length) {
+        String capitalCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String lowerCaseLetters = "abcdefghijklmnopqrstuvwxyz";
+        String specialCharacters = "!@#$";
+        String numbers = "1234567890";
+        String combinedChars = capitalCaseLetters + lowerCaseLetters + specialCharacters + numbers;
+        Random random = new Random();
+        char[] password = new char[length];
+
+        password[0] = lowerCaseLetters.charAt(random.nextInt(lowerCaseLetters.length()));
+        password[1] = capitalCaseLetters.charAt(random.nextInt(capitalCaseLetters.length()));
+        password[2] = specialCharacters.charAt(random.nextInt(specialCharacters.length()));
+        password[3] = numbers.charAt(random.nextInt(numbers.length()));
+
+        for(int i = 4; i< length ; i++) {
+            password[i] = combinedChars.charAt(random.nextInt(combinedChars.length()));
+        }
+        return password;
     }
 
     public String register(RegistrationRequest registrationRequest) {
@@ -40,6 +63,29 @@ public class RegistrationService {
         }
 
         switch (registrationRequest.getUserRole()) {
+            case "ADMINISTRATOR":
+
+                String password = String.valueOf(generatePassword(12));
+
+                Administrator administrator = new Administrator(
+                        password,
+                        registrationRequest.getFirstName(),
+                        registrationRequest.getLastName(),
+                        registrationRequest.getEmail(),
+                        registrationRequest.getPhoneNumber(),
+                        registrationRequest.getPlace(),
+                        registrationRequest.getNumber(),
+                        registrationRequest.getStreet(),
+                        registrationRequest.getCountry(),
+                        Boolean.FALSE, role
+                );
+
+                administrator.setConfirmed(false);
+                administratorService.save(administrator);
+
+                //TODO: Salji mail sa novom sifrom
+                response = "Uspešno ste registrovali novog administratora.";
+                break;
             case "CLIENT":
                 Client user = new Client(
                         registrationRequest.getPassword(),
@@ -63,13 +109,13 @@ public class RegistrationService {
                         user
                 );
                 confirmationTokenService.saveConfirmationToken(confirmationToken);
-                response = "Uspesno ste izvrsili registraciju.\nProverite email kako biste verifikovali svoj nalog";
+                response = "Uspešno ste izvršili registraciju.\nProverite email kako biste verifikovali svoj nalog";
                 break;
             case "FISHING_INSTRUCTOR":
             case "BOAT_OWNER":
             case "VACATION_HOUSE_OWNER":
                 registrationRequestService.addRegistrationRequest(registrationRequest);
-                response = "Uspesno ste poslali zahtev o registraciji";
+                response = "Uspešno ste poslali zahtev o registraciji";
                 break;
         }
         return response;

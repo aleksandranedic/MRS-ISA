@@ -63,18 +63,19 @@ public class AuthenticationController {
             // Kreiraj token za tog korisnika
             User user = (User) authentication.getPrincipal();
             if (user.getDeleted()) {
-                return ResponseEntity.ok(new LoginResponseDTO("Korisnik je obrisan", null, null));
+                return ResponseEntity.ok(new LoginResponseDTO("Korisnik je obrisan", null, null, true));
             }
             String jwt = tokenUtils.generateToken(user.getUsername());
 
             // Vrati token kao odgovor na uspesnu autentifikaciju
-            return ResponseEntity.ok(new LoginResponseDTO(jwt, user.getRoleName(), user.getId()));
+            LoginResponseDTO body = new LoginResponseDTO(jwt, user.getRoleName(), user.getId(), user.isConfirmed());
+
+            return ResponseEntity.ok(body);
         } catch (Exception e) {
-            return ResponseEntity.ok(new LoginResponseDTO("Uneli ste porgrešne podatke", null, null));
+            return ResponseEntity.ok(new LoginResponseDTO("Uneli ste porgrešne podatke", null, null, true));
         }
     }
-
-    @PostMapping("/changePassword")
+    @PostMapping(value ="/changePassword", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> changePassword(@RequestBody PasswordsDTO passwordsDTO) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -84,7 +85,7 @@ public class AuthenticationController {
             if (user == null)
                 return new ResponseEntity<>("Neuspešno. Ne postoji ulogovani korisnik", HttpStatus.EXPECTATION_FAILED);
             if (!passwordEncoder.bCryptPasswordEncoder().matches(passwordsDTO.getOldPassword(), user.getPassword()))
-                return new ResponseEntity<>("Neuspešno. Stara šifra i uneta stara šifra Vam se ne poklapaju", HttpStatus.EXPECTATION_FAILED);
+                return new ResponseEntity<>("Neuspešno. Stara šifra i uneta stara šifra se ne poklapaju", HttpStatus.EXPECTATION_FAILED);
             user.setPassword(passwordEncoder.bCryptPasswordEncoder().encode(passwordsDTO.getNewPassword()));
             user.setLastPasswordResetDate(Timestamp.valueOf(LocalDateTime.now()));
             if (user instanceof Client) {

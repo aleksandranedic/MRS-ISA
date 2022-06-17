@@ -3,6 +3,9 @@ import React, {useState, useRef, useEffect} from 'react';
 import {Modal, Button} from 'react-bootstrap'
 import UpdateBoatForm from './UpdateBoatForm';
 import { useParams } from "react-router-dom";
+import { backLink, frontLink, notifyError, notifySuccess } from '../Consts';
+import {isBoatOwner, isClient, isFishingInstructor, isLoggedIn, isVacationHouseOwner} from "../Autentification";
+import {ToastContainer} from "react-toastify";
 
 function UpdateBoat({showModal, closeModal, boat}) {
   const form = useRef();
@@ -11,9 +14,36 @@ function UpdateBoat({showModal, closeModal, boat}) {
   const [validated, setValidated] = useState(false);
   const HOST = "http://localhost:4444";
   const [state, setState] = useState({name:'', price:'', description:'', type:'', engineStrength:'', topSpeed:'', length:'', engineNumber:'', capacity:'', rulesAndRegulations:'', street:'', number:'', city:'', country:'', navigationEquipment:[{id:0, text:''}], fishingEquipment:[{id:0, text:''}], additionalServices:[{id:0, text:''}], cancellationFee:'', imagePaths:[]});
-    useEffect(() => {
+   
+  useEffect(() => {
       setState(boat);
     }, []);
+
+
+  const deleteBoat = () => {
+    var profileLink;
+    if (isLoggedIn()) {
+      if (isClient()) {
+          profileLink = frontLink + "client/" + localStorage.getItem("userId");
+      } else if (isVacationHouseOwner()) {
+          profileLink = frontLink + "houseOwner/" + localStorage.getItem("userId");
+      } else if (isBoatOwner()) {
+          profileLink = frontLink + "boatOwner/" + localStorage.getItem("userId");
+      } else if (isFishingInstructor()) {
+          profileLink = frontLink + "fishingInstructor/" + localStorage.getItem("userId");
+      }
+
+    }
+    axios
+    .get(backLink + "/boat/delete/" + id)
+    .then(res => {
+      notifySuccess("Uspešno ste obrisali brod.")
+      setTimeout(window.location.href = profileLink, 1500);
+    } )
+    .catch(function (error) {
+      notifyError(error.response.data)
+  });
+  }  
   const submit = e => {
     e.preventDefault()
     if (form.current.checkValidity() === false || state.imagePaths.length === 0) {
@@ -100,12 +130,25 @@ function UpdateBoat({showModal, closeModal, boat}) {
         </Modal.Body>
       
         <Modal.Footer className="justify-content-between">
-          <Button variant="outline-danger">Obriši</Button>
+          <Button variant="outline-danger" onClick={e => deleteBoat()}>Obriši</Button>
           <div>
           <Button className="me-2" variant="secondary" onClick={close}>Nazad</Button>
           <Button variant="primary" onClick={submit} >Sačuvaj</Button>
           </div>
         </Modal.Footer>
+        <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={true}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme={"colored"}
+                
+                />
       </Modal>
     );
 }
