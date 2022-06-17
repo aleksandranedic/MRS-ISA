@@ -1,6 +1,7 @@
 package com.project.team9.model.request;
 
 import javax.persistence.Entity;
+import javax.persistence.Version;
 
 
 @Entity
@@ -19,6 +20,8 @@ public class RegistrationRequest extends Request{
     private String biography;
     private String registrationRationale;
 
+    @Version
+    private Long version;
 
     public RegistrationRequest() {
     }
