@@ -1,7 +1,7 @@
 import {Sidebar} from "./Sidebar/Sidebar";
 import React, {useEffect, useState} from "react";
 import {Button, Card, Form, Modal} from "react-bootstrap";
-import {backLink, loadingToast, updateForFetchedDataSuccess} from "../Consts";
+import {backLink, loadingToast, updateForFetchedDataError, updateForFetchedDataSuccess} from "../Consts";
 import axios from "axios";
 import {ToastContainer} from "react-toastify";
 import {BsArrowRight} from "react-icons/bs";
@@ -88,13 +88,20 @@ function ComplaintModal({request, show, setShow}) {
             entityType: request.entityType
         }
         let id = loadingToast()
-        axios.post(backLink + "/complaints", dto).then(response => {
+        axios
+        .post(backLink + "/complaints", dto)
+        .then(response => {
             updateForFetchedDataSuccess(response.data, id)
             setShow(false)
             setTimeout(function () {
                 window.location.reload();
             }, 2000)
         })
+        .catch(function (error) {
+            updateForFetchedDataError(error.response.data, id)
+            setShow(false)
+            setTimeout(function () {window.location.reload();}, 2000);
+        });
     }
 
     return <Modal show={show} onHide={() => setShow(false)}>
