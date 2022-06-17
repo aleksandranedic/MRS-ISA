@@ -4,6 +4,7 @@ import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.repo.AdventureReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
@@ -39,6 +40,10 @@ public class AdventureReservationService {
 
 
     public Long save(AdventureReservation reservation) {
+        return repository.save(reservation).getId();
+    }
+    @Transactional(readOnly = false)
+    public Long saveQuickReservationAsReservation(AdventureReservation reservation) {
         return repository.save(reservation).getId();
     }
 

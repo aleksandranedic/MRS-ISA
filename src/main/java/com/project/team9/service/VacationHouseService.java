@@ -13,6 +13,7 @@ import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.VacationHouseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -738,6 +739,8 @@ public class VacationHouseService {
 
     public Long reserveQuickReservation(ReserveQuickReservationDTO dto) {
         VacationHouseReservation quickReservation = vacationHouseReservationService.getVacationHouseReservation(dto.getReservationID());
+        if (!quickReservation.isQuickReservation())
+            return Long.valueOf("-1");
         VacationHouse vacationHouse = quickReservation.getResource();
         vacationHouse.removeQuickReservation(quickReservation);
 
@@ -748,10 +751,15 @@ public class VacationHouseService {
         quickReservation.setQuickReservation(false);
         vacationHouse.addReservation(quickReservation);
 
-        Long id = vacationHouseReservationService.save(quickReservation);
-        repository.save(vacationHouse);
-        return id;
-        //TODO napravi potvrdu o rezervaciji na akciju
+        try {
+            Long id = vacationHouseReservationService.saveQuickReservationAsReservation(quickReservation); //ovo moze da pukne
+            repository.save(vacationHouse);
+            //TODO napravi potvrdu o rezervaciji na akciju
+            return id;
+        }
+        catch (ObjectOptimisticLockingFailureException e)   {
+            return null;
+        }
     }
 
     public boolean clientCanReviewVendor(Long vendorId, Long clientId) {

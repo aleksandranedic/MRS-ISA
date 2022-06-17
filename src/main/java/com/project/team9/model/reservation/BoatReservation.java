@@ -8,6 +8,7 @@ import com.project.team9.model.user.Client;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.Version;
 import java.util.List;
 
 @Entity
@@ -15,7 +16,8 @@ import java.util.List;
 public class BoatReservation extends Reservation{
     @ManyToOne
     private Boat resource;
-
+    @Version
+    private Long version;
     public BoatReservation() {
     }
 

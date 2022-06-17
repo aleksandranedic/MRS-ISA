@@ -1,9 +1,11 @@
 package com.project.team9.service;
 
+import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.repo.BoatReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,6 +47,11 @@ public class BoatReservationService {
     public Long save(BoatReservation reservation) {
         repository.save(reservation);
         return null;
+    }
+
+    @Transactional(readOnly = false)
+    public Long saveQuickReservationAsReservation(BoatReservation reservation) {
+        return repository.save(reservation).getId();
     }
 
     public List<BoatReservation> getBusyPeriodForBoat(Long id) {

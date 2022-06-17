@@ -15,7 +15,9 @@ import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.repo.AdventureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -548,9 +550,10 @@ public class AdventureService {
         return reservations;
     }
 
-
     public Long reserveQuickReservation(ReserveQuickReservationDTO dto) {
         AdventureReservation quickReservation = adventureReservationService.getById(dto.getReservationID());
+        if (!quickReservation.isQuickReservation())
+            return Long.valueOf("-1");
         Adventure adventure = quickReservation.getResource();
         adventure.removeQuickReservation(quickReservation);
 
@@ -559,10 +562,14 @@ public class AdventureService {
         quickReservation.setClient(client);
         quickReservation.setQuickReservation(false);
         adventure.addQuickReservation(quickReservation);
-        Long id = adventureReservationService.save(quickReservation);
-        //TODO napravi potvrdu o rezervaciji na akciju
-        repository.save(adventure);
-        return id;
+        try{
+            Long id = adventureReservationService.saveQuickReservationAsReservation(quickReservation);  // ovo moze da pukne
+            //TODO napravi potvrdu o rezervaciji na akciju
+            repository.save(adventure);
+            return id;
+        } catch (ObjectOptimisticLockingFailureException e){
+            return null;
+        }
     }
 
     public boolean clientCanReviewVendor(Long vendorId, Long clientId) {

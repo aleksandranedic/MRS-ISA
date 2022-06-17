@@ -41,11 +41,9 @@ function AddQuickReservation({showModal, closeModal, entity, priceText, duration
             .then(res => {
                 window.location.reload();
             }).catch(error => {
-                console.log(error);
+                close();
                 setShowAlert(true);
-
             })
-            close();
         }
       
       }

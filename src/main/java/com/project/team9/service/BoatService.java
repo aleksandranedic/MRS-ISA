@@ -15,6 +15,7 @@ import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.repo.BoatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -176,7 +177,8 @@ public class BoatService {
 
     public Long reserveQuickReservation(ReserveQuickReservationDTO dto) {
         BoatReservation quickReservation = boatReservationService.getBoatReservation(dto.getReservationID());
-
+        if (!quickReservation.isQuickReservation())
+            return Long.valueOf("-1");
         Boat boat = quickReservation.getResource();
         boat.removeQuickReservation(quickReservation);
         Client client = clientService.getById(dto.getClientID().toString());
@@ -184,12 +186,14 @@ public class BoatService {
         quickReservation.setClient(client);
         quickReservation.setQuickReservation(false);
         boat.addReservation(quickReservation);
-
-        Long id = boatReservationService.save(quickReservation);
-        repository.save(boat);
-        //TODO napravi potvrdu o rezervaciji na akciju
-
-        return id;
+        try{
+            Long id = boatReservationService.saveQuickReservationAsReservation(quickReservation); //ovo moze da pukne
+            repository.save(boat);
+            //TODO napravi potvrdu o rezervaciji na akciju
+            return id;
+        } catch (ObjectOptimisticLockingFailureException e){
+            return null;
+        }
     }
 
     public List<Boat> getOwnersBoats(Long owner_id) {

@@ -6,7 +6,7 @@ import {BsPencilSquare, BsPeople} from "react-icons/bs";
 import {AiOutlineCalendar, AiOutlineClockCircle} from "react-icons/ai";
 import UpdateQuickReservation from './UpdateQuickReservation';
 import axios from "axios";
-import {backLink} from "./Consts";
+import {backLink, notifyError, notifySuccess} from "./Consts";
 import {isLoggedIn} from "./Autentification";
 
 function QuickReservation({reservation,availableTags, name, address, image, entity, durationText, type, myPage}) {
@@ -50,25 +50,52 @@ function QuickReservation({reservation,availableTags, name, address, image, enti
 
 
         if (type === "adventure") {
-            axios.post(backLink + "/adventure/quickReservations/reserve", dto).then(res => {
-                console.log(res.data);
-                window.location.reload();
+            axios.post(backLink + "/adventure/quickReservations/reserve", dto)
+            .then(res => {
+                if (res.data === ''){
+                    notifyError("Akcija je rezervisana, molimo Vas izaberite drugu.")
+                }
+                else if (res.data === -1){
+                    notifyError("Akcija je rezervisana, molimo Vas izaberite drugu.")
+                }              
+                else {
+                    notifySuccess("Akcija rezervisana.");
+                    //window.location.reload();      
+                }
             }).catch(error => {
                 console.log(error.message);
             })
         }
         else if (type === "vacationHouse") {
-            axios.post(backLink + "/house/quickReservations/reserve", dto).then(res => {
-                console.log(res.data);
-                window.location.reload();
+            axios.post(backLink + "/house/quickReservations/reserve", dto)
+            .then(res => {
+                if (res.data === ''){
+                    notifyError("Akcija je rezervisana, molimo Vas izaberite drugu.")
+                }
+                else if (res.data === -1){
+                    notifyError("Akcija je rezervisana, molimo Vas izaberite drugu.")
+                }              
+                else {
+                    notifySuccess("Akcija rezervisana.");
+                    //window.location.reload();      
+                }
             }).catch(error => {
                 console.log(error.message);
             })
         }
         else if (type === "boat") {
-            axios.post(backLink + "/boat/quickReservations/reserve", dto).then(res => {
-                console.log(res.data);
-                window.location.reload();
+            axios.post(backLink + "/boat/quickReservations/reserve", dto)
+            .then(res => {
+                if (res.data === ''){
+                    notifyError("Akcija je rezervisana, molimo Vas izaberite drugu.")
+                }
+                else if (res.data === -1){
+                    notifyError("Akcija je rezervisana, molimo Vas izaberite drugu.")
+                }              
+                else {
+                    notifySuccess("Akcija rezervisana.");
+                    //window.location.reload();      
+                }
             }).catch(error => {
                 console.log(error.message);
             })
