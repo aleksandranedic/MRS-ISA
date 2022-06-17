@@ -204,8 +204,15 @@ public class VacationHouseService {
         return appointments;
     }
 
+    @Transactional(readOnly = false)
     public Boolean addQuickReservation(Long id, VacationHouseQuickReservationDTO quickReservationDTO) throws ReservationNotAvailableException{
-        VacationHouse house = this.getVacationHouse(id);
+        VacationHouse house;
+        try{
+            house = this.getByIdConcurrent(id);
+        }
+        catch (PessimisticLockingFailureException plfe){
+            return false;
+        }
         VacationHouseReservation reservation = getReservationFromDTO(quickReservationDTO, true);
         reservation.setResource(house);
 

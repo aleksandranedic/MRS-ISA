@@ -11,6 +11,7 @@ import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.resource.Boat;
+import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.repo.AdventureRepository;
@@ -84,8 +85,15 @@ public class AdventureService {
         return quickReservations;
     }
 
+    @Transactional(readOnly = false)
     public Boolean addQuickReservation(String id, AdventureQuickReservationDTO quickReservationDTO) throws ReservationNotAvailableException {
-        Adventure adventure = this.getById(id);
+        Adventure adventure;
+        try{
+            adventure= this.getByIdConcurrent(id);
+        }
+        catch (PessimisticLockingFailureException plfe){
+            return false;
+        }
         AdventureReservation reservation = getReservationFromDTO(quickReservationDTO);
         reservation.setResource(adventure);
 

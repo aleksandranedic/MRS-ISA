@@ -80,8 +80,15 @@ public class BoatService {
         return new BoatCardDTO(boat.getId(), boat.getImages().get(0).getPath(), boat.getTitle(), boat.getDescription(), address);
     }
 
+    @Transactional(readOnly = false)
     public Boolean addQuickReservation(Long id, BoatQuickReservationDTO quickReservationDTO) throws ReservationNotAvailableException {
-        Boat boat = this.getBoat(id);
+        Boat boat;
+        try{
+            boat = this.getByIdConcurrent(id);
+        }
+        catch (PessimisticLockingFailureException plfe){
+            return false;
+        }
         BoatReservation reservation = getReservationFromDTO(quickReservationDTO, true);
         reservation.setResource(boat);
 

@@ -209,7 +209,7 @@ export function ReservationModal({show, setShow, type, resourceId, myPage}) {
                         notifyError("Došlo je do greške prilikom zakazivanja. Molimo Vas pokušajte ponovo.")
                     }
                     else{
-                        notifySuccess("Avantura uspešno rezervisan.")
+                        notifySuccess("Avantura uspešno rezervisana.")
                         setTimeout(function(){window.location.reload();}, 2000);
                     }
                 })
@@ -241,7 +241,7 @@ export function ReservationModal({show, setShow, type, resourceId, myPage}) {
                         notifyError("Došlo je do greške prilikom zakazivanja. Molimo Vas pokušajte ponovo.")
                     }
                     else{
-                        notifySuccess("Vikendica uspešno rezervisan.")
+                        notifySuccess("Vikendica uspešno rezervisana.")
                         setTimeout(function(){window.location.reload();}, 2000);
                     }
                 })
