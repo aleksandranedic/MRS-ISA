@@ -136,13 +136,13 @@ public class ClientService {
     public List<ReservationDTO> getReservations(Long id) {
         List<ReservationDTO> reservations = new ArrayList<>();
         for (AdventureReservation reservation : adventureReservationService.getAdventureReservationsForClientId(id)) {
-            reservations.add(new ClientReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation(), reservation.getResource().getId(),"adventure"));
+            reservations.add(new ClientReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation(), reservation.getResource().getId(),reservation.getId(),"adventure"));
         }
         for (BoatReservation reservation : boatReservationService.getBoatReservationsForClientId(id)) {
-            reservations.add(new ClientReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation(), reservation.getResource().getId(),"boat" ));
+            reservations.add(new ClientReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation(), reservation.getResource().getId(),reservation.getId(),"boat" ));
         }
         for (VacationHouseReservation reservation : vacationHouseReservationService.getVacationHouseReservationsForClienId(id)) {
-            reservations.add(new ClientReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation(), reservation.getResource().getId(),"house"));
+            reservations.add(new ClientReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation(), reservation.getResource().getId(),reservation.getId(),"house"));
         }
         return reservations;
     }

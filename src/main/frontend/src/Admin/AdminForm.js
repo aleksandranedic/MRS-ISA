@@ -108,7 +108,7 @@ export function AdminForm({show, setShow, administrator}) {
             place: form.place,
             country: form.country
         }
-
+        console.log(userDTO)
         axios.post(backLink+"/registration", userDTO).then(res => {
             console.log(res.data);
             window.location.reload();

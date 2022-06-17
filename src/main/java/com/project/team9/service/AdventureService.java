@@ -770,15 +770,11 @@ public class AdventureService {
 
     public String cancelAdventureReservation(Long id) {
         try{
-            AdventureReservation adventureReservation=adventureReservationService.getById(Long.valueOf(id));
+            AdventureReservation adventureReservation=adventureReservationService.getById(id);
             LocalDateTime now=LocalDateTime.now();
             int numberOfDaysBetween = (int) ChronoUnit.DAYS.between(now.toLocalDate(), adventureReservation.getAppointments().get(0).getStartTime());
             if(numberOfDaysBetween<3){
                return  "Otkazivanje rezervacije je moguće najkasnije 3 dana do početka";
-            }
-            for (Appointment appointment :
-                    adventureReservation.getAppointments()) {
-                appointmentService.delete(appointment);
             }
             adventureReservationService.deleteReservation(adventureReservation);
             return "Uspešno ste otkazali rezervaciju avanture";

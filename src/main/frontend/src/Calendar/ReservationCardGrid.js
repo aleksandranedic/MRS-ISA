@@ -3,15 +3,18 @@ import {convertToDate} from "./ReservationDateConverter";
 import Tag from "../Tag";
 import React from "react";
 import {TimeFooter} from "./TimeFooter";
-import {backLink, notifySuccess} from "../Consts";
+import {backLink, frontLink, notifySuccess} from "../Consts";
 import axios from "axios";
 
 export function ReservationCardGrid({reservations}) {
 
-    const cancelReservation=(entityType,reservationId)=>{
-        axios.post(backLink+entityType+"/cancelReservation/"+reservationId).then(
+    const cancelReservation=(reservation)=>{
+        axios.post(backLink+"/"+reservation.entityType+"/cancelReservation/"+reservation.id).then(
             response=>{
                 notifySuccess(response.data)
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000)
             }
         )
     }
@@ -54,7 +57,7 @@ export function ReservationCardGrid({reservations}) {
                                 <div className="ms-auto fw-bold">
                                     {reservation.client.firstName + " " + reservation.client.lastName}
                                 </div>
-                                <Button variant={"light"} className="ms-1" onClick={cancelReservation(reservation.entityType,reservation.id)}>Otkaži</Button>
+                                <Button variant={"light"} className="ms-1" onClick={()=>cancelReservation(reservation)}>Otkaži</Button>
                             </Card.Header>
                             <Card.Body>
 
