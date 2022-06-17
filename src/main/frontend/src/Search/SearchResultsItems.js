@@ -3,7 +3,7 @@ import {backLink, frontLink} from "../Consts";
 import {SearchResultCard} from "./SearchResultCard";
 import Pagination from "../Pagination";
 
-const SearchResultsResources = ({list, name}) => {
+const SearchResultsResources = ({list}) => {
 
     const [currentPage, setCurrentPage] = useState(1)
 
@@ -19,9 +19,8 @@ const SearchResultsResources = ({list, name}) => {
 
 
     if (currentVHPost.length !== 0) {
-        return <>{currentVHPost.map((item) =>
-            (<SearchResultCard key={item.id} title={item.title} description={item.description}
-                               link={frontLink + name + "/" + item.id} image={backLink + item.images.at(0).path}/>))}
+        return <>{currentVHPost.map((item, index) =>
+            (<SearchResultCard key={index} item={item}/>))}
             <Pagination key={name} paginate={paginate} postPerPage={postsPerPage}
                         totalPosts={list.length} name={name}/></>
     }

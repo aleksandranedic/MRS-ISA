@@ -97,7 +97,9 @@ public class AuthenticationController {
             } else if (user instanceof BoatOwner) {
                 userServiceSecurity.addBoatOwner((BoatOwner) user);
             } else if (user instanceof Administrator) {
-                userServiceSecurity.addAdmin((Administrator) user);
+                Administrator administrator = (Administrator) user;
+                administrator.setConfirmed(true);
+                userServiceSecurity.addAdmin(administrator);
             }
             String jwt = tokenUtils.generateToken(user.getUsername());
             return new ResponseEntity<>(jwt, HttpStatus.OK);

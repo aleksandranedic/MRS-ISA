@@ -9,6 +9,7 @@ import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.VacationHouseReservation;
+import com.project.team9.model.resource.Boat;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
@@ -862,5 +863,25 @@ public class VacationHouseService {
             return "Otkazivanje rezervacije nije uspelo probajte ponovo";
         }
 
+    }
+
+    public List<EntityDTO> getEntities() {
+        List<EntityDTO> entities = new ArrayList<EntityDTO>();
+        for (VacationHouse house : repository.findAll()) {
+            if (!house.getDeleted()) {
+                entities.add(
+                        new EntityDTO(
+                                house.getTitle(),
+                                "house",
+                                house.getImages().get(house.getImages().size() - 1),
+                                this.getVacationHouseRating(house.getId()),
+                                house.getId(),
+                                house.getAddress(),
+                                house.getPricelist().getPrice()
+                        )
+                );
+            }
+        }
+        return entities;
     }
 }

@@ -149,7 +149,8 @@ export function BoatProfilePage() {
                             Kalendar
                         </h2>
                         <hr/>
-                        <Calendar myPage={myPage} reservable={true} pricelist={{price: boat.price}} type="boat" resourceId={id} events={events}/>
+                        <Calendar myPage={myPage} reservable={true} pricelist={{price: boat.price}} type="boat"
+                                  resourceId={id} events={events} additionalServices={boat.additionalServices}/>
 
             {myPage && <>
                 <h2 className="mt-5" id="reservations">Rezervacije</h2>

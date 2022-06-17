@@ -31,6 +31,11 @@ public class VacationHouseController {
         return service.getVacationHouses();
     }
 
+    @GetMapping("/entity")
+    public List<EntityDTO> getEntities() {
+        return service.getEntities();
+    }
+
     @GetMapping("/subs/{id}")
     public List<EntityDTO> getSubs(@PathVariable Long id) {
         return service.findVacationHousesThatClientIsSubbedTo(id);

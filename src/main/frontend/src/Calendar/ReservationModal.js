@@ -6,7 +6,7 @@ import {TagInfo} from "../Info";
 import {MessagePopupModal} from "../MessagePopupModal";
 import {isLoggedIn} from "../Autentification";
 
-export function ReservationModal({show, setShow, type, resourceId, myPage}) {
+export function ReservationModal({show, setShow, type, resourceId, myPage, additionalServices}) {
 
     const [clients, setClients] = useState([]);
 
@@ -77,7 +77,7 @@ export function ReservationModal({show, setShow, type, resourceId, myPage}) {
         endTime: "",
         numberOfClients: "",
         price: "",
-        additionalServices: []
+        additionalServices: additionalServices
     });
 
     const setField = (fieldName, value) => {
@@ -379,14 +379,6 @@ export function ReservationModal({show, setShow, type, resourceId, myPage}) {
                         <div className='d-flex justify-content-start align-items-center'>
                             <TagInfo tagList={formValues.additionalServices} edit={true}
                                      setState={setFormValues} entity="additionalServices"/>
-                            <InputGroup className="p-0 mt-2 ms-auto"
-                                        style={{maxWidth: "17vw", maxHeight: "4vh"}}>
-                                <Form.Control aria-describedby="basic-addon2" placeholder='Dodaj tag'
-                                              value={additionalServicesText}
-                                              onChange={e => setAdditionalServicesText(e.target.value)}/>
-                                <Button className="p-0 pe-2 ps-2" variant="primary" id="button-addon2"
-                                        onClick={addAdditionalServicesTag}> + </Button>
-                            </InputGroup>
                         </div>
                     </Form.Group>
 

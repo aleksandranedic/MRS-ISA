@@ -76,6 +76,7 @@ const Adventure = ({id}) => {
     const fetchReservations = () => {
         axios.get(backLink + "/adventure/reservation/adventure/" + id).then(res => {
             setReservations(res.data);
+            console.log(myPage)
             setEvents(processReservationsForResources(res.data, myPage));
 
         })
@@ -140,7 +141,9 @@ const Adventure = ({id}) => {
             <hr className="me-5 ms-5"/>
             <Calendar reservable={isLoggedIn()} pricelist={adventure.pricelist} resourceId={adventure.id}
                       type={"adventure"}
-                      events={events} myPage={myPage}/>
+                      events={events} myPage={myPage}
+                      additionalServices={adventure.additionalServices}
+            />
 
             <hr className="me-5 ms-5 mt-5"/>
 

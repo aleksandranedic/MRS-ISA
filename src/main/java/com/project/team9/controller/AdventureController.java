@@ -79,6 +79,11 @@ public class AdventureController {
         return service.getAdventures();
     }
 
+    @GetMapping("/entity")
+    public List<EntityDTO> getEntities() {
+        return service.getEntities();
+    }
+
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Adventure getById(@PathVariable String id) {
         return service.getById(id);
