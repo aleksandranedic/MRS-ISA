@@ -1,7 +1,7 @@
 import {Button, Col, Dropdown, Form, InputGroup, Modal} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {backLink, missingDataErrors} from "../Consts";
+import {backLink, missingDataErrors, notifyError, notifySuccess} from "../Consts";
 import {TagInfo} from "../Info";
 import {MessagePopupModal} from "../MessagePopupModal";
 import {isLoggedIn} from "../Autentification";
@@ -205,7 +205,13 @@ export function ReservationModal({show, setShow, type, resourceId, myPage}) {
             axios
                 .post(backLink + "/adventure/reservation/add", dto)
                 .then(response => {
-                    window.location.reload();
+                    if (response.data === -1){
+                        notifyError("Došlo je do greške prilikom zakazivanja. Molimo Vas pokušajte ponovo.")
+                    }
+                    else{
+                        notifySuccess("Avantura uspešno rezervisan.")
+                        setTimeout(function(){window.location.reload();}, 2000);
+                    }
                 })
                 .catch(error => {
                     setShowAlert(true);
@@ -214,8 +220,13 @@ export function ReservationModal({show, setShow, type, resourceId, myPage}) {
             axios
                 .post(backLink + "/boat/reservation/add", dto)
                 .then(response => {
-                    console.log(response);
-                    window.location.reload();
+                    if (response.data === -1){
+                        notifyError("Došlo je do greške prilikom zakazivanja. Molimo Vas pokušajte ponovo.")
+                    }
+                    else{
+                        notifySuccess("Brod uspešno rezervisan.")
+                        setTimeout(function(){window.location.reload();}, 2000);
+                    }
                 })
                 .catch(error => {
                     console.log(error);
@@ -226,8 +237,13 @@ export function ReservationModal({show, setShow, type, resourceId, myPage}) {
             axios
                 .post(backLink + "/house/reservation/add", dto)
                 .then(response => {
-                    console.log(response);
-                    window.location.reload();
+                    if (response.data === -1){
+                        notifyError("Došlo je do greške prilikom zakazivanja. Molimo Vas pokušajte ponovo.")
+                    }
+                    else{
+                        notifySuccess("Vikendica uspešno rezervisan.")
+                        setTimeout(function(){window.location.reload();}, 2000);
+                    }
                 })
                 .catch(error => {
                     console.log(error);

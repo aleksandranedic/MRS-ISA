@@ -15,6 +15,7 @@ import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.repo.AdventureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -207,6 +208,11 @@ public class AdventureService {
 
     public Adventure getById(String id) {
         return repository.getById(Long.parseLong(id));
+    }
+
+    @Transactional(readOnly = false)
+    public Adventure getByIdConcurrent(String id) throws PessimisticLockingFailureException {
+        return repository.findOneById(Long.parseLong(id));
     }
 
     public AdventureDTO getDTOById(String id) {
@@ -410,8 +416,15 @@ public class AdventureService {
         return reservations;
     }
 
+    @Transactional(readOnly = false)
     public Long createReservation(NewReservationDTO dto) throws ReservationNotAvailableException {
-        AdventureReservation reservation = createFromDTO(dto);
+        AdventureReservation reservation;
+        try {
+            reservation = createFromDTO(dto);
+        }
+        catch (PessimisticLockingFailureException plfe){
+            return Long.valueOf("-1");
+        }
 
         List<AdventureReservation> reservations = adventureReservationService.getPossibleCollisionReservations(reservation.getResource().getId(), reservation.getResource().getOwner().getId());
         for (AdventureReservation r : reservations) {
@@ -433,7 +446,11 @@ public class AdventureService {
         return reservation.getId();
     }
 
-    private AdventureReservation createFromDTO(NewReservationDTO dto) {
+    @Transactional(readOnly = false)
+    private AdventureReservation createFromDTO(NewReservationDTO dto) throws PessimisticLockingFailureException{
+        Client client = clientService.getById(dto.getClientId().toString());
+        String id = dto.getResourceId().toString();
+        Adventure adventure = this.getByIdConcurrent(id); //throws PessimisticLockingFailureException
 
         List<Appointment> appointments = new ArrayList<Appointment>();
 
@@ -450,10 +467,6 @@ public class AdventureService {
 
         appointments.add(new Appointment(startTime, finalTime));
         appointmentService.saveAll(appointments);
-
-        Client client = clientService.getById(dto.getClientId().toString());
-        String id = dto.getResourceId().toString();
-        Adventure adventure = this.getById(id);
 
         int price = adventure.getPricelist().getPrice() * appointments.size();
         int discount = userCategoryService.getClientCategoryBasedOnPoints(client.getNumOfPoints()).getDiscount();

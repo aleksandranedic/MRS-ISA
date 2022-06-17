@@ -8,13 +8,16 @@ import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.VacationHouseReservation;
+import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.VacationHouseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -114,6 +117,11 @@ public class VacationHouseService {
         return repository.getById(id);
     }
 
+    @Transactional(readOnly = false)
+    public VacationHouse getByIdConcurrent(Long id) throws PessimisticLockingFailureException {
+        return repository.findOneById(id);
+    }
+
     public double getRatingForHouse(Long id) {
         ReviewScoresDTO reviews = clientReviewService.getReviewScores(id, "resource");
         double sum = reviews.getFiveStars() * 5 + reviews.getFourStars() * 4 + reviews.getThreeStars() * 3 + reviews.getTwoStars() * 2 + reviews.getOneStars();
@@ -127,12 +135,12 @@ public class VacationHouseService {
         VacationHouse vh;
         try{
             vh = repository.getById(id);
+            if (vh.getDeleted())
+                return null;
         }
         catch (Exception e){
             return null;
         }
-        if (vh.getDeleted())
-            return null;
         String address = vh.getAddress().getStreet() + " " + vh.getAddress().getNumber() + ", " + vh.getAddress().getPlace() + ", " + vh.getAddress().getCountry();
         List<String> images = new ArrayList<String>();
         for (Image img : vh.getImages()) {
@@ -485,8 +493,15 @@ public class VacationHouseService {
         );
     }
 
+    @Transactional(readOnly = false)
     public Long createReservation(NewReservationDTO dto) throws ReservationNotAvailableException {
-        VacationHouseReservation reservation = createFromDTO(dto);
+        VacationHouseReservation reservation;
+        try{
+            reservation = createFromDTO(dto);
+        }
+        catch (PessimisticLockingFailureException plfe){
+            return Long.valueOf("-1");
+        }
 
         List<VacationHouseReservation> reservations = vacationHouseReservationService.getPossibleCollisionReservations(reservation.getResource().getId());
         for (VacationHouseReservation r : reservations) {
@@ -508,8 +523,11 @@ public class VacationHouseService {
         return reservation.getId();
     }
 
-
-    private VacationHouseReservation createFromDTO(NewReservationDTO dto) {
+    @Transactional(readOnly = false)
+    private VacationHouseReservation createFromDTO(NewReservationDTO dto) throws PessimisticLockingFailureException {
+        Client client = clientService.getById(dto.getClientId().toString());
+        Long id = dto.getResourceId();
+        VacationHouse vacationHouse = this.getByIdConcurrent(id); //throws exc
 
         List<Appointment> appointments = new ArrayList<Appointment>();
 
@@ -523,9 +541,6 @@ public class VacationHouseService {
         }
         appointmentService.saveAll(appointments);
 
-        Client client = clientService.getById(dto.getClientId().toString());
-        Long id = dto.getResourceId();
-        VacationHouse vacationHouse = this.getVacationHouse(id);
 
         int price = vacationHouse.getPricelist().getPrice() * appointments.size();
         int discount = userCategoryService.getClientCategoryBasedOnPoints(client.getNumOfPoints()).getDiscount();
