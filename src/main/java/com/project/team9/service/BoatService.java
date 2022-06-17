@@ -140,10 +140,17 @@ public class BoatService {
 
     public Boolean updateQuickReservation(Long id, BoatQuickReservationDTO quickReservationDTO) {
         Boat boat = this.getBoat(id);
-        BoatReservation newReservation = getReservationFromDTO(quickReservationDTO, true);
         BoatReservation originalReservation = boatReservationService.getBoatReservation(quickReservationDTO.getReservationID());
+        if (!originalReservation.isQuickReservation())
+            return false;
+        BoatReservation newReservation = getReservationFromDTO(quickReservationDTO, true);
         updateQuickReservation(originalReservation, newReservation);
-        boatReservationService.addReservation(originalReservation);
+        try {
+            boatReservationService.saveQuickReservationAsReservation(originalReservation);
+        }
+        catch (ObjectOptimisticLockingFailureException e) {
+            return false;
+        }
         this.addBoat(boat);
         return true;
     }

@@ -3,7 +3,7 @@ import {Modal, InputGroup, Button, Form, Col, Row} from 'react-bootstrap'
 import { TagInfo } from './Info';
 import axios from "axios";  
 import { useParams } from "react-router-dom";
-import { notifyError } from './Consts';
+import { notifyError, notifySuccess } from './Consts';
 import { ToastContainer } from 'react-toastify';
 import './material.css'
 
@@ -119,16 +119,20 @@ function UpdateQuickReservation({state, setState, closeModal, showModal, entity,
                     state.tagsText.push(state.additionalServices[i].text)
                 }
             }
-            console.log(sd) 
+    
             data.append("tagsText", state.tagsText);
             data.append("reservationID", state.reservationID);
             data.append("startDate", sd);
             axios
             .post("http://localhost:4444/" + entity + "/updateQuickReservation/" + id, data)
             .then(res => {
-                window.location.reload();
-            });
-            close();
+                if (res.data)
+                    notifySuccess("Izmena uspešna.")
+                else 
+                    notifyError("Izmena neuspšna. Molimo Vas pokušajte ponovo.")
+                close();
+                setTimeout(function(){window.location.reload();}, 2000);
+            })
         }
       
       }

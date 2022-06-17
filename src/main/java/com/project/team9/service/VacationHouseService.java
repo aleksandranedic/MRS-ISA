@@ -229,10 +229,18 @@ public class VacationHouseService {
 
     public Boolean updateQuickReservation(Long id, VacationHouseQuickReservationDTO quickReservationDTO) {
         VacationHouse house = this.getVacationHouse(id);
-        VacationHouseReservation newReservation = getReservationFromDTO(quickReservationDTO, true);
         VacationHouseReservation originalReservation = vacationHouseReservationService.getVacationHouseReservation(quickReservationDTO.getReservationID());
+        if (!originalReservation.isQuickReservation())
+            return false;
+        VacationHouseReservation newReservation = getReservationFromDTO(quickReservationDTO, true);
         updateQuickReservation(originalReservation, newReservation);
-        vacationHouseReservationService.addReservation(originalReservation);
+
+        try {
+            vacationHouseReservationService.saveQuickReservationAsReservation(originalReservation);
+        }
+        catch (ObjectOptimisticLockingFailureException e) {
+            return false;
+        }
         this.save(house);
         return true;
     }
