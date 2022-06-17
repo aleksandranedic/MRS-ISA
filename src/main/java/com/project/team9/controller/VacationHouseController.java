@@ -170,7 +170,7 @@ public class VacationHouseController {
     }
 
     @PostMapping("/filterHouse")
-    public ResponseEntity<List<VacationHouse>> getFilteredVacationHouse(@RequestBody VacationHouseFilterDTO vacationHouseFilterDTO) {
+    public ResponseEntity<List<EntityDTO>> getFilteredVacationHouse(@RequestBody VacationHouseFilterDTO vacationHouseFilterDTO) {
         return ResponseEntity.ok(service.getFilteredVacationHouses(vacationHouseFilterDTO));
     }
 

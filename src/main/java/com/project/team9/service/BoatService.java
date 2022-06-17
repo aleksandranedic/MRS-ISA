@@ -687,7 +687,7 @@ public class BoatService {
         return address;
     }
 
-    public List<Boat> getFilteredBoats(BoatFilterDTO boatFilterDTO) {
+    public List<EntityDTO> getFilteredBoats(BoatFilterDTO boatFilterDTO) {
         if (boatFilterDTO.isBoatsChecked()) {
             ArrayList<Boat> boats = new ArrayList<>();
             for (Boat boat : getBoats()) {
@@ -748,7 +748,20 @@ public class BoatService {
                     boatsToDelete) {
                 boats.remove(boat);
             }
-            return boats;
+            List<EntityDTO> list=new ArrayList<>();
+            for (Boat boat:
+                 boats) {
+                list.add(new EntityDTO(
+                        boat.getTitle(),
+                        "boat",
+                        boat.getImages().get(0),
+                        getBoatRating(boat.getId()),
+                        boat.getId(),
+                        boat.getAddress(),
+                        boat.getPricelist().getPrice()
+                ));
+            }
+            return list;
         } else {
             return new ArrayList<>();
         }
