@@ -156,7 +156,7 @@ public class BoatController {
         return ResponseEntity.ok(service.getBoatAddress());
     }
     @PostMapping("/filterBoats")
-    public ResponseEntity<List<Boat>> getFilteredAdventures(@RequestBody BoatFilterDTO boatFilterDTO) {
+    public ResponseEntity<List<EntityDTO>> getFilteredAdventures(@RequestBody BoatFilterDTO boatFilterDTO) {
         return ResponseEntity.ok(service.getFilteredBoats(boatFilterDTO));
     }
 

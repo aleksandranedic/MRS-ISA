@@ -35,7 +35,7 @@ public class AdventureController {
     }
 
     @PostMapping("/filterAdventures")
-    public ResponseEntity<List<Adventure>> getFilteredAdventures(@RequestBody AdventureFilterDTO filterDTO) {
+    public ResponseEntity<List<EntityDTO>> getFilteredAdventures(@RequestBody AdventureFilterDTO filterDTO) {
         return ResponseEntity.ok(service.getFilteredAdventures(filterDTO));
     }
 

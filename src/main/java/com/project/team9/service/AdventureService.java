@@ -10,7 +10,6 @@ import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.resource.Adventure;
-import com.project.team9.model.resource.Boat;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.repo.AdventureRepository;
@@ -598,7 +597,7 @@ public class AdventureService {
         return address;
     }
 
-    public List<Adventure> getFilteredAdventures(AdventureFilterDTO filterDTO) {
+    public List<EntityDTO> getFilteredAdventures(AdventureFilterDTO filterDTO) {
         if (filterDTO.isAdventuresChecked()) {
             ArrayList<Adventure> adventures = new ArrayList<>();
             for (Adventure adventure : getAdventures()) {
@@ -655,7 +654,20 @@ public class AdventureService {
                     adventuresToDelete) {
                 adventures.remove(adventure);
             }
-            return adventures;
+            List<EntityDTO> list = new ArrayList<>();
+            for (Adventure adventure :
+                    adventures) {
+                list.add(new EntityDTO(
+                        adventure.getTitle(),
+                        "adventure",
+                        adventure.getImages().get(0),
+                        getAdventureRating(adventure.getId()),
+                        adventure.getId(),
+                        adventure.getAddress(),
+                        adventure.getPricelist().getPrice()
+                ));
+            }
+            return list;
         } else {
             return new ArrayList<>();
         }

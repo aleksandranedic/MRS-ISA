@@ -625,7 +625,7 @@ public class VacationHouseService {
         return address;
     }
 
-    public List<VacationHouse> getFilteredVacationHouses(VacationHouseFilterDTO vacationHouseFilterDTO) {
+    public List<EntityDTO> getFilteredVacationHouses(VacationHouseFilterDTO vacationHouseFilterDTO) {
         if (vacationHouseFilterDTO.isVacationHousesChecked()) {
             ArrayList<VacationHouse> vacationHouses = new ArrayList<>();//treba da prodjes i kroz brze rezervacije
             for (VacationHouse vacationHouse : getVacationHouses()) {
@@ -677,7 +677,20 @@ public class VacationHouseService {
                     housesToDelete) {
                 vacationHouses.remove(vacationHouse);
             }
-            return vacationHouses;
+            List<EntityDTO> list=new ArrayList<>();
+            for (VacationHouse vacationHouse :
+                    vacationHouses) {
+                list.add(new EntityDTO(
+                        vacationHouse.getTitle(),
+                        "house",
+                        vacationHouse.getImages().get(0),
+                        getVacationHouseRating(vacationHouse.getId()),
+                        vacationHouse.getId(),
+                        vacationHouse.getAddress(),
+                        vacationHouse.getPricelist().getPrice()
+                ));
+            }
+            return list;
         } else {
             return new ArrayList<>();
         }
