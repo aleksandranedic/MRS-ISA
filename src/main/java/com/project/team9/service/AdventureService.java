@@ -14,6 +14,7 @@ import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.repo.AdventureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,11 +48,12 @@ public class AdventureService {
     private final EmailService emailService;
     private final UserCategoryService userCategoryService;
     private final PointlistService pointlistService;
-    private final ConfirmationTokenService confirmationTokenService;
 
+    @Value("${frontendlink}")
+    private String frontLink;
 
     @Autowired
-    public AdventureService(AdventureRepository adventureRepository, FishingInstructorService fishingInstructorService, TagService tagService, AddressService addressService, PricelistService pricelistService, ImageService imageService, AppointmentService appointmentService, ClientService clientService, AdventureReservationService adventureReservationService, ReservationService reservationService, UserCategoryService userCategoryService, PointlistService pointlistService, ClientReviewService clientReviewService, EmailService emailService, ConfirmationTokenService confirmationTokenService) {
+    public AdventureService(AdventureRepository adventureRepository, FishingInstructorService fishingInstructorService, TagService tagService, AddressService addressService, PricelistService pricelistService, ImageService imageService, AppointmentService appointmentService, ClientService clientService, AdventureReservationService adventureReservationService, ReservationService reservationService, UserCategoryService userCategoryService, PointlistService pointlistService, ClientReviewService clientReviewService, EmailService emailService) {
         this.repository = adventureRepository;
         this.fishingInstructorService = fishingInstructorService;
         this.tagService = tagService;
@@ -66,7 +68,6 @@ public class AdventureService {
         this.emailService = emailService;
         this.userCategoryService = userCategoryService;
         this.pointlistService = pointlistService;
-        this.confirmationTokenService = confirmationTokenService;
     }
 
     public List<AdventureQuickReservationDTO> getQuickReservations(String id) {
@@ -96,18 +97,16 @@ public class AdventureService {
                 }
             }
         }
-
         adventureReservationService.save(reservation);
         adventure.addQuickReservations(reservation);
         this.addAdventure(adventure);
-        //TODO proveri da li radi
         for (Long userId : adventure.getSubClientUsernames()) {
             Client client = clientService.getById(String.valueOf(userId));
             String fullResponse = "Napravljena je akcija na koji ste se preplatili\n " +
                     "Avantura kоšta " + reservation.getPrice() + "\n" +
                     "Zakazani period je od " + reservation.getAppointments().get(0).getStartTime().toString() + " do " +
                     reservation.getAppointments().get(reservation.getAppointments().size() - 1).getEndTime().toString();
-            String additionalText = "<a href=\"" + "http://localhost:3000" + "\">Prijavite se i rezervišite je</a>";
+            String additionalText = "<a href=\"" + this.frontLink + "\">Prijavite se i rezervišite je</a>";
             String emailForSubbedUser = emailService.buildHTMLEmail(client.getName(), fullResponse, additionalText, "Notifikacija o pretplacenim akcijama");
             emailService.send(client.getEmail(), emailForSubbedUser, "Notifikacija o pretplacenim akcijama");
         }
@@ -417,10 +416,9 @@ public class AdventureService {
                 }
             }
         }
-        //TODO napravi potvrdu o rezervaciji na akciju
         adventureReservationService.save(reservation);
         Client client = clientService.getById(String.valueOf(dto.getClientId()));
-        String link = "<a href=\"" + "http://localhost:3000\">Prijavi i rezervišivi još neku avanturu</a>";
+        String link = "<a href=\"" +this.frontLink+ ">Prijavi i rezervišivi još neku avanturu</a>";
         String fullResponse = "Uspešno ste rezervisali avanturu sa imenom " + reservation.getResource().getTitle() + "\n " +
                 "Avantura kоšta " + reservation.getPrice() + "\n" +
                 "Zakazani period je od " + reservation.getAppointments().get(0).getStartTime().toString() + " do " +
@@ -571,8 +569,7 @@ public class AdventureService {
         quickReservation.setQuickReservation(false);
         adventure.addQuickReservation(quickReservation);
         Long id = adventureReservationService.save(quickReservation);
-        //TODO napravi potvrdu o rezervaciji na akciju
-        String link = "<a href=\"" + "http://localhost:3000\">Prijavi i rezervišivi još neku avanturu</a>";
+        String link = "<a href=\"" + this.frontLink +">Prijavi i rezervišivi još neku avanturu</a>";
         String fullResponse = "Uspešno ste rezervisali akciju na avanturu sa imenom " + quickReservation.getResource().getTitle() + "\n " +
                 "Avantura kоšta " + quickReservation.getPrice() + "\n" +
                 "Zakazani period je od " + quickReservation.getAppointments().get(0).getStartTime().toString() + " do " +

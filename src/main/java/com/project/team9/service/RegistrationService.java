@@ -8,6 +8,7 @@ import com.project.team9.model.user.Role;
 import com.project.team9.model.user.User;
 import com.project.team9.security.token.ConfirmationToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,6 +24,8 @@ public class RegistrationService {
     private final RoleService roleService;
     private final ImageService imageService;
 
+    @Value("${frontendlink}")
+    private String frontLink;
 
     @Autowired
     public RegistrationService(UserServiceSecurity userServiceSecurity, RegistrationRequestService registrationRequestService, EmailService emailService, ConfirmationTokenService confirmationTokenService, RoleService roleService, ImageService imageService) {
@@ -101,8 +104,7 @@ public class RegistrationService {
                         registrationRequest.getCountry(),
                         Boolean.FALSE, role);
                 String token = userServiceSecurity.signUpUser(user);
-                // TODO izvadi localhost:3000
-                String link = "<a href=\""+"http://localhost:3000/confirmedEmail/" + token+"\">Aktivirajte</a>";
+                String link = "<a href=\""+this.frontLink+"confirmedEmail/" + token+"\">Aktivirajte</a>";
                 email=emailService.buildHTMLEmail(user.getName(),"Hvala na registraciji. Molim Vas kliknite link ispod da bi aktivirali svoj nalog:", link ,"Verifikacija emaila");
                 emailService.send(user.getEmail(), email, "Verifikacija emaila");
                 ConfirmationToken confirmationToken = new ConfirmationToken(
