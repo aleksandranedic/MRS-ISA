@@ -12,7 +12,7 @@ export function SearchResultsPage() {
     const [boats, setBoats] = useState([]);
     const fetchBoats = () => {
         let array;
-        axios.get(backLink + "/boat",).then(res => {
+        axios.get(backLink + "/boat/entity",).then(res => {
             array = res.data;
             if (searchTerm !== "" && searchTerm !== "searchTerm" && searchTerm !== undefined) {
                 array = array.filter(boat => boat.title.toString().toLowerCase().includes(searchTerm.toLowerCase()))
@@ -23,7 +23,7 @@ export function SearchResultsPage() {
     const [vacationHouses, setVacationHouses] = useState([]);
     const fetchVacationHouses = () => {
         let array;
-        axios.get(backLink + "/house",).then(res => {
+        axios.get(backLink + "/house/entity",).then(res => {
             array = res.data;
             if (searchTerm !== "" && searchTerm !== "searchTerm" && searchTerm !== undefined) {
                 array = array.filter(boat => boat.title.toString().toLowerCase().includes(searchTerm.toLowerCase()))
@@ -34,7 +34,7 @@ export function SearchResultsPage() {
     const [adventures, setAdventures] = useState([]);
     const fetchAdventures = () => {
         let array;
-        axios.get(backLink + "/adventure",).then(res => {
+        axios.get(backLink + "/adventure/entity",).then(res => {
             array = res.data;
             if (searchTerm !== "" && searchTerm !== "searchTerm" && searchTerm !== undefined) {
                 array = array.filter(boat => boat.title.toString().toLowerCase().includes(searchTerm.toLowerCase()))
@@ -124,13 +124,13 @@ export function SearchResultsPage() {
             <div style={{marginLeft: "5%", marginRight: "10%"}}>
                 <h4 className="fw-light m-3">Vikendice</h4>
                 <hr/>
-                <SearchResultsResources list={vacationHouses} name={"house"}/>
+                <SearchResultsResources list={vacationHouses}/>
                 <h4 className="fw-light m-3">Brodovi</h4>
                 <hr/>
-                <SearchResultsResources list={boats} name={"boat"}/>
+                <SearchResultsResources list={boats}/>
                 <h4 className="fw-light m-3">Avanture</h4>
                 <hr/>
-                <SearchResultsResources list={adventures} name={"adventure"}/>
+                <SearchResultsResources list={adventures}/>
             </div>
         </>
 

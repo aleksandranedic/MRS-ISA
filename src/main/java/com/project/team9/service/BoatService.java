@@ -908,4 +908,24 @@ public class BoatService {
             return "Otkazivanje rezervacije nije uspelo probajte ponovo";
         }
     }
+
+    public List<EntityDTO> getEntities() {
+        List<EntityDTO> entities = new ArrayList<EntityDTO>();
+        for (Boat boat : repository.findAll()) {
+            if (!boat.getDeleted()) {
+                entities.add(
+                        new EntityDTO(
+                                boat.getTitle(),
+                                "boat",
+                                boat.getImages().get(boat.getImages().size() - 1),
+                                this.getBoatRating(boat.getId()),
+                                boat.getId(),
+                                boat.getAddress(),
+                                boat.getPricelist().getPrice()
+                        )
+                );
+            }
+        }
+        return entities;
+    }
 }

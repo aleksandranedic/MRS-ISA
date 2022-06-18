@@ -38,6 +38,12 @@ public class BoatController {
         Long houseId = Long.parseLong(id);
         return service.getBoat(houseId);
     }
+
+    @GetMapping("/entity")
+    public List<EntityDTO> getEntities() {
+        return service.getEntities();
+    }
+
     @PostMapping(value = "createBoat")
     public Long addBoatForOwner(BoatDTO boat, @RequestParam("fileImage") MultipartFile[] multipartFiles) throws IOException {
         return service.createBoat(boat, multipartFiles);

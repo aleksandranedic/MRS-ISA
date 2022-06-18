@@ -230,6 +230,7 @@ public class AdventureService {
         this.addAdventure(originalAdventure);
         return this.getDTOById(originalAdventure.getId().toString());
     }
+
     private List<String> saveImages(Adventure adventure, MultipartFile[] multipartFiles) throws IOException {
         List<String> paths = new ArrayList<>();
         if (multipartFiles == null) {
@@ -265,6 +266,7 @@ public class AdventureService {
             }
         }
     }
+
     private List<Image> getImages(List<String> paths) {
         List<Image> images = new ArrayList<Image>();
         for (String path : paths) {
@@ -276,6 +278,7 @@ public class AdventureService {
         }
         return images;
     }
+
     private void updateAdventureFromNew(Adventure oldAdventure, Adventure newAdventure) {
         oldAdventure.setTitle(newAdventure.getTitle());
         oldAdventure.setAddress(newAdventure.getAddress());
@@ -418,13 +421,13 @@ public class AdventureService {
         adventureReservationService.save(reservation);
         Client client = clientService.getById(String.valueOf(dto.getClientId()));
         String link = "<a href=\"" + "http://localhost:3000\">Prijavi i rezervišivi još neku avanturu</a>";
-        String fullResponse = "Uspešno ste rezervisali avanturu sa imenom "+ reservation.getResource().getTitle() +"\n " +
+        String fullResponse = "Uspešno ste rezervisali avanturu sa imenom " + reservation.getResource().getTitle() + "\n " +
                 "Avantura kоšta " + reservation.getPrice() + "\n" +
                 "Zakazani period je od " + reservation.getAppointments().get(0).getStartTime().toString() + " do " +
                 reservation.getAppointments().get(reservation.getAppointments().size() - 1).getEndTime().toString();
         String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda rezervacije");
         emailService.send(client.getEmail(), email, "Potvrda rezervacije");
-        client.setNumOfPoints(client.getNumOfPoints()+ pointlistService.getClientPointlist().getNumOfPoints());
+        client.setNumOfPoints(client.getNumOfPoints() + pointlistService.getClientPointlist().getNumOfPoints());
         clientService.addClient(client);
         reservation.setClient(client);
         adventureReservationService.save(reservation);
@@ -567,10 +570,10 @@ public class AdventureService {
         quickReservation.setClient(client);
         quickReservation.setQuickReservation(false);
         adventure.addQuickReservation(quickReservation);
-        Long id  = adventureReservationService.save(quickReservation);
+        Long id = adventureReservationService.save(quickReservation);
         //TODO napravi potvrdu o rezervaciji na akciju
         String link = "<a href=\"" + "http://localhost:3000\">Prijavi i rezervišivi još neku avanturu</a>";
-        String fullResponse = "Uspešno ste rezervisali akciju na avanturu sa imenom "+ quickReservation.getResource().getTitle() +"\n " +
+        String fullResponse = "Uspešno ste rezervisali akciju na avanturu sa imenom " + quickReservation.getResource().getTitle() + "\n " +
                 "Avantura kоšta " + quickReservation.getPrice() + "\n" +
                 "Zakazani period je od " + quickReservation.getAppointments().get(0).getStartTime().toString() + " do " +
                 quickReservation.getAppointments().get(quickReservation.getAppointments().size() - 1).getEndTime().toString();
@@ -781,17 +784,37 @@ public class AdventureService {
     }
 
     public String cancelAdventureReservation(Long id) {
-        try{
-            AdventureReservation adventureReservation=adventureReservationService.getById(id);
-            LocalDateTime now=LocalDateTime.now();
+        try {
+            AdventureReservation adventureReservation = adventureReservationService.getById(id);
+            LocalDateTime now = LocalDateTime.now();
             int numberOfDaysBetween = (int) ChronoUnit.DAYS.between(now.toLocalDate(), adventureReservation.getAppointments().get(0).getStartTime());
-            if(numberOfDaysBetween<3){
-               return  "Otkazivanje rezervacije je moguće najkasnije 3 dana do početka";
+            if (numberOfDaysBetween < 3) {
+                return "Otkazivanje rezervacije je moguće najkasnije 3 dana do početka";
             }
             adventureReservationService.deleteReservation(adventureReservation);
             return "Uspešno ste otkazali rezervaciju avanture";
-        }catch (Exception exception){
+        } catch (Exception exception) {
             return "Otkazivanje rezervacije nije uspelo probajte ponovo";
         }
+    }
+
+    public List<EntityDTO> getEntities() {
+        List<EntityDTO> entities = new ArrayList<EntityDTO>();
+        for (Adventure adventure : repository.findAll()) {
+            if (!adventure.getDeleted()) {
+                entities.add(
+                        new EntityDTO(
+                                adventure.getTitle(),
+                                "adventure",
+                                adventure.getImages().get(adventure.getImages().size() - 1),
+                                this.getAdventureRating(adventure.getId()),
+                                adventure.getId(),
+                                adventure.getAddress(),
+                                adventure.getPricelist().getPrice()
+                        )
+                );
+            }
+        }
+        return entities;
     }
 }
