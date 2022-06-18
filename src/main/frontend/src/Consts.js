@@ -28,7 +28,7 @@ export const missingDataErrors = {
     color: "Morate odabrati boju"
 }
 
-export const frontLink = "http://localhost:3000/"
+export const frontLink = "https://savana-frontend.herokuapp.com/"
 export const backLink = "https://savana-backend.herokuapp.com"
 export const profilePicturePlaceholder = "http://localhost:3000/images/profilePicturePlaceholder.png"
 export const locationPlaceholder = {iconUrl:"http://localhost:3000/images/location.png", iconSize:[38,38]}
