@@ -30,6 +30,7 @@ jobs:
            password: $DOCKERHUB_PASSWORD 
     steps:
        - checkout
+       - run: ls
        - run:
             name: Deploy frontend
             command: git subtree push --prefix="src/main/frontend" https://heroku:$HEROKU_API_KEY@git.heroku.com/savana-frontend.git master
