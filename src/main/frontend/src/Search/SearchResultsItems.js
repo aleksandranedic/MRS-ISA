@@ -3,7 +3,7 @@ import {backLink, frontLink} from "../Consts";
 import {SearchResultCard} from "./SearchResultCard";
 import Pagination from "../Pagination";
 
-const SearchResultsResources = ({list}) => {
+const SearchResultsResources = ({list,name}) => {
 
     const [currentPage, setCurrentPage] = useState(1)
 

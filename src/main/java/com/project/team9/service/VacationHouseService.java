@@ -15,6 +15,7 @@ import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.VacationHouseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,7 +49,8 @@ public class VacationHouseService {
     private final PointlistService pointlistService;
     private final UserCategoryService userCategoryService;
 
-
+    @Value("${frontendlink}")
+    private String frontLink;
 
     @Autowired
     public VacationHouseService(VacationHouseRepository vacationHouseRepository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, VacationHouseReservationService vacationHouseReservationService, ClientReviewService clientReviewService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService, EmailService emailService, PointlistService pointlistService, UserCategoryService userCategoryService) {
@@ -214,14 +216,13 @@ public class VacationHouseService {
         vacationHouseReservationService.addReservation(reservation);
         house.addReservation(reservation);
         this.save(house);
-        //TODO proveri da li radi
         for (Long userId : house.getSubClientUsernames()) {
             Client client = clientService.getById(String.valueOf(userId));
             String fullResponse = "Napravljena je akcija na koji ste se preplatili\n " +
                     "Noćenja na vikendici kоštaju " + reservation.getPrice() + "\n" +
                     "Zakazani period je od " + reservation.getAppointments().get(0).getStartTime().toString() + " do " +
                     reservation.getAppointments().get(reservation.getAppointments().size() - 1).getEndTime().toString();
-            String additionalText = "<a href=\"" + "http://localhost:3000" + "\">Prijavite se i rezervišite je</a>";
+            String additionalText = "<a href=\"" + frontLink + "\">Prijavite se i rezervišite je</a>";
             String emailForSubbedUser = emailService.buildHTMLEmail(client.getName(), fullResponse, additionalText, "Notifikacija o pretplacenim akcijama");
             emailService.send(client.getEmail(), emailForSubbedUser, "Notifikacija o pretplacenim akcijama");
         }
@@ -489,9 +490,8 @@ public class VacationHouseService {
                 }
             }
         }
-        //TODO napravi potvrdu o rezervaciji na akciju
         Client client=clientService.getById(String.valueOf(dto.getClientId()));
-        String link = "<a href=\"" + "http://localhost:3000\">Prijavi i rezervišivi još neku avanturu</a>";
+        String link = "<a href=\"" + frontLink+">Prijavi i rezervišivi još neku avanturu</a>";
         String fullResponse = "Uspešno ste rezervisali akciju na vikendicu sa imenom "+ reservation.getResource().getTitle() +"\n " +
                 "Avantura kоšta " + reservation.getPrice() + "\n" +
                 "Zakazani period je od " + reservation.getAppointments().get(0).getStartTime().toString() + " do " +
@@ -771,7 +771,7 @@ public class VacationHouseService {
 
         Long id = vacationHouseReservationService.save(quickReservation);
         repository.save(vacationHouse);
-        String link = "<a href=\"" + "http://localhost:3000\">Prijavi i rezervišivi još neku avanturu</a>";
+        String link = "<a href=\"" + frontLink +">Prijavi i rezervišivi još neku avanturu</a>";
         String fullResponse = "Uspešno ste rezervisali akciju na vikendicu sa imenom "+ quickReservation.getResource().getTitle() +"\n " +
                 "Rezervacija vikendice kоšta " + quickReservation.getPrice() + "\n" +
                 "Zakazani period je od " + quickReservation.getAppointments().get(0).getStartTime().toString() + " do " +
@@ -779,7 +779,6 @@ public class VacationHouseService {
         String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda rezervacije");
         emailService.send(client.getEmail(), email, "Potvrda rezervacije");
         return id;
-        //TODO napravi potvrdu o rezervaciji na akciju
     }
 
     public boolean clientCanReviewVendor(Long vendorId, Long clientId) {

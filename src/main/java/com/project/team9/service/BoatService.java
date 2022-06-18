@@ -17,6 +17,7 @@ import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.repo.BoatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -50,7 +51,8 @@ public class BoatService {
     private final PointlistService pointlistService;
     private final UserCategoryService userCategoryService;
 
-
+    @Value("${frontendlink}")
+    private String frontLink;
 
     @Autowired
     public BoatService(BoatRepository repository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, BoatReservationService boatReservationService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService, ClientReviewService clientReviewService, EmailService emailService, PointlistService pointlistService, UserCategoryService userCategoryService) {
@@ -96,17 +98,14 @@ public class BoatService {
         boatReservationService.addReservation(reservation);
         boat.addReservation(reservation);
         this.addBoat(boat);
-        //TODO proveri da li radi
-        for (Long userId : boat.getSubClientUsernames()) {
-            Client client = clientService.getById(String.valueOf(userId));
+            Client client = clientService.getById(String.valueOf(reservation.getClient().getId()));
             String fullResponse = "Napravljena je akcija na koji ste se preplatili\n " +
                     "Avanture na brod kоšta " + reservation.getPrice() + "\n" +
                     "Zakazani period je od " + reservation.getAppointments().get(0).getStartTime().toString() + " do " +
                     reservation.getAppointments().get(reservation.getAppointments().size() - 1).getEndTime().toString();
-            String additionalText = "<a href=\"" + "http://localhost:3000" + "\">Prijavite se i rezervišite je</a>";
+            String additionalText = "<a href=\"" + frontLink + "\">Prijavite se i rezervišite je</a>";
             String emailForSubbedUser = emailService.buildHTMLEmail(client.getName(), fullResponse, additionalText, "Notifikacija o pretplacenim akcijama");
             emailService.send(client.getEmail(), emailForSubbedUser, "Notifikacija o pretplacenim akcijama");
-        }
         return true;
     }
 
@@ -189,8 +188,7 @@ public class BoatService {
 
         Long id = boatReservationService.save(quickReservation);
         repository.save(boat);
-        //TODO napravi potvrdu o rezervaciji na akciju
-        String link = "<a href=\"" + "http://localhost:3000\">Prijavi i rezervišivi još neku avanturu na brodu</a>";
+        String link = "<a href=\"" + frontLink+">Prijavi i rezervišivi još neku avanturu na brodu</a>";
         String fullResponse = "Uspešno ste rezervisali akciju na brod sa imenom "+ quickReservation.getResource().getTitle() +"\n " +
                 "Rezervaicija broda kоšta " + quickReservation.getPrice() + "\n" +
                 "Zakazani period je od " + quickReservation.getAppointments().get(0).getStartTime().toString() + " do " +
@@ -502,9 +500,8 @@ public class BoatService {
                 }
             }
         }
-        //TODO napravi potvrdu o rezervaciji na akciju
         Client client=clientService.getById(String.valueOf(dto.getClientId()));
-        String link = "<a href=\"" + "http://localhost:3000\">Prijavi i rezervišivi još neku avanturu</a>";
+        String link = "<a href=\"" + frontLink+">Prijavi i rezervišivi još neku avanturu</a>";
         String fullResponse = "Uspešno ste rezervisali avanturu na brodu sa imenom "+ reservation.getResource().getTitle() +"\n " +
                 "Rezervacija broda kоšta " + reservation.getPrice() + "\n" +
                 "Zakazani period je od " + reservation.getAppointments().get(0).getStartTime().toString() + " do " +
