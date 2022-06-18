@@ -71,7 +71,6 @@ const Client = () => {
         axios.get(backLink + "/client/reservation/" + id).then(res => {
             setReservations(res.data);
             setEvents(processReservationsForUsers(res.data));
-
         })
 
     }

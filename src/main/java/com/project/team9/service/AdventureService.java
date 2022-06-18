@@ -11,8 +11,6 @@ import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.resource.Adventure;
-import com.project.team9.model.resource.Boat;
-import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.repo.AdventureRepository;
@@ -20,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,8 +53,11 @@ public class AdventureService {
     private final UserCategoryService userCategoryService;
     private final PointlistService pointlistService;
 
+    @Value("${frontendlink}")
+    private String frontLink;
+
     @Autowired
-    public AdventureService(AdventureRepository adventureRepository, FishingInstructorService fishingInstructorService, TagService tagService, AddressService addressService, PricelistService pricelistService, ImageService imageService, AppointmentService appointmentService, ClientService clientService, AdventureReservationService adventureReservationService, ReservationService reservationService, ClientReviewService clientReviewService, EmailService emailService, UserCategoryService userCategoryService, PointlistService pointlistService) {
+    public AdventureService(AdventureRepository adventureRepository, FishingInstructorService fishingInstructorService, TagService tagService, AddressService addressService, PricelistService pricelistService, ImageService imageService, AppointmentService appointmentService, ClientService clientService, AdventureReservationService adventureReservationService, ReservationService reservationService, UserCategoryService userCategoryService, PointlistService pointlistService, ClientReviewService clientReviewService, EmailService emailService) {
         this.repository = adventureRepository;
         this.fishingInstructorService = fishingInstructorService;
         this.tagService = tagService;
@@ -106,18 +108,16 @@ public class AdventureService {
                 }
             }
         }
-
         adventureReservationService.save(reservation);
         adventure.addQuickReservations(reservation);
         this.addAdventure(adventure);
-        //TODO proveri da li radi
         for (Long userId : adventure.getSubClientUsernames()) {
             Client client = clientService.getById(String.valueOf(userId));
             String fullResponse = "Napravljena je akcija na koji ste se preplatili\n " +
                     "Avantura kоšta " + reservation.getPrice() + "\n" +
                     "Zakazani period je od " + reservation.getAppointments().get(0).getStartTime().toString() + " do " +
                     reservation.getAppointments().get(reservation.getAppointments().size() - 1).getEndTime().toString();
-            String additionalText = "<a href=\"" + "http://localhost:3000" + "\">Prijavite se i rezervišite je</a>";
+            String additionalText = "<a href=\"" + this.frontLink + "\">Prijavite se i rezervišite je</a>";
             String emailForSubbedUser = emailService.buildHTMLEmail(client.getName(), fullResponse, additionalText, "Notifikacija o pretplacenim akcijama");
             emailService.send(client.getEmail(), emailForSubbedUser, "Notifikacija o pretplacenim akcijama");
         }
@@ -261,6 +261,7 @@ public class AdventureService {
         this.addAdventure(originalAdventure);
         return this.getDTOById(originalAdventure.getId().toString());
     }
+
     private List<String> saveImages(Adventure adventure, MultipartFile[] multipartFiles) throws IOException {
         List<String> paths = new ArrayList<>();
         if (multipartFiles == null) {
@@ -296,6 +297,7 @@ public class AdventureService {
             }
         }
     }
+
     private List<Image> getImages(List<String> paths) {
         List<Image> images = new ArrayList<Image>();
         for (String path : paths) {
@@ -307,6 +309,7 @@ public class AdventureService {
         }
         return images;
     }
+
     private void updateAdventureFromNew(Adventure oldAdventure, Adventure newAdventure) {
         oldAdventure.setTitle(newAdventure.getTitle());
         oldAdventure.setAddress(newAdventure.getAddress());
@@ -452,11 +455,16 @@ public class AdventureService {
                 }
             }
         }
-        //TODO napravi potvrdu o rezervaciji na akciju
         adventureReservationService.save(reservation);
-
-        Client client = reservation.getClient();
-        client.setNumOfPoints(client.getNumOfPoints()+ pointlistService.getClientPointlist().getNumOfPoints());
+        Client client = clientService.getById(String.valueOf(dto.getClientId()));
+        String link = "<a href=\"" +this.frontLink+ ">Prijavi i rezervišivi još neku avanturu</a>";
+        String fullResponse = "Uspešno ste rezervisali avanturu sa imenom " + reservation.getResource().getTitle() + "\n " +
+                "Avantura kоšta " + reservation.getPrice() + "\n" +
+                "Zakazani period je od " + reservation.getAppointments().get(0).getStartTime().toString() + " do " +
+                reservation.getAppointments().get(reservation.getAppointments().size() - 1).getEndTime().toString();
+        String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda rezervacije");
+        emailService.send(client.getEmail(), email, "Potvrda rezervacije");
+        client.setNumOfPoints(client.getNumOfPoints() + pointlistService.getClientPointlist().getNumOfPoints());
         clientService.addClient(client);
         reservation.setClient(client);
         adventureReservationService.save(reservation);
@@ -602,7 +610,13 @@ public class AdventureService {
         adventure.addQuickReservation(quickReservation);
         try{
             Long id = adventureReservationService.saveQuickReservationAsReservation(quickReservation);  // ovo moze da pukne
-            //TODO napravi potvrdu o rezervaciji na akciju
+            String link = "<a href=\"" + this.frontLink +">Prijavi i rezervišivi još neku avanturu</a>";
+            String fullResponse = "Uspešno ste rezervisali akciju na avanturu sa imenom " + quickReservation.getResource().getTitle() + "\n " +
+                    "Avantura kоšta " + quickReservation.getPrice() + "\n" +
+                    "Zakazani period je od " + quickReservation.getAppointments().get(0).getStartTime().toString() + " do " +
+                    quickReservation.getAppointments().get(quickReservation.getAppointments().size() - 1).getEndTime().toString();
+            String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda brze rezervacije");
+            emailService.send(client.getEmail(), email, "Potvrda brze rezervacije");
             repository.save(adventure);
             return id;
         } catch (ObjectOptimisticLockingFailureException e){
@@ -627,7 +641,7 @@ public class AdventureService {
         return address;
     }
 
-    public List<Adventure> getFilteredAdventures(AdventureFilterDTO filterDTO) {
+    public List<EntityDTO> getFilteredAdventures(AdventureFilterDTO filterDTO) {
         if (filterDTO.isAdventuresChecked()) {
             ArrayList<Adventure> adventures = new ArrayList<>();
             for (Adventure adventure : getAdventures()) {
@@ -684,7 +698,20 @@ public class AdventureService {
                     adventuresToDelete) {
                 adventures.remove(adventure);
             }
-            return adventures;
+            List<EntityDTO> list = new ArrayList<>();
+            for (Adventure adventure :
+                    adventures) {
+                list.add(new EntityDTO(
+                        adventure.getTitle(),
+                        "adventure",
+                        adventure.getImages().get(0),
+                        getAdventureRating(adventure.getId()),
+                        adventure.getId(),
+                        adventure.getAddress(),
+                        adventure.getPricelist().getPrice()
+                ));
+            }
+            return list;
         } else {
             return new ArrayList<>();
         }
@@ -795,5 +822,40 @@ public class AdventureService {
         }
 
         return adventures;
+    }
+
+    public String cancelAdventureReservation(Long id) {
+        try {
+            AdventureReservation adventureReservation = adventureReservationService.getById(id);
+            LocalDateTime now = LocalDateTime.now();
+            int numberOfDaysBetween = (int) ChronoUnit.DAYS.between(now.toLocalDate(), adventureReservation.getAppointments().get(0).getStartTime());
+            if (numberOfDaysBetween < 3) {
+                return "Otkazivanje rezervacije je moguće najkasnije 3 dana do početka";
+            }
+            adventureReservationService.deleteReservation(adventureReservation);
+            return "Uspešno ste otkazali rezervaciju avanture";
+        } catch (Exception exception) {
+            return "Otkazivanje rezervacije nije uspelo probajte ponovo";
+        }
+    }
+
+    public List<EntityDTO> getEntities() {
+        List<EntityDTO> entities = new ArrayList<EntityDTO>();
+        for (Adventure adventure : repository.findAll()) {
+            if (!adventure.getDeleted()) {
+                entities.add(
+                        new EntityDTO(
+                                adventure.getTitle(),
+                                "adventure",
+                                adventure.getImages().get(adventure.getImages().size() - 1),
+                                this.getAdventureRating(adventure.getId()),
+                                adventure.getId(),
+                                adventure.getAddress(),
+                                adventure.getPricelist().getPrice()
+                        )
+                );
+            }
+        }
+        return entities;
     }
 }

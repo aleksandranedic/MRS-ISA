@@ -145,7 +145,7 @@ export function VacationHousePage() {
             </h2>
             <hr className="me-5 ms-5"/>
             <Calendar reservable={true} pricelist={{price: house.price}} resourceId={house.id} type={"vacationHouse"}
-                      events={events} myPage={myPage}/>
+                      events={events} myPage={myPage} additionalServices={house.additionalServices}/>
 
             {myPage && <>
                 <h2 className="me-5 ms-5 mt-5" id="reservations">
@@ -153,9 +153,6 @@ export function VacationHousePage() {
                 </h2>
                 <hr className="me-5 ms-5"/>
                 <ReservationCardGrid reservations={reservations}/>
-
-
-
 
             </>}
 

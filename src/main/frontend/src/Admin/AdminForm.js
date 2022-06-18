@@ -110,7 +110,7 @@ export function AdminForm({show, setShow, administrator}) {
             place: form.place,
             country: form.country
         }
-        
+
         axios.post(backLink+"/registration", userDTO).then(res => {
             console.log(res.data);
             window.location.reload();
@@ -164,7 +164,7 @@ export function AdminForm({show, setShow, administrator}) {
                 window.location.reload();
             })
         }
-       
+
     }
 
     const setField = (field, value) => {
@@ -237,7 +237,7 @@ export function AdminForm({show, setShow, administrator}) {
                                 {errors.phoneNumber}
                             </Form.Control.Feedback>
                         </Form.Group>
-                       
+
                         <Form.Group className="mb-3 w-50" controlId="formBasicEmail">
                             <Form.Label>Email</Form.Label>
                             <Form.Control type="email"
@@ -249,7 +249,7 @@ export function AdminForm({show, setShow, administrator}) {
                             </Form.Control.Feedback>
                         </Form.Group>
                     </div>
-                      
+
             </Form>
             <Form className="d-flex">
                 <Form.Group className="mb-3 m-2" controlId="formStreet">

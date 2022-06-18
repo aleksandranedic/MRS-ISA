@@ -37,7 +37,7 @@ public class AdventureController {
     }
 
     @PostMapping("/filterAdventures")
-    public ResponseEntity<List<Adventure>> getFilteredAdventures(@RequestBody AdventureFilterDTO filterDTO) {
+    public ResponseEntity<List<EntityDTO>> getFilteredAdventures(@RequestBody AdventureFilterDTO filterDTO) {
         return ResponseEntity.ok(service.getFilteredAdventures(filterDTO));
     }
 
@@ -79,6 +79,11 @@ public class AdventureController {
     @GetMapping
     public List<Adventure> getAdventures() {
         return service.getAdventures();
+    }
+
+    @GetMapping("/entity")
+    public List<EntityDTO> getEntities() {
+        return service.getEntities();
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -173,5 +178,8 @@ public class AdventureController {
     public ResponseEntity<List<EntityDTO>> getClientsSubscribedAdventures(@PathVariable Long id){
         return ResponseEntity.ok(service.getClientsSubscribedAdventures());
     }
-
+    @PostMapping("/cancelReservation/{id}")
+    public ResponseEntity<String> cancelAdventureReservation(@PathVariable Long id){
+        return ResponseEntity.ok(service.cancelAdventureReservation(id));
+    }
 }

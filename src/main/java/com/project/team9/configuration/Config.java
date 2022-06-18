@@ -128,6 +128,8 @@ public class Config {
         roleRepository.save(roleClient);
 
         Client client3 = getClient("/images/clients/3/client_3.jpg", "3", 3L, "Verica", "Markov", roleClient);
+        client3.setNumOfPenalties(2);
+        clientRepository.save(client3);
         Client client4 = getClient("/images/clients/4/client_4.jpg", "4", 4L, "Jovanka", "Prodanov", roleClient);
         Client client5 = getClient("/images/clients/5/client_5.jpg", "5", 5L, "Lena", "Sudarski", roleClient);
         Client client6 = getClient("/images/clients/6/client_6.jpg", "6", 6L, "Adrijana", "Radanov", roleClient);

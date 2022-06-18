@@ -9,12 +9,12 @@ import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.VacationHouseReservation;
-import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.VacationHouseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
@@ -51,7 +51,8 @@ public class VacationHouseService {
     private final PointlistService pointlistService;
     private final UserCategoryService userCategoryService;
 
-
+    @Value("${frontendlink}")
+    private String frontLink;
 
     @Autowired
     public VacationHouseService(VacationHouseRepository vacationHouseRepository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, VacationHouseReservationService vacationHouseReservationService, ClientReviewService clientReviewService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService, EmailService emailService, PointlistService pointlistService, UserCategoryService userCategoryService) {
@@ -229,14 +230,13 @@ public class VacationHouseService {
         vacationHouseReservationService.addReservation(reservation);
         house.addReservation(reservation);
         this.save(house);
-        //TODO proveri da li radi
         for (Long userId : house.getSubClientUsernames()) {
             Client client = clientService.getById(String.valueOf(userId));
             String fullResponse = "Napravljena je akcija na koji ste se preplatili\n " +
                     "Noćenja na vikendici kоštaju " + reservation.getPrice() + "\n" +
                     "Zakazani period je od " + reservation.getAppointments().get(0).getStartTime().toString() + " do " +
                     reservation.getAppointments().get(reservation.getAppointments().size() - 1).getEndTime().toString();
-            String additionalText = "<a href=\"" + "http://localhost:3000" + "\">Prijavite se i rezervišite je</a>";
+            String additionalText = "<a href=\"" + frontLink + "\">Prijavite se i rezervišite je</a>";
             String emailForSubbedUser = emailService.buildHTMLEmail(client.getName(), fullResponse, additionalText, "Notifikacija o pretplacenim akcijama");
             emailService.send(client.getEmail(), emailForSubbedUser, "Notifikacija o pretplacenim akcijama");
         }
@@ -315,7 +315,6 @@ public class VacationHouseService {
             vh = getByIdConcurrent(id);
         }
         catch (PessimisticLockingFailureException plfe){
-            System.out.println("opa djurfjo");
             return false;
         }
         if (getReservationsForVacationHouse(id).size() > 0)
@@ -528,10 +527,15 @@ public class VacationHouseService {
                 }
             }
         }
-        //TODO napravi potvrdu o rezervaciji na akciju
+        Client client=clientService.getById(String.valueOf(dto.getClientId()));
+        String link = "<a href=\"" + frontLink+">Prijavi i rezervišivi još neku avanturu</a>";
+        String fullResponse = "Uspešno ste rezervisali akciju na vikendicu sa imenom "+ reservation.getResource().getTitle() +"\n " +
+                "Avantura kоšta " + reservation.getPrice() + "\n" +
+                "Zakazani period je od " + reservation.getAppointments().get(0).getStartTime().toString() + " do " +
+                reservation.getAppointments().get(reservation.getAppointments().size() - 1).getEndTime().toString();
+        String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda brze rezervacije");
+        emailService.send(client.getEmail(), email, "Potvrda brze rezervacije");
         vacationHouseReservationService.save(reservation);
-
-        Client client = reservation.getClient();
         client.setNumOfPoints(client.getNumOfPoints()+ pointlistService.getClientPointlist().getNumOfPoints());
         clientService.addClient(client);
         reservation.setClient(client);
@@ -659,7 +663,7 @@ public class VacationHouseService {
         return address;
     }
 
-    public List<VacationHouse> getFilteredVacationHouses(VacationHouseFilterDTO vacationHouseFilterDTO) {
+    public List<EntityDTO> getFilteredVacationHouses(VacationHouseFilterDTO vacationHouseFilterDTO) {
         if (vacationHouseFilterDTO.isVacationHousesChecked()) {
             ArrayList<VacationHouse> vacationHouses = new ArrayList<>();//treba da prodjes i kroz brze rezervacije
             for (VacationHouse vacationHouse : getVacationHouses()) {
@@ -711,7 +715,20 @@ public class VacationHouseService {
                     housesToDelete) {
                 vacationHouses.remove(vacationHouse);
             }
-            return vacationHouses;
+            List<EntityDTO> list=new ArrayList<>();
+            for (VacationHouse vacationHouse :
+                    vacationHouses) {
+                list.add(new EntityDTO(
+                        vacationHouse.getTitle(),
+                        "house",
+                        vacationHouse.getImages().get(0),
+                        getVacationHouseRating(vacationHouse.getId()),
+                        vacationHouse.getId(),
+                        vacationHouse.getAddress(),
+                        vacationHouse.getPricelist().getPrice()
+                ));
+            }
+            return list;
         } else {
             return new ArrayList<>();
         }
@@ -794,7 +811,13 @@ public class VacationHouseService {
         try {
             Long id = vacationHouseReservationService.saveQuickReservationAsReservation(quickReservation); //ovo moze da pukne
             repository.save(vacationHouse);
-            //TODO napravi potvrdu o rezervaciji na akciju
+            String link = "<a href=\"" + frontLink +">Prijavi i rezervišivi još neku avanturu</a>";
+            String fullResponse = "Uspešno ste rezervisali akciju na vikendicu sa imenom "+ quickReservation.getResource().getTitle() +"\n " +
+                    "Rezervacija vikendice kоšta " + quickReservation.getPrice() + "\n" +
+                    "Zakazani period je od " + quickReservation.getAppointments().get(0).getStartTime().toString() + " do " +
+                    quickReservation.getAppointments().get(quickReservation.getAppointments().size() - 1).getEndTime().toString();
+            String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda rezervacije");
+            emailService.send(client.getEmail(), email, "Potvrda rezervacije");
             return id;
         }
         catch (ObjectOptimisticLockingFailureException e)   {
@@ -863,5 +886,45 @@ public class VacationHouseService {
         }
 
         return houses;
+    }
+
+    public String cancelVacationHouseReservation(Long id) {
+        try{
+            VacationHouseReservation vacationHouseReservation=vacationHouseReservationService.getVacationHouseReservation(id);
+            LocalDateTime now=LocalDateTime.now();
+            int numberOfDaysBetween = (int) ChronoUnit.DAYS.between(now.toLocalDate(), vacationHouseReservation.getAppointments().get(0).getStartTime());
+            if(numberOfDaysBetween<3){
+                return  "Otkazivanje rezervacije je moguće najkasnije 3 dana do početka";
+            }
+            for (Appointment appointment :
+                    vacationHouseReservation.getAppointments()) {
+                appointmentService.delete(appointment);
+            }
+            vacationHouseReservationService.deleteReservation(vacationHouseReservation);
+            return "Uspešno ste otkazali rezervaciju vikendicu";
+        }catch (Exception exception){
+            return "Otkazivanje rezervacije nije uspelo probajte ponovo";
+        }
+
+    }
+
+    public List<EntityDTO> getEntities() {
+        List<EntityDTO> entities = new ArrayList<EntityDTO>();
+        for (VacationHouse house : repository.findAll()) {
+            if (!house.getDeleted()) {
+                entities.add(
+                        new EntityDTO(
+                                house.getTitle(),
+                                "house",
+                                house.getImages().get(house.getImages().size() - 1),
+                                this.getVacationHouseRating(house.getId()),
+                                house.getId(),
+                                house.getAddress(),
+                                house.getPricelist().getPrice()
+                        )
+                );
+            }
+        }
+        return entities;
     }
 }

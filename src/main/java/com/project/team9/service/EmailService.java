@@ -20,10 +20,13 @@ public class EmailService implements EmailSender{
 
     private final JavaMailSender mailSender;
 
+
+
     @Autowired
     public EmailService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
+
 
     @Override
     @Async

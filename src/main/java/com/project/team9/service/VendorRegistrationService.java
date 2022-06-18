@@ -11,6 +11,7 @@ import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.security.PasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -28,6 +29,9 @@ public class VendorRegistrationService {
     private final BoatOwnerService boatOwnerService;
     private final AddressService addressService;
     private final EmailService emailService;
+
+    @Value("${frontendlink}")
+    private String frontLink;
 
     @Autowired
     public VendorRegistrationService(RegistrationRequestService service, RoleService roleService, PasswordEncoder passwordEncoder, FishingInstructorService fishingInstructorService, VacationHouseOwnerService vacationHouseOwnerService, BoatOwnerService boatOwnerService, AddressService addressService, EmailService emailService) {
@@ -129,7 +133,7 @@ public class VendorRegistrationService {
                     break;
             }
             String fullResponse = "Administratorov odgovor je: " + replay.getResponse() + "\n Uspešno ste registrovani. ";
-            String additionalText = "<a href=\"" + "http://localhost:3000/login" + "\">";
+            String additionalText = "<a href=\"" + frontLink+"login" + "\">";
             String email = emailService.buildHTMLEmail(name, fullResponse, additionalText, "Registracija pružaoca usluga");
             //emailService.send(registrationRequest.getEmail(), email, "Registracija pružaoca usluga");
             return "Odobravanje registracije je uspešno";

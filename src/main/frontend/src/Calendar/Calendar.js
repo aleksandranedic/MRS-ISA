@@ -7,8 +7,9 @@ import interactionPlugin from "@fullcalendar/interaction";
 import {ReservationModal} from "./ReservationModal";
 import {BusyPeriodModal} from "./BusyPeriodModal";
 import {BsPlusLg} from "react-icons/bs";
+import {isLoggedIn, isClient} from "../Autentification";
 
-export function Calendar({reservable, pricelist, type, resourceId, events, myPage}) {
+export function Calendar({reservable, pricelist, type, resourceId, events, myPage, additionalServices}) {
 
     let perHour = true;
     if (type === "vacationHouse") {
@@ -89,7 +90,11 @@ export function Calendar({reservable, pricelist, type, resourceId, events, myPag
                                 </Card.Body>
                             </Card>
                         </div>
-                        <Button className="m-2" style={{width: "12rem"}} onClick={reservationClick}>Rezerviši</Button>
+
+                        {isLoggedIn() && (isClient() || myPage) &&
+                            <Button className="m-2" style={{width: "12rem"}} onClick={reservationClick}>Rezerviši</Button>
+
+                        }
 
                         {myPage &&
                             <Button className="m-2 d-flex align-items-center" style={{width: "12rem"}}
@@ -104,7 +109,7 @@ export function Calendar({reservable, pricelist, type, resourceId, events, myPag
 
 
                 <ReservationModal show={showReservationDialog} setShow={setShowReservationDialog} type={type}
-                                  resourceId={resourceId} myPage={myPage}/>
+                                  resourceId={resourceId} myPage={myPage} additionalServices={additionalServices}/>
                 <BusyPeriodModal show={showBusyPeriodDialog} setShow={setShowBusyPeriodDialog} type={type}
                                  resourceId={resourceId}/>
             </div>

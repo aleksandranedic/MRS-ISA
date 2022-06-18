@@ -72,4 +72,9 @@ public class VacationHouseReservationService {
     public List<VacationHouseReservation> getVacationHouseReservationsForClienId(Long id) {
         return repository.findVacationHouseReservationForClientId(id);
     }
+
+    public void deleteReservation(VacationHouseReservation vacationHouseReservation) {
+        vacationHouseReservation.setDeleted(true);
+        repository.save(vacationHouseReservation);
+    }
 }

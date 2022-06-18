@@ -73,4 +73,9 @@ public class AdventureReservationService {
     public List<AdventureReservation> getAdventureReservationsForClientId(Long id) {
         return repository.findAdventureReservationForClientId(id);
     }
+
+    public void deleteReservation(AdventureReservation adventureReservation) {
+        adventureReservation.setDeleted(true);
+        repository.save(adventureReservation);
+    }
 }

@@ -38,6 +38,12 @@ public class BoatController {
         Long houseId = Long.parseLong(id);
         return service.getBoat(houseId);
     }
+
+    @GetMapping("/entity")
+    public List<EntityDTO> getEntities() {
+        return service.getEntities();
+    }
+
     @PostMapping(value = "createBoat")
     public Long addBoatForOwner(BoatDTO boat, @RequestParam("fileImage") MultipartFile[] multipartFiles) throws IOException {
         return service.createBoat(boat, multipartFiles);
@@ -156,7 +162,7 @@ public class BoatController {
         return ResponseEntity.ok(service.getBoatAddress());
     }
     @PostMapping("/filterBoats")
-    public ResponseEntity<List<Boat>> getFilteredAdventures(@RequestBody BoatFilterDTO boatFilterDTO) {
+    public ResponseEntity<List<EntityDTO>> getFilteredAdventures(@RequestBody BoatFilterDTO boatFilterDTO) {
         return ResponseEntity.ok(service.getFilteredBoats(boatFilterDTO));
     }
 
@@ -182,5 +188,10 @@ public class BoatController {
     @GetMapping("/clientSubbedBoats/{id}")
     public ResponseEntity<List<EntityDTO>> getClientsSubscribedBoats(@PathVariable Long id){
         return ResponseEntity.ok(service.getClientsSubscribedBoats());
+    }
+
+    @PostMapping("/cancelReservation/{id}")
+    public ResponseEntity<String> cancelBoatReservation(@PathVariable Long id){
+        return ResponseEntity.ok(service.cancelBoatReservation(id));
     }
 }

@@ -31,6 +31,11 @@ public class VacationHouseController {
         return service.getVacationHouses();
     }
 
+    @GetMapping("/entity")
+    public List<EntityDTO> getEntities() {
+        return service.getEntities();
+    }
+
     @GetMapping("/subs/{id}")
     public List<EntityDTO> getSubs(@PathVariable Long id) {
         return service.findVacationHousesThatClientIsSubbedTo(id);
@@ -171,7 +176,7 @@ public class VacationHouseController {
     }
 
     @PostMapping("/filterHouse")
-    public ResponseEntity<List<VacationHouse>> getFilteredVacationHouse(@RequestBody VacationHouseFilterDTO vacationHouseFilterDTO) {
+    public ResponseEntity<List<EntityDTO>> getFilteredVacationHouse(@RequestBody VacationHouseFilterDTO vacationHouseFilterDTO) {
         return ResponseEntity.ok(service.getFilteredVacationHouses(vacationHouseFilterDTO));
     }
 
@@ -191,5 +196,10 @@ public class VacationHouseController {
     @GetMapping("/clientSubbedVacationHouses/{id}")
     public ResponseEntity<List<EntityDTO>> getClientsSubscribedVacationHouses(@PathVariable Long id){
         return ResponseEntity.ok(service.getClientsSubscribedVacationHouses());
+    }
+
+    @PostMapping("/cancelReservation/{id}")
+    public ResponseEntity<String> cancelVacationHouseReservation(@PathVariable Long id){
+        return ResponseEntity.ok(service.cancelVacationHouseReservation(id));
     }
 }
