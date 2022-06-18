@@ -3,7 +3,7 @@ import {Modal, InputGroup, Button, Form, Col, Row} from 'react-bootstrap'
 import { TagInfo } from './Info';
 import axios from "axios";  
 import { useParams } from "react-router-dom";
-import { notifyError } from './Consts';
+import { notifyError, notifySuccess, backLink } from './Consts';
 import { ToastContainer } from 'react-toastify';
 import './material.css'
 
@@ -119,20 +119,39 @@ function UpdateQuickReservation({state, setState, closeModal, showModal, entity,
                     state.tagsText.push(state.additionalServices[i].text)
                 }
             }
-            console.log(sd) 
+    
             data.append("tagsText", state.tagsText);
             data.append("reservationID", state.reservationID);
             data.append("startDate", sd);
             axios
-            .post("http://localhost:4444/" + entity + "/updateQuickReservation/" + id, data)
+            .post(backLink + "/" + entity + "/updateQuickReservation/" + id, data)
             .then(res => {
-                window.location.reload();
-            });
-            close();
+                if (res.data)
+                    notifySuccess("Izmena uspešna.")
+                else 
+                    notifyError("Izmena neuspšna. Molimo Vas pokušajte ponovo.")
+                close();
+                setTimeout(function(){window.location.reload();}, 2000);
+            })
         }
       
-      }
-      function close(){
+    }
+    
+    const deleteQuickReservation = () => {
+        var reservationID = state.reservationID;
+        axios
+            .post(backLink + "/" + entity + "/deleteQuickReservation/" + id, reservationID, {headers: {"Content-Type": "text/plain"}})
+            .then(res => {
+                if (res.data)
+                    notifySuccess("Akcija obrisana.")
+                else 
+                    notifyError("Brisanje neuspšno. Molimo Vas pokušajte ponovo.")
+                close();
+                setTimeout(function(){window.location.reload();}, 2000);
+            })
+    }
+
+    function close(){
         Reset();
         closeModal();
       }
@@ -289,7 +308,7 @@ function UpdateQuickReservation({state, setState, closeModal, showModal, entity,
 
             </Modal.Body>
             <Modal.Footer className="justify-content-between">
-                <Button variant="outline-danger">Obriši</Button>
+                <Button variant="outline-danger" onClick={deleteQuickReservation}>Obriši</Button>
                 <div>
                     <Button className="me-2" variant="secondary" onClick={close}>Nazad</Button>
                     <Button variant="primary" onClick={submit} >Sačuvaj</Button>

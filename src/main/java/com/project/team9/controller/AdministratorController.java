@@ -13,7 +13,9 @@ import com.project.team9.service.FishingInstructorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -60,8 +62,13 @@ public class AdministratorController {
         return service.deleteById(id);
     }
 
+    @PostMapping("/editWithPhoto")
+    public Long editWithPhoto(AdminDTO dto, @RequestParam("fileImage") MultipartFile multipartFile) throws IOException {
+        return service.editWithPhoto(dto, multipartFile);
+    }
+
     @PostMapping("/edit")
-    public Long edit(@RequestBody AdminDTO dto) {
+    public Long edit(AdminDTO dto) {
         return service.edit(dto);
     }
 

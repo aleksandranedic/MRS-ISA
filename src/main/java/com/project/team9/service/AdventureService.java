@@ -9,13 +9,17 @@ import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
+import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.repo.AdventureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.PessimisticLockingFailureException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -78,14 +82,21 @@ public class AdventureService {
     private List<AdventureQuickReservationDTO> getQuickReservations(Adventure adv) {
         List<AdventureQuickReservationDTO> quickReservations = new ArrayList<AdventureQuickReservationDTO>();
         for (AdventureReservation reservation : adv.getQuickReservations()) {
-            if (reservation.isQuickReservation())
+            if (reservation.isQuickReservation() && !reservation.isDeleted())
                 quickReservations.add(createAdventureReservationDTO(adv.getPricelist().getPrice(), reservation));
         }
         return quickReservations;
     }
 
+    @Transactional(readOnly = false)
     public Boolean addQuickReservation(String id, AdventureQuickReservationDTO quickReservationDTO) throws ReservationNotAvailableException {
-        Adventure adventure = this.getById(id);
+        Adventure adventure;
+        try{
+            adventure= this.getByIdConcurrent(id);
+        }
+        catch (PessimisticLockingFailureException plfe){
+            return false;
+        }
         AdventureReservation reservation = getReservationFromDTO(quickReservationDTO);
         reservation.setResource(adventure);
 
@@ -145,9 +156,25 @@ public class AdventureService {
 
     public Boolean updateQuickReservation(String id, AdventureQuickReservationDTO quickReservationDTO) {
         Adventure adventure = this.getById(id);
-        AdventureReservation newReservation = getReservationFromDTO(quickReservationDTO);
         AdventureReservation originalReservation = adventureReservationService.getById(quickReservationDTO.getReservationID());
+        if (!originalReservation.isQuickReservation())
+            return false;
+        AdventureReservation newReservation = getReservationFromDTO(quickReservationDTO);
         updateQuickReservation(originalReservation, newReservation);
+        try {
+            adventureReservationService.saveQuickReservationAsReservation(originalReservation);
+        }
+        catch (ObjectOptimisticLockingFailureException e) {
+            return false;
+        }
+        this.addAdventure(adventure);
+        return true;
+    }
+
+    public Boolean deleteQuickReservation(String id, String reservationID) {
+        Adventure adventure = this.getById(id);
+        AdventureReservation originalReservation = adventureReservationService.getById(Long.parseLong(reservationID));
+        originalReservation.setDeleted(true);
         adventureReservationService.save(originalReservation);
         this.addAdventure(adventure);
         return true;
@@ -199,6 +226,11 @@ public class AdventureService {
 
     public Adventure getById(String id) {
         return repository.getById(Long.parseLong(id));
+    }
+
+    @Transactional(readOnly = false)
+    public Adventure getByIdConcurrent(String id) throws PessimisticLockingFailureException {
+        return repository.findOneById(Long.parseLong(id));
     }
 
     public AdventureDTO getDTOById(String id) {
@@ -405,8 +437,15 @@ public class AdventureService {
         return reservations;
     }
 
+    @Transactional(readOnly = false)
     public Long createReservation(NewReservationDTO dto) throws ReservationNotAvailableException {
-        AdventureReservation reservation = createFromDTO(dto);
+        AdventureReservation reservation;
+        try {
+            reservation = createFromDTO(dto);
+        }
+        catch (PessimisticLockingFailureException plfe){
+            return Long.valueOf("-1");
+        }
 
         List<AdventureReservation> reservations = adventureReservationService.getPossibleCollisionReservations(reservation.getResource().getId(), reservation.getResource().getOwner().getId());
         for (AdventureReservation r : reservations) {
@@ -433,7 +472,11 @@ public class AdventureService {
         return reservation.getId();
     }
 
-    private AdventureReservation createFromDTO(NewReservationDTO dto) {
+    @Transactional(readOnly = false)
+    private AdventureReservation createFromDTO(NewReservationDTO dto) throws PessimisticLockingFailureException{
+        Client client = clientService.getById(dto.getClientId().toString());
+        String id = dto.getResourceId().toString();
+        Adventure adventure = this.getByIdConcurrent(id); //throws PessimisticLockingFailureException
 
         List<Appointment> appointments = new ArrayList<Appointment>();
 
@@ -450,10 +493,6 @@ public class AdventureService {
 
         appointments.add(new Appointment(startTime, finalTime));
         appointmentService.saveAll(appointments);
-
-        Client client = clientService.getById(dto.getClientId().toString());
-        String id = dto.getResourceId().toString();
-        Adventure adventure = this.getById(id);
 
         int price = adventure.getPricelist().getPrice() * appointments.size();
         int discount = userCategoryService.getClientCategoryBasedOnPoints(client.getNumOfPoints()).getDiscount();
@@ -557,9 +596,10 @@ public class AdventureService {
         return reservations;
     }
 
-
     public Long reserveQuickReservation(ReserveQuickReservationDTO dto) {
         AdventureReservation quickReservation = adventureReservationService.getById(dto.getReservationID());
+        if (!quickReservation.isQuickReservation())
+            return Long.valueOf("-1");
         Adventure adventure = quickReservation.getResource();
         adventure.removeQuickReservation(quickReservation);
 
@@ -568,16 +608,20 @@ public class AdventureService {
         quickReservation.setClient(client);
         quickReservation.setQuickReservation(false);
         adventure.addQuickReservation(quickReservation);
-        Long id = adventureReservationService.save(quickReservation);
-        String link = "<a href=\"" + this.frontLink +">Prijavi i rezervišivi još neku avanturu</a>";
-        String fullResponse = "Uspešno ste rezervisali akciju na avanturu sa imenom " + quickReservation.getResource().getTitle() + "\n " +
-                "Avantura kоšta " + quickReservation.getPrice() + "\n" +
-                "Zakazani period je od " + quickReservation.getAppointments().get(0).getStartTime().toString() + " do " +
-                quickReservation.getAppointments().get(quickReservation.getAppointments().size() - 1).getEndTime().toString();
-        String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda brze rezervacije");
-        emailService.send(client.getEmail(), email, "Potvrda brze rezervacije");
-        repository.save(adventure);
-        return id;
+        try{
+            Long id = adventureReservationService.saveQuickReservationAsReservation(quickReservation);  // ovo moze da pukne
+            String link = "<a href=\"" + this.frontLink +">Prijavi i rezervišivi još neku avanturu</a>";
+            String fullResponse = "Uspešno ste rezervisali akciju na avanturu sa imenom " + quickReservation.getResource().getTitle() + "\n " +
+                    "Avantura kоšta " + quickReservation.getPrice() + "\n" +
+                    "Zakazani period je od " + quickReservation.getAppointments().get(0).getStartTime().toString() + " do " +
+                    quickReservation.getAppointments().get(quickReservation.getAppointments().size() - 1).getEndTime().toString();
+            String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda brze rezervacije");
+            emailService.send(client.getEmail(), email, "Potvrda brze rezervacije");
+            repository.save(adventure);
+            return id;
+        } catch (ObjectOptimisticLockingFailureException e){
+            return null;
+        }
     }
 
     public boolean clientCanReviewVendor(Long vendorId, Long clientId) {

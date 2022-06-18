@@ -33,8 +33,6 @@ public class Boat extends Resource{
     private int capacity;
     @OneToMany(cascade = javax.persistence.CascadeType.ALL, orphanRemoval = true, mappedBy = "resource")
     private List<BoatReservation> reservations;
-    @Version
-    private Long version;
 
     public Boat() {
     }

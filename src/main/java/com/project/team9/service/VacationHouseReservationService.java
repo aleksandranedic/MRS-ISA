@@ -5,6 +5,7 @@ import com.project.team9.repo.VacationHouseReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
@@ -41,6 +42,11 @@ public class VacationHouseReservationService {
     }
 
     public Long save(VacationHouseReservation reservation) {
+        return repository.save(reservation).getId();
+    }
+
+    @Transactional(readOnly = false)
+    public Long saveQuickReservationAsReservation(VacationHouseReservation reservation) {
         return repository.save(reservation).getId();
     }
 

@@ -6,7 +6,7 @@ import { TagInfo } from './Info';
 import './material.css'
 import {MessagePopupModal} from "./MessagePopupModal";
 
-import { backLink, notifyError } from './Consts';
+import { backLink, notifyError, notifySuccess } from './Consts';
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -39,13 +39,18 @@ function AddQuickReservation({showModal, closeModal, entity, priceText, duration
             axios
             .post(backLink+"/" + entity + "/addQuickReservation/" + id, data)
             .then(res => {
-                window.location.reload();
+                if (res.data === true){
+                    notifySuccess("Akcija uspešno dodata.")
+                    setTimeout(function() {window.location.reload();}, 2000);  
+                }
+                else {
+                    notifyError("Nespešno dodavanje. Molimo Vas pokušajte ponovo.")
+                    close();
+                }
             }).catch(error => {
-                console.log(error);
+                close();
                 setShowAlert(true);
-
             })
-            close();
         }
       
       }

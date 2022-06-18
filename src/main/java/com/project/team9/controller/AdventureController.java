@@ -4,9 +4,11 @@ import com.project.team9.dto.*;
 import com.project.team9.exceptions.ReservationNotAvailableException;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.service.AdventureService;
+import org.hibernate.dialect.lock.OptimisticEntityLockException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -107,6 +109,10 @@ public class AdventureController {
     @PostMapping(value = "updateQuickReservation/{id}")
     public Boolean updateQuickReservation(@PathVariable String id, AdventureQuickReservationDTO quickReservation) {
         return service.updateQuickReservation(id, quickReservation);
+    }
+    @PostMapping(value = "deleteQuickReservation/{id}", consumes = MediaType.TEXT_PLAIN_VALUE)
+    public Boolean deleteQuickReservation(@PathVariable String id, @RequestBody String reservationID) {
+        return service.deleteQuickReservation(id, reservationID);
     }
     @PostMapping(value = "updateAdventure/{id}")
     public AdventureDTO updateAdventure(@PathVariable String id, AdventureDTO adventureDTO, @RequestParam("fileImage") MultipartFile[] multipartFiles) throws IOException {

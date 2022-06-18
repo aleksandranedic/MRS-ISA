@@ -7,7 +7,9 @@ import com.project.team9.model.user.Client;
 import com.project.team9.repo.ComplaintsRepository;
 import com.project.team9.security.email.EmailSender;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +45,10 @@ public class ComplaintsService {
         repository.save(complaint);
     }
 
+    @Transactional(readOnly = false)
+    public void saveComplaint(Complaint complaint) {
+        repository.save(complaint);
+    }
     public List<ComplaintDTO> getAllComplaints() {
 
         List<ComplaintDTO> complaintDTOS=new ArrayList<>();
@@ -84,7 +90,16 @@ public class ComplaintsService {
     }
 
     public String answerComplaint(ComplaintResponseDTO responseDTO) {
-        deleteComplaint(responseDTO.getComplaintId());
+        Complaint complaint=repository.getById(responseDTO.getComplaintId());
+        if (complaint.getDeleted())
+            return "Zahtev je već obrađen.";
+        complaint.setDeleted(true);
+        try{
+            saveComplaint(complaint);
+        }
+        catch (ObjectOptimisticLockingFailureException e)   {
+            return "Zahtev je već obrađen.";
+        }
         String fullName="";
         String email="";
         switch (responseDTO.getEntityType()){
@@ -116,10 +131,9 @@ public class ComplaintsService {
         Client client= clientService.getById(String.valueOf(responseDTO.getUserId()));
         String fullResponse="Administratorov odgovor na žalbu je: "+responseDTO.getResponse();
         String emailForVendorOfResourceOrVendor=emailService.buildHTMLEmail(fullName,fullResponse,"","Odgovor na žalbu klijenta");
-        emailService.send(email, emailForVendorOfResourceOrVendor, "Odgovor na žalbu klijenta");
+       // emailService.send(email, emailForVendorOfResourceOrVendor, "Odgovor na žalbu klijenta");
         String emailForClient=emailService.buildHTMLEmail(client.getName(), fullResponse,"","Odgovor na žalbu klijenta");;
-        emailService.send(client.getEmail(),emailForClient, "Odgovor na žalbu klijenta");
-        deleteComplaint(responseDTO.getComplaintId());
+       // emailService.send(client.getEmail(),emailForClient, "Odgovor na žalbu klijenta");
         return "Uspešno ste odgovoroli na žalbu";
     }
 

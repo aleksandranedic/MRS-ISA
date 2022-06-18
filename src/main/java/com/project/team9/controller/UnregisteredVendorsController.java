@@ -26,8 +26,9 @@ public class UnregisteredVendorsController {
 
     @PostMapping(value = "/validate")
     public ResponseEntity<String> approveRegistration(@RequestBody VendorRegistrationRequestReplay replay) {
-        return ResponseEntity.ok(service.processRegistrationRequest(replay));
-
-
+        String response = service.processRegistrationRequest(replay);
+        if (response.equalsIgnoreCase("Zahtev je već obrađen."))
+            return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.ok(response);
     }
 }
