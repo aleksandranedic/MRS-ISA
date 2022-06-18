@@ -6,6 +6,7 @@ import com.project.team9.model.Address;
 import com.project.team9.model.Image;
 import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
+import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.VacationHouseReservation;
 import com.project.team9.model.resource.Adventure;
@@ -157,7 +158,7 @@ public class VacationHouseService {
     private List<VacationHouseQuickReservationDTO> getQuickReservations(VacationHouse vh) {
         List<VacationHouseQuickReservationDTO> quickReservations = new ArrayList<VacationHouseQuickReservationDTO>();
         for (VacationHouseReservation reservation : vh.getReservations()) {
-            if (reservation.isQuickReservation())
+            if (reservation.isQuickReservation() && !reservation.isDeleted())
                 quickReservations.add(createVacationHouseQuickReservationDTO(vh.getPricelist().getPrice(), reservation));
         }
         return quickReservations;
@@ -260,11 +261,12 @@ public class VacationHouseService {
         return true;
     }
 
-    public Boolean deleteQuickReservation(Long id, VacationHouseQuickReservationDTO quickReservationDTO) {
-        VacationHouse house = this.getVacationHouse(id);
-        vacationHouseReservationService.deleteById(quickReservationDTO.getReservationID());
-        //izbaci se reservation iz house
-        this.save(house);
+    public Boolean deleteQuickReservation(String id, String reservationID) {
+        VacationHouse house = this.getVacationHouse(Long.parseLong(id));
+        VacationHouseReservation originalReservation = vacationHouseReservationService.getVacationHouseReservation(Long.parseLong(reservationID));
+        originalReservation.setDeleted(true);
+        vacationHouseReservationService.save(originalReservation);
+        this.addVacationHouses(house);
         return true;
     }
 

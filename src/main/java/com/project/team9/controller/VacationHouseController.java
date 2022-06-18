@@ -113,10 +113,11 @@ public class VacationHouseController {
         return service.updateQuickReservation(Long.parseLong(id), quickReservation);
     }
 
-    @PostMapping(value = "deleteQuickReservation/{id}")
-    public Boolean deleteQuickReservation(@PathVariable String id, VacationHouseQuickReservationDTO quickReservation) {
-        return service.deleteQuickReservation(Long.parseLong(id), quickReservation);
+    @PostMapping(value = "deleteQuickReservation/{id}", consumes = MediaType.TEXT_PLAIN_VALUE)
+    public Boolean deleteQuickReservation(@PathVariable String id, @RequestBody String reservationID) {
+        return service.deleteQuickReservation(id, reservationID);
     }
+
 
     @GetMapping(value = "houseprof/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public VacationHouseDTO getVacationHouseDTO(@PathVariable String id) {

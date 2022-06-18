@@ -9,6 +9,7 @@ import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
+import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.resource.Boat;
 import com.project.team9.model.resource.VacationHouse;
@@ -79,7 +80,7 @@ public class AdventureService {
     private List<AdventureQuickReservationDTO> getQuickReservations(Adventure adv) {
         List<AdventureQuickReservationDTO> quickReservations = new ArrayList<AdventureQuickReservationDTO>();
         for (AdventureReservation reservation : adv.getQuickReservations()) {
-            if (reservation.isQuickReservation())
+            if (reservation.isQuickReservation() && !reservation.isDeleted())
                 quickReservations.add(createAdventureReservationDTO(adv.getPricelist().getPrice(), reservation));
         }
         return quickReservations;
@@ -166,6 +167,15 @@ public class AdventureService {
         catch (ObjectOptimisticLockingFailureException e) {
             return false;
         }
+        this.addAdventure(adventure);
+        return true;
+    }
+
+    public Boolean deleteQuickReservation(String id, String reservationID) {
+        Adventure adventure = this.getById(id);
+        AdventureReservation originalReservation = adventureReservationService.getById(Long.parseLong(reservationID));
+        originalReservation.setDeleted(true);
+        adventureReservationService.save(originalReservation);
         this.addAdventure(adventure);
         return true;
     }

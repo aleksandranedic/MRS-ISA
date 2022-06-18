@@ -105,6 +105,10 @@ public class AdventureController {
     public Boolean updateQuickReservation(@PathVariable String id, AdventureQuickReservationDTO quickReservation) {
         return service.updateQuickReservation(id, quickReservation);
     }
+    @PostMapping(value = "deleteQuickReservation/{id}", consumes = MediaType.TEXT_PLAIN_VALUE)
+    public Boolean deleteQuickReservation(@PathVariable String id, @RequestBody String reservationID) {
+        return service.deleteQuickReservation(id, reservationID);
+    }
     @PostMapping(value = "updateAdventure/{id}")
     public AdventureDTO updateAdventure(@PathVariable String id, AdventureDTO adventureDTO, @RequestParam("fileImage") MultipartFile[] multipartFiles) throws IOException {
         System.out.println(adventureDTO);

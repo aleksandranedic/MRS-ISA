@@ -183,10 +183,11 @@ public class BoatService {
         return reservations;
     }
 
-    public Boolean deleteQuickReservation(Long id, BoatQuickReservationDTO quickReservationDTO) {
+    public Boolean deleteQuickReservation(Long id, String reservationID) {
         Boat boat = this.getBoat(id);
-        boatReservationService.deleteById(quickReservationDTO.getReservationID());
-        //izbaci se reservation iz house
+        BoatReservation originalReservation = boatReservationService.getBoatReservation(Long.parseLong(reservationID));
+        originalReservation.setDeleted(true);
+        boatReservationService.save(originalReservation);
         this.addBoat(boat);
         return true;
     }
@@ -278,7 +279,7 @@ public class BoatService {
     private List<BoatQuickReservationDTO> getQuickReservations(Boat bt) {
         List<BoatQuickReservationDTO> quickReservations = new ArrayList<BoatQuickReservationDTO>();
         for (BoatReservation reservation : bt.getReservations()) {
-            if (reservation.isQuickReservation())
+            if (reservation.isQuickReservation() && !reservation.isDeleted())
                 quickReservations.add(createBoatReservationDTO(bt.getPricelist().getPrice(), reservation));
         }
         return quickReservations;
