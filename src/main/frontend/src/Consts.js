@@ -29,7 +29,7 @@ export const missingDataErrors = {
 }
 
 export const frontLink = "http://localhost:3000/"
-export const backLink = "http://localhost:4444"
+export const backLink = "https://savana-backend.herokuapp.com"
 export const profilePicturePlaceholder = "http://localhost:3000/images/profilePicturePlaceholder.png"
 export const locationPlaceholder = {iconUrl:"http://localhost:3000/images/location.png", iconSize:[38,38]}
 export const NominatimBaseUrl = "https://nominatim.openstreetmap.org/search?"
