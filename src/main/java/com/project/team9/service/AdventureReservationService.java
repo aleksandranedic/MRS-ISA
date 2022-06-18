@@ -28,7 +28,6 @@ public class AdventureReservationService {
         return repository.findReservationsByResourceId(resourceId);
     }
 
-
     public List<AdventureReservation> getPossibleCollisionReservations(Long resourceId, Long ownerId) {
         return repository.findPossibleCollisionReservations(resourceId, ownerId);
     }
@@ -72,5 +71,9 @@ public class AdventureReservationService {
     public void deleteReservation(AdventureReservation adventureReservation) {
         adventureReservation.setDeleted(true);
         repository.save(adventureReservation);
+    }
+
+    public List<AdventureReservation> getReservations() {
+        return repository.getReservations();
     }
 }

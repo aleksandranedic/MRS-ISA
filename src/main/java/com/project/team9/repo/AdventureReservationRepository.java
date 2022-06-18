@@ -40,4 +40,7 @@ public interface AdventureReservationRepository extends JpaRepository<AdventureR
 
     @Query("FROM AdventureReservation WHERE client.id=?1 AND deleted= false")
     List<AdventureReservation> findAdventureReservationForClientId(Long id);
+
+    @Query("FROM AdventureReservation  WHERE deleted = false")
+    List<AdventureReservation> getReservations();
 }
