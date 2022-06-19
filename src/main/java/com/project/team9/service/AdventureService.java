@@ -655,7 +655,7 @@ public class AdventureService {
             }
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm");
             String datetime = filterDTO.getStartDate() + " " + filterDTO.getStartTime();
-            LocalDateTime startDateTime = LocalDateTime.parse(datetime, formatter);//ovde puca
+            LocalDateTime startDateTime = LocalDateTime.parse(datetime, formatter);
             datetime = filterDTO.getEndDate() + " " + filterDTO.getEndTime();
             LocalDateTime endDateTime = LocalDateTime.parse(datetime, formatter);
 
@@ -718,11 +718,11 @@ public class AdventureService {
     }
 
     private boolean checkNumberOfClients(AdventureFilterDTO filterDTO, Adventure adventure) {
-        return filterDTO.getNumberOfClients().isEmpty() || Integer.parseInt(filterDTO.getNumberOfClients()) == adventure.getNumberOfClients();
+        return filterDTO.getNumberOfClients().isEmpty() || Integer.parseInt(filterDTO.getNumberOfClients()) <= adventure.getNumberOfClients();
     }
 
     private boolean checkInstructorName(AdventureFilterDTO filterDTO, Adventure adventure) {
-        return (adventure.getOwner().getFirstName() + " " + adventure.getOwner().getLastName()).equals(filterDTO.getFishingInstructorName()) || filterDTO.getFishingInstructorName().isEmpty();
+        return adventure.getOwner().getName().equals(filterDTO.getFishingInstructorName()) || filterDTO.getFishingInstructorName().isEmpty();
     }
 
     private boolean checkPrice(AdventureFilterDTO filterDTO, int price) {
@@ -730,7 +730,9 @@ public class AdventureService {
     }
 
     private boolean checkCancellationFee(AdventureFilterDTO filterDTO, Adventure adventure) {
-        if (filterDTO.isCancellationFee() && adventure.getCancellationFee() == 0)
+        if(!filterDTO.isCancellationFee())
+            return true;
+        if (adventure.getCancellationFee() == 0)
             return true;
         else if (!filterDTO.isCancellationFee() && adventure.getCancellationFee() != 0)
             return true;

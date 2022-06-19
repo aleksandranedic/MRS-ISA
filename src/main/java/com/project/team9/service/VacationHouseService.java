@@ -765,15 +765,15 @@ public class VacationHouseService {
     }
 
     private boolean checkOwnerName(VacationHouseFilterDTO vacationHouseFilterDTO, VacationHouse vacationHouse) {
-        return vacationHouseFilterDTO.getVacationHouseOwnerName().isEmpty() || (vacationHouse.getOwner().getFirstName() + " " + vacationHouse.getOwner().getFirstName()).equals(vacationHouseFilterDTO.getVacationHouseOwnerName());
+        return vacationHouseFilterDTO.getVacationHouseOwnerName().isEmpty() || vacationHouse.getOwner().getName().equals(vacationHouseFilterDTO.getVacationHouseOwnerName());
     }
 
     private boolean checkNumberOfVacationHouseBeds(VacationHouseFilterDTO vacationHouseFilterDTO, VacationHouse vacationHouse) {
-        return vacationHouseFilterDTO.getNumOfVacationHouseBeds().isEmpty() || Integer.parseInt(vacationHouseFilterDTO.getNumOfVacationHouseBeds()) == vacationHouse.getNumberOfBedsPerRoom();
+        return vacationHouseFilterDTO.getNumOfVacationHouseBeds().isEmpty() || Integer.parseInt(vacationHouseFilterDTO.getNumOfVacationHouseBeds()) <= vacationHouse.getNumberOfBedsPerRoom();
     }
 
     private boolean checkNumberOfVacationHouseRooms(VacationHouseFilterDTO vacationHouseFilterDTO, VacationHouse vacationHouse) {
-        return vacationHouseFilterDTO.getNumOfVacationHouseRooms().isEmpty() || Integer.parseInt(vacationHouseFilterDTO.getNumOfVacationHouseRooms()) == vacationHouse.getNumberOfRooms();
+        return vacationHouseFilterDTO.getNumOfVacationHouseRooms().isEmpty() || Integer.parseInt(vacationHouseFilterDTO.getNumOfVacationHouseRooms()) <= vacationHouse.getNumberOfRooms();
     }
 
     public List<ReservationDTO> getReservationsForReview(Long id) {

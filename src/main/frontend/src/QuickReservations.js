@@ -33,7 +33,7 @@ function QuickReservations({reservations,additionalServices, name, address, enti
         )
     }
 
-    useState(() => {
+    useEffect(() => {
         checkSubscription()
     }, [])
     const subscribeUser = () => {
@@ -45,6 +45,7 @@ function QuickReservations({reservations,additionalServices, name, address, enti
             response => {
                 console.log(response.data)
                 notifySuccess(response.data)
+                setTimeout(()=>window.location.reload(),3000)
             }
         )
     }

@@ -6,13 +6,12 @@ import Collapse from "react-bootstrap/Collapse";
 import {backLink, notifySuccess} from "../Consts";
 
 export default function DeleteUserPopUp({user, showDelete, handleClose, type}) {
-    console.log(user);
-
     const [deleteReason, setReason] = useState("")
-
     function handleDeleteAccount() {
         if (type === "CLIENT") {
-            axios.post(backLink+"/deletionRequests/client/" + user.id.toString(), deleteReason).then(
+            console.log(user.id)
+            console.log(deleteReason.toString())
+            axios.post(backLink+"/deletionRequests/client/" + user.id.toString(), deleteReason.toString()).then(
                 res => {
                     notifySuccess(res.data)
                     handleClose();

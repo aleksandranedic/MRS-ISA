@@ -104,16 +104,9 @@ public class RegistrationService {
                         registrationRequest.getCountry(),
                         Boolean.FALSE, role);
                 String token = userServiceSecurity.signUpUser(user);
-                String link = "<a href=\""+this.frontLink+"confirmedEmail/" + token+"\">Aktivirajte</a>";
+                String link = "<a href="+this.frontLink+"confirmedEmail/" + token+">Aktivirajte</a>";
                 email=emailService.buildHTMLEmail(user.getName(),"Hvala na registraciji. Molim Vas kliknite link ispod da bi aktivirali svoj nalog:", link ,"Verifikacija emaila");
                 emailService.send(user.getEmail(), email, "Verifikacija emaila");
-                ConfirmationToken confirmationToken = new ConfirmationToken(
-                        token,
-                        LocalDateTime.now(),
-                        LocalDateTime.now().plusMinutes(15),
-                        user
-                );
-                confirmationTokenService.saveConfirmationToken(confirmationToken);
                 response = "Uspešno ste izvršili registraciju.\nProverite email kako biste verifikovali svoj nalog";
                 break;
             case "FISHING_INSTRUCTOR":

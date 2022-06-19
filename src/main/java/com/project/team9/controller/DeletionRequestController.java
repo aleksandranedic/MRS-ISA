@@ -37,8 +37,8 @@ public class DeletionRequestController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/client/{id}")
-    public ResponseEntity<String> deleteClient(@PathVariable Long id, @RequestParam String deletingReason) {
+    @PostMapping("/client/{id}")
+    public ResponseEntity<String> deleteClient(@PathVariable Long id, @RequestBody String deletingReason) {
         return ResponseEntity.ok(service.deleteUser(id,deletingReason, "CLIENT"));
     }
 
