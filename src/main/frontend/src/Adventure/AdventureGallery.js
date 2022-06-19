@@ -16,14 +16,13 @@ export function AdventureGallery({id, images})  {
         fetchAdventure();
     }, []);
 
-    const HOST = "http://localhost:4444";
     if (typeof adventure.imagePaths !== "undefined"){
 
         let empty = images.length === 0;
 
         for (let i=0; i<adventure.imagePaths.length; i++){
-            if (!adventure.imagePaths[i].includes(HOST)){
-                adventure.imagePaths[i] = HOST + adventure.imagePaths[i];
+            if (!adventure.imagePaths[i].includes(backLink)){
+                adventure.imagePaths[i] = backLink + adventure.imagePaths[i];
                 images.push({original:adventure.imagePaths[i], thumbnail:adventure.imagePaths[i]})
             } else if (empty){
                 images.push({original:adventure.imagePaths[i], thumbnail:adventure.imagePaths[i]})

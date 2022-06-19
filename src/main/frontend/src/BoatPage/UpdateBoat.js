@@ -12,7 +12,7 @@ function UpdateBoat({showModal, closeModal, boat}) {
   const imagesRef = useRef();
   const {id} = useParams();
   const [validated, setValidated] = useState(false);
-  const HOST = "http://localhost:4444";
+  
   const [state, setState] = useState({name:'', price:'', description:'', type:'', engineStrength:'', topSpeed:'', length:'', engineNumber:'', capacity:'', rulesAndRegulations:'', street:'', number:'', city:'', country:'', navigationEquipment:[{id:0, text:''}], fishingEquipment:[{id:0, text:''}], additionalServices:[{id:0, text:''}], cancellationFee:'', imagePaths:[]});
    
   useEffect(() => {
@@ -79,7 +79,7 @@ function UpdateBoat({showModal, closeModal, boat}) {
       var imgs = []
       for (let i=0; i<state.imagePaths.length;i++){
         if (!state.imagePaths[i].includes("blob")){
-          imgs.push(state.imagePaths[i].replace(HOST, ''));
+          imgs.push(state.imagePaths[i].replace(backLink, ''));
         }
       }
       data.append("name", state.name)
@@ -104,7 +104,7 @@ function UpdateBoat({showModal, closeModal, boat}) {
       data.append("fileImage",images);
       
       axios
-      .post("http://localhost:4444/boat/updateBoat/" + id, data)
+      .post(backLink + "/boat/updateBoat/" + id, data)
       .then(res => {
         window.location.reload();
       });

@@ -93,7 +93,7 @@ export function HouseOwnerForm({show, setShow, owner, profileImg}) {
                 }
                 data.append("fileImage",file);
                 axios
-                .post("http://localhost:4444/houseowner/changeProfilePicture/" + id, data)
+                .post(backLink + "/houseowner/changeProfilePicture/" + id, data)
                 .then(res => {
                        console.log(res.data)
                 });
@@ -105,7 +105,7 @@ export function HouseOwnerForm({show, setShow, owner, profileImg}) {
             data.append("place", houseOwner.address.place)
             data.append("country", houseOwner.address.country)
             axios
-            .post("http://localhost:4444/houseowner/updateOwner/" + id, data)
+            .post(backLink + "/houseowner/updateOwner/" + id, data)
             .then(res => {
                 window.location.reload();
             });

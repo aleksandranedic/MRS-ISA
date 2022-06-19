@@ -1,8 +1,9 @@
 import React from 'react';
 import {Card} from "react-bootstrap";
 import {BsGeoAltFill} from 'react-icons/bs'
+import { frontLink } from '../Consts';
 function BoatOwnerCard({id, pic, title, text, address}) {
-    const url = "http://localhost:3000/boat/" + id;
+    const url = frontLink + "boat/" + id;
     return (
         <Card className="m-3">
             <a href={url} className="text-decoration-none h-100">

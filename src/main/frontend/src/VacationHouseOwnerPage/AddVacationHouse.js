@@ -3,6 +3,7 @@ import {Modal, Button} from 'react-bootstrap'
 import HouseForm from './HouseForm';
 import axios from "axios";  
 import { useParams } from "react-router-dom";
+import { backLink } from '../Consts';
 
 function AddVacationHouse({showModal, closeModal}) {
   const {id} = useParams();
@@ -39,10 +40,10 @@ function AddVacationHouse({showModal, closeModal}) {
       data.append("tagsText", state.tagsText)
       data.append("address", state.address)
       axios
-      .post("http://localhost:4444/house/createHouse", data)
+      .post(backLink + "/house/createHouse", data)
       .then(res => {
             var houseID = res.data
-            axios.post("http://localhost:4444/houseowner/addHouse/" + id, houseID).then( res => {window.location.reload();});
+            axios.post(backLink + "/houseowner/addHouse/" + id, houseID).then( res => {window.location.reload();});
       });
       close();
     }

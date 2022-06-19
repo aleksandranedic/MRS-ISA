@@ -86,7 +86,7 @@ export function AdventureModal({adventure, show, setShow, ownerId}) {
         let dto = getDto(formValues, formReference, imagesRef);
 
         axios
-            .post("http://localhost:4444/adventure/add", dto)
+            .post(backLink + "/adventure/add", dto)
             .then(response => {
                 window.location.reload();
             })
