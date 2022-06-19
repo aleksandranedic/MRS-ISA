@@ -18,32 +18,26 @@ export function ReservationCardGrid({reservations}) {
             }
         )
     }
-    let indexesToPop = []
+    let futureReservations = []
 
     for (let index in reservations) {
         let reservation = reservations.at(index);
-        if (reservation.busyPeriod === true) {
-            indexesToPop.push(index);
-        } else if (convertToDate(reservation.appointments.at(0).startTime) < Date.now()) {
-            indexesToPop.push(index);
+        if (reservation.busyPeriod === false && reservation.quickReservation === false && convertToDate(reservation.appointments.at(0).startTime) >= Date.now()) {
+            futureReservations.push(reservation);
         }
-    }
-
-    for (let index in indexesToPop) {
-        reservations.pop(index);
     }
 
     let html = "";
 
     if (reservations !== null)
-        if (reservations.length > 0)
+        if (futureReservations.length > 0)
         html = <>
         <div className="ms-5 me-5"
              style={{
                  maxHeight: "60vh", overflow: "auto"
              }}>
             <Row xs={1} md={2} lg={3} className="g-4 mb-4 w-100">
-                {reservations.map((reservation, index) => (
+                {futureReservations.map((reservation, index) => (
                     <Col key={index + "col"}>
                         <Card key={index} style={{
                             borderRadius: "0"
