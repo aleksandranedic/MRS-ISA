@@ -28,9 +28,9 @@ export const missingDataErrors = {
     color: "Morate odabrati boju"
 }
 
-export const frontLink = "https://savana-frontend.herokuapp.com/" //frontLink = "http://localhost:3000/";
-export const backLink = "https://savana-backend.herokuapp.com" //backLink = "http://localhost:4444";
-export const profilePicturePlaceholder =  "https://savana-frontend.herokuapp.com/images/profilePicturePlaceholder.png"; //"http://localhost:3000/images/profilePicturePlaceholder.png"
+export const frontLink = "http://localhost:3000/"//frontLink = "https://savana-frontend.herokuapp.com/";
+export const backLink = "http://localhost:4444"; //backLink = "https://savana-backend.herokuapp.com"
+export const profilePicturePlaceholder =  "http://localhost:3000/images/profilePicturePlaceholder.png" //"https://savana-frontend.herokuapp.com/images/profilePicturePlaceholder.png";
 export const locationPlaceholder = {iconUrl:"https://savana-frontend.herokuapp.com/images/location.png", iconSize:[38,38]}
 export const NominatimBaseUrl = "https://nominatim.openstreetmap.org/search?"
 
