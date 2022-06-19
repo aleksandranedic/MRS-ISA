@@ -22,6 +22,14 @@ export function processReservationsForResources(reservations, myPage) {
                     backgroundColor: "rgb(224,48,22)"
                 })
             }
+            else if (r.quickReservation === true){
+                newEvents.push({
+                    title: "Akcija",
+                    start: start,
+                    end: end,
+                    backgroundColor: "rgb(237,126,22)"
+                })
+            }
             else {
                 let clientName = "";
                 if (myPage) {
@@ -62,13 +70,23 @@ export function processReservationsForUsers(reservations) {
         else {
 
             let title = r.resourceTitle;
+            if (r.quickReservations === true){
+                newEvents.push({
+                    title: "Akcija - " + title,
+                    start: start,
+                    end: end,
+                    backgroundColor: "rgb(224,113,22)"
+                })
+            }else {
+                newEvents.push({
+                    title: title,
+                    start: start,
+                    end: end,
+                    backgroundColor: "rgb(34,215,195)"
+                })
+            }
 
-            newEvents.push({
-                title: title,
-                start: start,
-                end: end,
-                backgroundColor: "rgb(34,215,195)"
-            })
+
         }
 
     }

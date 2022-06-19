@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface AdventureReservationRepository extends JpaRepository<AdventureReservation, Long> {
 
-    @Query("FROM AdventureReservation WHERE isQuickReservation = false AND isBusyPeriod = false AND deleted= false")
+    @Query("FROM AdventureReservation WHERE isBusyPeriod = false AND deleted= false")
     List<AdventureReservation> findStandardReservations();
 
     @Query("FROM AdventureReservation WHERE isBusyPeriod = true AND deleted= false")

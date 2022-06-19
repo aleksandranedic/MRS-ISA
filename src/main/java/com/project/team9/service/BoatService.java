@@ -458,7 +458,7 @@ public class BoatService {
         List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
 
         for (BoatReservation br : boatReservationService.getAll()) {
-            if (Objects.equals(br.getResource().getId(), id) && !br.isQuickReservation() && !br.isBusyPeriod()) {
+            if (Objects.equals(br.getResource().getId(), id) && !br.isBusyPeriod()) {
                 reservations.add(createDTOFromReservation(br));
             }
         }

@@ -13,7 +13,7 @@ public interface VacationHouseReservationRepository extends JpaRepository<Vacati
     @Query("FROM VacationHouseReservation WHERE isQuickReservation = false AND isBusyPeriod = false AND deleted= false")
     List<VacationHouseReservation> findStandardReservations();
 
-    @Query("FROM VacationHouseReservation  WHERE resource.id = ?1 AND deleted= false ")
+    @Query("FROM VacationHouseReservation  WHERE resource.id = ?1 AND deleted= false")
     List<VacationHouseReservation> findPossibleCollisionReservations(Long resourceId);
 
     @Query("FROM VacationHouseReservation WHERE isBusyPeriod = true and resource.id = ?1 AND deleted= false")

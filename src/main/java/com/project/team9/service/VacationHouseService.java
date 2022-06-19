@@ -442,7 +442,7 @@ public class VacationHouseService {
         List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
 
         for (VacationHouseReservation vhr : vacationHouseReservationService.getAll()) {
-            if (Objects.equals(vhr.getResource().getId(), id) && !vhr.isQuickReservation() && !vhr.isBusyPeriod()) {
+            if (Objects.equals(vhr.getResource().getId(), id) && !vhr.isBusyPeriod()) {
                 reservations.add(createDTOFromReservation(vhr));
             }
         }
@@ -558,9 +558,9 @@ public class VacationHouseService {
         return periods;
     }
 
-    public Long createBusyPeriod(NewBusyPeriodDTO dto) {
+    public VacationHouseReservation createBusyPeriod(NewBusyPeriodDTO dto) {
 
-        VacationHouseReservation reservation = createBusyPeriodReservationFromDTO(dto);
+        VacationHouseReservation reservation = this.createBusyPeriodReservationFromDTO(dto);
 
         List<VacationHouseReservation> reservations = vacationHouseReservationService.getPossibleCollisionReservations(reservation.getResource().getId());
         for (VacationHouseReservation r : reservations) {
@@ -572,20 +572,20 @@ public class VacationHouseService {
             }
         }
         vacationHouseReservationService.save(reservation);
-        return reservation.getId();
+        return reservation;
     }
 
-    private VacationHouseReservation createBusyPeriodReservationFromDTO(NewBusyPeriodDTO dto) {
+    public VacationHouseReservation createBusyPeriodReservationFromDTO(NewBusyPeriodDTO dto) {
 
         List<Appointment> appointments = new ArrayList<Appointment>();
 
-        LocalDateTime startTime = LocalDateTime.of(dto.getStartYear(), Month.of(dto.getStartMonth()), dto.getStartDay(), 0, 0);
+        LocalDateTime startTime = LocalDateTime.of(dto.getStartYear(), Month.of(dto.getStartMonth()), dto.getStartDay(), 10, 0);
         LocalDateTime endTime = startTime.plusDays(1);
 
-        while (startTime.isBefore(LocalDateTime.of(dto.getEndYear(), Month.of(dto.getEndMonth()), dto.getEndDay(), 23, 59))) {
+        while (startTime.isBefore(LocalDateTime.of(dto.getEndYear(), Month.of(dto.getEndMonth()), dto.getEndDay(), 10, 0))) {
             appointments.add(new Appointment(startTime, endTime));
             startTime = endTime;
-            endTime = startTime.plusHours(1);
+            endTime = startTime.plusDays(1);
         }
         appointmentService.saveAll(appointments);
 
