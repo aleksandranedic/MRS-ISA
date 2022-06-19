@@ -94,6 +94,9 @@ export default function Registration() {
                 updateForFetchedDataSuccess(res.data,id)
             else
                 updateForFetchedDataError(res.data,id)
+            setTimeout(function (){
+                window.location.href=frontLink+"login"
+            },2000)
         })
     }
 

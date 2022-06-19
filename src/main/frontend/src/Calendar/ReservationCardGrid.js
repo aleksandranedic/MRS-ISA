@@ -18,7 +18,6 @@ export function ReservationCardGrid({reservations}) {
             }
         )
     }
-    console.log(reservations)
     let indexesToPop = []
 
     for (let index in reservations) {

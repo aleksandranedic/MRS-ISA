@@ -136,9 +136,14 @@ public class VendorRegistrationService {
             registrationRequest.setDeleted(true);
             service.addRegistrationRequest(registrationRequest);
             String fullResponse = "Administratorov odgovor je: " + replay.getResponse() + "\n Uspešno ste registrovani. ";
-            String additionalText = "<a href=\"" + frontLink+"login" + "\">";
+            String additionalText = "<a href=" + frontLink +"login" + ">";
             String email = emailService.buildHTMLEmail(name, fullResponse, additionalText, "Registracija pružaoca usluga");
-            emailService.send(registrationRequest.getEmail(), email, "Registracija pružaoca usluga");
+            try {
+                emailService.send(registrationRequest.getEmail(), email, "Registracija pružaoca usluga");
+            }catch (Exception e)
+            {
+                System.out.println("Nije se poslao email");
+            }
             return "Odobravanje registracije je uspešno";
         }
     }

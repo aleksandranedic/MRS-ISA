@@ -13,7 +13,7 @@ export function DeletionRequestCard({request}) {
 
     const handleDeletionRequest = (type) => {
         let dto = {
-            username: request.userId,
+            username: user.username,
             comment: text,
             requestId: request.id.toString(),
             type: type

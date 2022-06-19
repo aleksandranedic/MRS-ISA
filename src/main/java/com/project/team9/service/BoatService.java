@@ -805,7 +805,7 @@ public class BoatService {
     }
 
     private boolean checkBoatMaxSpeed(BoatFilterDTO boatFilterDTO, Boat boat) {
-        return boatFilterDTO.getBoatMaxSpeed().isEmpty() || Double.parseDouble(boatFilterDTO.getBoatMaxSpeed()) == boat.getTopSpeed();
+        return boatFilterDTO.getBoatMaxSpeed().isEmpty() || Double.parseDouble(boatFilterDTO.getBoatMaxSpeed()) <= boat.getTopSpeed();
     }
 
     private boolean checkEngineNum(BoatFilterDTO boatFilterDTO, Boat boat) {
@@ -813,11 +813,11 @@ public class BoatService {
     }
 
     private boolean checkBoatEnginePower(BoatFilterDTO boatFilterDTO, Boat boat) {
-        return (boatFilterDTO.getBoatEnginePower().isEmpty() || Double.parseDouble(boatFilterDTO.getBoatEnginePower()) == boat.getEngineStrength());
+        return (boatFilterDTO.getBoatEnginePower().isEmpty() || Double.parseDouble(boatFilterDTO.getBoatEnginePower()) <= boat.getEngineStrength());
     }
 
     private boolean checkOwnerName(BoatFilterDTO boatFilterDTO, Boat boat) {
-        return ((boat.getOwner().getFirstName() + " " + boat.getOwner().getLastName()).equals(boatFilterDTO.getBoatOwnerName()) || boatFilterDTO.getBoatOwnerName().isEmpty());
+        return ((boat.getOwner().getName()).equals(boatFilterDTO.getBoatOwnerName()) || boatFilterDTO.getBoatOwnerName().isEmpty());
     }
 
     private boolean checkBoatType(BoatFilterDTO boatFilterDTO, Boat boat) {
