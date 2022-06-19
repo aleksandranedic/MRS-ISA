@@ -9,7 +9,9 @@ import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.DeleteRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +44,7 @@ public class DeleteRequestService {
         this.vacationHouseReservationService = vacationHouseReservationService;
     }
 
+    @Transactional(readOnly = false)
     public void addDeleteRequest(DeleteRequest deleteRequest) {
         deleteRequestRepository.save(deleteRequest);
     }
@@ -70,6 +73,17 @@ public class DeleteRequestService {
         String response = "";
         String email = "";
         String fullName = "";
+        DeleteRequest deleteRequest = getById(deleteReplayDTO.getRequestId());
+        if (deleteRequest.getDeleted())
+            return "Zahtev za brisanje je već obrađen.";
+        deleteReplayDTO.setComment(deleteReplayDTO.getComment());
+        deleteRequest.setDeleted(true);
+        try{
+            addDeleteRequest(deleteRequest);
+        }
+        catch (ObjectOptimisticLockingFailureException e)   {
+            return "Zahtev za brisanje je već obrađen.";
+        }
         if (deleteReplayDTO.getType().equals("approve")) {
             if (fishingInstructorService.getFishingInstructorByEmail(deleteReplayDTO.getUsername()) != null) {
                 FishingInstructor fishingInstructor = fishingInstructorService.getFishingInstructorByEmail(deleteReplayDTO.getUsername());
@@ -130,10 +144,6 @@ public class DeleteRequestService {
             emailService.send(email, emailForUser,"Potvrda o brisanje naloga");
             response = "Uspešno ste odbili brisanje korisnika";
         }
-        DeleteRequest deleteRequest = getById(deleteReplayDTO.getRequestId());
-        deleteReplayDTO.setComment(deleteReplayDTO.getComment());
-        deleteRequest.setDeleted(true);
-        addDeleteRequest(deleteRequest);
         return response;
     }
 

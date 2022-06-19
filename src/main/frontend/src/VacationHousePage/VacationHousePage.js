@@ -53,7 +53,7 @@ const Reservations = ({reservations, name, address, myPage, additionalServices})
     if (typeof reservations !== "undefined") {
         return <QuickReservations type={"vacationHouse"} reservations={reservations} name={name} address={address}
                                   entity="house" additionalServices={additionalServices} priceText="po noćenju" durationText="dana"
-                                  myPage={myPage}/>
+                                  myPage={myPage}/>                               
     } else {
         return <></>
     }
@@ -135,7 +135,6 @@ export function VacationHousePage() {
 
                     <>
                         <Reservations myPage={myPage} additionalServices={house.additionalServices} reservations={house.quickReservations} name={house.name} address={house.address}/>
-                        <footer className="blockquote-footer">Svi izlasci iz vikendice obavljaju se do 10:00h.</footer>
                     </>
                 }
 

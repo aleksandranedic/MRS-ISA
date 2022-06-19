@@ -30,8 +30,6 @@ public class Adventure extends Resource {
     @OneToMany(cascade = javax.persistence.CascadeType.ALL, orphanRemoval = true, mappedBy = "resource")
     private List<AdventureReservation> quickReservations;
 
-    @Version
-    private Long version;
 
     public Adventure() {
     }

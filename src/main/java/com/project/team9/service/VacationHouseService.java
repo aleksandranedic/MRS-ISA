@@ -9,14 +9,16 @@ import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
 import com.project.team9.model.reservation.VacationHouseReservation;
-import com.project.team9.model.resource.Boat;
 import com.project.team9.model.resource.VacationHouse;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.VacationHouseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.PessimisticLockingFailureException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -117,6 +119,11 @@ public class VacationHouseService {
         return repository.getById(id);
     }
 
+    @Transactional(readOnly = false)
+    public VacationHouse getByIdConcurrent(Long id) throws PessimisticLockingFailureException {
+        return repository.findOneById(id);
+    }
+
     public double getRatingForHouse(Long id) {
         ReviewScoresDTO reviews = clientReviewService.getReviewScores(id, "resource");
         double sum = reviews.getFiveStars() * 5 + reviews.getFourStars() * 4 + reviews.getThreeStars() * 3 + reviews.getTwoStars() * 2 + reviews.getOneStars();
@@ -130,12 +137,12 @@ public class VacationHouseService {
         VacationHouse vh;
         try{
             vh = repository.getById(id);
+            if (vh.getDeleted())
+                return null;
         }
         catch (Exception e){
             return null;
         }
-        if (vh.getDeleted())
-            return null;
         String address = vh.getAddress().getStreet() + " " + vh.getAddress().getNumber() + ", " + vh.getAddress().getPlace() + ", " + vh.getAddress().getCountry();
         List<String> images = new ArrayList<String>();
         for (Image img : vh.getImages()) {
@@ -152,7 +159,7 @@ public class VacationHouseService {
     private List<VacationHouseQuickReservationDTO> getQuickReservations(VacationHouse vh) {
         List<VacationHouseQuickReservationDTO> quickReservations = new ArrayList<VacationHouseQuickReservationDTO>();
         for (VacationHouseReservation reservation : vh.getReservations()) {
-            if (reservation.isQuickReservation())
+            if (reservation.isQuickReservation() && !reservation.isDeleted())
                 quickReservations.add(createVacationHouseQuickReservationDTO(vh.getPricelist().getPrice(), reservation));
         }
         return quickReservations;
@@ -199,8 +206,15 @@ public class VacationHouseService {
         return appointments;
     }
 
+    @Transactional(readOnly = false)
     public Boolean addQuickReservation(Long id, VacationHouseQuickReservationDTO quickReservationDTO) throws ReservationNotAvailableException{
-        VacationHouse house = this.getVacationHouse(id);
+        VacationHouse house;
+        try{
+            house = this.getByIdConcurrent(id);
+        }
+        catch (PessimisticLockingFailureException plfe){
+            return false;
+        }
         VacationHouseReservation reservation = getReservationFromDTO(quickReservationDTO, true);
         reservation.setResource(house);
 
@@ -231,19 +245,28 @@ public class VacationHouseService {
 
     public Boolean updateQuickReservation(Long id, VacationHouseQuickReservationDTO quickReservationDTO) {
         VacationHouse house = this.getVacationHouse(id);
-        VacationHouseReservation newReservation = getReservationFromDTO(quickReservationDTO, true);
         VacationHouseReservation originalReservation = vacationHouseReservationService.getVacationHouseReservation(quickReservationDTO.getReservationID());
+        if (!originalReservation.isQuickReservation())
+            return false;
+        VacationHouseReservation newReservation = getReservationFromDTO(quickReservationDTO, true);
         updateQuickReservation(originalReservation, newReservation);
-        vacationHouseReservationService.addReservation(originalReservation);
+
+        try {
+            vacationHouseReservationService.saveQuickReservationAsReservation(originalReservation);
+        }
+        catch (ObjectOptimisticLockingFailureException e) {
+            return false;
+        }
         this.save(house);
         return true;
     }
 
-    public Boolean deleteQuickReservation(Long id, VacationHouseQuickReservationDTO quickReservationDTO) {
-        VacationHouse house = this.getVacationHouse(id);
-        vacationHouseReservationService.deleteById(quickReservationDTO.getReservationID());
-        //izbaci se reservation iz house
-        this.save(house);
+    public Boolean deleteQuickReservation(String id, String reservationID) {
+        VacationHouse house = this.getVacationHouse(Long.parseLong(id));
+        VacationHouseReservation originalReservation = vacationHouseReservationService.getVacationHouseReservation(Long.parseLong(reservationID));
+        originalReservation.setDeleted(true);
+        vacationHouseReservationService.save(originalReservation);
+        this.addVacationHouses(house);
         return true;
     }
 
@@ -285,8 +308,15 @@ public class VacationHouseService {
         repository.save(house);
     }
 
+    @Transactional(readOnly = false)
     public boolean deleteById(Long id) {
-        VacationHouse vh = getVacationHouse(id);
+        VacationHouse vh;
+        try{
+            vh = getByIdConcurrent(id);
+        }
+        catch (PessimisticLockingFailureException plfe){
+            return false;
+        }
         if (getReservationsForVacationHouse(id).size() > 0)
             return false;
         vh.setDeleted(true);
@@ -479,8 +509,15 @@ public class VacationHouseService {
         );
     }
 
+    @Transactional(readOnly = false)
     public Long createReservation(NewReservationDTO dto) throws ReservationNotAvailableException {
-        VacationHouseReservation reservation = createFromDTO(dto);
+        VacationHouseReservation reservation;
+        try{
+            reservation = createFromDTO(dto);
+        }
+        catch (PessimisticLockingFailureException plfe){
+            return Long.valueOf("-1");
+        }
 
         List<VacationHouseReservation> reservations = vacationHouseReservationService.getPossibleCollisionReservations(reservation.getResource().getId());
         for (VacationHouseReservation r : reservations) {
@@ -507,8 +544,11 @@ public class VacationHouseService {
         return reservation.getId();
     }
 
-
-    private VacationHouseReservation createFromDTO(NewReservationDTO dto) {
+    @Transactional(readOnly = false)
+    private VacationHouseReservation createFromDTO(NewReservationDTO dto) throws PessimisticLockingFailureException {
+        Client client = clientService.getById(dto.getClientId().toString());
+        Long id = dto.getResourceId();
+        VacationHouse vacationHouse = this.getByIdConcurrent(id); //throws exc
 
         List<Appointment> appointments = new ArrayList<Appointment>();
 
@@ -522,9 +562,6 @@ public class VacationHouseService {
         }
         appointmentService.saveAll(appointments);
 
-        Client client = clientService.getById(dto.getClientId().toString());
-        Long id = dto.getResourceId();
-        VacationHouse vacationHouse = this.getVacationHouse(id);
 
         int price = vacationHouse.getPricelist().getPrice() * appointments.size();
         int discount = userCategoryService.getClientCategoryBasedOnPoints(client.getNumOfPoints()).getDiscount();
@@ -759,6 +796,8 @@ public class VacationHouseService {
 
     public Long reserveQuickReservation(ReserveQuickReservationDTO dto) {
         VacationHouseReservation quickReservation = vacationHouseReservationService.getVacationHouseReservation(dto.getReservationID());
+        if (!quickReservation.isQuickReservation())
+            return Long.valueOf("-1");
         VacationHouse vacationHouse = quickReservation.getResource();
         vacationHouse.removeQuickReservation(quickReservation);
 
@@ -769,16 +808,21 @@ public class VacationHouseService {
         quickReservation.setQuickReservation(false);
         vacationHouse.addReservation(quickReservation);
 
-        Long id = vacationHouseReservationService.save(quickReservation);
-        repository.save(vacationHouse);
-        String link = "<a href=\"" + frontLink +">Prijavi i rezervišivi još neku avanturu</a>";
-        String fullResponse = "Uspešno ste rezervisali akciju na vikendicu sa imenom "+ quickReservation.getResource().getTitle() +"\n " +
-                "Rezervacija vikendice kоšta " + quickReservation.getPrice() + "\n" +
-                "Zakazani period je od " + quickReservation.getAppointments().get(0).getStartTime().toString() + " do " +
-                quickReservation.getAppointments().get(quickReservation.getAppointments().size() - 1).getEndTime().toString();
-        String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda rezervacije");
-        emailService.send(client.getEmail(), email, "Potvrda rezervacije");
-        return id;
+        try {
+            Long id = vacationHouseReservationService.saveQuickReservationAsReservation(quickReservation); //ovo moze da pukne
+            repository.save(vacationHouse);
+            String link = "<a href=\"" + frontLink +">Prijavi i rezervišivi još neku avanturu</a>";
+            String fullResponse = "Uspešno ste rezervisali akciju na vikendicu sa imenom "+ quickReservation.getResource().getTitle() +"\n " +
+                    "Rezervacija vikendice kоšta " + quickReservation.getPrice() + "\n" +
+                    "Zakazani period je od " + quickReservation.getAppointments().get(0).getStartTime().toString() + " do " +
+                    quickReservation.getAppointments().get(quickReservation.getAppointments().size() - 1).getEndTime().toString();
+            String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda rezervacije");
+            emailService.send(client.getEmail(), email, "Potvrda rezervacije");
+            return id;
+        }
+        catch (ObjectOptimisticLockingFailureException e)   {
+            return null;
+        }
     }
 
     public boolean clientCanReviewVendor(Long vendorId, Long clientId) {

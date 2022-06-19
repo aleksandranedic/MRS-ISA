@@ -25,7 +25,10 @@ public class ComplaintsController {
 
     @PostMapping
     public ResponseEntity<String> answerComplaint(@RequestBody ComplaintResponseDTO responseDTO) {
-        return ResponseEntity.ok(complaintsService.answerComplaint(responseDTO));
+        String response = complaintsService.answerComplaint(responseDTO);
+        if (response.equalsIgnoreCase("Zahtev je već obrađen."))
+            return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/add")

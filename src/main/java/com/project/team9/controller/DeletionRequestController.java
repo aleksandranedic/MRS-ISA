@@ -31,7 +31,10 @@ public class DeletionRequestController {
 
     @PostMapping(path="/validateDeletion",produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<String> deleteUser(@RequestBody DeleteReplayDTO deleteReplayDTO) {
-        return ResponseEntity.ok(service.processDeletionRequest(deleteReplayDTO));
+        String response = service.processDeletionRequest(deleteReplayDTO);
+        if (response.equalsIgnoreCase("Zahtev za brisanje je već obrađen."))
+            return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/client/{id}")

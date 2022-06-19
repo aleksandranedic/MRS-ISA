@@ -14,7 +14,7 @@ public interface BoatReservationRepository extends JpaRepository<BoatReservation
     @Query("FROM BoatReservation WHERE isQuickReservation = false AND isBusyPeriod = false AND deleted= false")
     List<BoatReservation> findStandardReservations();
 
-    @Query("FROM BoatReservation  WHERE resource.id = ?1 AND deleted= false")
+    @Query("FROM BoatReservation  WHERE resource.id = ?1 AND deleted = false")
     List<BoatReservation> findPossibleCollisionReservations(Long resourceId);
 
     @Query("FROM BoatReservation  WHERE isBusyPeriod = true AND resource.id = ?1 AND deleted= false")
@@ -23,13 +23,13 @@ public interface BoatReservationRepository extends JpaRepository<BoatReservation
     @Query("FROM BoatReservation  WHERE resource.id = ?1 AND client.id = ?2 AND deleted= false")
     List<BoatReservation> findReservationsForClient(Long resourceId, Long clientId);
 
-    @Query("FROM BoatReservation  WHERE resource.owner.id = ?1 AND client.id = ?2 AND deleted= false")
+    @Query("FROM BoatReservation  WHERE resource.owner.id = ?1 AND client.id = ?2 AND deleted = false")
     List<BoatReservation> findReservationsForClientAndVendor(Long vendorId, Long clientId);
 
-    @Query("FROM BoatReservation WHERE resource.id=?1 AND deleted= false")
+    @Query("FROM BoatReservation WHERE resource.id=?1 AND deleted = false")
     List<BoatReservation> findReservationsByResourceId(Long id);
 
-    @Query("FROM BoatReservation WHERE resource.owner.id=?1 AND deleted= false")
+    @Query("FROM BoatReservation WHERE resource.owner.id=?1 AND deleted = false")
     List<BoatReservation> findReservationsByVendorId(Long id);
 
     @Query("FROM BoatReservation WHERE client.id=?1 AND deleted= false")

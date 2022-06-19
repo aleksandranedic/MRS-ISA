@@ -21,7 +21,7 @@ public interface AdventureRepository extends JpaRepository<Adventure, Long> {
     List<Adventure> findByOwnerId(Long owner_id);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select p from Adventure p where p.id = :id")
+    @Query("select p from Adventure p where p.id = :id AND deleted = false")
     //Postgres po defaultu poziva for update bez no wait, tako da treba dodati vrednost 0 za timeout
     //kako bismo dobili PessimisticLockingFailureException ako pri pozivu ove metode torka nije dostupna
 
