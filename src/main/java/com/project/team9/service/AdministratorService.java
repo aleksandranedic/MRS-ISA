@@ -12,12 +12,21 @@ import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.AdministratorRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AdministratorService {
+    final String STATIC_PATH = "src/main/resources/static/";
+    final String STATIC_PATH_TARGET = "target/classes/static/";
+    final String IMAGES_PATH = "/images/administrators/";
+
     private final AdministratorRepository administratorRepository;
     private final FishingInstructorService fishingInstructorService;
     private final VacationHouseOwnerService vacationHouseOwnerService;
@@ -126,5 +135,62 @@ public class AdministratorService {
         return administratorRepository.save(administrator).getId();
 
     }
+
+    public Long editWithPhoto(AdminDTO dto, MultipartFile multipartFile) throws IOException {
+
+        Administrator administrator = administratorRepository.getAdminById(dto.getId());
+
+        String path = saveImage(administrator, multipartFile);
+        Image image = getImage(path);
+        administrator.setProfileImg(image);
+
+        Address address = new Address(dto.getPlace(), dto.getNumber(), dto.getStreet(), dto.getCountry());
+        addressService.addAddress(address);
+        administrator.setFirstName(dto.getFirstName());
+        administrator.setLastName(dto.getLastName());
+        administrator.setEmail(dto.getEmail());
+        administrator.setPhoneNumber(dto.getPhoneNumber());
+        administrator.setAddress(address);
+
+        return administratorRepository.save(administrator).getId();
+
+    }
+
+    private String saveImage(Administrator admin, MultipartFile multipartFile) throws IOException {
+        String pathStr = "";
+        if (multipartFile == null) {
+            return pathStr;
+        }
+        Path path = Paths.get(STATIC_PATH + IMAGES_PATH + admin.getId());
+        Path path_target = Paths.get(STATIC_PATH_TARGET + IMAGES_PATH + admin.getId());
+        savePictureOnPath(admin, multipartFile, pathStr, path);
+        pathStr = savePictureOnPath(admin, multipartFile, pathStr, path_target);
+        return pathStr;
+    }
+
+    private String savePictureOnPath(Administrator admin, MultipartFile mpf, String pathStr, Path path) throws IOException {
+        if (!Files.exists(path)) {
+            Files.createDirectories(path);
+        }
+        String fileName = mpf.getOriginalFilename();
+        try (InputStream inputStream = mpf.getInputStream()) {
+            Path filePath = path.resolve(fileName);
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+            pathStr = IMAGES_PATH + admin.getId() + "/" + fileName;
+        } catch (DirectoryNotEmptyException dnee) {
+            throw new IOException("Directory Not Empty Exception: " + fileName, dnee);
+        } catch (IOException ioe) {
+            throw new IOException("Could not save image file: " + fileName, ioe);
+        }
+        return pathStr;
+    }
+    private Image getImage(String path) {
+        Image image;
+        Optional<Image> optImg = imageService.getImageByPath(path);
+        image = optImg.orElseGet(() -> new Image(path));
+        imageService.save(image);
+        return image;
+    }
+
 
 }

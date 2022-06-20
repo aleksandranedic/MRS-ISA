@@ -5,6 +5,7 @@ import com.project.team9.model.request.Request;
 import com.project.team9.repo.RegistrationRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ public class RegistrationRequestService {
         this.repository = repository;
     }
 
+    @Transactional(readOnly = false)
     public RegistrationRequest addRegistrationRequest(RegistrationRequest registrationRequest) {
         return repository.save(registrationRequest);
     }

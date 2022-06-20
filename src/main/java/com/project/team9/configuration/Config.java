@@ -128,7 +128,7 @@ public class Config {
         roleRepository.save(roleClient);
 
         Client client3 = getClient("/images/clients/3/client_3.jpg", "3", 3L, "Verica", "Markov", roleClient);
-        client3.setNumOfPenalties(2);
+        client3.setNumOfPenalties(1);
         clientRepository.save(client3);
         Client client4 = getClient("/images/clients/4/client_4.jpg", "4", 4L, "Jovanka", "Prodanov", roleClient);
         Client client5 = getClient("/images/clients/5/client_5.jpg", "5", 5L, "Lena", "Sudarski", roleClient);
@@ -195,7 +195,7 @@ public class Config {
 
         //----------------------------------------
 
-        addRegistrationRequest("U ponudi ima 3 avanture", "aleksa123", "Aleksu", "Aleksić", "aleksa.aleksić@gmail.com", "19", "FISHING_INSTRUCTOR", "Živim na lepom plavom Dunavu.");
+        addRegistrationRequest("U ponudi ima 3 avanture", "aleksa123", "Aleksu", "Aleksić", "aleksa.aleksic@gmail.com", "19", "FISHING_INSTRUCTOR", "Živim na lepom plavom Dunavu.");
         addRegistrationRequest("U ponudi ima 2 vikendice", "julia123", "Julia", "Annie", "jula.annie@gmail.com", "20", "VACATION_HOUSE_OWNER", "Volim da uživam na lepoj vikendici uz čašu vina.");
 
         //-----------------------------------------------

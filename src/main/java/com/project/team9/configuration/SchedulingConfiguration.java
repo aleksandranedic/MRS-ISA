@@ -4,7 +4,6 @@ import com.project.team9.model.user.Client;
 import com.project.team9.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,9 +16,9 @@ public class SchedulingConfiguration {
 
     @Autowired
     public SchedulingConfiguration(ClientService clientService) {
-        System.out.println("Napravljen je");
         this.clientService = clientService;
     }
+
     @Scheduled(cron = "0 0 0 1 * *")//s m h dayOfMouuth mount dayofWeek ako se stavi /2 kod necega znaci svake dve..
     public void deletePenalties(){
         for (Client client: clientService.getClients()) {

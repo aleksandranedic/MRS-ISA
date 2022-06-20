@@ -64,9 +64,9 @@ public class BoatController {
         return service.updateQuickReservation(Long.parseLong(id), quickReservation);
     }
 
-    @PostMapping(value = "deleteQuickReservation/{id}")
-    public Boolean deleteQuickReservation(@PathVariable String id, BoatQuickReservationDTO quickReservation) {
-        return service.deleteQuickReservation(Long.parseLong(id), quickReservation);
+    @PostMapping(value = "deleteQuickReservation/{id}", consumes = MediaType.TEXT_PLAIN_VALUE)
+    public Boolean deleteQuickReservation(@PathVariable String id, @RequestBody String reservationID) {
+        return service.deleteQuickReservation(Long.parseLong(id), reservationID);
     }
 
     @GetMapping(value = "boatprof/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

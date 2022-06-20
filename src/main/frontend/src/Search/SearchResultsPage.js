@@ -47,7 +47,6 @@ export function SearchResultsPage() {
     const {searchTerm} = useParams();
 
     useEffect(() => {
-        //TODO resi nesto sto ne znas ti ce refresha kada imas popunjen filter
         fetchVacationHouses()
         fetchBoats()
         fetchAdventures()
@@ -124,13 +123,13 @@ export function SearchResultsPage() {
             <div style={{marginLeft: "5%", marginRight: "10%"}}>
                 <h4 className="fw-light m-3">Vikendice</h4>
                 <hr/>
-                <SearchResultsResources list={vacationHouses}/>
+                <SearchResultsResources list={vacationHouses} name={"house"} />
                 <h4 className="fw-light m-3">Brodovi</h4>
                 <hr/>
-                <SearchResultsResources list={boats}/>
+                <SearchResultsResources list={boats} name={"boat"}/>
                 <h4 className="fw-light m-3">Avanture</h4>
                 <hr/>
-                <SearchResultsResources list={adventures}/>
+                <SearchResultsResources list={adventures} name={"adventure"}/>
             </div>
         </>
 

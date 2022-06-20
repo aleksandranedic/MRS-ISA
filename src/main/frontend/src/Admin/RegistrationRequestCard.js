@@ -20,7 +20,8 @@ export function RegistrationRequestCard({props}) {
             requestId: props.id,
             response: response
         }
-        axios.post(backLink + "/vendorRegistration/validate", dto).then(
+        axios.post(backLink + "/vendorRegistration/validate", dto)
+        .then(
             response => {
                 if(response.data==="Odobravanje registracije je uspešno")
                     notifySuccess(response.data)
@@ -32,6 +33,11 @@ export function RegistrationRequestCard({props}) {
                 }, 5000)
             }
         )
+        .catch(function (error) {
+            notifyError(error.response.data)
+            setShow(false)
+            setTimeout(function () {window.location.reload();}, 5000)
+        });
     }
 
     return (

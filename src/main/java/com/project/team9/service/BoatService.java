@@ -17,7 +17,11 @@ import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.repo.BoatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.PessimisticLockingFailureException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -50,7 +54,8 @@ public class BoatService {
     private final PointlistService pointlistService;
     private final UserCategoryService userCategoryService;
 
-
+    @Value("${frontendlink}")
+    private String frontLink;
 
     @Autowired
     public BoatService(BoatRepository repository, AddressService addressService, PricelistService pricelistService, TagService tagService, ImageService imageService, BoatReservationService boatReservationService, AppointmentService appointmentService, ClientService clientService, ReservationService reservationService, ClientReviewService clientReviewService, EmailService emailService, PointlistService pointlistService, UserCategoryService userCategoryService) {
@@ -79,8 +84,15 @@ public class BoatService {
         return new BoatCardDTO(boat.getId(), boat.getImages().get(0).getPath(), boat.getTitle(), boat.getDescription(), address);
     }
 
+    @Transactional(readOnly = false)
     public Boolean addQuickReservation(Long id, BoatQuickReservationDTO quickReservationDTO) throws ReservationNotAvailableException {
-        Boat boat = this.getBoat(id);
+        Boat boat;
+        try{
+            boat = this.getByIdConcurrent(id);
+        }
+        catch (PessimisticLockingFailureException plfe){
+            return false;
+        }
         BoatReservation reservation = getReservationFromDTO(quickReservationDTO, true);
         reservation.setResource(boat);
 
@@ -96,17 +108,14 @@ public class BoatService {
         boatReservationService.addReservation(reservation);
         boat.addReservation(reservation);
         this.addBoat(boat);
-        //TODO proveri da li radi
-        for (Long userId : boat.getSubClientUsernames()) {
-            Client client = clientService.getById(String.valueOf(userId));
+            Client client = clientService.getById(String.valueOf(reservation.getClient().getId()));
             String fullResponse = "Napravljena je akcija na koji ste se preplatili\n " +
                     "Avanture na brod kоšta " + reservation.getPrice() + "\n" +
                     "Zakazani period je od " + reservation.getAppointments().get(0).getStartTime().toString() + " do " +
                     reservation.getAppointments().get(reservation.getAppointments().size() - 1).getEndTime().toString();
-            String additionalText = "<a href=\"" + "http://localhost:3000" + "\">Prijavite se i rezervišite je</a>";
+            String additionalText = "<a href=\"" + frontLink + "\">Prijavite se i rezervišite je</a>";
             String emailForSubbedUser = emailService.buildHTMLEmail(client.getName(), fullResponse, additionalText, "Notifikacija o pretplacenim akcijama");
             emailService.send(client.getEmail(), emailForSubbedUser, "Notifikacija o pretplacenim akcijama");
-        }
         return true;
     }
 
@@ -141,10 +150,17 @@ public class BoatService {
 
     public Boolean updateQuickReservation(Long id, BoatQuickReservationDTO quickReservationDTO) {
         Boat boat = this.getBoat(id);
-        BoatReservation newReservation = getReservationFromDTO(quickReservationDTO, true);
         BoatReservation originalReservation = boatReservationService.getBoatReservation(quickReservationDTO.getReservationID());
+        if (!originalReservation.isQuickReservation())
+            return false;
+        BoatReservation newReservation = getReservationFromDTO(quickReservationDTO, true);
         updateQuickReservation(originalReservation, newReservation);
-        boatReservationService.addReservation(originalReservation);
+        try {
+            boatReservationService.saveQuickReservationAsReservation(originalReservation);
+        }
+        catch (ObjectOptimisticLockingFailureException e) {
+            return false;
+        }
         this.addBoat(boat);
         return true;
     }
@@ -168,17 +184,19 @@ public class BoatService {
         return reservations;
     }
 
-    public Boolean deleteQuickReservation(Long id, BoatQuickReservationDTO quickReservationDTO) {
+    public Boolean deleteQuickReservation(Long id, String reservationID) {
         Boat boat = this.getBoat(id);
-        boatReservationService.deleteById(quickReservationDTO.getReservationID());
-        //izbaci se reservation iz house
+        BoatReservation originalReservation = boatReservationService.getBoatReservation(Long.parseLong(reservationID));
+        originalReservation.setDeleted(true);
+        boatReservationService.save(originalReservation);
         this.addBoat(boat);
         return true;
     }
 
     public Long reserveQuickReservation(ReserveQuickReservationDTO dto) {
         BoatReservation quickReservation = boatReservationService.getBoatReservation(dto.getReservationID());
-
+        if (!quickReservation.isQuickReservation())
+            return Long.valueOf("-1");
         Boat boat = quickReservation.getResource();
         boat.removeQuickReservation(quickReservation);
         Client client = clientService.getById(dto.getClientID().toString());
@@ -186,19 +204,20 @@ public class BoatService {
         quickReservation.setClient(client);
         quickReservation.setQuickReservation(false);
         boat.addReservation(quickReservation);
-
-        Long id = boatReservationService.save(quickReservation);
-        repository.save(boat);
-        //TODO napravi potvrdu o rezervaciji na akciju
-        String link = "<a href=\"" + "http://localhost:3000\">Prijavi i rezervišivi još neku avanturu na brodu</a>";
-        String fullResponse = "Uspešno ste rezervisali akciju na brod sa imenom "+ quickReservation.getResource().getTitle() +"\n " +
-                "Rezervaicija broda kоšta " + quickReservation.getPrice() + "\n" +
-                "Zakazani period je od " + quickReservation.getAppointments().get(0).getStartTime().toString() + " do " +
-                quickReservation.getAppointments().get(quickReservation.getAppointments().size() - 1).getEndTime().toString();
-        String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda brze rezervacije");
-        emailService.send(client.getEmail(), email, "Potvrda brze rezervacije");
-
-        return id;
+        try{
+            Long id = boatReservationService.saveQuickReservationAsReservation(quickReservation); //ovo moze da pukne
+            repository.save(boat);
+            String link = "<a href=\"" + frontLink+">Prijavi i rezervišivi još neku avanturu na brodu</a>";
+            String fullResponse = "Uspešno ste rezervisali akciju na brod sa imenom "+ quickReservation.getResource().getTitle() +"\n " +
+                    "Rezervaicija broda kоšta " + quickReservation.getPrice() + "\n" +
+                    "Zakazani period je od " + quickReservation.getAppointments().get(0).getStartTime().toString() + " do " +
+                    quickReservation.getAppointments().get(quickReservation.getAppointments().size() - 1).getEndTime().toString();
+            String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda brze rezervacije");
+            emailService.send(client.getEmail(), email, "Potvrda brze rezervacije");
+            return id;
+        } catch (ObjectOptimisticLockingFailureException e){
+            return null;
+        }
     }
 
     public List<Boat> getOwnersBoats(Long owner_id) {
@@ -236,16 +255,21 @@ public class BoatService {
         return repository.getById(id);
     }
 
+    @Transactional(readOnly = false)
+    public Boat getByIdConcurrent(Long id) throws PessimisticLockingFailureException {
+        return repository.findOneById(id);
+    }
+
     public BoatDTO getBoatDTO(Long id) {
         Boat bt;
         try {
             bt= repository.getById(id);
+            if (bt.getDeleted())
+                return null;
         }
         catch (Exception e){
             return null;
         }
-        if (bt.getDeleted())
-            return null;
         String address = bt.getAddress().getStreet() + " " + bt.getAddress().getNumber() + ", " + bt.getAddress().getPlace() + ", " + bt.getAddress().getCountry();
         List<String> images = new ArrayList<String>();
         for (Image img : bt.getImages()) {
@@ -262,7 +286,7 @@ public class BoatService {
     private List<BoatQuickReservationDTO> getQuickReservations(Boat bt) {
         List<BoatQuickReservationDTO> quickReservations = new ArrayList<BoatQuickReservationDTO>();
         for (BoatReservation reservation : bt.getReservations()) {
-            if (reservation.isQuickReservation())
+            if (reservation.isQuickReservation() && !reservation.isDeleted())
                 quickReservations.add(createBoatReservationDTO(bt.getPricelist().getPrice(), reservation));
         }
         return quickReservations;
@@ -301,8 +325,15 @@ public class BoatService {
         repository.save(boat);
     }
 
+    @Transactional(readOnly = false)
     public boolean deleteById(Long id) {
-        Boat boat = this.getBoat(id);
+        Boat boat;
+        try{
+            boat = this.getByIdConcurrent(id);
+        }
+        catch (PessimisticLockingFailureException plfe){
+            return false;
+        }
         if (getReservationsForBoat(id).size() > 0)
             return false;
         boat.setDeleted(true);
@@ -491,8 +522,15 @@ public class BoatService {
 
     }
 
+    @Transactional(readOnly = false)
     public Long createReservation(NewReservationDTO dto) throws ReservationNotAvailableException {
-        BoatReservation reservation = createFromDTO(dto);
+        BoatReservation reservation;
+        try{
+            reservation = createFromDTO(dto);
+        }
+        catch (PessimisticLockingFailureException plfe){
+            return Long.valueOf("-1");
+        }
 
         List<BoatReservation> reservations = boatReservationService.getPossibleCollisionReservations(reservation.getResource().getId());
         for (BoatReservation r : reservations) {
@@ -502,9 +540,8 @@ public class BoatService {
                 }
             }
         }
-        //TODO napravi potvrdu o rezervaciji na akciju
         Client client=clientService.getById(String.valueOf(dto.getClientId()));
-        String link = "<a href=\"" + "http://localhost:3000\">Prijavi i rezervišivi još neku avanturu</a>";
+        String link = "<a href=\"" + frontLink+">Prijavi i rezervišivi još neku avanturu</a>";
         String fullResponse = "Uspešno ste rezervisali avanturu na brodu sa imenom "+ reservation.getResource().getTitle() +"\n " +
                 "Rezervacija broda kоšta " + reservation.getPrice() + "\n" +
                 "Zakazani period je od " + reservation.getAppointments().get(0).getStartTime().toString() + " do " +
@@ -522,7 +559,11 @@ public class BoatService {
     }
 
 
-    private BoatReservation createFromDTO(NewReservationDTO dto) {
+    @Transactional(readOnly = false)
+    private BoatReservation createFromDTO(NewReservationDTO dto) throws PessimisticLockingFailureException {
+        Client client = clientService.getById(dto.getClientId().toString());
+        Long id = dto.getResourceId();
+        Boat boat = this.getByIdConcurrent(id); //throws
 
         List<Appointment> appointments = new ArrayList<Appointment>();
 
@@ -536,9 +577,6 @@ public class BoatService {
         }
         appointmentService.saveAll(appointments);
 
-        Client client = clientService.getById(dto.getClientId().toString());
-        Long id = dto.getResourceId();
-        Boat boat = this.getBoat(id);
 
         int price = boat.getPricelist().getPrice() * appointments.size();
         int discount = userCategoryService.getClientCategoryBasedOnPoints(client.getNumOfPoints()).getDiscount();
@@ -808,7 +846,7 @@ public class BoatService {
     }
 
     private boolean checkBoatMaxSpeed(BoatFilterDTO boatFilterDTO, Boat boat) {
-        return boatFilterDTO.getBoatMaxSpeed().isEmpty() || Double.parseDouble(boatFilterDTO.getBoatMaxSpeed()) == boat.getTopSpeed();
+        return boatFilterDTO.getBoatMaxSpeed().isEmpty() || Double.parseDouble(boatFilterDTO.getBoatMaxSpeed()) <= boat.getTopSpeed();
     }
 
     private boolean checkEngineNum(BoatFilterDTO boatFilterDTO, Boat boat) {
@@ -816,11 +854,11 @@ public class BoatService {
     }
 
     private boolean checkBoatEnginePower(BoatFilterDTO boatFilterDTO, Boat boat) {
-        return (boatFilterDTO.getBoatEnginePower().isEmpty() || Double.parseDouble(boatFilterDTO.getBoatEnginePower()) == boat.getEngineStrength());
+        return (boatFilterDTO.getBoatEnginePower().isEmpty() || Double.parseDouble(boatFilterDTO.getBoatEnginePower()) <= boat.getEngineStrength());
     }
 
     private boolean checkOwnerName(BoatFilterDTO boatFilterDTO, Boat boat) {
-        return ((boat.getOwner().getFirstName() + " " + boat.getOwner().getLastName()).equals(boatFilterDTO.getBoatOwnerName()) || boatFilterDTO.getBoatOwnerName().isEmpty());
+        return ((boat.getOwner().getName()).equals(boatFilterDTO.getBoatOwnerName()) || boatFilterDTO.getBoatOwnerName().isEmpty());
     }
 
     private boolean checkBoatType(BoatFilterDTO boatFilterDTO, Boat boat) {

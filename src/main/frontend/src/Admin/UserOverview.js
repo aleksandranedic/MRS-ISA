@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import {GetAllVacationHouseOwners} from "../VacationHouseOwnerPage/AllVacationHouseOwners";
 import {GetAllFishingInstructors} from "../FishingInstructor/AllFishingInstructors";
 import {GetAllBoatOwners} from "../BoatOwnerPage/AllBoatOwners";
-import {backLink} from "../Consts";
+import {backLink, frontLink, profilePicturePlaceholder} from "../Consts";
 
 import "./OverviewCard.css"
 import {Card, Row, Col, Button} from "react-bootstrap";
@@ -15,7 +15,7 @@ import {isLoggedIn} from "../Autentification";
 import {AdminForm} from "./AdminForm";
 
 export function UserOverview() {
-    const profilePicturePlaceholder = require("../images/houseIncomeCopy.jpg");
+   // const profilePicturePlaceholder = require("../images/houseIncomeCopy.jpg");
     const [user, setUser] = useState(null);
     const [showRegister, setShowRegister] = useState(false);
 
@@ -43,7 +43,6 @@ export function UserOverview() {
     let fishingInstructors = GetAllFishingInstructors();
     let boatOwners = GetAllBoatOwners();
     let admins = GetAllAdministrators();
-    console.log(admins)
 
     let clients = GetAllClients();
 
@@ -69,8 +68,7 @@ export function UserOverview() {
     let linkAdmin = "";
     let admin = admins[Math.floor(Math.random() * admins.length)];
     if (typeof admin != "undefined") {
-        console.log(admin)
-        linkAdmin = admin.profileImg.path !== null ? backLink + admin.profileImg.path: profilePicturePlaceholder;
+        linkAdmin = admin.profileImg.path !== null ? backLink + admin.profileImg.path : profilePicturePlaceholder;
     }
 
     let linkClient = "";

@@ -10,6 +10,8 @@ import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.security.PasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -28,6 +30,9 @@ public class VendorRegistrationService {
     private final AddressService addressService;
     private final EmailService emailService;
 
+    @Value("${frontendlink}")
+    private String frontLink;
+
     @Autowired
     public VendorRegistrationService(RegistrationRequestService service, RoleService roleService, PasswordEncoder passwordEncoder, FishingInstructorService fishingInstructorService, VacationHouseOwnerService vacationHouseOwnerService, BoatOwnerService boatOwnerService, AddressService addressService, EmailService emailService) {
         this.service = service;
@@ -44,8 +49,7 @@ public class VendorRegistrationService {
         return service.getAllUndeletedRegistrationRequests();
     }
 
-    public String validateVendor(VendorRegistrationRequestReplay replay) {
-        RegistrationRequest registrationRequest = service.getRegistrationRequest(replay.getRequestId());
+    public String validateVendor(VendorRegistrationRequestReplay replay, RegistrationRequest registrationRequest) {
         String name="";
         if (registrationRequest == null) {
             return "Odobravanje registracija nije uspešno";
@@ -128,20 +132,15 @@ public class VendorRegistrationService {
                     boatOwnerService.save(boatOwner);
                     break;
             }
-            registrationRequest.setResponse(replay.getResponse());
-            registrationRequest.setDeleted(true);
-            service.addRegistrationRequest(registrationRequest);
             String fullResponse = "Administratorov odgovor je: " + replay.getResponse() + "\n Uspešno ste registrovani. ";
-            String additionalText = "<a href=\"" + "http://localhost:3000/login" + "\">";
+            String additionalText = "<a href=" + frontLink +"login" + ">";
             String email = emailService.buildHTMLEmail(name, fullResponse, additionalText, "Registracija pružaoca usluga");
             emailService.send(registrationRequest.getEmail(), email, "Registracija pružaoca usluga");
             return "Odobravanje registracije je uspešno";
         }
     }
 
-    public String deleteRegistrationRequest(VendorRegistrationRequestReplay replay) {
-        RegistrationRequest registrationRequest = service.getRegistrationRequest(replay.getRequestId());
-        registrationRequest.setResponse(replay.getResponse());
+    public String deleteRegistrationRequest(VendorRegistrationRequestReplay replay,  RegistrationRequest registrationRequest) {
         String fullResponse = "Administratorov odgovor je: " + replay.getResponse();
         String additionalText="Niste registrovani jer Vam je administrator odbio registraciju";
         String name=replay.getFullName();
@@ -151,10 +150,21 @@ public class VendorRegistrationService {
     }
 
     public String processRegistrationRequest(VendorRegistrationRequestReplay replay) {
+        RegistrationRequest registrationRequest = service.getRegistrationRequest(replay.getRequestId());
+        if (registrationRequest.getDeleted())
+            return "Zahtev je već obrađen.";
+        registrationRequest.setDeleted(true);
+        registrationRequest.setResponse(replay.getResponse());
+        try{
+            service.addRegistrationRequest(registrationRequest);
+        }
+        catch (ObjectOptimisticLockingFailureException e)   {
+            return "Zahtev je već obrađen.";
+        }
         if (replay.getType().equals("approve")) {
-            return validateVendor(replay);
+            return validateVendor(replay, registrationRequest);
         } else {
-            return deleteRegistrationRequest(replay);
+            return deleteRegistrationRequest(replay, registrationRequest);
         }
     }
 }

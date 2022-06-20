@@ -19,13 +19,13 @@ export default function EmailConfirmed() {
     const getData = () => {
         axios.get(backLink + "/registration/confirm/" + token.token).then(res => {
             console.log(res.data)
-            if (!res.data.messageTitle.toString().startsWith("Vaša"))
-                setData(res.data)
+            setData(res.data)
         })
     }
     useEffect(() => {
         getData()
     }, [])
+
     return (
         <div className="m-0 p-0 min-vw-90 min-vh-100"
              style={{backgroundImage: `url(${background})`, backgroundSize: "cover",}}

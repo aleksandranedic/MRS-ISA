@@ -33,7 +33,7 @@ function QuickReservations({reservations,additionalServices, name, address, enti
         )
     }
 
-    useState(() => {
+    useEffect(() => {
         checkSubscription()
     }, [])
     const subscribeUser = () => {
@@ -45,6 +45,7 @@ function QuickReservations({reservations,additionalServices, name, address, enti
             response => {
                 console.log(response.data)
                 notifySuccess(response.data)
+                setTimeout(()=>window.location.reload(),3000)
             }
         )
     }
@@ -61,7 +62,7 @@ function QuickReservations({reservations,additionalServices, name, address, enti
         )
     }
 
-    if (reservations.length <= 0) {
+    if (reservations.length <= 0 && !myPage) {
         return (<div></div>);
     }
 
@@ -120,7 +121,7 @@ function QuickReservations({reservations,additionalServices, name, address, enti
 
                 </Container>
 
-
+                <footer className="blockquote-footer mt-4">Svi izlasci iz vikendice obavljaju se do 10:00h.</footer>
             </div>
             <ToastContainer
                 position="top-center"
