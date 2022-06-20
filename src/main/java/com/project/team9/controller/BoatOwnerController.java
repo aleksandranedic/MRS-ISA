@@ -23,9 +23,9 @@ public class BoatOwnerController {
     private final BoatService boatService;
 
     @Autowired
-    public BoatOwnerController(BoatOwnerService service, BoatService vacationHouseService) {
+    public BoatOwnerController(BoatOwnerService service, BoatService boatService) {
         this.service = service;
-        this.boatService = vacationHouseService;
+        this.boatService = boatService;
     }
 
     @GetMapping

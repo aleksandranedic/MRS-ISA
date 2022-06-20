@@ -17,6 +17,7 @@ import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.repo.BoatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.beans.factory.annotation.Value;
@@ -489,7 +490,7 @@ public class BoatService {
         List<ReservationDTO> reservations = new ArrayList<ReservationDTO>();
 
         for (BoatReservation br : boatReservationService.getAll()) {
-            if (Objects.equals(br.getResource().getId(), id) && !br.isQuickReservation() && !br.isBusyPeriod()) {
+            if (Objects.equals(br.getResource().getId(), id) && !br.isBusyPeriod()) {
                 reservations.add(createDTOFromReservation(br));
             }
         }

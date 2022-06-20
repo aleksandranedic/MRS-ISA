@@ -229,7 +229,7 @@ public class BoatOwnerService {
         return incomeReport;
     }
 
-    private void writeToDictReport(HashMap<String, Integer> datesIncomes, List<BoatReservation> reservations, LocalDateTime start, LocalDateTime date){
+    public void writeToDictReport(HashMap<String, Integer> datesIncomes, List<BoatReservation> reservations, LocalDateTime start, LocalDateTime date){
         int val = getNumberOfReservationsInRange(reservations, start, date);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy.");
         String keyS = start.format(formatter);
@@ -254,7 +254,8 @@ public class BoatOwnerService {
         }
         return numOfReservations;
     }
-    private boolean ReservationInRangeAttendance(List<Appointment> appointments, LocalDateTime startDate, LocalDateTime endDate){
+
+    public boolean ReservationInRangeAttendance(List<Appointment> appointments, LocalDateTime startDate, LocalDateTime endDate){
         for (Appointment appointment: appointments){
             LocalDateTime date = appointment.getStartTime();
             LocalDateTime date1;
@@ -270,7 +271,7 @@ public class BoatOwnerService {
         }
         return false;
     }
-    private List<LocalDateTime> getDates(String startDateStr, String endDateStr){
+    public List<LocalDateTime> getDates(String startDateStr, String endDateStr){
         List<LocalDateTime> dates = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy.");
         LocalDateTime startDate = LocalDate.parse(startDateStr, formatter).atStartOfDay();

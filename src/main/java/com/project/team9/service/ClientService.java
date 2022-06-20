@@ -165,7 +165,7 @@ public class ClientService {
             addressService.addAddress(address);
         }
         currentClient.setAddress(address);
-        currentClient = addClient(currentClient);
+        addClient(currentClient);
         return currentClient;
     }
 

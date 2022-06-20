@@ -120,7 +120,7 @@ public class AdministratorService {
         administratorRepository.save(administrator);
     }
 
-    public Long edit(AdminDTO dto) {
+    public Administrator edit(AdminDTO dto) {
 
         Administrator administrator = administratorRepository.getAdminById(dto.getId());
 
@@ -132,7 +132,7 @@ public class AdministratorService {
         administrator.setPhoneNumber(dto.getPhoneNumber());
         administrator.setAddress(address);
 
-        return administratorRepository.save(administrator).getId();
+        return administratorRepository.save(administrator);
 
     }
 
