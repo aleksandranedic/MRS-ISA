@@ -1,7 +1,7 @@
 import {React, useState, useEffect} from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { backLink, profilePicturePlaceholder } from "../Consts";
+import { backLink, frontLink, profilePicturePlaceholder } from "../Consts";
 import {Info, TagInfo, LinkInfo} from "../Info";
 import 'bootstrap/dist/css/bootstrap.css'
 import Map from "../Map";
@@ -28,7 +28,7 @@ export default function HouseInfo({house}) {
             <div className="d-flex">
                <h4 className="fw-light" style={{ wordWrap: "break-word", width:"80%"}}>{house.description}</h4> 
                <div className="d-flex align-items-start justify-content-end border-start" style={{width:"20%"}}>
-                    <LinkInfo title="Vlasnik:" profileImg = {owner.profileImg !== null ? backLink + owner.profileImg.path : profilePicturePlaceholder} text={owner.name} link={"http://localhost:3000/houseOwner/"+ owner.id}/>
+                    <LinkInfo title="Vlasnik:" profileImg = {owner.profileImg !== null ? backLink + owner.profileImg.path : profilePicturePlaceholder} text={owner.name} link={frontLink + "houseOwner/"+ owner.id}/>
                </div>
             </div>
             <hr/>
