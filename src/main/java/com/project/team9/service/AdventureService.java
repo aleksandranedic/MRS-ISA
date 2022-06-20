@@ -549,7 +549,7 @@ public class AdventureService {
     }
 
     @Transactional(readOnly = false)
-    public AdventureReservation createReservationFromDto(NewReservationDTO dto) throws PessimisticLockingFailureException{
+    public AdventureReservation createFromDTO(NewReservationDTO dto) throws PessimisticLockingFailureException{
         Client client = clientService.getById(dto.getClientId().toString());
         String id = dto.getResourceId().toString();
         Adventure adventure = this.getByIdConcurrent(id); //throws PessimisticLockingFailureException

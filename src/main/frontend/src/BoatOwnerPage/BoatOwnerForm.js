@@ -92,7 +92,7 @@ export function BoatOwnerForm({show, setShow, owner, profileImg}) {
                 }
                 data.append("fileImage",file);
                 axios
-                .post("http://localhost:4444/boatowner/changeProfilePicture/" + id, data)
+                .post(backLink + "/boatowner/changeProfilePicture/" + id, data)
                 .then(res => {
                        console.log(res.data)
                 });
@@ -104,7 +104,7 @@ export function BoatOwnerForm({show, setShow, owner, profileImg}) {
             data.append("place", boatOwner.address.place)
             data.append("country", boatOwner.address.country)
             axios
-            .post("http://localhost:4444/boatowner/updateOwner/" + id, data)
+            .post(backLink + "/boatowner/updateOwner/" + id, data)
             .then(res => {
                 window.location.reload();
             });

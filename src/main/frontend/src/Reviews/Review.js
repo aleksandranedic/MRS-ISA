@@ -1,18 +1,18 @@
 import {React, useEffect, useState} from 'react';
 import {Col, Card} from 'react-bootstrap'
 import StarRatings from 'react-star-ratings';
+import { backLink, frontLink } from '../Consts';
 
 function Review({review}) {
-    const HOST = "http://localhost:4444";
     const [profileImg, setProfileImg] = useState("");
     
     
     useEffect(() => {
-        setProfileImg(HOST + review.profilePicture);
+        setProfileImg(backLink + review.profilePicture);
     }, []);
 
     function visitClient(){
-        window.location.href = "http://localhost:3000/client/" + review.clientId;
+        window.location.href = frontLink + "client/" + review.clientId;
     }
     return (
         <Col>

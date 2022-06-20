@@ -3,6 +3,7 @@ import {Modal, Button} from 'react-bootstrap'
 import AddBoatForm from './AddBoatForm';
 import axios from "axios";  
 import { useParams } from "react-router-dom";
+import { backLink } from '../Consts';
 
 function AddBoat({showModal, closeModal}) {
   const {id} = useParams();
@@ -56,10 +57,10 @@ function AddBoat({showModal, closeModal}) {
 
       data.append("address", state.address)
       axios
-      .post("http://localhost:4444/boat/createBoat", data)
+      .post(backLink + "/boat/createBoat", data)
       .then(res => {
             var boatID = res.data
-            axios.post("http://localhost:4444/boatowner/addBoat/" + id, boatID).then( res => {window.location.reload();});
+            axios.post(backLink + "/boatowner/addBoat/" + id, boatID).then( res => {window.location.reload();});
       });
       close();
     }

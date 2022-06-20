@@ -2,7 +2,7 @@ import {React, useState, useEffect} from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import {Info, TagInfo, LinkInfo} from "../Info";
-import { backLink, profilePicturePlaceholder } from "../Consts";
+import { backLink, frontLink, profilePicturePlaceholder } from "../Consts";
 import Map from "../Map"
 import 'bootstrap/dist/css/bootstrap.css'
 import 'leaflet/dist/leaflet.css'
@@ -13,7 +13,7 @@ export default function BoatInfo({boat}) {
 
     const fetchOwner = () => {
         axios
-        .get("http://localhost:4444/boat/getOwner/" + id)
+        .get(backLink + "/boat/getOwner/" + id)
         .then(res => {
             setOwner(res.data);
         });
@@ -30,7 +30,7 @@ export default function BoatInfo({boat}) {
              <div className="d-flex">
                <h4 className="fw-light" style={{ wordWrap: "break-word", width:"80%"}}>{boat.description}</h4> 
                <div className="d-flex align-items-start justify-content-end border-start" style={{width:"20%"}}>
-                    <LinkInfo title="Vlasnik:" profileImg = {owner.profileImg !== null ? backLink + owner.profileImg.path : profilePicturePlaceholder} text={owner.name} link={"http://localhost:3000/boatOwner/"+ owner.id}/>
+                    <LinkInfo title="Vlasnik:" profileImg = {owner.profileImg !== null ? backLink + owner.profileImg.path : profilePicturePlaceholder} text={owner.name} link={frontLink + "boatOwner/"+ owner.id}/>
                </div>
             </div>
             <hr/>

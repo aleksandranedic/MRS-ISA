@@ -2,7 +2,7 @@ import React from "react";
 import {Info, AddressInfo, TagInfo, LinkInfo} from "../Info";
 import 'bootstrap/dist/css/bootstrap.css'
 import Map from "../Map";
-import { backLink, profilePicturePlaceholder } from "../Consts";
+import { backLink, frontLink, profilePicturePlaceholder } from "../Consts";
 
 export default function AdventureInfo({adventure}) {
 
@@ -11,7 +11,7 @@ export default function AdventureInfo({adventure}) {
             <div className="d-flex">
                <h4 className="fw-light" style={{ wordWrap: "break-word", width:"80%"}}>{adventure.description}</h4> 
                <div className="d-flex align-items-start justify-content-end border-start" style={{width:"20%"}}>
-                    <LinkInfo title="Vlasnik:" profileImg = {adventure.owner.profileImg !== null ? backLink + adventure.owner.profileImg.path : profilePicturePlaceholder} text={adventure?.owner.firstName + " " + adventure?.owner.lastName} link={"http://localhost:3000/fishingInstructor/"+adventure.owner.id}/>
+                    <LinkInfo title="Vlasnik:" profileImg = {adventure.owner.profileImg !== null ? backLink + adventure.owner.profileImg.path : profilePicturePlaceholder} text={adventure?.owner.firstName + " " + adventure?.owner.lastName} link={frontLink + "fishingInstructor/"+adventure.owner.id}/>
                </div>
             </div>
 

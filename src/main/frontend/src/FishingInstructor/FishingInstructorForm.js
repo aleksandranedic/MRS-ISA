@@ -69,7 +69,7 @@ export function FishingInstructorForm({show, setShow, fishingInstructor, profile
                 }
                 data.append("fileImage", file);
                 axios
-                    .post("http://localhost:4444/fishinginstructor/changeProfilePicture/" + id, data)
+                    .post(backLink + "/fishinginstructor/changeProfilePicture/" + id, data)
                     .then(res => {
                         console.log(res.data);
                         setShow(false);
