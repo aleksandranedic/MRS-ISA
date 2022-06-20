@@ -9,16 +9,15 @@ import com.project.team9.model.Tag;
 import com.project.team9.model.buissness.Pricelist;
 import com.project.team9.model.reservation.AdventureReservation;
 import com.project.team9.model.reservation.Appointment;
-import com.project.team9.model.reservation.BoatReservation;
 import com.project.team9.model.resource.Adventure;
 import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.repo.AdventureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -517,7 +516,7 @@ public class AdventureService {
     public Long createReservation(NewReservationDTO dto) throws ReservationNotAvailableException {
         AdventureReservation reservation;
         try {
-            reservation = createReservationFromDto(dto);
+            reservation = createFromDTO(dto);
         }
         catch (PessimisticLockingFailureException plfe){
             return Long.valueOf("-1");
