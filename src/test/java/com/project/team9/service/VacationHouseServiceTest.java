@@ -19,10 +19,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -95,7 +96,7 @@ class VacationHouseServiceTest {
     }
 
     @Test
-    void createBusyPeriod() {
+    void createBusyPeriod() { // Student 2
 
         NewBusyPeriodDTO dto = new NewBusyPeriodDTO(
                 1L,
@@ -113,5 +114,16 @@ class VacationHouseServiceTest {
         when(repository.getById(anyLong())).thenReturn(vacationHouse);
         VacationHouseReservation r = vacationHouseService.createBusyPeriod(dto);
         assertTrue(r.isBusyPeriod());
+    }
+
+    @Test
+    void getVacationHouses() {  // Student 2
+        when(repository.findAll()).thenReturn(Arrays.asList(vacationHouse, vacationHouse, vacationHouse));
+
+        List<VacationHouse> test = vacationHouseService.getVacationHouses();
+
+        assertEquals(3, test.size());
+        verify(repository, times(1)).findAll();
+
     }
 }

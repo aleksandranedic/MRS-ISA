@@ -30,6 +30,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -67,11 +68,8 @@ class AdventureServiceTest {
     private ConfirmationTokenService confirmationTokenService;
 
     private static Address address;
-    private static ArrayList<Appointment> appointments1;
-    private static ArrayList<Appointment> appointments2;
     private static Adventure adventure1;
     private static Adventure adventure2;
-    private static FishingInstructor fishingInstructor;
     private static AdventureReservation adventureReservation1;
     private static AdventureReservation adventureReservation2;
 
@@ -80,19 +78,19 @@ class AdventureServiceTest {
 
     @BeforeAll
     static void setUp() {
-        appointments1 = new ArrayList<Appointment>();
+        ArrayList<Appointment> appointments1 = new ArrayList<Appointment>();
         appointments1.add(Appointment.getHourAppointment(2022, 10,1, 10, 0 ));
         appointments1.add(Appointment.getHourAppointment(2022, 10,1, 11, 0 ));
         appointments1.add(Appointment.getHourAppointment(2022, 10,1, 12, 0 ));
 
-        appointments2= new ArrayList<Appointment>();
+        ArrayList<Appointment> appointments2 = new ArrayList<Appointment>();
         appointments2.add(Appointment.getHourAppointment(2022, 10,1, 15, 0 ));
         appointments2.add(Appointment.getHourAppointment(2022, 10,1, 16, 0 ));
         appointments2.add(Appointment.getHourAppointment(2022, 10,1, 17, 0 ));
 
         address = new Address("place1", "number1", "street1", "country1");
 
-        fishingInstructor = new FishingInstructor(
+        FishingInstructor fishingInstructor = new FishingInstructor(
                 null,
                 "password",
                 "FirstName",
@@ -105,7 +103,7 @@ class AdventureServiceTest {
                 "",
                 new Role("FISHING_INSTRUCTOR"),
                 new ArrayList<Adventure>()
-                );
+        );
         fishingInstructor.setId(1L);
 
         adventure1 = new Adventure(
@@ -164,7 +162,7 @@ class AdventureServiceTest {
     }
 
     @Test
-    void createDTOFromReservation() {
+    void createDTOFromReservation() { //Student 3
         //Akcija
         ReservationDTO dto = adventureService.createDTOFromReservation(adventureReservation1);
 
@@ -176,7 +174,7 @@ class AdventureServiceTest {
     }
 
     @Test
-    void convertAdventureToEntityDTO() {
+    void convertAdventureToEntityDTO() {  // Student 1
         //Definisanje
         EntityDTO expected = new EntityDTO(
                 "adventure1",
@@ -203,7 +201,7 @@ class AdventureServiceTest {
     }
 
     @Test
-    void filterAdventures() {
+    void filterAdventures() {  // Student 1
 
         DateTimeFormatter dateformat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter timeformat = DateTimeFormatter.ofPattern("H:mm");
@@ -228,10 +226,33 @@ class AdventureServiceTest {
 
 
     @Test
-    void createAdventureReservationDTO() {
+    void createAdventureReservationDTO() {  //Student 3
         AdventureQuickReservationDTO dto = adventureService.createAdventureReservationDTO(100, adventureReservation1);
 
         assertEquals(50, dto.getDiscount());
         assertEquals(3, dto.getDuration());
+    }
+
+    @Test
+    public void getAdventures() {  // Student 3
+        List<Adventure> adventures = Arrays.asList(adventure1, adventure2);
+
+        when(repository.findAll()).thenReturn(adventures);
+
+        List<Adventure> result = adventureService.getAdventures();
+        assertEquals(2, result.size());
+        verify(repository, times(1)).findAll();
+
+    }
+
+    @Test
+    public void getById() { //Student 3
+        when(repository.getById(1L)).thenReturn(adventure1);
+
+        Adventure result = adventureService.getById("1");
+
+        assertEquals(adventure1.getTitle(), result.getTitle());
+
+        verify(repository, times(1)).getById(1L);
     }
 }
