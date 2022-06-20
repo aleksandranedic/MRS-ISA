@@ -302,7 +302,12 @@ public class AdventureService {
     }
 
     public Adventure getById(String id) {
-        return repository.getById(Long.parseLong(id));
+        try{
+            return repository.getById(Long.parseLong(id));
+        }
+        catch (Exception e){
+            return null;
+        }
     }
 
     @Transactional(readOnly = false)
