@@ -22,6 +22,7 @@ public class UserCategoryController {
     public List<UserCategory> getAllClientCategories(){
         return service.getAllClientCategories();
     }
+
     @GetMapping("/vendor")
     public List<UserCategory> getAllVendorCategories(){
         return service.getAllVendorCategories();

@@ -1,4 +1,4 @@
-package com.project.team9.controller;
+package com.project.team9.dto;
 
 public class VendorReviewResponseDTO {
     private String response;

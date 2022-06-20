@@ -1,13 +1,12 @@
 package com.project.team9.service;
 
-import com.project.team9.controller.VendorReviewResponseDTO;
+import com.project.team9.dto.VendorReviewResponseDTO;
 import com.project.team9.dto.VendorRequestReviewDenialDTO;
 import com.project.team9.dto.VendorReviewDTO;
 import com.project.team9.model.request.VendorReviewRequest;
 import com.project.team9.model.review.VendorReview;
 import com.project.team9.model.user.Client;
 import com.project.team9.repo.VendorReviewRepository;
-import com.project.team9.security.email.EmailSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

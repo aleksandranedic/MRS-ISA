@@ -34,9 +34,9 @@ public class VendorReviewRequestService {
 
     public VendorReviewRequest getById(Long id){return repository.getById(id);}
 
-    public void delete(Long vendorReviewRequestId) {
+    public VendorReviewRequest delete(Long vendorReviewRequestId) {
         VendorReviewRequest vendorReviewRequest=getById(vendorReviewRequestId);
         vendorReviewRequest.setDeleted(true);
-        repository.save(vendorReviewRequest);
+        return repository.save(vendorReviewRequest);
     }
 }

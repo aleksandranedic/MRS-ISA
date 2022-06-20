@@ -549,7 +549,7 @@ public class AdventureService {
     }
 
     @Transactional(readOnly = false)
-    private AdventureReservation createReservationFromDto(NewReservationDTO dto) throws PessimisticLockingFailureException{
+    public AdventureReservation createReservationFromDto(NewReservationDTO dto) throws PessimisticLockingFailureException{
         Client client = clientService.getById(dto.getClientId().toString());
         String id = dto.getResourceId().toString();
         Adventure adventure = this.getByIdConcurrent(id); //throws PessimisticLockingFailureException
@@ -723,22 +723,6 @@ public class AdventureService {
                         filterDTO,
                         getAdventures(),
                         adventureReservationService.getReservations()));
-        if (filterDTO.isAdventuresChecked()) {
-            ArrayList<Adventure> adventures = new ArrayList<>();
-            for (Adventure adventure : getAdventures()) {
-                if (checkNumberOfClients(filterDTO, adventure) &&
-                        checkInstructorName(filterDTO, adventure) &&
-                        checkReviewRating(filterDTO, adventure) &&
-                        checkLocation(filterDTO, adventure) &&
-                        checkCancellationFee(filterDTO, adventure)
-                )
-                    adventures.add(adventure);
-            }
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm");
-            String datetime = filterDTO.getStartDate() + " " + filterDTO.getStartTime();
-            LocalDateTime startDateTime = LocalDateTime.parse(datetime, formatter);
-            datetime = filterDTO.getEndDate() + " " + filterDTO.getEndTime();
-            LocalDateTime endDateTime = LocalDateTime.parse(datetime, formatter);
     }
     public EntityDTO convertAdventureToEntityDTO(Adventure adventure, double rating) {
         return new EntityDTO(
@@ -756,7 +740,9 @@ public class AdventureService {
         List<EntityDTO> entities = new ArrayList<EntityDTO>();
         for (Adventure adventure: adventures) {
             entities.add(convertAdventureToEntityDTO(adventure, getAdventureRating(adventure.getId())));
+        }
         return entities;
+    }
 
     private boolean checkNumberOfClients(AdventureFilterDTO filterDTO, Adventure adventure) {
         return filterDTO.getNumberOfClients().isEmpty() || Integer.parseInt(filterDTO.getNumberOfClients()) <= adventure.getNumberOfClients();

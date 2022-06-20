@@ -17,6 +17,7 @@ import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.repo.BoatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.beans.factory.annotation.Value;
@@ -560,7 +561,7 @@ public class BoatService {
 
 
     @Transactional(readOnly = false)
-    private BoatReservation createFromDTO(NewReservationDTO dto) throws PessimisticLockingFailureException {
+    public BoatReservation createFromDTO(NewReservationDTO dto) throws PessimisticLockingFailureException {
         Client client = clientService.getById(dto.getClientId().toString());
         Long id = dto.getResourceId();
         Boat boat = this.getByIdConcurrent(id); //throws

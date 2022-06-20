@@ -23,8 +23,6 @@ public class ClientController {
 
     private final ClientService clientService;
 
-
-
     @Autowired
     public ClientController(ClientService clientService) {
         this.clientService = clientService;
