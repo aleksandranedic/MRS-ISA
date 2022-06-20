@@ -6,7 +6,7 @@ import AdventureInfo from "./AdventureInfo";
 import {Calendar} from "../Calendar/Calendar";
 import {AdventureModal} from "./AdventureModal";
 import {useParams} from "react-router-dom";
-import {backLink} from "../Consts";
+import {backLink, frontLink} from "../Consts";
 import {ReservationsTable} from "../Calendar/ReservationsTable";
 import {Button, Collapse, Form} from "react-bootstrap";
 import {ReservationCardGrid} from "../Calendar/ReservationCardGrid";
@@ -65,10 +65,20 @@ const Adventure = ({id}) => {
         }
     }
     const fetchAdventure = () => {
-        axios.get(backLink + "/adventure/" + id).then(res => {
+        axios.get(backLink + "/adventure/" + id)
+        .then(res => {
+            if (res.data === ''){
+                window.location.href = frontLink + "pageNotFound"
+            }
             setAdventure(res.data);
             setImages([]);
             setMyPage(isMyPage(res.data.owner.roleName, res.data.owner.id));
+            fetchReservations();
+            fetchReviews();
+            fetchQuickReservations();
+        })
+        .catch(error => {
+            window.location.href = frontLink + "pageNotFound"
         });
     };
 
@@ -97,9 +107,6 @@ const Adventure = ({id}) => {
     };
 
     useEffect(() => {
-        fetchReservations();
-        fetchReviews();
-        fetchQuickReservations();
         fetchAdventure();
     }, []);
 
