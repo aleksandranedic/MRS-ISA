@@ -37,9 +37,6 @@ public class ClientReviewService {
     }
 
     public List<ClientReviewDTO> getResourceReviews(Long resource_id) {
-
-        System.out.println(resource_id);
-
         List<ClientReview> reviews = repository.findByResourceId(resource_id);
         List<ClientReviewDTO> reviewsDTO = new ArrayList<ClientReviewDTO>();
         for (ClientReview review : reviews) {
