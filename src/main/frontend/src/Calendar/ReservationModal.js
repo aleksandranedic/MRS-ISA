@@ -5,6 +5,7 @@ import {backLink, missingDataErrors, notifyError, notifySuccess} from "../Consts
 import {TagInfo} from "../Info";
 import {MessagePopupModal} from "../MessagePopupModal";
 import {isLoggedIn} from "../Autentification";
+import {compareDateStrings, compareDateStringToToday, compareTimeStrings} from "./ReservationDateConverter";
 
 export function ReservationModal({show, setShow, type, resourceId, myPage, additionalServices}) {
 
@@ -47,10 +48,28 @@ export function ReservationModal({show, setShow, type, resourceId, myPage, addit
         if (formValues.startDate === "") {
             errors.startDate = missingDataErrors.date;
         }
+
+        else if (compareDateStringToToday(formValues.startDate)) {
+            errors.startDate = "Datum ne sme biti u prošlosti."
+        }
+
+
         if (type === "vacationHouse") {
             if (formValues.endDate === "") {
                 errors.endDate = missingDataErrors.date;
             }
+
+            else if (compareDateStringToToday(formValues.endDate)) {
+                errors.endDate = "Datum ne sme biti u prošlosti."
+            }
+
+            if (compareDateStrings(formValues.startDate, formValues.endDate)) {
+                errors.endDate = "Krajnji datum ne sme biti pre početnog."
+                errors.startDate = "Krajnji datum ne sme biti pre početnog."
+            }
+
+
+
         }
 
         if (type !== "vacationHouse") {
@@ -60,6 +79,11 @@ export function ReservationModal({show, setShow, type, resourceId, myPage, addit
 
             if (formValues.endTime === "") {
                 errors.endTime = missingDataErrors.time;
+            }
+
+            if (compareTimeStrings(formValues.startTime, formValues.endTime)) {
+                errors.startTime = "Krajnje vreme ne sme biti pre početnog."
+                errors.endTime = "Krajnje vreme ne sme biti pre početnog."
             }
         }
 
@@ -199,7 +223,6 @@ export function ReservationModal({show, setShow, type, resourceId, myPage, addit
             isQuickReservation: false
         }
 
-        console.log(dto);
 
         if (type === "adventure") {
             axios
@@ -229,7 +252,6 @@ export function ReservationModal({show, setShow, type, resourceId, myPage, addit
                     }
                 })
                 .catch(error => {
-                    console.log(error);
                     setShowAlert(true);
 
                 })
@@ -334,7 +356,7 @@ export function ReservationModal({show, setShow, type, resourceId, myPage, addit
                             </Form.Group>
 
                             <Form.Group className="ms-2 w-50 mt-2">
-                                <Form.Label>Vreme zavrsetka</Form.Label>
+                                <Form.Label>Vreme završetka</Form.Label>
                                 <Form.Control type="time" min="05:00" max="20:00"
                                               value={formValues.endTime}
                                               onChange={(e) => setField("endTime", e.target.value)}

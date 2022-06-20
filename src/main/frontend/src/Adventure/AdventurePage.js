@@ -86,7 +86,6 @@ const Adventure = ({id}) => {
     const fetchReservations = () => {
         axios.get(backLink + "/adventure/reservation/adventure/" + id).then(res => {
             setReservations(res.data);
-            console.log(myPage)
             setEvents(processReservationsForResources(res.data, myPage));
 
         })
