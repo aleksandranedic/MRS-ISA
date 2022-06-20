@@ -95,7 +95,7 @@ function QuickReservations({reservations,additionalServices, name, address, enti
                               autoPlay={false} autoPlaySpeed={9000000}>
                         {reservations.map((reservation) => (
                             <QuickReservation key={reservation.reservationID} type={type} reservation={reservation}
-                                              name={name} address={address} image={"./images/loginBackground.jpg"}
+                                              name={name} address={address} image={"./images/QuickReservationImage.jpg"}
                                               entity={entity} priceText={priceText} durationText={durationText}
                                               myPage={myPage} availableTags={additionalServices}/>
                         ))}
