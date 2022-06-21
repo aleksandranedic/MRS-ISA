@@ -17,6 +17,7 @@ import com.project.team9.model.user.Client;
 import com.project.team9.model.user.vendor.BoatOwner;
 import com.project.team9.repo.BoatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -261,10 +262,11 @@ public class BoatService {
         return repository.findOneById(id);
     }
 
+    @Cacheable(value = "boatDTO")
     public BoatDTO getBoatDTO(Long id) {
         Boat bt;
         try {
-            bt= repository.getById(id);
+            bt= this.getBoat(id);
             if (bt.getDeleted())
                 return null;
         }

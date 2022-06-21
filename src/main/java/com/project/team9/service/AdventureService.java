@@ -15,6 +15,7 @@ import com.project.team9.model.user.vendor.FishingInstructor;
 import com.project.team9.repo.AdventureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
@@ -301,6 +302,7 @@ public class AdventureService {
         repository.save(adventure);
     }
 
+    @Cacheable(value = "adventure")
     public Adventure getById(String id) {
         try{
             return repository.getById(Long.parseLong(id));
