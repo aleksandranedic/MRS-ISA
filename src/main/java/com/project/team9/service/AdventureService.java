@@ -544,9 +544,15 @@ public class AdventureService {
                 reservation.getAppointments().get(reservation.getAppointments().size() - 1).getEndTime().toString();
         String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda rezervacije");
         emailService.send(client.getEmail(), email, "Potvrda rezervacije");
+
+        FishingInstructor fishingInstructor = reservation.getResource().getOwner();
+        fishingInstructor.setNumOfPoints(fishingInstructor.getNumOfPoints() + pointlistService.getVendorPointlist().getNumOfPoints());
+        fishingInstructorService.addFishingInstructor(fishingInstructor);
+
         client.setNumOfPoints(client.getNumOfPoints() + pointlistService.getClientPointlist().getNumOfPoints());
         clientService.addClient(client);
         reservation.setClient(client);
+
         adventureReservationService.save(reservation);
 
         return reservation.getId();
@@ -684,6 +690,14 @@ public class AdventureService {
         adventure.removeQuickReservation(quickReservation);
 
         Client client = clientService.getById(dto.getClientID().toString());
+
+        FishingInstructor fishingInstructor = quickReservation.getResource().getOwner();
+        fishingInstructor.setNumOfPoints(fishingInstructor.getNumOfPoints() + pointlistService.getVendorPointlist().getNumOfPoints());
+        fishingInstructorService.addFishingInstructor(fishingInstructor);
+
+        client.setNumOfPoints(client.getNumOfPoints() + pointlistService.getClientPointlist().getNumOfPoints());
+        clientService.addClient(client);
+        quickReservation.setClient(client);
 
         quickReservation.setClient(client);
         quickReservation.setQuickReservation(false);

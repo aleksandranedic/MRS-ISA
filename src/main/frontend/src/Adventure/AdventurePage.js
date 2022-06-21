@@ -168,7 +168,7 @@ const Adventure = ({id}) => {
                 </>
             }
 
-            <div className="m-5 mb-0 me-0" id="reviews">
+            <div className="m-5 mb-0" id="reviews">
                 <ReviewsComp reviews={adventureReviews}/>
             </div>
 
