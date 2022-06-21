@@ -15,6 +15,7 @@ import com.project.team9.model.user.vendor.VacationHouseOwner;
 import com.project.team9.repo.VacationHouseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
@@ -133,10 +134,11 @@ public class VacationHouseService {
         return Math.round(result * scale) / scale;
     }
 
+    @Cacheable(value = "houseDTO")
     public VacationHouseDTO getVacationHouseDTO(Long id) {
         VacationHouse vh;
         try{
-            vh = repository.getById(id);
+            vh = this.getVacationHouse(id);
             if (vh.getDeleted())
                 return null;
         }
