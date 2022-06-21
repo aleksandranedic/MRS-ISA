@@ -130,7 +130,7 @@ public class BoatService {
         Appointment currApp = startDateAppointment;
         for (int i = 0; i < dto.getDuration() - 1; i++) {
             LocalDateTime startDate = currApp.getEndTime();
-            LocalDateTime endDate = startDate.plusDays(1);
+            LocalDateTime endDate = startDate.plusHours(1);
             currApp = new Appointment(startDate, endDate);
             appointmentService.save(currApp);
             appointments.add(currApp);

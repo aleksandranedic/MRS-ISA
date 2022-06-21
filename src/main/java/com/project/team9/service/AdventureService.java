@@ -204,7 +204,7 @@ public class AdventureService {
         Appointment currApp = startDateAppointment;
         for (int i = 0; i < dto.getDuration() - 1; i++) {
             LocalDateTime startDate = currApp.getEndTime();
-            LocalDateTime endDate = startDate.plusDays(1);
+            LocalDateTime endDate = startDate.plusHours(1);
             currApp = new Appointment(startDate, endDate);
             appointmentService.save(currApp);
             appointments.add(currApp);
@@ -302,7 +302,12 @@ public class AdventureService {
     }
 
     public Adventure getById(String id) {
-        return repository.getById(Long.parseLong(id));
+        try{
+            return repository.getById(Long.parseLong(id));
+        }
+        catch (Exception e){
+            return null;
+        }
     }
 
     @Transactional(readOnly = false)
@@ -539,9 +544,15 @@ public class AdventureService {
                 reservation.getAppointments().get(reservation.getAppointments().size() - 1).getEndTime().toString();
         String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda rezervacije");
         emailService.send(client.getEmail(), email, "Potvrda rezervacije");
+
+        FishingInstructor fishingInstructor = reservation.getResource().getOwner();
+        fishingInstructor.setNumOfPoints(fishingInstructor.getNumOfPoints() + pointlistService.getVendorPointlist().getNumOfPoints());
+        fishingInstructorService.addFishingInstructor(fishingInstructor);
+
         client.setNumOfPoints(client.getNumOfPoints() + pointlistService.getClientPointlist().getNumOfPoints());
         clientService.addClient(client);
         reservation.setClient(client);
+
         adventureReservationService.save(reservation);
 
         return reservation.getId();
@@ -679,6 +690,14 @@ public class AdventureService {
         adventure.removeQuickReservation(quickReservation);
 
         Client client = clientService.getById(dto.getClientID().toString());
+
+        FishingInstructor fishingInstructor = quickReservation.getResource().getOwner();
+        fishingInstructor.setNumOfPoints(fishingInstructor.getNumOfPoints() + pointlistService.getVendorPointlist().getNumOfPoints());
+        fishingInstructorService.addFishingInstructor(fishingInstructor);
+
+        client.setNumOfPoints(client.getNumOfPoints() + pointlistService.getClientPointlist().getNumOfPoints());
+        clientService.addClient(client);
+        quickReservation.setClient(client);
 
         quickReservation.setClient(client);
         quickReservation.setQuickReservation(false);

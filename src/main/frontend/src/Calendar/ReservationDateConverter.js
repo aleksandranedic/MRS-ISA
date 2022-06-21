@@ -25,3 +25,39 @@ export function getEndTime(reservation) {
 export function convertToDate(dateArray) {
     return new Date(dateArray.at(0), dateArray.at(1) - 1, dateArray.at(2), dateArray.at(3), dateArray.at(4));
 }
+
+export function compareDateStrings(start, end) {
+
+    if (start === "" || end === "") {
+        return false;
+    }
+
+    let startDate = new Date(start.split("-")[0],start.split("-")[1]-1,start.split("-")[2]);
+    let endDate = new Date(end.split("-")[0],end.split("-")[1]-1,end.split("-")[2]);
+    return startDate > endDate;
+
+}
+
+export function compareDateStringToToday(string) {
+    if (string === "") {
+        return false;
+    }
+
+    let date = new Date(string.split("-")[0],string.split("-")[1]-1,string.split("-")[2]);
+
+    return new Date() > date;
+
+}
+
+export function compareTimeStrings(start, end) {
+
+    if (start === "" || end === "") {
+        return false;
+    }
+
+    let startTime = new Date(1,1,1, start.split(":")[0],start.split(":")[1]);
+    let endTime = new Date(1,1,1, end.split(":")[0],end.split(":")[1]);
+
+    return startTime > endTime;
+
+}
