@@ -946,13 +946,10 @@ public class BoatService {
         try {
             BoatReservation boatReservation = boatReservationService.getBoatReservation(id);
             LocalDateTime now = LocalDateTime.now();
-            int numberOfDaysBetween = (int) ChronoUnit.DAYS.between(now.toLocalDate(), boatReservation.getAppointments().get(0).getStartTime());
+            List<Appointment> appointments = boatReservation.getAppointments();
+            int numberOfDaysBetween = (int) ChronoUnit.DAYS.between(now.toLocalDate(), appointments.get(0).getStartTime());
             if (numberOfDaysBetween < 3) {
                 return "Otkazivanje rezervacije je moguće najkasnije 3 dana do početka";
-            }
-            for (Appointment appointment :
-                    boatReservation.getAppointments()) {
-                appointmentService.delete(appointment);
             }
             boatReservationService.deleteReservation(boatReservation);
             return "Uspešno ste otkazali rezervaciju vikendicu";

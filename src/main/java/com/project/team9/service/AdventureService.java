@@ -866,7 +866,8 @@ public class AdventureService {
         try {
             AdventureReservation adventureReservation = adventureReservationService.getById(id);
             LocalDateTime now = LocalDateTime.now();
-            int numberOfDaysBetween = (int) ChronoUnit.DAYS.between(now.toLocalDate(), adventureReservation.getAppointments().get(0).getStartTime());
+            List<Appointment> appointments = adventureReservation.getAppointments();
+            int numberOfDaysBetween = (int) ChronoUnit.DAYS.between(now.toLocalDate(), appointments.get(0).getStartTime());
             if (numberOfDaysBetween < 3) {
                 return "Otkazivanje rezervacije je moguće najkasnije 3 dana do početka";
             }
