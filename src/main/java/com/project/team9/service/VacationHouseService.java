@@ -421,6 +421,8 @@ public class VacationHouseService {
         Pricelist pl = new Pricelist(house.getPrice(), new Date());
         pricelistService.addPriceList(pl);
         int numberOfBedsPerRoom = house.getCapacity() / house.getNumberOfRooms();
+        if (numberOfBedsPerRoom <1)
+            numberOfBedsPerRoom = 1;
         Address adr = new Address(house.getCity(), house.getNumber(), house.getStreet(), house.getCountry());
         addressService.addAddress(adr);
         VacationHouse vh = new VacationHouse(house.getName(), adr, house.getDescription(), house.getRulesAndRegulations(), pl, house.getCancellationFee(), null, house.getNumberOfRooms(), numberOfBedsPerRoom);

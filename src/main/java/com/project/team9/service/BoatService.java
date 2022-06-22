@@ -110,7 +110,8 @@ public class BoatService {
         boatReservationService.addReservation(reservation);
         boat.addReservation(reservation);
         this.addBoat(boat);
-            Client client = clientService.getById(String.valueOf(reservation.getClient().getId()));
+        for (Long userId : boat.getSubClientUsernames()) {
+            Client client = clientService.getById(String.valueOf(userId));
             String fullResponse = "Napravljena je akcija na koji ste se preplatili\n " +
                     "Avanture na brod kоšta " + reservation.getPrice() + "\n" +
                     "Zakazani period je od " + reservation.getAppointments().get(0).getStartTime().toString() + " do " +
@@ -118,6 +119,7 @@ public class BoatService {
             String additionalText = "<a href=\"" + frontLink + "\">Prijavite se i rezervišite je</a>";
             String emailForSubbedUser = emailService.buildHTMLEmail(client.getName(), fullResponse, additionalText, "Notifikacija o pretplacenim akcijama");
             emailService.send(client.getEmail(), emailForSubbedUser, "Notifikacija o pretplacenim akcijama");
+        }
         return true;
     }
 
