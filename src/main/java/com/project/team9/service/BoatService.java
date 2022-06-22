@@ -631,7 +631,8 @@ public class BoatService {
                 r.isBusyPeriod(),
                 r.isQuickReservation(),
                 r.getResource().getId(),
-                r.getId()
+                r.getId(),
+                "boat"
         );
     }
 
