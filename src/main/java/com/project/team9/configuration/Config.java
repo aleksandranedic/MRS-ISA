@@ -195,7 +195,7 @@ public class Config {
 
         //----------------------------------------
 
-        addRegistrationRequest("U ponudi ima 3 avanture", "aleksa123", "Aleksu", "Aleksić", "aleksa.aleksic@gmail.com", "19", "FISHING_INSTRUCTOR", "Živim na lepom plavom Dunavu.");
+        addRegistrationRequest("U ponudi ima 3 avanture", "aleksa123", "Aleksa", "Aleksić", "aleksa.aleksic@gmail.com", "19", "FISHING_INSTRUCTOR", "Živim na lepom plavom Dunavu.");
         addRegistrationRequest("U ponudi ima 2 vikendice", "julia123", "Julia", "Annie", "jula.annie@gmail.com", "20", "VACATION_HOUSE_OWNER", "Volim da uživam na lepoj vikendici uz čašu vina.");
 
         //-----------------------------------------------
