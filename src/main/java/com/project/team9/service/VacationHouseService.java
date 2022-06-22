@@ -138,7 +138,7 @@ public class VacationHouseService {
         return Math.round(result * scale) / scale;
     }
 
-    @Cacheable(value = "houseDTO")
+    @Cacheable(value = "houseDTO", unless="#result == null")
     public VacationHouseDTO getVacationHouseDTO(Long id) {
         VacationHouse vh;
         try{

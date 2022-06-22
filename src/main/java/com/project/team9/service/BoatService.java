@@ -269,7 +269,7 @@ public class BoatService {
         return repository.findOneById(id);
     }
 
-    @Cacheable(value = "boatDTO")
+    @Cacheable(value = "boatDTO", unless="#result == null")
     public BoatDTO getBoatDTO(Long id) {
         Boat bt;
         try {
