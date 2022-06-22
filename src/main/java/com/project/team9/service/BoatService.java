@@ -203,14 +203,6 @@ public class BoatService {
         boat.removeQuickReservation(quickReservation);
         Client client = clientService.getById(dto.getClientID().toString());
 
-        BoatOwner boatOwner = quickReservation.getResource().getOwner();
-        boatOwner.setNumOfPoints(boatOwner.getNumOfPoints() + pointlistService.getVendorPointlist().getNumOfPoints());
-        boatOwnerService.addOwner(boatOwner);
-
-        client.setNumOfPoints(client.getNumOfPoints() + pointlistService.getClientPointlist().getNumOfPoints());
-        clientService.addClient(client);
-        quickReservation.setClient(client);
-
         quickReservation.setClient(client);
         quickReservation.setQuickReservation(false);
         boat.addReservation(quickReservation);
@@ -224,6 +216,13 @@ public class BoatService {
                     quickReservation.getAppointments().get(quickReservation.getAppointments().size() - 1).getEndTime().toString();
             String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda brze rezervacije");
             emailService.send(client.getEmail(), email, "Potvrda brze rezervacije");
+
+            BoatOwner boatOwner = quickReservation.getResource().getOwner();
+            boatOwner.setNumOfPoints(boatOwner.getNumOfPoints() + pointlistService.getVendorPointlist().getNumOfPoints());
+            boatOwnerService.addOwner(boatOwner);
+
+            client.setNumOfPoints(client.getNumOfPoints() + pointlistService.getClientPointlist().getNumOfPoints());
+            clientService.addClient(client);
             return id;
         } catch (ObjectOptimisticLockingFailureException e) {
             return null;
