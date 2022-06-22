@@ -11,8 +11,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class VacationHouse extends Resource{
     @ManyToOne
     private VacationHouseOwner owner;
