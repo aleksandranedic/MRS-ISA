@@ -8,6 +8,7 @@ import axios from "axios";
 
 export function ReservationCardGrid({reservations}) {
 
+    console.log(reservations)
     const cancelReservation = (reservation) => {
         axios.post(backLink + "/" + reservation.entityType + "/cancelReservation/" + reservation.id).then(
             response => {

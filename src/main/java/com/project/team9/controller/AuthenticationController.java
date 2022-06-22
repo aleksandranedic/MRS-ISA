@@ -67,6 +67,9 @@ public class AuthenticationController {
             if (user.getDeleted()) {
                 return ResponseEntity.ok(new LoginResponseDTO("Korisnik je obrisan", null, null, true));
             }
+            if (!user.isEnabled()) {
+                return ResponseEntity.ok(new LoginResponseDTO("Korisnik nije verifikovao svoj nalog", null, null, true));
+            }
             String jwt = tokenUtils.generateToken(user.getUsername());
 
             // Vrati token kao odgovor na uspesnu autentifikaciju
@@ -74,7 +77,7 @@ public class AuthenticationController {
 
             return ResponseEntity.ok(body);
         } catch (Exception e) {
-            return ResponseEntity.ok(new LoginResponseDTO("Uneli ste porgrešne podatke", null, null, true));
+            return ResponseEntity.ok(new LoginResponseDTO("Neuspešna prijava, probajte ponovo", null, null, true));
         }
     }
 //    @PostMapping(value = "/refresh")
