@@ -318,7 +318,6 @@ public class BoatDTO {
                 ", price=" + price +
                 ", cancellationFee=" + cancellationFee +
                 ", capacity=" + capacity +
-                ", quickReservations=" + quickReservations +
                 '}';
     }
 

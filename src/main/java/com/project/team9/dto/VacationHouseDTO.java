@@ -230,7 +230,6 @@ public class VacationHouseDTO {
                 ", cancellationFee=" + cancellationFee +
                 ", numberOfRooms=" + numberOfRooms +
                 ", capacity=" + capacity +
-                ", quickReservations=" + quickReservations +
                 '}';
     }
 }
