@@ -61,7 +61,6 @@ function HouseOwnerPage() {
             .get(backLink + "/houseowner/getStat/" + id)
             .then(res => {
                 setStat(res.data);
-                console.log(res.data);
             });
     };
 
