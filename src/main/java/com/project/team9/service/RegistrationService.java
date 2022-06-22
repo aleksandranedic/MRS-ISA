@@ -82,6 +82,7 @@ public class RegistrationService {
                         Boolean.FALSE, role
                 );
                 administrator.setConfirmed(false);
+                administrator.setEnabled(true);
                 Image image=new Image();
                 image.setPath(null);
                 imageService.save(image);
