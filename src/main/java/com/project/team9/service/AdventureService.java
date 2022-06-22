@@ -302,7 +302,7 @@ public class AdventureService {
         repository.save(adventure);
     }
 
-    @Cacheable(value = "adventure")
+    @Cacheable(value = "adventure", unless="#result == null")
     public Adventure getById(String id) {
         try{
             return repository.getById(Long.parseLong(id));
@@ -696,14 +696,6 @@ public class AdventureService {
 
         Client client = clientService.getById(dto.getClientID().toString());
 
-        FishingInstructor fishingInstructor = quickReservation.getResource().getOwner();
-        fishingInstructor.setNumOfPoints(fishingInstructor.getNumOfPoints() + pointlistService.getVendorPointlist().getNumOfPoints());
-        fishingInstructorService.addFishingInstructor(fishingInstructor);
-
-        client.setNumOfPoints(client.getNumOfPoints() + pointlistService.getClientPointlist().getNumOfPoints());
-        clientService.addClient(client);
-        quickReservation.setClient(client);
-
         quickReservation.setClient(client);
         quickReservation.setQuickReservation(false);
         adventure.addQuickReservation(quickReservation);
@@ -717,6 +709,12 @@ public class AdventureService {
             String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda brze rezervacije");
             emailService.send(client.getEmail(), email, "Potvrda brze rezervacije");
             repository.save(adventure);
+            FishingInstructor fishingInstructor = quickReservation.getResource().getOwner();
+            fishingInstructor.setNumOfPoints(fishingInstructor.getNumOfPoints() + pointlistService.getVendorPointlist().getNumOfPoints());
+            fishingInstructorService.addFishingInstructor(fishingInstructor);
+
+            client.setNumOfPoints(client.getNumOfPoints() + pointlistService.getClientPointlist().getNumOfPoints());
+            clientService.addClient(client);
             return id;
         } catch (ObjectOptimisticLockingFailureException e){
             return null;

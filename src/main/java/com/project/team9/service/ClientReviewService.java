@@ -139,7 +139,7 @@ public class ClientReviewService {
         return new UserStatDTO(
                 client.getNumOfPenalties(),
                 client.getNumOfPoints(),
-                userCategoryService.getVendorCategoryBasedOnPoints(client.getNumOfPoints()),
+                userCategoryService.getClientCategoryBasedOnPoints(client.getNumOfPoints()),
                 this.getRating(id, "client")
         );
     }

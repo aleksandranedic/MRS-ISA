@@ -138,7 +138,7 @@ public class VacationHouseService {
         return Math.round(result * scale) / scale;
     }
 
-    @Cacheable(value = "houseDTO")
+    @Cacheable(value = "houseDTO", unless="#result == null")
     public VacationHouseDTO getVacationHouseDTO(Long id) {
         VacationHouse vh;
         try{
@@ -820,17 +820,8 @@ public class VacationHouseService {
 
         Client client = clientService.getById(dto.getClientID().toString());
 
-        quickReservation.getResource().removeQuickReservation(quickReservation);
-        quickReservation.setQuickReservation(false);
-
-        client.setNumOfPoints(client.getNumOfPoints()+ pointlistService.getClientPointlist().getNumOfPoints());
-        clientService.addClient(client);
         quickReservation.setClient(client);
-
-        VacationHouseOwner vacationHouseOwner = quickReservation.getResource().getOwner();
-        vacationHouseOwner.setNumOfPoints(vacationHouseOwner.getNumOfPoints() + pointlistService.getVendorPointlist().getNumOfPoints());
-        vacationHouseOwnerService.addOwner(vacationHouseOwner);
-
+        quickReservation.setQuickReservation(false);
         vacationHouse.addReservation(quickReservation);
 
         try {
@@ -843,6 +834,11 @@ public class VacationHouseService {
                     quickReservation.getAppointments().get(quickReservation.getAppointments().size() - 1).getEndTime().toString();
             String email = emailService.buildHTMLEmail(client.getName(), fullResponse, link, "Potvrda rezervacije");
             emailService.send(client.getEmail(), email, "Potvrda rezervacije");
+            VacationHouseOwner vacationHouseOwner = quickReservation.getResource().getOwner();
+            vacationHouseOwner.setNumOfPoints(vacationHouseOwner.getNumOfPoints() + pointlistService.getVendorPointlist().getNumOfPoints());
+            vacationHouseOwnerService.addOwner(vacationHouseOwner);
+            client.setNumOfPoints(client.getNumOfPoints()+ pointlistService.getClientPointlist().getNumOfPoints());
+            clientService.addClient(client);
             return id;
         }
         catch (ObjectOptimisticLockingFailureException e)   {
