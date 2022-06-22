@@ -68,7 +68,7 @@ public class AdministratorController {
     }
 
     @PostMapping("/edit")
-    public Administrator edit(@RequestParam AdminDTO dto) {
+    public Administrator edit(AdminDTO dto) {
         return service.edit(dto);
     }
 
