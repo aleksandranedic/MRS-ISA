@@ -6,19 +6,15 @@ import { frontLink } from "../Consts";
 
 
 export function ReservationsTable(props) {
-    let reservations = props.reservations;
+    let reservations = [];
 
-    let indexesToPop = []
-    for (let index in reservations) {
-        let reservation = reservations.at(index);
 
-        if (reservation.busyPeriod === true) {
-            indexesToPop.push(index);
+    for (let index in props.reservations) {
+        let reservation = props.reservations.at(index);
+
+        if (reservation.busyPeriod === false && reservation.quickReservation === false ) {
+            reservations.push(reservation);
         }
-    }
-
-    for (let index in indexesToPop) {
-        reservations.pop(index);
     }
 
     function visitClient(clientId){

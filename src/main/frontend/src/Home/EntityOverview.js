@@ -31,7 +31,7 @@ export function EntityOverview({entities, caption}) {
             <Banner caption={caption}/>
 
             <Navigation buttons={[]}
-                        editable={false} searchable={true}
+                        editable={false} searchable={false}
             />
 
             <div className="d-flex align-items-center mt-3" style={{marginLeft: "15%", marginRight: "15%"}}>

@@ -133,8 +133,8 @@ function HouseOwnerPage() {
             <Navigation buttons={
                 buttons}
                         editable={myPage} editFunction={handleShow}
-                        searchable={true} showProfile={true}
-                        showReports={true} type="house"/>
+                        searchable={false} showProfile={true}
+                        reports={myPage} type="house"/>
 
             <AddVacationHouse/>
             <UpdateOwner show={show} setShow={setShow} owner={houseOwner}/>

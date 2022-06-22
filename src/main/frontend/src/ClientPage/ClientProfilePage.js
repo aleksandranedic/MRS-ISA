@@ -119,7 +119,7 @@ const Client = () => {
                     {text: "Rezervacije", path: "#reservations"}
                 ]}
                         editable={myPage} editFunction={handleShow}
-                        searchable={true}/>
+                        searchable={false}/>
 
 
             <div id="info"><OwnerInfo

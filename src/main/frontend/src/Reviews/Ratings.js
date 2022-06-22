@@ -11,7 +11,7 @@ function Ratings({reviews, type}) {
                 <AddReview type={type}/>   
             </div>
 
-            {reviews.length > 1 ?
+            {reviews.length > 0 ?
                 <Reviews reviews={reviews}/>              
                 : <></>
             }

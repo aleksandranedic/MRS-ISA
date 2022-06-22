@@ -127,7 +127,7 @@ const Adventure = ({id}) => {
                     {text: "Recenzije", path: "#reviews"},
 
                 ]}
-                        editable={myPage} editFunction={handleShow} searchable={true}
+                        editable={myPage} editFunction={handleShow} searchable={false}
             />
             <AdventureModal show={show} setShow={setShow} adventure={adventure}/>
             <AdventureInfoComponent adventure={adventure}/>

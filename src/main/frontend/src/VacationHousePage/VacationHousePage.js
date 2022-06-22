@@ -125,7 +125,7 @@ export function VacationHousePage() {
                     {text: "Kalendar", path: "#calendar"},
                     {text: "Recenzije", path: "#reviews"}
                 ]}
-                        editable={myPage} editFunction={handleShow} searchable={true}/>
+                        editable={myPage} editFunction={handleShow} searchable={false}/>
             { typeof house.name !== "undefined" &&<HouseInfo house={house}/>}
             <Update closeModal={handleClose} showModal={show} vacationHouse={house}/>
 

@@ -129,8 +129,8 @@ function BoatOwnerPage() {
         let html = <><>
             <Banner caption={boatOwner.firstName + " " + boatOwner.lastName}/>
             <Navigation buttons={buttons}
-                        editable={myPage} editFunction={handleShow} searchable={true}
-                        showReports={myPage} type="boat"/>
+                        editable={myPage} editFunction={handleShow} searchable={false}
+                        reports={myPage} type="boat"/>
             <AddBoat/>
             <UpdateOwner show={show} setShow={setShow} owner={boatOwner}/>
 
@@ -175,7 +175,7 @@ function BoatOwnerPage() {
             <Complaints type={"boatOwner"} toWhom={boatOwner.firstName + " " + boatOwner.lastName}/>
             <BeginButton/>
         </>
-    }
+    
 
     </>;
     return html;

@@ -101,8 +101,8 @@ const FishingInstructors = ({id}) => {
             <Banner caption={fishingInstructor.firstName + " " + fishingInstructor.lastName}/>
 
             <Navigation buttons={buttons}
-                        editable={myPage} editFunction={handleShow} searchable={true}
-                        showReports={myPage} type="adventure"
+                        editable={myPage} editFunction={handleShow} searchable={false}
+                        reports={myPage} type="adventure"
             />
 
             <div className="pe-5 pt-0">

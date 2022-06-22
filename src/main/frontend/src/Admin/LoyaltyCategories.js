@@ -313,14 +313,14 @@ export function LoyaltyCategories() {
 
                                 <TiDeleteOutline style={{color: "white", height: "1.2rem", width: "1.2rem"}}/>
                             </Button>
-                            {category.priceAlteration > 0 && <Badge bg="light"
-                                                                    className="ms-auto d-flex align-items-center justify-content-end w-25">
-                                <div className="text-secondary h-100 align-center p-0 m-0 ms-2"
-                                     style={{
-                                         fontSize: "1.25rem", fontWeight: "400"
-                                     }}>{category.priceAlteration}%
-                                </div>
-                            </Badge>}
+                            {category.discount > 0 && 
+                            <div className="ms-auto d-flex align-items-center justify-content-center w-25" style={{border:"1px solid white", borderRadius:"5px"}}>
+                            <div className="text-light h-100 align-center d-flex justify-content-center p-0 m-0 ms-2"
+                                 style={{
+                                     fontSize: "1.25rem", fontWeight: "400"
+                                 }}>{category.discount}%
+                            </div>
+                        </div>}
                         </Card.Footer>
                     </Card>
                 </Col>))}
@@ -351,14 +351,14 @@ export function LoyaltyCategories() {
 
                                 <TiDeleteOutline style={{color: "white", height: "1.2rem", width: "1.2rem"}}/>
                             </Button>
-                            {category.priceAlteration > 0 && <Badge bg="light"
-                                                                    className="ms-auto d-flex align-items-center justify-content-end w-25">
-                                <div className="text-secondary h-100 align-center p-0 m-0 ms-2"
+                            {category.discount > 0 && 
+                            <div className="ms-auto d-flex align-items-center justify-content-center w-25" style={{border:"1px solid white", borderRadius:"5px"}}>
+                                <div className="text-light h-100 align-center d-flex justify-content-center p-0 m-0 ms-2"
                                      style={{
                                          fontSize: "1.25rem", fontWeight: "400"
-                                     }}>{category.priceAlteration}%
+                                     }}>{category.discount}%
                                 </div>
-                            </Badge>}
+                            </div>}
                         </Card.Footer>
                     </Card>
                 </Col>))}

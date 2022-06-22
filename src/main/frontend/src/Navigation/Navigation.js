@@ -104,7 +104,7 @@ export default function Navigation(props) {
                                 return <NavigationButton text={button.text} path={button.path} key={index}/>
                             }
                         )}
-                        {props.showReports &&
+                        {props.reports &&
                             <>
                                  <Button variant="outline-" className="border-0 m-0" onClick={handleShowReports}>
                                     <p className="m-0 text-secondary font-monospace p-1">Izveštaji</p>

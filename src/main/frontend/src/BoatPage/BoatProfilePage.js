@@ -137,7 +137,7 @@ export function BoatProfilePage() {
                 {text: "Kalendar", path: "#calendar"},
                 {text: "Recenzije", path: "#reviews"}
             ]}
-                    editable={myPage} editFunction={handleShow} searchable={true}/>
+                    editable={myPage} editFunction={handleShow} searchable={false}/>
         { typeof boat.name !== "undefined" && <BoatInfo boat={boat}/>}
         <Update closeModal={handleClose} showModal={show} boat = {boat}/>
         <div className='p-5 pt-0'>

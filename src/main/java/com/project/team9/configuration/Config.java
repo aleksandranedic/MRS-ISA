@@ -208,8 +208,8 @@ public class Config {
         addVacationHouseReservation(vacationHouse13, client5, 7, 3, 7);
         addVacationHouseReservation(vacationHouse13, client6, 7, 12, 22);
 
-        addVacationHouseQuickReservation(vacationHouse13, 6, 20, 22);
-        addVacationHouseQuickReservation(vacationHouse13, 7, 25, 27);
+        addVacationHouseQuickReservation(vacationHouse13, 8, 20, 22);
+        addVacationHouseQuickReservation(vacationHouse13, 9, 25, 27);
 
 
         addVacationHouseReservation(vacationHouse14, client6, 6, 1, 5);
@@ -217,8 +217,8 @@ public class Config {
         addVacationHouseReservation(vacationHouse14, client4, 7, 3, 7);
         addVacationHouseReservation(vacationHouse14, client5, 7, 12, 22);
 
-        addVacationHouseQuickReservation(vacationHouse14, 6, 20, 22);
-        addVacationHouseQuickReservation(vacationHouse14, 7, 25, 27);
+        addVacationHouseQuickReservation(vacationHouse14, 8, 20, 22);
+        addVacationHouseQuickReservation(vacationHouse14, 9, 25, 27);
 
 
         addVacationHouseReservation(vacationHouse15, client5, 6, 1, 5);
@@ -226,8 +226,8 @@ public class Config {
         addVacationHouseReservation(vacationHouse15, client3, 7, 3, 7);
         addVacationHouseReservation(vacationHouse15, client4, 7, 12, 22);
 
-        addVacationHouseQuickReservation(vacationHouse15, 6, 20, 22);
-        addVacationHouseQuickReservation(vacationHouse15, 7, 25, 27);
+        addVacationHouseQuickReservation(vacationHouse15, 8, 20, 22);
+        addVacationHouseQuickReservation(vacationHouse15, 9, 25, 27);
 
 
         addVacationHouseReservation(vacationHouse16, client4, 6, 1, 5);
@@ -235,8 +235,8 @@ public class Config {
         addVacationHouseReservation(vacationHouse16, client6, 7, 3, 7);
         addVacationHouseReservation(vacationHouse16, client3, 7, 12, 22);
 
-        addVacationHouseQuickReservation(vacationHouse16, 6, 20, 22);
-        addVacationHouseQuickReservation(vacationHouse16, 7, 25, 27);
+        addVacationHouseQuickReservation(vacationHouse16, 8, 20, 22);
+        addVacationHouseQuickReservation(vacationHouse16, 9, 25, 27);
 
 
         addVacationHouseReservation(vacationHouse17, client3, 6, 7, 9);
@@ -244,8 +244,8 @@ public class Config {
         addVacationHouseReservation(vacationHouse17, client5, 7, 10, 23);
         addVacationHouseReservation(vacationHouse17, client6, 7, 28, 31);
 
-        addVacationHouseQuickReservation(vacationHouse17, 6, 20, 22);
-        addVacationHouseQuickReservation(vacationHouse17, 7, 25, 27);
+        addVacationHouseQuickReservation(vacationHouse17, 8, 20, 22);
+        addVacationHouseQuickReservation(vacationHouse17, 9, 25, 27);
 
 
         addVacationHouseReservation(vacationHouse18, client6, 6, 7, 9);
@@ -253,8 +253,8 @@ public class Config {
         addVacationHouseReservation(vacationHouse18, client4, 7, 10, 23);
         addVacationHouseReservation(vacationHouse18, client5, 7, 28, 31);
 
-        addVacationHouseQuickReservation(vacationHouse18, 6, 20, 22);
-        addVacationHouseQuickReservation(vacationHouse18, 7, 25, 27);
+        addVacationHouseQuickReservation(vacationHouse18, 8, 20, 22);
+        addVacationHouseQuickReservation(vacationHouse18, 9, 25, 27);
 
 
         //------------------------------------------------
@@ -264,8 +264,8 @@ public class Config {
         addAdventureReservation(adventure1, client5, 6, 25, 9, 13);
         addAdventureReservation(adventure1, client6, 6, 25, 16, 18);
 
-        addAdventureQuickReservation(adventure1, 6, 13, 10, 12);
-        addAdventureQuickReservation(adventure1, 6, 18, 14, 17);
+        addAdventureQuickReservation(adventure1, 8, 13, 10, 12);
+        addAdventureQuickReservation(adventure1, 8, 18, 14, 17);
 
 
         addAdventureReservation(adventure2, client6, 6, 6, 10, 12);
@@ -273,8 +273,8 @@ public class Config {
         addAdventureReservation(adventure2, client4, 6, 25, 9, 13);
         addAdventureReservation(adventure2, client5, 6, 25, 16, 18);
 
-        addAdventureQuickReservation(adventure2, 6, 13, 10, 12);
-        addAdventureQuickReservation(adventure2, 6, 18, 14, 17);
+        addAdventureQuickReservation(adventure2, 8, 13, 10, 12);
+        addAdventureQuickReservation(adventure2, 8, 18, 14, 17);
 
 
         addAdventureReservation(adventure3, client5, 6, 6, 10, 12);
@@ -282,8 +282,8 @@ public class Config {
         addAdventureReservation(adventure3, client3, 6, 25, 9, 13);
         addAdventureReservation(adventure3, client4, 6, 25, 16, 18);
 
-        addAdventureQuickReservation(adventure3, 6, 13, 10, 12);
-        addAdventureQuickReservation(adventure3, 6, 18, 14, 17);
+        addAdventureQuickReservation(adventure3, 8, 13, 10, 12);
+        addAdventureQuickReservation(adventure3, 8, 18, 14, 17);
 
 
         addAdventureReservation(adventure4, client4, 6, 6, 10, 12);
@@ -291,8 +291,8 @@ public class Config {
         addAdventureReservation(adventure4, client6, 6, 25, 9, 13);
         addAdventureReservation(adventure4, client3, 6, 25, 16, 18);
 
-        addAdventureQuickReservation(adventure4, 6, 13, 10, 12);
-        addAdventureQuickReservation(adventure4, 6, 18, 14, 17);
+        addAdventureQuickReservation(adventure4, 8, 13, 10, 12);
+        addAdventureQuickReservation(adventure4, 8, 18, 14, 17);
 
 
         addAdventureReservation(adventure5, client3, 7, 1, 10, 12);
@@ -300,8 +300,8 @@ public class Config {
         addAdventureReservation(adventure5, client5, 6, 26, 9, 13);
         addAdventureReservation(adventure5, client6, 6, 29, 16, 18);
 
-        addAdventureQuickReservation(adventure5, 6, 13, 15, 20);
-        addAdventureQuickReservation(adventure5, 6, 18, 6, 9);
+        addAdventureQuickReservation(adventure5, 8, 13, 15, 20);
+        addAdventureQuickReservation(adventure5, 8, 18, 6, 9);
 
 
         addAdventureReservation(adventure6, client6, 7, 1, 10, 12);
@@ -309,8 +309,8 @@ public class Config {
         addAdventureReservation(adventure6, client4, 6, 26, 9, 13);
         addAdventureReservation(adventure6, client5, 6, 29, 16, 18);
 
-        addAdventureQuickReservation(adventure6, 6, 13, 15, 20);
-        addAdventureQuickReservation(adventure6, 6, 18, 6, 9);
+        addAdventureQuickReservation(adventure6, 8, 13, 15, 20);
+        addAdventureQuickReservation(adventure6, 8, 18, 6, 9);
 
         //--------------------------------------------------------------
 
@@ -319,8 +319,8 @@ public class Config {
         addBoatReservation(boat7, client5, 6, 27, 17, 21);
         addBoatReservation(boat7, client6, 7, 9, 13, 16);
 
-        addBoatQuickReservation(boat7, 6, 14, 8, 16);
-        addBoatQuickReservation(boat7, 6, 19, 15, 21);
+        addBoatQuickReservation(boat7, 8, 14, 8, 16);
+        addBoatQuickReservation(boat7, 8, 19, 15, 21);
 
 
         addBoatReservation(boat8, client6, 6, 11, 7, 9);
@@ -328,8 +328,8 @@ public class Config {
         addBoatReservation(boat8, client4, 6, 27, 17, 21);
         addBoatReservation(boat8, client5, 7, 9, 13, 16);
 
-        addBoatQuickReservation(boat8, 6, 14, 8, 16);
-        addBoatQuickReservation(boat8, 6, 19, 15, 21);
+        addBoatQuickReservation(boat8, 8, 14, 8, 16);
+        addBoatQuickReservation(boat8, 8, 19, 15, 21);
 
 
         addBoatReservation(boat9, client5, 6, 11, 7, 9);
@@ -337,8 +337,8 @@ public class Config {
         addBoatReservation(boat9, client3, 6, 27, 17, 21);
         addBoatReservation(boat9, client4, 7, 9, 13, 16);
 
-        addBoatQuickReservation(boat9, 6, 14, 8, 16);
-        addBoatQuickReservation(boat9, 6, 19, 15, 21);
+        addBoatQuickReservation(boat9, 8, 14, 8, 16);
+        addBoatQuickReservation(boat9, 8, 19, 15, 21);
 
 
         addBoatReservation(boat10, client4, 6, 11, 7, 9);
@@ -346,16 +346,16 @@ public class Config {
         addBoatReservation(boat10, client6, 6, 27, 17, 21);
         addBoatReservation(boat10, client3, 7, 9, 13, 16);
 
-        addBoatQuickReservation(boat10, 6, 14, 8, 16);
-        addBoatQuickReservation(boat10, 6, 19, 15, 21);
+        addBoatQuickReservation(boat10, 8, 14, 8, 16);
+        addBoatQuickReservation(boat10, 8, 19, 15, 21);
 
         addBoatReservation(boat11, client3, 6, 28, 7, 9);
         addBoatReservation(boat11, client4, 6, 30, 13, 15);
         addBoatReservation(boat11, client5, 7, 2, 17, 21);
         addBoatReservation(boat11, client6, 7, 24, 13, 16);
 
-        addBoatQuickReservation(boat11, 6, 14, 8, 16);
-        addBoatQuickReservation(boat11, 6, 19, 15, 21);
+        addBoatQuickReservation(boat11, 8, 14, 8, 16);
+        addBoatQuickReservation(boat11, 8, 19, 15, 21);
 
 
         addBoatReservation(boat12, client6, 6, 28, 7, 9);
@@ -363,8 +363,8 @@ public class Config {
         addBoatReservation(boat12, client4, 7, 2, 17, 21);
         addBoatReservation(boat12, client5, 7, 24, 13, 16);
 
-        addBoatQuickReservation(boat12, 6, 14, 8, 16);
-        addBoatQuickReservation(boat12, 6, 19, 15, 21);
+        addBoatQuickReservation(boat12, 8, 14, 8, 16);
+        addBoatQuickReservation(boat12, 8, 19, 15, 21);
 
 
         //------------------------------------

@@ -592,7 +592,7 @@ public class BoatService {
         int discount = userCategoryService.getClientCategoryBasedOnPoints(client.getNumOfPoints()).getDiscount();
 
         if (discount > 0) {
-            price = price * (1 - discount / 100);
+            price = price * (100 - discount) / 100;
         }
 
         List<Tag> tags = new ArrayList<Tag>();
