@@ -43,4 +43,7 @@ public interface AdventureReservationRepository extends JpaRepository<AdventureR
 
     @Query("FROM AdventureReservation  WHERE deleted = false")
     List<AdventureReservation> getReservations();
+
+    @Query("FROM AdventureReservation  WHERE (client.id = ?1 AND deleted = false) OR (client.id = ?1 AND resource.id = ?1 AND deleted=true) ")
+    List<AdventureReservation> getPossibleCollisionReservationsForClient(Long clientId, Long resourceId);
 }

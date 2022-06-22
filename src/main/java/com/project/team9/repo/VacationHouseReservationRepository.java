@@ -33,4 +33,7 @@ public interface VacationHouseReservationRepository extends JpaRepository<Vacati
 
     @Query("FROM VacationHouseReservation WHERE client.id=?1 AND deleted= false")
     List<VacationHouseReservation> findVacationHouseReservationForClientId(Long id);
+
+    @Query("FROM VacationHouseReservation  WHERE (client.id = ?1 AND deleted = false) OR (client.id = ?1 AND resource.id = ?1 AND deleted=true) ")
+    List<VacationHouseReservation> getPossibleCollisionReservationsForClient(Long clientId, Long resourceId);
 }
