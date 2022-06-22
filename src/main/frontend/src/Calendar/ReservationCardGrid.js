@@ -8,6 +8,7 @@ import axios from "axios";
 import {ReservationAdditionalInfoModal} from "./ReservationAdditionalInfoModal";
 import {MdUnfoldMore} from "react-icons/md";
 import {isClient} from "../Autentification";
+import {ToastContainer} from "react-toastify";
 
 
 export function ReservationCardGrid({reservations}) {
@@ -153,6 +154,18 @@ export function Grid({futureReservations}) {
     </Row>
         <ReservationAdditionalInfoModal reservation={reservation} setShowReservation={setShowReservation}
                                         showReservation={showReservation} myPage={true}/>
+        <ToastContainer
+            position="top-center"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme={"colored"}
+        />
 
     </>
 }

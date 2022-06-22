@@ -913,13 +913,10 @@ public class VacationHouseService {
         try{
             VacationHouseReservation vacationHouseReservation=vacationHouseReservationService.getVacationHouseReservation(id);
             LocalDateTime now=LocalDateTime.now();
-            int numberOfDaysBetween = (int) ChronoUnit.DAYS.between(now.toLocalDate(), vacationHouseReservation.getAppointments().get(0).getStartTime());
+            List<Appointment> appointments = vacationHouseReservation.getAppointments();
+            int numberOfDaysBetween = (int) ChronoUnit.DAYS.between(now.toLocalDate(), appointments.get(0).getStartTime());
             if(numberOfDaysBetween<3){
                 return  "Otkazivanje rezervacije je moguće najkasnije 3 dana do početka";
-            }
-            for (Appointment appointment :
-                    vacationHouseReservation.getAppointments()) {
-                appointmentService.delete(appointment);
             }
             vacationHouseReservationService.deleteReservation(vacationHouseReservation);
             return "Uspešno ste otkazali rezervaciju vikendicu";
