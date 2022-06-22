@@ -1,7 +1,7 @@
 import React, {useRef, useState} from "react";
 import {Button, Col, Form, InputGroup, Modal} from "react-bootstrap";
 import axios from "axios";
-import {backLink, frontLink, missingDataErrors} from "../Consts";
+import {backLink, frontLink, missingDataErrors, notifySuccess} from "../Consts";
 import AdventureFormImages from "./AdventureFormImages";
 import {TagInfo} from "../Info";
 import {MessagePopupModal} from "../MessagePopupModal";
@@ -79,12 +79,11 @@ export function AdventureModal({adventure, show, setShow, ownerId}) {
     function handleDelete() {
         axios.post(backLink + "/adventure/delete/" + adventure.id)
             .then(response => {
-                console.log(response);
-                window.location.href = frontLink + "fishingInstructor/" + adventure.owner.id;
+                notifySuccess("Uspešno ste obrisali avanturu.")
+                setTimeout(function(){window.location.href = frontLink + "fishingInstructor/" + adventure.owner.id},1500);
                 }
             ).catch(error => {
             setShowAlert(true);
-
         })
     }
 

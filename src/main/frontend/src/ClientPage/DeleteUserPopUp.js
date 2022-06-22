@@ -3,7 +3,7 @@ import {Button, Form, Modal} from "react-bootstrap";
 import {Info} from "../Info";
 import axios from "axios";
 import Collapse from "react-bootstrap/Collapse";
-import {backLink, notifySuccess} from "../Consts";
+import {backLink, notifyError, notifySuccess} from "../Consts";
 
 export default function DeleteUserPopUp({user, showDelete, handleClose, type}) {
     const [deleteReason, setReason] = useState("")
@@ -19,12 +19,18 @@ export default function DeleteUserPopUp({user, showDelete, handleClose, type}) {
             )
         }
         else if (type === "FISHING_INSTRUCTOR") {
-            axios.post(backLink+"/deletionRequests/fishingInstructor/" + user.id.toString(), deleteReason).then(
-                res => {
-                    notifySuccess(res.data)
-                    handleClose();
-                }
-            )
+            axios
+            .delete(backLink+"/deletionRequests/fishingInstructor/" + user.id.toString(), {
+                headers: {"Content-Type": "text/plain"},
+                data: deleteReason,
+            })
+            .then(res => {
+                notifySuccess(res.data)
+                handleClose();
+                })
+                .catch(function (error) {
+                    notifyError(error.response.data)
+                });
         }
 
     }
