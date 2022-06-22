@@ -1,6 +1,7 @@
 package com.project.team9.controller;
 
 import com.project.team9.dto.ClientDTO;
+import com.project.team9.dto.NewReservationDTO;
 import com.project.team9.dto.ReservationDTO;
 import com.project.team9.dto.UserStatDTO;
 import com.project.team9.exceptions.CannotDeleteException;
@@ -51,6 +52,11 @@ public class ClientController {
     @GetMapping("/reservation/{id}")
     public List<ReservationDTO> getReservations(@PathVariable Long id) {
         return clientService.getReservations(id);
+    }
+
+    @PostMapping("/canReserve")
+    public String canReserve(@RequestBody NewReservationDTO dto) {
+        return clientService.canReserve(dto);
     }
 
     @PostMapping("/delete/{id}")

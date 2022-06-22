@@ -81,4 +81,8 @@ public class AdventureReservationService {
     public List<AdventureReservation> getReservations() {
         return repository.getReservations();
     }
+
+    public List<AdventureReservation> getPossibleCollisionReservationsForClient(Long clientId, Long resourceId) {
+        return repository.getPossibleCollisionReservationsForClient(clientId, resourceId);
+    }
 }

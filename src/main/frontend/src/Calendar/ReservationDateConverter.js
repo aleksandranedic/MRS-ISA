@@ -1,3 +1,5 @@
+import star from "react-star-ratings/build/star";
+
 export function getStartTime(reservation) {
     if (reservation.appointments.length == 0) {
         return "";
@@ -26,6 +28,22 @@ export function convertToDate(dateArray) {
     return new Date(dateArray.at(0), dateArray.at(1) - 1, dateArray.at(2), dateArray.at(3), dateArray.at(4));
 }
 
+
+export function compareDates(reservation1, reservation2) {
+    let start1 = convertToDate(reservation1.appointments.at(0).startTime);
+    let start2 = convertToDate(reservation2.appointments.at(0).startTime);
+    return start1 > start2;
+}
+
+export function compareDuration(reservation1, reservation2) {
+    let start1 = convertToDate(reservation1.appointments.at(0).startTime);
+    let end1 = convertToDate(reservation1.appointments.at(reservation1.appointments.length - 1).endTime)
+    let start2 = convertToDate(reservation2.appointments.at(0).startTime);
+    let end2 = convertToDate(reservation2.appointments.at(reservation2.appointments.length - 1).endTime)
+
+    return (end1 - start1) > (end2 - start2);
+}
+
 export function compareDateStrings(start, end) {
 
     if (start === "" || end === "") {
@@ -34,7 +52,7 @@ export function compareDateStrings(start, end) {
 
     let startDate = new Date(start.split("-")[0],start.split("-")[1]-1,start.split("-")[2]);
     let endDate = new Date(end.split("-")[0],end.split("-")[1]-1,end.split("-")[2]);
-    return startDate > endDate;
+    return startDate >= endDate;
 
 }
 
@@ -45,7 +63,7 @@ export function compareDateStringToToday(string) {
 
     let date = new Date(string.split("-")[0],string.split("-")[1]-1,string.split("-")[2]);
 
-    return new Date() > date;
+    return new Date() >= date;
 
 }
 
@@ -58,6 +76,6 @@ export function compareTimeStrings(start, end) {
     let startTime = new Date(1,1,1, start.split(":")[0],start.split(":")[1]);
     let endTime = new Date(1,1,1, end.split(":")[0],end.split(":")[1]);
 
-    return startTime > endTime;
+    return startTime >= endTime;
 
 }

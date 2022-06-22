@@ -77,4 +77,8 @@ public class VacationHouseReservationService {
         vacationHouseReservation.setDeleted(true);
         repository.save(vacationHouseReservation);
     }
+
+    public List<VacationHouseReservation> getPossibleCollisionReservationsForClient(Long clientId, Long resourceId) {
+        return repository.getPossibleCollisionReservationsForClient(clientId, resourceId);
+    }
 }

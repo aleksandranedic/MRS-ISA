@@ -6,6 +6,11 @@ import {MdStars, MdDoNotDisturbOn} from "react-icons/md";
 import {Badge} from "react-bootstrap";
 
 function OwnerInfo({name, rate, bio, email, phoneNum, address, profileImg, category, points, penalty}) {
+
+
+    console.log(penalty);
+    console.log(points);
+
     return (
         <div className = "d-flex align-items-center justify-content-center ps-2 m-5" id="info">
             <div className='pt-4 ps-0 d-flex justify-content-center me-2' style={{width:"15%"}}>
@@ -30,7 +35,8 @@ function OwnerInfo({name, rate, bio, email, phoneNum, address, profileImg, categ
                 </div>
 
                     <div className='h-25 w-100 d-flex'>
-                        {  typeof category != "undefined" ?
+
+                        { category !== null ?
                         <div className="mt-4 ms-3 w-50 d-flex align-items-center">
                             <div>
                                 <div className="d-flex align-items-center justify-content-center"
@@ -44,23 +50,24 @@ function OwnerInfo({name, rate, bio, email, phoneNum, address, profileImg, categ
                                     {category.name}
                                 </div>
                             </div>
+                        </div>:<></>}
 
-                            <div className="d-flex align-items-center">
+                        <div className="d-flex align-items-center">
 
+                            <div className="d-flex">
+                                <MdStars className="pe-2 ms-3" style={{width: "4vh", height: "4vh", color: "#f4b136"}}/>
+                                {points}
+
+                            </div>
+                            {typeof penalty != "undefined" &&
                                 <div className="d-flex">
-                                    <MdStars className="pe-2 ms-3" style={{width: "4vh", height: "4vh", color: "#f4b136"}}/>
-                                    {points}
+                                    <MdDoNotDisturbOn className="pe-2 ms-3" style={{width: "4vh", height: "4vh", color: "#ff4242"}}/>
+                                    {penalty}
 
                                 </div>
-                                {typeof penalty != "undefined" &&
-                                    <div className="d-flex">
-                                        <MdDoNotDisturbOn className="pe-2 ms-3" style={{width: "4vh", height: "4vh", color: "#ff4242"}}/>
-                                        {penalty}
+                            }
+                        </div>
 
-                                    </div>
-                                }
-                            </div>
-                        </div>:<></>}
                         {  typeof bio != "undefined" ?
                         <div className="mt-4 ms-3 w-50">
                             <p   style={{ textAlign: 'justify', textJustify: 'inter-word', fontSize: "18px"}}>

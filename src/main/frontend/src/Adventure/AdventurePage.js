@@ -149,6 +149,8 @@ const Adventure = ({id}) => {
                       type={"adventure"}
                       events={events} myPage={myPage}
                       additionalServices={adventure.additionalServices}
+                      cancellationFee = {adventure.cancellationFee}
+                      reservations = {reservations}
             />
 
             <hr className="me-5 ms-5 mt-5"/>

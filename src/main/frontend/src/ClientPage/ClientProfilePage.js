@@ -146,7 +146,7 @@ const Client = () => {
                 <h2 className="me-5 ms-5 mt-5">Kalendar</h2>
 
                 <hr className="me-5 ms-5"/>
-                <Calendar id="calendar" events={events} reservable={false}/>
+                <Calendar id="calendar" events={events} reservable={false} reservations = {reservations}  myPage={myPage}/>
 
                 <h2 className="me-5 ms-5 mt-5" id="reservations">Rezervacije</h2>
                 <hr className="me-5 ms-5"/>
@@ -162,7 +162,7 @@ const Client = () => {
                 <hr className="me-5 ms-5"/>
                 <Collapse in={open}>
                     <div id="reservationsTable">
-                        <ReservationsTable  reservations={reservations} showResource={false}/>
+                        <ReservationsTable  reservations={reservations} showResource={true}/>
                     </div>
                 </Collapse>
             </>

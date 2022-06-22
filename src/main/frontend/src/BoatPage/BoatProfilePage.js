@@ -150,7 +150,9 @@ export function BoatProfilePage() {
                         </h2>
                         <hr/>
                         <Calendar myPage={myPage} reservable={true} pricelist={{price: boat.price}} type="boat"
-                                  resourceId={id} events={events} additionalServices={boat.additionalServices}/>
+                                  resourceId={id} events={events} additionalServices={boat.additionalServices}
+                                  cancellationFee = {boat.cancellationFee} reservations = {reservations}
+                        />
 
             {myPage && <>
                 <h2 className="mt-5" id="reservations">Rezervacije</h2>
