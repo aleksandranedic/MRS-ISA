@@ -74,7 +74,7 @@ class ReviewControllerTest {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         mockMvc.perform(get(URL_PREFIX + "/getStat/3"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.points").value(0));
+                .andExpect(jsonPath("$.points").value(16));
         ;
     }
 }
