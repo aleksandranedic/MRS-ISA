@@ -12,7 +12,6 @@ import {isClient} from "../Autentification";
 
 export function ReservationCardGrid({reservations}) {
 
-    console.log(reservations)
     const [sortBy, setSortBy] = useState("");
 
 

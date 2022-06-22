@@ -107,7 +107,6 @@ export function BoatProfilePage() {
             }
             setBoat(res.data);
             setImgs([]);
-            console.log(res.data);
             setMyPage(isMyPage("BOAT_OWNER", res.data.ownerId));
 
             fetchReviews();

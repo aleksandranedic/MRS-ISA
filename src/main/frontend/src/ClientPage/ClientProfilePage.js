@@ -55,7 +55,6 @@ const Client = () => {
             .get(backLink + "/review/getStat/" + id)
             .then(res => {
                 setStat(res.data);
-                console.log(res.data);
             });
     };
 
@@ -77,21 +76,18 @@ const Client = () => {
 
     const fetchAdventures = ()  => {
         axios.get(backLink + "/adventure/subs/" + id).then(res => {
-            console.log(res.data);
             setAdventures(res.data);
         })
     }
 
     const fetchBoats = ()  => {
         axios.get(backLink + "/boat/subs/" + id).then(res => {
-            console.log(res.data);
             setBoats(res.data);
         })
     }
 
     const fetchHouses = ()  => {
         axios.get(backLink + "/house/subs/" + id).then(res => {
-            console.log(res.data);
             setHouses(res.data);
         })
     }

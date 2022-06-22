@@ -25,7 +25,6 @@ export function ReservationsToReview({type}) {
                     for (let index in res.data) {
 
                         let reservation = res.data.at(index);
-                        console.log(reservation)
                         if (reservation.busyPeriod === false && reservation.quickReservation === false) {
                             reservations.push(reservation);
                         }
@@ -76,7 +75,6 @@ export function ReservationsToReview({type}) {
         }
 
         axios.post(backLink + "/review/vendor/add", dto).then( response => {
-            console.log(response.data);
             }
         ).catch(err => {
 

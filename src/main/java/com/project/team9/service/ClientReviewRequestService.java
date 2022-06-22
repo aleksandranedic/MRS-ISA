@@ -182,12 +182,12 @@ public class ClientReviewRequestService {
         Client client = clientService.getById(String.valueOf(clientReviewResponseDTO.getClientId()));
         String vendorEmail="";
         String vendorName="";
-        if (clientReviewResponseDTO.getVendorId() != null) {
-            vendorEmail = getVendorEmail(clientReviewResponseDTO.getVendorId());
-            vendorName = getVendorFullName(clientReviewResponseDTO.getVendorId());
-        } else if (clientReviewResponseDTO.getResourceId() != null) {
+        if (clientReviewResponseDTO.getVendorId() == null) {
             vendorEmail = getVendorEmail(getResourceOwnerId(clientReviewResponseDTO.getResourceId()));
             vendorName = getVendorFullName(getResourceOwnerId(clientReviewResponseDTO.getResourceId()));
+        } else if (clientReviewResponseDTO.getResourceId() == null) {
+            vendorEmail = getVendorEmail(clientReviewResponseDTO.getVendorId());
+            vendorName = getVendorFullName(clientReviewResponseDTO.getVendorId());
         }
         String fullResponse="Administratoreva poruka je: "+clientReviewResponseDTO.getResponse();
         String email=emailService.buildHTMLEmail(vendorName,fullResponse,"Zahtev je prihvaćen", "Recenzija");

@@ -7,10 +7,6 @@ import {Badge} from "react-bootstrap";
 
 function OwnerInfo({name, rate, bio, email, phoneNum, address, profileImg, category, points, penalty}) {
 
-
-    console.log(penalty);
-    console.log(points);
-
     return (
         <div className = "d-flex align-items-center justify-content-center ps-2 m-5" id="info">
             <div className='pt-4 ps-0 d-flex justify-content-center me-2' style={{width:"15%"}}>
@@ -74,11 +70,7 @@ function OwnerInfo({name, rate, bio, email, phoneNum, address, profileImg, categ
                                 {bio}
                             </p>
                         </div>: <></>}
-
-
                     </div>
-
-
             </div>
         </div>
     );

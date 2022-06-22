@@ -9,7 +9,6 @@ export function DeletionRequestCard({request}) {
     const [user, setUser] = useState();
     const [text, setComment] = useState("");
 
-    console.log(request);
 
     const handleDeletionRequest = (type) => {
         let dto = {
@@ -42,7 +41,6 @@ export function DeletionRequestCard({request}) {
             case "CLIENT":
                 axios.get(backLink + "/client/" + request.userId).then(
                     response => {
-                        console.log(response.data)
                         setUser(response.data)
                     }
                 )
@@ -50,7 +48,6 @@ export function DeletionRequestCard({request}) {
             case "FISHING_INSTRUCTOR":
                 axios.get(backLink + "/fishinginstructor/" + request.userId).then(
                     response => {
-                        console.log(response.data)
                         setUser(response.data)
                     }
                 )
@@ -58,7 +55,6 @@ export function DeletionRequestCard({request}) {
             case "VACATION_HOUSE_OWNER":
                 axios.get(backLink + "/houseowner/" + request.userId).then(
                     response => {
-                        console.log(response.data)
                         setUser(response.data)
                     }
                 )
@@ -66,7 +62,6 @@ export function DeletionRequestCard({request}) {
             case "BOAT_OWNER":
                 axios.get(backLink + "/boatowner/" + request.userId).then(
                     response => {
-                        console.log(response.data)
                         setUser(response.data)
                     }
                 )
