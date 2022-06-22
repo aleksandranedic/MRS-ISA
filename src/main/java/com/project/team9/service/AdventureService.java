@@ -489,7 +489,7 @@ public class AdventureService {
     }
 
     public ReservationDTO createDTOFromReservation(AdventureReservation reservation) {
-        return new ReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation(), reservation.getResource().getId(), reservation.getId());
+        return new ReservationDTO(reservation.getAppointments(), reservation.getNumberOfClients(), reservation.getAdditionalServices(), reservation.getPrice(), reservation.getClient(), reservation.getResource().getTitle(), reservation.isBusyPeriod(), reservation.isQuickReservation(), reservation.getResource().getId(), reservation.getId(), "adventure");
     }
 
     public List<ReservationDTO> getReservationsForFishingInstructor(Long id) {

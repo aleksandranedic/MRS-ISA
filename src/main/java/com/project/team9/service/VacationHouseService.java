@@ -509,7 +509,8 @@ public class VacationHouseService {
                 vhr.isBusyPeriod(),
                 vhr.isQuickReservation(),
                 vhr.getResource().getId(),
-                vhr.getId()
+                vhr.getId(),
+                "house"
         );
     }
 
