@@ -584,7 +584,10 @@ public class AdventureService {
 
         int price = adventure.getPricelist().getPrice() * appointments.size();
         int discount = userCategoryService.getClientCategoryBasedOnPoints(client.getNumOfPoints()).getDiscount();
-        price = price * (1 - discount) / 100;
+
+        if (discount > 0) {
+            price = price * (1 - discount / 100);
+        }
 
         List<Tag> tags = new ArrayList<Tag>();
         for (String text : dto.getAdditionalServicesStrings()) {
