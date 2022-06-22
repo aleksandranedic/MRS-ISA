@@ -129,6 +129,7 @@ public class PenaltyReviewService {
             penaltyVendorText = "Nalog klijenta koji je koristio jedan od vaših resursa će dobiti penal jer se nije pojavio";
             penaltyClientText = "Administrator je odlučio da Vaš nalog dobije penal za odsutstvo";
         }
+        clientService.addClient(client);
         String fullResponse= "Administratorov odgovor na recenziju: " + reviewResponseDTO.getResponse();
         String emailForVendor=emailService.buildHTMLEmail(list[1],fullResponse,penaltyVendorText,"Recenzija pružaoca usluga");
         emailService.send(list[3], emailForVendor, "Recenzija pružioca usluga");
