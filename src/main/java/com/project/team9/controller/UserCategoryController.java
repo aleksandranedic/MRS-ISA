@@ -1,5 +1,6 @@
 package com.project.team9.controller;
 
+import com.project.team9.exceptions.CategoryExistsException;
 import com.project.team9.model.buissness.UserCategory;
 import com.project.team9.service.UserCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class UserCategoryController {
     }
 
     @PostMapping("/add")
-    public Long addUserCategory(@RequestBody UserCategory userCategory) {
+    public Long addUserCategory(@RequestBody UserCategory userCategory) throws CategoryExistsException {
         return service.addUserCategory(userCategory);
     }
 
