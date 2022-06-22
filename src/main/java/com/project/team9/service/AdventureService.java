@@ -302,7 +302,7 @@ public class AdventureService {
         repository.save(adventure);
     }
 
-    @Cacheable(value = "adventure")
+    @Cacheable(value = "adventure", unless="#result == null")
     public Adventure getById(String id) {
         try{
             return repository.getById(Long.parseLong(id));
